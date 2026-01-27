@@ -24,9 +24,9 @@
     <updated>2025-02-10T03:11:08+00:00</updated>
     <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
   </info>
-  <macro name="author">
+<macro name="author">
     <names variable="author">
-      <name and="text" et-al-min="11" et-al-use-first="1" initialize-with=". " delimiter=", "/>
+      <name and="text" et-al-min="11" et-al-use-first="1" delimiter=", "/>
       <label form="long" prefix=", " suffix=" "/>
       <substitute>
         <names variable="editor"/>
@@ -37,7 +37,7 @@
   <macro name="editor">
     <names variable="editor">
       <label form="verb" suffix=" "/>
-      <name delimiter=", " initialize-with=". " and="text"/>
+      <name delimiter=", " and="text"/>
     </names>
   </macro>
   <macro name="year-date">
@@ -103,6 +103,11 @@
   <bibliography entry-spacing="0" second-field-align="flush">
     <!-- Reference for book, chapter, report layouts: https://doi.org/10.1103/PhysRevX.10.011010 -->
     <!-- Reference for arXiv: https://doi.org/10.1103/PhysRevX.10.011004 -->
+    <!-- Add sorting  -->
+    <sort>
+      <key variable="issued" sort="descending"/>
+      <key variable="title"/>
+    </sort>
     <layout suffix=".">
       <text variable="citation-number" prefix="[" suffix="]"/>
       <text macro="author" suffix=", "/>
