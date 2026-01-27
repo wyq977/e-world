@@ -1,0 +1,19 @@
+body {
+    max-width: 900px; /* Widen the container (Standard is often ~800px) */
+    margin: 40px auto; /* Center it */
+    padding: 0 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* Optional: Make the title look sharp */
+h1 {
+    border-bottom: 2px solid #eaeaea;
+    padding-bottom: 10px;
+}
+
+/* Optional: Add space between bib entries */
+.csl-entry {
+    margin-bottom: 1em;
+}
