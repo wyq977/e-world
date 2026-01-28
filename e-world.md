@@ -3,10 +3,13 @@ title: "E-world"
 suppress-bibliography: true
 ---
 
+*This is ongoing collection of literature about e-value (methodology),*
+*Pls make a pull request in [github](https://github.com/wyq977/e-world).*
+
 ## 2025
 
 * [@ramdasHypothesisTestingEvalues2025]
-    *E-book* Some comments about it! [PDF](https://www.stat.cmu.edu/~aramdas/ebook-final.pdf)
+    A comprehensive E-book. [PDF](https://www.stat.cmu.edu/~aramdas/ebook-final.pdf)
 
 ## 2024
 
@@ -16,7 +19,7 @@ suppress-bibliography: true
 ## 2020
 
 * [@wassermanUniversalInference2020]
-    *A universally applicable e-value and e-process*
+    A universally applicable e-value and e-process
 
 ## Preprints
 
