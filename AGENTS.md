@@ -153,6 +153,9 @@ Artifact is regenerated from it and republished, never edited by hand.
 - Reading queue: https://claude.ai/artifact/KFhexm2aZpiG915dYsfCuc
   built by `scripts/build_candidates_page.py` from `wiki/candidates.md`.
   Republish after every change to `candidates.md`.
+- Wiki: https://claude.ai/artifact/EdnyNYvYX4QCoZNbkF6cim
+  built by `scripts/build_wiki_page.py` from `wiki/` (index, sources,
+  concepts, gaps, log). Republish after every ingest or lint.
 - `wiki/candidates.md` is the agent's proposal list for the human. Rows move
   from `missing` to `bib` to `staged` only through the human's actions.
 
