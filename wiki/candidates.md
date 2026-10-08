@@ -14,13 +14,13 @@ Only the human adds to the bib or raw/. Tick a row by staging it.
 |---|---|---|---|---|
 | 1 | Hypothesis testing with e-values | Ramdas, Wang 2025 | ingested | survey; its bibliography seeds this list |
 | 2 | Safe testing | Grünwald, de Heide, Koolen 2024 | ingested | book:5, SAVI |
-| 3 | Testing by betting: a strategy for statistical and scientific communication | Shafer 2021 | bib | book:2, SAVI |
-| 4 | E-values: calibration, combination, and applications | Vovk, Wang 2021 | bib | book:7 |
-| 5 | Game-theoretic statistics and safe anytime-valid inference | Ramdas, Grünwald, Vovk, Shafer 2023 | bib | web: cited as the standard survey |
+| 3 | Testing by betting: a strategy for statistical and scientific communication | Shafer 2021 | ingested | book:2, SAVI |
+| 4 | E-values: calibration, combination, and applications | Vovk, Wang 2021 | ingested | book:7 |
+| 5 | Game-theoretic statistics and safe anytime-valid inference | Ramdas, Grünwald, Vovk, Shafer 2023 | ingested | web: cited as the standard survey |
 | 6 | Universal inference | Wasserman, Ramdas, Balakrishnan 2020 | ingested | book:2, SAVI |
 | 7 | Admissible anytime-valid sequential inference must rely on nonnegative martingales | Ramdas, Ruf, Larsson, Koolen 2020 | missing | book:5, SAVI |
 | 8 | The numeraire e-variable and reverse information projection | Larsson, Ramdas, Ruf 2025 | missing | book:9 (most cited) |
-| 9 | Time-uniform, nonparametric, nonasymptotic confidence sequences | Howard, Ramdas, McAuliffe, Sekhon 2021 | bib | book:2, SAVI |
+| 9 | Time-uniform, nonparametric, nonasymptotic confidence sequences | Howard, Ramdas, McAuliffe, Sekhon 2021 | ingested | book:2, SAVI |
 | 10 | Estimating means of bounded random variables by betting | Waudby-Smith, Ramdas 2024 | missing | book:4, SAVI |
 | 11 | A composite generalization of Ville's martingale theorem using e-processes | Ruf, Larsson, Koolen, Ramdas 2023 | missing | SAVI |
 | 12 | Game-theoretic foundations for probability and finance | Shafer, Vovk 2019 (book) | missing | book:2 |
@@ -58,14 +58,14 @@ Only the human adds to the bib or raw/. Tick a row by staging it.
 |---|---|---|---|---|
 | 22 | Reverse information projections and optimal e-statistics | Lardy, Grünwald, Harremoës 2024 | missing | core of RIPr theory |
 | 23 | E-statistics, group invariance and anytime-valid testing | Pérez-Ortiz, Lardy, de Heide, Grünwald 2024 | missing | |
-| 24 | Optimal e-values for exponential families: the simple case | Grünwald, Lardy, Hao, Bar-Lev, de Jong 2024 | bib | book:2 |
+| 24 | Optimal e-values for exponential families: the simple case | Grünwald, Lardy, Hao, Bar-Lev, de Jong 2024 | ingested | book:2 |
 | 25 | E-values for exponential families: the general case | Hao, Grünwald 2025 | ingested | |
 | 26 | Anytime-valid t-tests and confidence sequences for Gaussian means with unknown variance | Wang, Ramdas 2025 | missing | book:5 |
 | 27 | Testing exchangeability: fork-convexity, supermartingales and e-processes | Ramdas, Ruf, Larsson, Koolen 2022 | missing | book:2, SAVI |
 | 28 | Testing randomness online | Vovk 2021 | missing | book:7 |
 | 29 | Beyond Neyman–Pearson: e-values enable hypothesis testing with a data-driven alpha | Grünwald 2024 | missing | |
 | 30 | Post-hoc α hypothesis testing and the post-hoc p-value | Koning 2023 | missing | book:2 |
-| 31 | Log-optimal anytime-valid e-values for... (already in bib) | Koolen, Grünwald 2022 | bib | |
+| 31 | Log-optimal anytime-valid e-values | Koolen, Grünwald 2022 | ingested | IJAR; GRO under optional stopping |
 | 32 | Regularized e-processes: anytime valid inference with knowledge-based efficiency gains | Martin 2025 | missing | web |
 | 33 | Anytime-valid and asymptotically efficient inference driven by predictive recursion | Dixit, Martin 2025 | missing | book:1, web |
 
@@ -73,7 +73,7 @@ Only the human adds to the bib or raw/. Tick a row by staging it.
 
 | # | Title | Authors, year | Status | Evidence |
 |---|---|---|---|---|
-| 34 | Étude critique de la notion de collectif | Ville 1939 | bib | book:3 |
+| 34 | Étude critique de la notion de collectif | Ville 1939 | ingested | book:3 |
 | 35 | Sequential tests of statistical hypotheses | Wald 1945 | missing (bib has the 1947 book) | book:3 |
 | 36 | A new interpretation of information rate | Kelly 1956 | missing | book:3 |
 | 37 | Confidence sequences for mean, variance, and median | Darling, Robbins 1967 | missing | |
@@ -91,9 +91,11 @@ Only the human adds to the bib or raw/. Tick a row by staging it.
 | 44 | E-detectors: a nonparametric framework for sequential change detection | Shin, Ramdas, Rinaldo 2024 | missing | SAVI |
 | 45 | Time-uniform central limit theory and asymptotic confidence sequences | Waudby-Smith, Arbour, Sinha, Kennedy, Ramdas 2024 | missing | SAVI |
 | 46 | Sequential Monte Carlo testing by betting | Fischer, Ramdas 2024 | missing | |
-| 47 | The anytime-valid logrank test | ter Schure, Pérez-Ortiz, Ly, Grünwald 2024 | bib | SAVI |
+| 47 | The anytime-valid logrank test | ter Schure, Pérez-Ortiz, Ly, Grünwald 2024 | ingested | SAVI |
 | 48 | Anytime-valid inference for multinomial count data | Lindon, Malek 2022 | missing | SAVI |
 | 49 | E-values for adaptive clinical trials: anytime-valid monitoring in practice | Sokolova, Sokolov 2026 | missing | web, preprint |
+| 81 | Generic e-variables for exact sequential k-sample tests that allow for optional stopping | Turner, Ly, Grünwald 2024 | ingested | JSPI; in bib |
+| 82 | Exact anytime-valid confidence intervals for contingency tables and beyond | Turner, Grünwald 2023 | ingested | SPL; in bib |
 
 ## Tier 6 — e-posteriors, post-hoc decisions and evidence
 

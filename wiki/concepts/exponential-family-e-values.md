@@ -1,7 +1,7 @@
 ---
 slug: exponential-family-e-values
 title: E-values for exponential family nulls
-sources: 2
+sources: 6
 updated: 2026-10-08
 ---
 
@@ -19,6 +19,10 @@ The setting is a composite null that is a regular d-dimensional exponential fami
 - S_COND and S_RIP are generally not [e-processes](e-process.md), unlike S_UI and S_SEQ-RIP, except in the Gaussian and Poisson k-sample settings [haoEValuesExponentialFamilies2025, Prop. 7, Prop. 1].
 - Contingency tables: for the 2×2 table with fixed design, the RIPr of a point alternative is the pooled rate, full-alternative REGROW is numerical with (1/2) log n regret, and a sequential Beta(0.18, 0.18) prior is almost REGROW [grunwaldSafeTesting2024, Examples 2, 6, 7, 9].
 - The sequential plug-in analysis generalises prequential log-loss results of Grünwald and de Rooij 2005 and Kotłowski and Grünwald 2011 [haoEValuesExponentialFamilies2025, Prop. 4, Lemma 3].
+- The simple case, origin: for a regular exponential family null P and a simple alternative Q, generate the family Q̄ = {q_β ∝ exp(βᵀt(U)) q(U)} sharing P's sufficient statistic; Theorem 1 gives eight equivalent conditions, chiefly Σ_p(μ) − Σ_q(μ) ⪰ 0 for all μ in the alternative's mean space, under which q_{μ*}/p_{μ*} is the GRO e-variable with the RIPr a point mass; locality for all μ implies globality [grunwaldOptimalEValuesExponential2024, eq. 1.3, Thm 1, Prop. 2]. Examples: Gaussian and Poisson k-sample (E_P[S] = 1 for all null elements), Bernoulli k-sample via concavity of log, Gaussian location with Σ_p ⪰ Σ_q, Gaussian scale, NEF pairs by variance functions, Tweedie pairs; Poisson regression violates the condition even at n = 2 [grunwaldOptimalEValuesExponential2024, Sec. 4, App. A].
+- One-sided exponential-family interval nulls β ∈ [a, b] vs β1 < a: the RIPr is p_a and the log-optimal anytime-valid e-process is exp((β1 − a)Σx_i − m(φ(β1) − φ(a))) [koolenLogoptimalAnytimevalidEvalues2022, Sec. 4.4(iv)].
+- Survey remarks: monotone-likelihood-ratio families with separated null and alternative have GRO equal to a simple likelihood ratio; conditional e-values via sufficient statistics are usually not (RE)GRO(W) [ramdasGametheoreticStatisticsSafe2023, Secs 4.1.1, 4.1.3].
+- For 2 × 2 tables the conditional (sufficient-statistic) e-variable is Wald's two-sample SPRT, equal to one whenever the counts tie, and inferior to the GRO block e-variable [turnerGenericEvariablesExact2024, Sec. 8.2]; see [k-sample-and-contingency-table-e-values](k-sample-and-contingency-table-e-values.md).
 
 ## Variants and related concepts
 - [reverse-information-projection](reverse-information-projection.md), [gro-criterion](gro-criterion.md).
@@ -28,6 +32,9 @@ The setting is a composite null that is a regular d-dimensional exponential fami
 ## Sources
 - [haoEValuesExponentialFamilies2025](../sources/haoEValuesExponentialFamilies2025.md) — the general case, all theorems above.
 - [grunwaldSafeTesting2024](../sources/grunwaldSafeTesting2024.md) — 2×2 table and Gaussian examples.
+- [grunwaldOptimalEValuesExponential2024](../sources/grunwaldOptimalEValuesExponential2024.md) — the simple case in full.
+- [koolenLogoptimalAnytimevalidEvalues2022](../sources/koolenLogoptimalAnytimevalidEvalues2022.md) — interval nulls under optional stopping.
+- [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md), [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md) — MLR remark, conditional e-variable for 2 × 2.
 
 ## Disagreements / open issues
 - No general n-free sufficient condition for the UI regularity condition in multivariate families [haoEValuesExponentialFamilies2025, App. C.1].

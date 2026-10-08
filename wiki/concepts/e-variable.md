@@ -1,7 +1,7 @@
 ---
 slug: e-variable
 title: E-variable
-sources: 4
+sources: 11
 updated: 2026-10-08
 ---
 
@@ -27,6 +27,11 @@ An e-variable is a [0, ∞]-valued statistic E with E_P[E] ≤ 1 under every dis
 - Soft-rank e-value for Monte Carlo and permutation settings: E = (B+1)R_0 / Σ R_b, with 1/E at least the permutation p-value; it is the numeraire for exchangeability [ramdasHypothesisTestingEvalues2025, Sec. 1.7, Sec. 2.6.7, Sec. 6.7.7].
 - E-variables for monotone likelihood ratio, symmetry, mean and variance, sub-Gaussian, constrained and exchangeable nulls [ramdasHypothesisTestingEvalues2025, Sec. 2.6].
 - Backtest e-statistics e(x, r): e-variables for the null ρ(F) ≤ r with mean above one when ρ(F) > r, including an expected-shortfall and value-at-risk pair [ramdasHypothesisTestingEvalues2025, Defs 16.5–16.6, Thm 16.11].
+- Canonical modern definition and the betting reading: E ≥ 0 with E_Q[E] ≤ 1, infinity meaning outright rejection; e-values are defined through expectations where p-values use probabilities, so 1/e is exactly a p-value but not conversely [vovkEvaluesCalibrationCombination2021, Sec. 2, Remark 2.3]; the universal quantifier over probability spaces can be replaced by one rich model [vovkEvaluesCalibrationCombination2021, App. D].
+- Shafer's betting score S with E_P[S] = 1 is the same object; every bet implies an alternative Q = SP, so betting scores are likelihood ratios; the level-α test is the all-or-nothing bet (1/α)1_E [shaferTestingBettingStrategy2021, Sec. 2]. Grünwald's discussion proves equivalence with the ≤ 1 definition.
+- The survey's 'unit bet' terminology and the remark that statisticians always used e-values via likelihood ratios, interesting only for composite nulls [ramdasGametheoreticStatisticsSafe2023, Sec. 2.1].
+- Local e-variables (null restricted to a canonical neighbourhood) need not be global, but locality for all alternatives in the generated family implies globality [grunwaldOptimalEValuesExponential2024, Sec. 2, Thm 1, Fig. 3].
+- Constructive e-variables for composite nulls without invariance: the k-sample block e-variable [turnerGenericEvariablesExact2024, Thm 1], the lifted single-outcome e-variable for general two-sample nulls [turnerExactAnytimevalidConfidence2023, Thm 1], the one-event partial-likelihood ratio for survival data [terschureAnytimevalidLogrankTest2024, eq. 3.3]; see [k-sample-and-contingency-table-e-values](k-sample-and-contingency-table-e-values.md), [survival-e-values](survival-e-values.md).
 
 ## Variants and related concepts
 - [e-process](e-process.md), the sequential object.
@@ -38,6 +43,11 @@ An e-variable is a [0, ∞]-valued statistic E with E_P[E] ≤ 1 under every dis
 - [ramdasHypothesisTestingEvalues2025](../sources/ramdasHypothesisTestingEvalues2025.md) — canonical definition, closure, admissibility, representation theorems, randomised Markov, catalogue.
 - [wassermanUniversalInference2020](../sources/wassermanUniversalInference2020.md) — split LRT as an e-variable; averages stay valid.
 - [haoEValuesExponentialFamilies2025](../sources/haoEValuesExponentialFamilies2025.md) — four e-variables for exponential family nulls.
+- [vovkEvaluesCalibrationCombination2021](../sources/vovkEvaluesCalibrationCombination2021.md) — definition, naming, composite nulls, Appendix D.
+- [shaferTestingBettingStrategy2021](../sources/shaferTestingBettingStrategy2021.md) — betting scores, implied alternative.
+- [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — unit bets, taxonomy.
+- [grunwaldOptimalEValuesExponential2024](../sources/grunwaldOptimalEValuesExponential2024.md) — local vs global e-variables.
+- [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md), [turnerExactAnytimevalidConfidence2023](../sources/turnerExactAnytimevalidConfidence2023.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — constructive composite-null e-variables.
 
 ## Disagreements / open issues
 - Wang's discussion of Safe Testing shows that e-variables with high rejection probability can have e-power minus infinity, so "good e-variable" is not a single ordering [grunwaldSafeTesting2024, discussion].

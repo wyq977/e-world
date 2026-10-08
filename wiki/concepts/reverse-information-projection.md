@@ -1,7 +1,7 @@
 ---
 slug: reverse-information-projection
 title: Reverse information projection (RIPr)
-sources: 4
+sources: 10
 updated: 2026-10-08
 ---
 
@@ -18,6 +18,11 @@ The reverse information projection of an alternative Q onto a convex set of null
 - For the 2×2 contingency table with a point alternative the RIPr is a point mass at the pooled rate [grunwaldSafeTesting2024, Example 2, eq. 14]; finite support follows from Carathéodory [App. A.3].
 - Local RIPr used by the sequential plug-in e-variable [haoEValuesExponentialFamilies2025, eq. 1.3]; see [exponential-family-e-values](exponential-family-e-values.md).
 - Regularity-free extensions via description gain (Lardy, Grünwald, Harremoës) and the numeraire [grunwaldSafeTesting2024, reply Sec. 2].
+- Sequential RIPr: the implied target under optional stopping equals inf KL(Q^σ ‖ mixture of stopped nulls), mixing jointly over null elements and stopping times; a flow parametrisation makes the dual a concave programme [koolenLogoptimalAnytimevalidEvalues2022, Thm 5, Prop. 6]. When the one-outcome RIPr of an i.i.d. alternative lies in the null, the log-optimal e-process is the likelihood ratio for every stopping rule, e.g. N(0, ρ²+μ²) for the Gaussian scale null, the pooled rate for 2 × 2 tables, the boundary point for exponential-family intervals [koolenLogoptimalAnytimevalidEvalues2022, Thm 12, Sec. 4.4].
+- A checkable condition for the RIPr to be degenerate, equal to the KL projection onto the null family itself: the covariance ordering Σ_p − Σ_q ⪰ 0 on the alternative's mean space; exponential families are nonconvex except Bernoulli/multinomial, which is why RIPr computation is hard in general [grunwaldOptimalEValuesExponential2024, eqs 1.4–1.7, Thm 1, Sec. 1.3].
+- For convex nulls Θ_0 ⊂ [0,1]² in the 2 × 2 table the RIPr of a point alternative is a point mass at the unique block-KL minimiser, on the boundary of Θ_0; closed-form stationarity for linear boundaries [turnerExactAnytimevalidConfidence2023, Thm 2, eq. 11]; in the generic k-sample construction the per-outcome mixture of the streams' alternatives plays the RIPr role, and for exponential or negative binomial families the mean-matched element is not the RIPr [turnerGenericEvariablesExact2024, eq. 3.6, Sec. 8.1].
+- The survey treats the per-τ RIPr as a sub-probability measure, GRO among functions of X^τ, sometimes an e-process and sometimes not; the independence-test denominator ∫ q(Y | x) dR(x) is a RIPr [ramdasGametheoreticStatisticsSafe2023, Sec. 3.3.2, eq. 17, Sec. 4.2].
+- Sequential RIPr for the Cox model with covariates is valid for any prior but not yet computable; a Li–Barron algorithm is proposed [terschureAnytimevalidLogrankTest2024, Thm B.1, App. B.2].
 
 ## Variants and related concepts
 - [gro-criterion](gro-criterion.md), [numeraire](numeraire.md).
@@ -28,6 +33,10 @@ The reverse information projection of an alternative Q onto a convex set of null
 - [ramdasHypothesisTestingEvalues2025](../sources/ramdasHypothesisTestingEvalues2025.md) — bipolar definition, duality, history.
 - [haoEValuesExponentialFamilies2025](../sources/haoEValuesExponentialFamilies2025.md) — explicit and approximate RIPrs in exponential families.
 - [wassermanUniversalInference2020](../sources/wassermanUniversalInference2020.md) — RIPr under misspecification, RIPr split LRT.
+- [koolenLogoptimalAnytimevalidEvalues2022](../sources/koolenLogoptimalAnytimevalidEvalues2022.md) — sequential RIPr, point-RIPr cases.
+- [grunwaldOptimalEValuesExponential2024](../sources/grunwaldOptimalEValuesExponential2024.md) — degeneracy criterion.
+- [turnerExactAnytimevalidConfidence2023](../sources/turnerExactAnytimevalidConfidence2023.md), [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md) — contingency-table RIPrs.
+- [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — survey view, survival with covariates.
 
 ## Disagreements / open issues
 - No general fast algorithm for computing the RIPr prior is given; numerical accuracy for infinite sample spaces is unclear [grunwaldSafeTesting2024, Sec. 2]; direct computation is infeasible for large effect sizes in the simulations [haoEValuesExponentialFamilies2025, Sec. 4].

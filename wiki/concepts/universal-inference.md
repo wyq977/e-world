@@ -1,7 +1,7 @@
 ---
 slug: universal-inference
 title: Universal inference and the split likelihood ratio
-sources: 4
+sources: 7
 updated: 2026-10-08
 ---
 
@@ -19,6 +19,9 @@ A procedure is universal when its type-I error or coverage guarantee holds in fi
 - Inadmissibility: the [numeraire](numeraire.md) dominates universal inference whenever it is available [ramdasHypothesisTestingEvalues2025, Sec. 6.5].
 - E-power in exponential families: S_UI = q/p_MLE loses exactly d_rp/2 against a simple alternative and (d/2) log n against a composite one relative to the conditional e-variable [haoEValuesExponentialFamilies2025, Thms 1.1, 2.1, 3.1, 4.1, Cors 2, 4]; it is always an e-process, unlike the conditional e-variable.
 - Safe Testing positions it as the density-free fallback when Theorem 1 cannot be applied [grunwaldSafeTesting2024, Sec. 8].
+- The survey places UI between the generalised likelihood ratio and the composite Bayes factor: always an e-process, dominated by the RIPr when the latter is an e-process, the only route for exchangeability and log-concavity where no supermartingale exists, possibly inadmissible, power open [ramdasGametheoreticStatisticsSafe2023, Sec. 3.3.1, eq. 16, Sec. 5.5, Secs 8.2.3–8.2.4].
+- The maximum-likelihood plug-in e-value (alternative over maximised null likelihood) is anytime-valid but strictly less log-optimal than the RIPr likelihood ratio: implied target 3.072 vs 3.466 at n = 10 for the Gaussian scale problem [koolenLogoptimalAnytimevalidEvalues2022, Sec. 4.3].
+- Running-MLE denominator over nuisance regression coefficients is the recommended practical route to the full Cox model; power suffers when the covariate dimension is large relative to the number of events [terschureAnytimevalidLogrankTest2024, Sec. 8.1, eq. 8.2].
 
 ## Variants and related concepts
 - [reverse-information-projection](reverse-information-projection.md), for the RIPr split LRT and misspecification.
@@ -30,6 +33,9 @@ A procedure is universal when its type-I error or coverage guarantee holds in fi
 - [ramdasHypothesisTestingEvalues2025](../sources/ramdasHypothesisTestingEvalues2025.md) — Chapter 5 treatment, inadmissibility.
 - [haoEValuesExponentialFamilies2025](../sources/haoEValuesExponentialFamilies2025.md) — quantitative e-power loss.
 - [grunwaldSafeTesting2024](../sources/grunwaldSafeTesting2024.md) — positioning.
+- [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — positioning and open problems.
+- [koolenLogoptimalAnytimevalidEvalues2022](../sources/koolenLogoptimalAnytimevalidEvalues2022.md) — quantitative loss vs RIPr.
+- [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — Cox model with covariates.
 
 ## Disagreements / open issues
 - The original authors say they do not fully understand how close to optimal the split LRT is beyond uniform and Gaussian cases [wassermanUniversalInference2020, Sec. 2]; the later numeraire and exponential-family results quantify the loss.

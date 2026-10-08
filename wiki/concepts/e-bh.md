@@ -1,7 +1,7 @@
 ---
 slug: e-bh
 title: e-BH, compound e-values and multiple testing
-sources: 1
+sources: 3
 updated: 2026-10-08
 ---
 
@@ -17,12 +17,16 @@ The e-Benjamini–Hochberg procedure rejects the k* hypotheses with the largest 
 - e-weighted BH and e-values as unnormalised weights [ramdasHypothesisTestingEvalues2025, Thm 11.10].
 - e-BY controls the false coverage rate for e-confidence intervals [ramdasHypothesisTestingEvalues2025, Thm 13.7]; see [confidence-sets-and-sequences](confidence-sets-and-sequences.md).
 - Post-hoc choice of α in e-BH extends to general e-closure procedures [ramdasHypothesisTestingEvalues2025, Thm 9.10 as cited by later work]; see [post-hoc-validity](post-hoc-validity.md).
+- Precursor: Vovk and Wang's multiple testing is FWER-type via closure of e-merging functions, not e-BH; FDP control by non-singleton closure is flagged as the next step [vovkEvaluesCalibrationCombination2021, Sec. 5, App. A.3].
+- Survey statement of e-BH: k* = max{k : e_[k] ≥ K/(kα)}, FDR under arbitrary dependence, also for stopped e-processes in bandit testing; e-values as unnormalised weights; e-BY for false coverage rate; 'e-hacking' as reporting the best of many strategies, exposed by the implied alternative at preregistration [ramdasGametheoreticStatisticsSafe2023, Secs 6.2–6.4].
 
 ## Variants and related concepts
 - [e-merging](e-merging.md), [post-hoc-validity](post-hoc-validity.md).
 
 ## Sources
 - [ramdasHypothesisTestingEvalues2025](../sources/ramdasHypothesisTestingEvalues2025.md) — Chapters 9, 10, 11, 13.
+- [vovkEvaluesCalibrationCombination2021](../sources/vovkEvaluesCalibrationCombination2021.md) — FWER precursor.
+- [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — survey statement.
 
 ## Disagreements / open issues
 - The primary papers (Wang and Ramdas 2022 on e-BH; Ignatiadis, Wang and Ramdas 2024 on weights and compound e-values; Xu, Fischer and Ramdas 2025 on closed e-BH; Xu, Wang and Ramdas 2024 on e-BY) are candidates, not yet in the bib.
