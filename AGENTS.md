@@ -11,7 +11,7 @@ list, `e-world.md` → `index.html`, not the wiki itself.
 | Path | Owner | Agent may |
 |---|---|---|
 | `e-world.bib` | human | read only |
-| `raw/<citekey>/` | human | read only |
+| `raw/<citekey>/` | human (populated via `make approve` on the human's go) | read only afterwards |
 | `inbox/` | human reviews | write (downloads on request), never read as a source |
 | `wiki/` | agent | read, write |
 | `e-world.md`, `index.html` | generated | regenerate via `make list` |
@@ -43,8 +43,9 @@ A paper exists for this project only when **both** are true:
 
 Nothing else makes it a source. Not a citation inside another paper, not a
 Zotero item, not a web search result, not a file in `inbox/`. When you meet
-such a paper, record it in `wiki/gaps.md` and move on. Never create
-`raw/<citekey>/` yourself.
+such a paper, record it in `wiki/gaps.md` and move on. `raw/<citekey>/` is
+created only by `make approve`, run after the human's go in chat (see
+Stage below).
 
 ## Source versions (decided policy)
 
@@ -82,10 +83,14 @@ from it with Better BibTeX keys. To stage a paper:
    `arxiv`, `doi`, `url`, `added`, `added_by`.
 4. Report which attachment you chose and why, and stop.
 
-The human reviews and runs `make approve KEY=<citekey>`, which moves the
-folder to `raw/`. You never run `make approve` and never write to `raw/`.
-If the paper is not in Zotero, or the only copy there is not an acceptable
-version, say so; the human downloads it into `inbox/` by hand.
+The human reviews the staging report. When the human says in chat to go
+ahead (any explicit instruction naming the papers or "all staged"), the agent
+runs `make approve KEY=<citekey>` itself and proceeds to ingest. Without
+such an instruction in the current conversation, staged folders stay in
+`inbox/`. The agent never creates `raw/<citekey>/` by any other route, and
+the Zotero library is never written to. If the paper is not in Zotero, or
+the only copy there is not an acceptable version, say so; the human
+downloads it into `inbox/` by hand.
 
 ### Ingest — `ingest <citekey>`
 

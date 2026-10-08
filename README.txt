@@ -16,9 +16,9 @@ Layers
 Adding a paper
   1. file it in Zotero (Better BibTeX key = citekey) and export e-world.bib
   2. ask the agent:  stage <citekey>    -> inbox/<citekey>/ (pdf, txt, meta.yaml)
-  3. review inbox/<citekey>/, then:   make approve KEY=<citekey>   -> raw/<citekey>/
-  4. ask the agent:  ingest <citekey>
-  Only step 2 is the agent's; it never writes to raw/ or the bib.
+  3. review the staging report; say "go" in chat -> agent runs make approve -> raw/<citekey>/
+  4. agent ingests
+  The agent never edits the bib and never writes to the Zotero library.
 
 Requirements: pandoc, python3, ghostscript (only for PDFs not in Zotero).
 CSL: https://www.zotero.org/styles/

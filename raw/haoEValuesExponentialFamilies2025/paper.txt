@@ -1,0 +1,2786 @@
+E-Values for exponential families:
+the general case
+Y U N DA H AO1,a and P E T E R G RÜ N WA L D 2,3,b
+1 Department of Statistics and Data Science, the Chinese University of Hong Kong, Hong Kong, China, ayundahao@cuhk.edu.hk 2CWI, Science Park 123, 1098 XG Amsterdam, The Netherlands, bpdg@cwi.nl 3Mathematical Institute, Leiden University, Leiden, The Netherlands
+We analyze common types of e-variables and e-processes for composite exponential family nulls: the optimal evariable based on the reverse information projection (RIPr), a conditional (COND) e-variable, and the universal inference (UI) and sequentialized RIPr e-processes. Whereas earlier derivations of the RIPr e-variable, for parametric and nonparametric nulls alike, were restricted to cases in which it reduces to a simple-vs.-simple likelihood, we manage to derive it also in ‘anti-simple’ cases in which it cannot be so reduced. We characterize the RIPr for simple and Bayes-mixture based alternatives, either precisely (for Gaussian nulls and alternatives) or in an approximate sense (general exponential family nulls). We also provide conditions under which the RIPr e-variable is (again exactly vs. asymptotically) equal to the COND e-variable, and we determine, up to o(1), the e-power of the four e-statistics as a function of sample size. For d-dimensional null and alternative, the e-power of UI tends to be smaller by a term of (d/2) log n + O (1) than that of the COND e-variable, which is the clear winner.
+MSC2020 subject classifications: Primary 62H15; secondary 62L10
+Keywords: Exponential family; e-value; growth rate; hypothesis testing
+1. Introduction
+Interest in e-values — a term coined only in 2019 — has exploded in recent years. Key publications include [11,20,23,25]; see the introduction [19] for many more references. E-values are the values taken on by e-variables and e-processes. E-variables allow for effortless null hypothesis testing under optional continuation to a future study; e-processes additionally allow for optional stopping within a study. Here we consider composite null hypotheses P for i.i.d. data U1, U2, . . . with each Ui taking values in some set U. Recall that an e-variable for sample size n is any nonnegative measurable statistic S(n) = S(n) (Un) of the data Un = (U1, . . . , Un) such that, under every distribution P ∈ P, we have E
+P [S(n) ] ≤ 1. For a simple alternative Q = {Q}, expressing U1, U2, . . . ∼ Q, the e-power of e-variable
+S (n) is given by
+E
+Q [log S (n) ]. (1.1)
+We consider the e-variable (known variously as GRO (growth rate optimal) or numéraire) that maximizes this e-power over all e-variables on Un. [11,19] provide ample justification to define an analogue of power in this manner. A (perhaps the) central result in e-value theory [11,15,16] says that, under mild regularity conditions, this maximizing e-variable is given by
+S(n)
+Q,RIP := q (Un)
+pfq (Un ) (Un) , (1.2)
+where lower-case letters denote probability densities, and pfq(Un) is the reverse information projection (RIPr) of Q (Un) on the set CONV({P(Un) : P ∈ P}). Here CONV is the convex hull, and for
+1
+arXiv:2409.11134v2 [stat.ME] 26 Aug 2025
+
+
+2
+general distributions R for U1, U2, . . ., we let R(Un) denote their marginal on the first n outcomes (see
+Section1.1for precise definitions of all quantities in this introductory section). We refer to S(n)
+Q,RIP al
+ternatively as the RIPr e-variable or simply the optimal e-variable. Once we have identified the optimal e-variable for simple alternative Q, there is a standard and easy way to find good e-variables for composite Q as well: we represent Q by a single Q∗ that ‘learns’ in the sense that, for any Q ∈ Q, if U1, U2
+are i.i.d. ∼ Q, then q∗ (Ui | Ui−1) serves as a consistent estimator of q(U1). This is usually achieved
+by letting Q∗ be a Bayes mixture (’the method of mixtures’) or a ‘prequential (predictive-sequential) plug-in’ distribution over Q [19]. For such Q∗ we ideally still employ (1.2) with Q set to Q∗, but it may be hard to compute. It is often easier to consider its ‘sequentialized’ (hence potentially sub-optimal) version
+S(n)
+Q∗,SEQ-RIP =
+n Ö
+i=1
+q∗ (Ui | Ui−1)
+pfq∗ (Ui |Ui−1 ) (Ui) , (1.3)
+where for each Ui−1 ∈ Ui−1, pfq∗ (Ui |ui−1) is the ‘local’ (in time) RIPr of Q∗ (Ui | Ui−1 = ui−1) on the set CONV(P (Ui)), i.e. the convex hull of P restricted to a single outcome.
+A generic issue. Over the past five years, substantial progress has been made in calculating SQ,RIP and/or SQ,SEQ-RIP for a wide variety of nulls P, and with Q ∈ Q or Q = Q∗ as above. However, to the best of our knowledge, all these ‘solved’ cases have in common that the RIPrs involved are degenerate, being achieved by a single element of the null. As a consequence, in all such cases, the resulting evariable can be written as either
+S(n)
+Q,RIP = q (V n)
+p(V n) (‘super-simple case’) or S(n)
+Q,SEQ-RIP =
+n Ö
+i=1
+q(Ui | Ui−1)
+pi (Ui) (‘simple case’), (1.4)
+i.e. as a product of simple-vs-simple likelihood ratios, for some fixed P ∈ P (with density p) viz. a sequence of elements Pi, each in P, with densities pi (here V n = f (Un) for a measurable function f , usually but not always [18] the identity, and with some abuse of notation we denote the density of V n also by q resp. p). We refer to such situations as super-simple and simple, respectively. The super-simple case includes tests for monotone likelihood ratio families and tests with nuisance parameters expressing a group invariance such as the t-test [11,16,18]. The simple case is ubiquitous in nonparametric settings such as testing for the mean of i.i.d. random variables [19,26] in which the SEQ-RIP approach is quite natural because P (U(1) ) is itself convex (such e-variables look quite different on the surface, but are really of SQ,SEQ-RIP form [16, Section 5.2-5.4]). Yet still, many (if not most) testing problems encountered in daily practice are neither simple or super-simple in the sense of (1.4). In ‘simple yet not super-simple’ settings, reasonable e-variables have been proposed but it has been unknown how much e-power is lost when replacing the optimal-yethard-to-compute SQ,RIP by the suboptimal SQ,SEQ-RIP. These cases include finite-dimensional linear regression and k-sample Bernoulli (contingency table) tests [12,22]. These are special cases of a general subclass of tests with exponential family nulls that satisfy a simplicity condition on the covariance matrices corresponding to Q and P, first identified by [10]. For other multivariate exponential family nulls, this condition does not hold, and no powerful e-values were known to date.
+This paper. In this paper we comprehensively analyze e-value and e-power for exponential family nulls, which we may parameterize as
+P = {Pμ : μ ∈ Mp } (1.5)
+
+
+E-values for exponential families: the general case 3
+where Mp ⊂ Rd, d ≥ 1 denotes the mean-value parameter space. We identify a counterpart of the covariance simplicity condition on P and Q mentioned above, denoted the anti-simple case, under which neither SQ,RIP nor SQ,SEQ-RIP can be written as in (1.4), and we characterize the (nondegenerate) RIPr
+against simple Q for such cases. We show that both in the simple- and anti-simple case, S(n)
+Q,RIP is
+well-approximated by another type of conditional e-variable SQ,COND, which is given by
+S(n)
+Q,COND := q (Un | Z)
+p(Un | Z) := q(Un | Z)
+pW (Un | Z) , with pW (Un) :=
+∫
+pμ (Un)dW ( μ) (1.6)
+where Z is a minimal sufficient statistic for P and pW the Bayes marginal density based on prior W on Mp. By sufficiency the denominator is identical for any choice of prior W, including all degenerate priors putting mass on a single μ, making the left-hand side well-defined and allowing us to drop the subscript W. While exponential family nulls may still feel like a relatively simple setting, they already require development of novel concepts and proof techniques: our first key insight is that, under the anti-simple condition on their covariances matrices, if P is a Gaussian location family and Q is also Gaussian, then if we take prior W0 to be a specific a Gaussian with variance O (1/n), we obtain that the marginal distribution of Z under PW0 is identical to its distribution under Q (hence the models are in a sense indistinguishable if we only consider the sufficient statistic Z). Combined with the fact that (1.6) must hold for this prior, we show that the RIPr is given by this pW0 and SQ,COND is equal to SQ,RIP in this Gaussian case. We then extend this insight, using a local central limit theorem with explicit bounds on the error terms [3] to analyze the distribution of Z and a nonstandard (because W0 depends on n) Laplace approximation of pW0 , to find that, still in the anti-simple case, SQ,COND and SQ,RIP achieve asymptotically the same e-power for general exponential family nulls as well. Once we have these results in hand, and adding in further results which substantially generalize findings of [9,14], we also find precise asymptotic (up to o(1)) expressions for the e-power of S(n)
+Q,SEQ-RIP, thus quantifying
+how much is lost by using it instead of S(n)
+Q,RIP. We do the same for yet another popular e-variable,
+S(n)
+Q,UI := q (Un)
+supμ∈M pμ (Un) = q(Un)
+p ˆμ|n (Un) , (1.7)
+where the second equality holds whenever the MLE (maximum likelihood estimator) ˆμ|n is welldefined. SQ,UI is one possible (and in fact quite standard) instantiation of the universal inference method
+pioneered by [25]; see also e.g. [21]. By the growth optimality of S(n)
+Q,RIP we have, for general Q,
+E
+Q [log S (n)
+Q,RIP] ≥ max
+n
+E
+Q [log S (n)
+Q,SEQ-RIP], EQ [log S (n)
+Q,UI], EQ [log S (n)
+Q,COND]
+o
+. (1.8)
+Theorem1(Gaussian case) and3(general exponential family case) refine this statement into precise expressions of e-power for the four e-variables under consideration, not just under the ‘true’ alternative Q = {Q}, but also in the misspecified case when data are sampled i.i.d. from a distribution R ≠ Q. Theorem2(Gaussian case) and4(general case) extend these results to a special type of composite alternatives, namely, a second exponential family with the same sufficient statistic as the null. Many practical parametric testing problems are of this form, as recalled in and below Example1. As our most remarkable result (Theorem4Part 4), we find that, when using the method of mixtures, equipping Q with a prior W1, then, under regularity conditions, the RIPr pfq(Un) (Un) is, in an approximate sense, given by the Bayes marginal PW1 for the same prior W1, irrespective of whether we are in the simple or the anti-simple case. Additional theoretical insights include that, in the Gaussian case of Theorem2, the e-variable SCOND coincides with the e-variable obtained by equipping P and Q with the improper right Haar prior,
+
+
+4
+that is suggested by Pérez-Ortiz et al. [18] (Section2.2, (2.24)); and that the conditions needed for well-behavedness of the plug-in method and universal inference are ‘dual’ to each other: compare Condition3, Section3.3with Condition2, Section3.2. Summarizing (and for simplicity leaving O (1) terms unspecified) our main findings for the — practically more relevant — composite Q case, we obtain the following relations. These are obtained from Corollary2(Section2.2) and Corollary4(Section3.3). Here we used particular, convenient versions of the plug-in and mixture method to deal with composite Q, with precise definitions (including the definition of ‘strict’, ‘simple’, ‘anti-simple’ and dq p) in Section2and3. We find that, under appropriate (yet mild) regularity conditions on P and Q, that for all Q ∈ Q,
+E
+Q
+h
+log S (n)
+RIP /S(n)
+COND
+i
+= o(1). (1.9)
+E
+Q
+h
+log S (n)
+COND/S (n)
+UI
+i
+=d
+2 log n + O (1). (1.10)
+E
+Q
+h
+log S (n)
+SEQ-RIP/S (n)
+UI
+i
+=
+dq p
+2 log n + O (1) with 0 < dq p < d, in the strict simple case. (1.11)
+E
+Q
+h
+log S (n)
+SEQ-RIP/S (n)
+COND
+i
+≤ − nε for some ε > 0, all large n, in the strict anti-simple case. (1.12)
+where d is the dimensionality of the exponential family and dq p is a notion of ‘effective dimension’ whose exact size depends on Q. Note in particular that SSEQ-RIP is not competitive in the anti-simple case. The resemblance of (1.9) to the ubiquitous BIC model selection criterion is no coincidence: both are derived via a Laplace approximation of a Bayesian marginal likelihood. The occurrence of dq p < d arises due to the use of plug-in methods — it also appears in the results on prequential model selection by [9,14], whose techniques for analyzing log-loss of sequential plug-in estimators we employ and (vastly) generalize. Given that, in contrast to SRIP, we always know how to calculate SCOND, it appears that SCOND is in some sense the clear winner — a fact that came as a surprise to us, especially since its definition requires neither a prior on the alternative (as in the method of mixtures) nor an estimator (as in the plug-in method): in a sense, it’s not “learning”! However, SCOND does carry one big disadvantage: in contrast to SUI and SSEQ-RIP, usually (i.e. for most exponentially family nulls), SCOND does not define an e-process — we discuss this further in the final Section7. Finally, we emphasize that while some of our results on e-power are asymptotic, the four types of e-variables we employ, and hence the Type-I error guarantees they lead to, are invariably nonasymptotic, i.e. valid at each sample size.
+Contents. In the remainder of this introductory section, we first (Section1.1) formally define all technical notions referred to in the above. For ease of reference we also provide a list of notations. In Section2, we provide our theorems for multivariate Gaussians, in Section3, we provide the analogous results for general exponential family nulls. Section4instantiates these results to two examples for which we provide finite-sample simulations. Section5provides the proofs of the Gaussian results, Section6provides the proofs of the general exponential family results — these are given in terms of various lemmas that are interesting in their own right and whose proofs are delegated to appendices. Finally, Section7discusses potential future work.
+1.1. Technical preliminaries
+In all our results, the null hypothesis P is a regular d-dimensional exponential family defined on underlying random element U taking values in some set U and sufficient statistic vector X =
+
+
+E-values for exponential families: the general case 5
+Table 1. Summary of notations.
+Notation Description Page
+U ; U U is a random vector representing a single outcome, taking values in U 1 Un Un = (U1, U2, . . . , Un ), an i.i.d. data sequence 1 X := t (U ), the sufficient statistic for a single outcome: X = (X(1) , . . . , X(d) ) = (t1 (U ) , . . . , td (U ) ) 5 Xn := (X1, . . . , Xn ) = (t (U1 ) , . . . , t (Un ) ): the sequence of sufficient statistics in the observed sample 6 P, Q null and alternative hypothesis, respectively 1 M
+p , Mq mean-value parameter space of P, Q, respectively 5,6 Q, q, (Qμ , qμ) a distribution (Q) and its density (q) in the alternative hypothesis (with mean μ) 1,6 P, p, (Pμ , pμ) a distribution ( P) and its density ( p) in the null hypothesis (with mean μ) 1,2 pW , qW the Bayes marginal density based on prior W on Mp and Mq, respectively. 3,10 R a distribution outside alternative hypothesis and null hypothesis 6 CONV ( G) convex hull of set G 1 pfq (Un ) reverse information projection (RIPr) of Q (Un ) on the set CONV ( { P (Un ) : P ∈ P } ) 1 pfqμ (Ui ) reverse information projection (RIPr) of Qμ (Ui ) on the set CONV ( { P (U ) : P ∈ P } ) 10
+S(n)
+Q,RIP := q (Un )
+pfq(Un) , growth rate optimal e-variable under Q (Un ) with density q 1
+S(n)
+Q,SEQ-RIP := În
+i=1
+q (Ui |Ui−1 ) p
+fq(Ui |Ui−1) (Ui ) , sequentialized-RIPr e-variable under Q (Un ) with density q 2
+S(n)
+Q,COND, S(n)
+COND := q (Un | Z )
+p (Un | Z ) , Z is a minimal sufficient statistic for P 3
+S(n)
+Q,UI := q (Un )
+supμ∈Mp pμ (Un ) 3
+ˆμ|n :=
+Ín
+i=1 xi
+n , i.e. maximum likelihood estimator for Un on Mp 6
+ ̆μ|n :=
+x0 n0 +Ín
+i=1 xi
+n+n0 for some given x0 ∈ Mp and n0 > 0 9
+S(n)
+ ̆μ,SEQ-RIP :=
+n Î
+i=1
+q  ̆μ|i−1 (Ui )
+pfq  ̆μ|i−1 (Ui ) (Ui ) 10
+S(n)
+ ̆μ,UI ; S (n)
+W1,UI :=
+n Î
+i=1
+q  ̆μ|i−1 (Ui )
+supμ∈Mp pμ (Un ) and
+qW1 (Un )
+supμ∈Mp pμ (Un ) , resp. 10,10
+S(n)
+W1,RIP :=
+qW1 (Un )
+pfqW1 (Un ) (Un ) 10
+dab trace of ΣaΣ−1
+b , where Σa , Σb are positive definite d × d matrices 7
+DGAUSS ( B) := 1
+2 (− log det( B) − (d − TR ( B) ) ), B is an invertible d × d matrix, TR ( B) is its trace 7 Σ
+p (μ) , Σq (μ) covariance matrix of X under Pμ, Qμ 5,5 DΣr (Σq | |Σ p ) := DGAUSS (Σr Σ−1
+p ) − DGAUSS (Σr Σ−1
+q) 7 D (R | | P) Kullback-Leibler (KL) divergence between distributions R and P on sample space U 6 DR (Q| |P) = D(R| |P) − D(R| |Q) 6 D (R (Un ) | | P (Un ) ) Kullback-Leibler (KL) divergence between R and P on Un 6
+(X(1) , . . . , X(d) )⊤. We can write X( j) = t j (U) for given functions t1, . . . , td. For the Gaussian case, Section2, we can take X = U, but in general (see e.g. Example1), distinguishing between X and U is crucial. Here and in the sequel we freely use standard properties of exponential families without explicitly referring to their proofs, for which we refer to, e.g. [2,5,7]. We parameterize P in terms of the mean-value parameter space Mp, so that we can write P as (1.5) with Mp ⊂ Rd and EPμ [X] = μ. We denote the d × d covariance matrix of X under Pμ as Σp ( μ). Recall that Σp ( μ) is continuous and positive definite for all μ ∈ Mp, and, since the family is regular, Mp is a convex open set. We fix some measure ν that is mutually absolutely continuous with some, and hence all, P ∈ P. We denote the density of U under Pμ relative to ν as pμ. P is extended to multiple outcomes by the i.i.d. assumption. It thus becomes a set of distributions for random process U1, U2, . . ., with for i ≥ 1, Ui an i.i.d. copy of U, and Xi = (Xi(1) , . . . , Xi(d) ) with
+
+
+6
+Xi( j) = t j (Ui). We abbreviate Xn = (X1, . . . , Xn) and similarly Un = (U1, . . . , Un) and write Pμ (Un) (density pμ (Un)) for the marginal distribution of Un under Pμ. We use the notation P to refer both to the set of distributions for a single outcome U and for the random processes (Ui)i∈N, as in each instance it will be clear what is meant. When referring to the set of marginal distributions for the first n outcomes, we use the notation P (Un) := {Pμ (Un) : μ ∈ Mp }.
+MLE and the UI e-variable. Since we assume P to be regular, the maximum likelihood estimator (MLE) in the mean-value parameterization, ˆμ|n, based on data Un exists, is unique and equal to
+n−1 Ín
+i=1 Xi whenever the latter quantity lies in the set Mp. With slight abuse of notation, we shall ex
+tend the definition of ˆμ|n and simply set it to be equal to n−1 Ín
+i=1 Xi even if the latter quantity is not contained in Mp; this can happen, for example, with the Bernoulli distribution if all Xi are equal to 1, or all are equal to 0. For such cases we set p ˆμ|n (Un) := supμ∈Mp
+pμ (Un). In this way, the UI e-variable SQ,UI can always be written in the rightmost form of (1.7).
+The alternative Q and the COND e-variable. The alternative hypothesis Q will either (Theorem1 and3) be a singleton Q = {Q} or (Theorem2and4) will itself be another regular exponential family, defined on U, with the same sufficient statistic X as P. In both cases we assume that all elements Q ∈ Q are mutually absolutely continuous with ν and denote by q the density of Q relative to ν. For the case that Q is an exponential family, we extend all notation in the obvious way: Mq denotes the mean-value parameter space, Bq is a canonical parameter space, Σq ( μ) is the d × d covariance matrix corresponding to Qμ, and so on. Again, Q is extended to sequences of outcomes by the i.i.d. assumption. In the definition (1.6) of SQ,COND, we invariably take Z = n−1/2 Ín
+i=1 ( Xi,1, . . . , Xi,d)⊤ = n1/2 ˆμ|n.
+p(· | Z) is set to be the density of P | Z, the regular conditional distribution of Un given Z, which is identical for all P ∈ P because Z is a sufficient statistic and the family is regular. Similarly, we set q(· | Z) to be the density of Q | Z, the regular conditional distribution of Un given Z. Again, this distribution is identical for all Q ∈ Q because either Q = {Q} is simple or because Z is sufficient for Q and Q is regular. Both densities p(· | Z) and q(· | Z) are taken relative to a common underlying (random, since it depends on Z) measure ν′ (· | Z) which we fix once and for all. We may for example take ν′ | Z equal to (1/2) (P | Z) + (1/2) (Q | Z), but our theorems hold under any other choice as well, since the corresponding SQ,CONDs must be almost surely equal under all P ∈ P and Q ∈ Q. To see that
+S(n)
+Q,COND indeed is an e-variable, note that for all P ∈ P, EP [S (n)
+Q,COND] may be rewritten as
+E
+Z∼P [EUn∼P [S (n)
+Q,COND|Z]] = EZ∼P
+∫
+p(Un | Z) · q(Un | Z)
+p(Un | Z) dν′ (Un | Z) = E[1] = 1. (1.13)
+KL Divergence, RIPr and seq-RIPr. The KL (Kullback-Leibler) divergence D (·∥·) plays a central role in our analysis. For R, P distributions for i.i.d. random process U1, U2, . . . as above, we write D (R(V) ∥P(V)) to denote the KL divergence between the R- and P-marginal distributions for random vector V, respectively; for example, D (R(Un) ∥P(Un)). Whenever we write D (R∥P), this is meant to abbreviate D (R(U) ∥P(U)). We further define (as is common, see e.g. [14]) the generalized KL divergence between Q and P under sampling distribution R (also assumed to have a density relative to ν) as
+DR (Q ∥P) := EU∼R log
+q (U )
+p (U )
+(=a) D (R∥P) − D (R∥Q), (1.14)
+where (a) holds whenever either D (R∥P) or D (R∥Q) is finite. Yet DR (Q∥P) is still well-defined in some cases in which both D (R∥P) or D (R∥Q) are ∞ [15].
+
+
+E-values for exponential families: the general case 7
+Now, let Q∗ be an arbitrary distribution for random process U1, U2 such that its conditional densities
+q∗ (x1), q∗ (x2 | x1), . . . relative to the chosen background measure ν are well-defined. Grünwald et al.
+[11] define the GRO (growth-rate optimal) e-variable for a sample of size n, relative to Q∗, to be the e-variable S(n) that, among all e-variables that can be written as a function of data Un, maximizes growth-rate (1.1) (with Q set to Q∗), also known as e-power [24], EUn∼Q [log S(n) ], and show that it is given by (1.2). More precisely, [11, Theorem 1] implies that a sub-probability density pfq∗ (Un)
+exists, such that (1.2) gives the growth-optimal e-variable maximizing (1.1) (with Q set to Q∗) whenever D (Q∗ (Un) ∥Pμ (Un)) < ∞ for all μ ∈ Mp (this result has later been vastly generalized [15,16] but for us the initial, simple version suffices). [11, Theorem 1] further implies that if there exists a prior W on Mp such that the Bayes marginal pW (Un) as defined in (1.6) achieves min D (Q∗ ∥PW ), with the minimum over all distributions W on Mp, then pfq∗ (Un) (Un) = pW (Un). In the theorems below we encounter various cases in which such a prior does exist, sometimes degenerate (W ({μ} = 1 for a single μ ∈ Mp) and sometimes Gaussian. Applying this RIPr existence result for the case n = 1 with Q∗ substituted by Q∗ (Ui | Ui−1 = ui−1) shows that, whenever D (Q∗ (Ui | Ui−1 = ui−1) ∥Pμ (Ui)) < ∞ for all μ ∈ Mp, the local (in time) RIPr pfq∗ (Ui |ui−1) of Q∗ (Ui | Ui−1 = ui−1) on the set CONV(P (Ui)) is well-defined for all i, and then so is
+S(n)
+Q∗,SEQ-RIP as in (1.3).
+2. The Gaussian location family
+2.1. Q simple, P multivariate Gaussian location
+Let the null hypothesis P be the Gaussian location family for X = U = (X(1) , . . . , X(d) ) with nondegenerate d × d covariance matrix Σp. Fix a particular mean vector μ∗ ∈ Mp = Rd. We take as alternative Q = {Q} with Q a Gaussian for X with mean μ∗ but with nondegenerate covariance matrix Σq ≠ Σp. To prepare for our results, we develop simplified expressions for the generalized KL divergence (1.14) that hold in this Gaussian case. First, for invertible d × d matrix B, we let
+DGAUSS (B) := 1
+2 (− log det(B) − (d − TR(B))) , (2.1)
+where TR(B) is the trace of B and det(B) is the determinant of B. The subscript derives from the fact that DGAUSS (Σq Σ−1
+p ) is the KL divergence between two d-dimensional Gaussians that share the same (arbitrary) mean vector and have covariances Σq and Σp respectively — which also tells us that for general positive definite and symmetric Σq, Σp, DGAUSS (ΣqΣ−1
+p ) ≥ 0 with equality iff Σq = Σp. The following characterization, derived from standard properties of determinant and trace, will prove useful below: letting λ1, . . . , λd be the eigenvalues of Σ−1/2
+p Σq Σ−1/2
+p , we have
+D GAUSS (Σq Σ−1
+p ) = D GAUSS (Σ−1/2
+p Σq Σ−1/2
+p )=1
+2
+©
+«
+d ∑︁
+j =1
+− log λ j − (1 − λ j ) a
+®
+¬
+. (2.2)
+It is helpful to introduce the following nonstandard notation: for positive definite d × d matrices Σ
+a, Σb, we set dab := TR(ΣaΣ−1
+b ). Using this definition, we further define:
+DΣr (Σq ∥Σp) := DGAUSS (Σr Σ−1
+p ) − DGAUSS (Σr Σ−1
+q ) =−1
+2 log det(ΣqΣ−1
+p )+
+dr p − drq
+2 (2.3)
+
+
+8
+as a generalization (in the sense that DΣq (Σq ∥Σp) = DGAUSS (ΣqΣ−1
+p ) ), of (2.1). Then, for any distribution R on X with mean μ∗ and covariance Σr , we have (as shown in Section5as part of the proof of the theorem below), that with DR the generalized KL divergence as in (1.14),
+DR (Qμ∗ ∥Pμ∗ ) = DΣr (Σq ∥Σp). (2.4)
+The prime interest of the theorems below occurs if we analyze e-power under the alternative Q, i.e. for the case that R = Q. Yet, all results hold more generally under any other sampling distribution R with the same mean μ∗ as Q, so we will state and prove our results for such general R. We shall refer to the case R ≠ Q as misspecified, in contrast to the well-specified case R = Q. Allowing R ≠ Q mainly adds strength to Theorem2for composite alternatives further on; in Theorem1directly below, if a statistician employs SQ it implies she has knowledge of μ∗, so the added generality of allowing general R with the same μ∗ is somewhat limited. In (2.7) below and later in (2.18) we use both notations DR and DΣr simultaneously— this is done to ease comparison to the exponential family version of our results stated in Section1.1. In particular,
+dqq = d p p = d, 0 < dq p and if Σq − Σp is negative semidefinite, then dq p ≤ d, (2.5)
+the latter inequality becoming strict if Σq − Σp is negative definite. To derive the inequality, note that
+if Σq − Σp is negative definite, then Σ−1/2
+p Σq Σ−1/2
+p − I is negative definite, and then all eigenvalues λ j
+above are smaller than 1, so dq p = Íd
+j=1 λ j is smaller than d.
+Theorem 1. Let P and Q be as above and let R be a distribution on X = U with the same mean E
+R [X] = μ∗ as Q and with covariance matrix Σr . Let U1, U2, . . . be i.i.d. ∼ R. Then DR (Q ∥Pμ∗ ) is finite and we have:
+1. (UI) Let S (n)
+Q,UI = q (Un )
+p ˆμ|n (Un ) be defined as in (1.7). We have:
+E
+R [log S (n)
+Q,UI] = nDR (Q∥Pμ∗) −
+dr p
+2
+. (2.6)
+2. (COND) Let S(n)
+Q,COND = q (Un | Z )
+p(Un |Z ) be as in (1.6). We have:
+E
+R [log S (n)
+Q,COND] = (n − 1)D R (Q ∥Pμ∗ ) = n · D R (Q ∥Pμ∗ ) − DΣr (Σq ∥Σp). (2.7)
+3. (seq-RIPr/RIPr Simple Case; seq-RIPr Anti-Simple Case) Let S(n)
+Q,RIP, S(n)
+Q,SEQ-RIP be as in (1.2)
+and (1.3). If Σq − Σp is negative semidefinite (the ‘simple’ case), then we have, for all n:
+S(n)
+Q,RIP = S(n)
+Q,SEQ-RIP = q (Un)
+pμ∗ (Un) so that ER [log S (n)
+Q,RIP] = nD R (Q ∥Pμ∗ ). (2.8)
+If Σq − Σp is positive semidefinite (‘anti-simple case’), then S(n)
+Q,SEQ-RIP = 1, i.e. it is trivial.
+4. (RIPr, Anti-Simple Case) Let S(n)
+Q,RIP, S(n)
+Q,COND and S (n)
+Q,SEQ-RIP be defined as in (1.2), (1.6) and
+(1.3). If Σq − Σp is positive semidefinite, then we have
+S(n)
+Q,RIP = q (Un)
+pW0 (Un) = S (n)
+Q,COND, (2.9)
+where W0 is a Gaussian prior with mean μ∗ and covariance matrix Π0 := (Σq − Σp)/n. PW0 = Pfq(Un ) is then the RIPr of Q onto CONV(P (Un)).
+
+
+E-values for exponential families: the general case 9
+Remark 1 (Simple vs. Anti-Simple). We see that, if Σq − Σp is negative semidefinite, then the RIPr is simply an element of P and the growth-optimal e-variable is of the same form as it would be if P were simple. Following [10] and as anticipated in the introduction we call this the simple case and indeed Part 3 of the theorem is really a direct corollary of the main result of that paper (all other parts are novel). We will formalize the notion of ‘simplicity’ for general exponential families in Section3.
+Remark 2 (Remark: comparing e-power). In the strictly simple case that Σq −Σp is negative definite, we have, already mentioned below (2.5), that all λ j in (2.2) are smaller than 1. Similarly, we are in the strict anti-simple case iff all these λ j are greater than 1. This eigen-characterization leads to the following corollary about the e-power for the strict anti-simple and simple cases of UI vs. the other e-variables. In the strict anti-simple case, we have, by Part 4 above, S(n)
+Q,COND = S(n)
+Q,RIP, so, using (2.7) and (2.2) and the fact that in this strict anti-simple case, all eigenvalues λ j are larger than 1, we find (2.10) below. Using (2.5) for the strict simple case, we find (2.11):
+Corollary 1.[e-power and growth optimality] In the strict anti-simple case,
+E
+Q
+h
+log S (n)
+Q,RIP /S (n)
+Q,UI
+i
+=
+dq p
+2 − DΣq (Σq ∥Σp) = d
+2+1
+2
+d ∑︁
+j =1
+log λ j >
+d
+2
+, whereas (2.10)
+E
+Q
+h
+log S (n)
+Q,RIP /S (n)
+Q,UI
+i
+=
+dq p
+2
+<
+d
+2
+, in the strict simple case. (2.11)
+Even though SQ,UI therefore always has less e-power than SQ,RIP, the difference (in contrast to the composite Q case in Section2.2below) does not keep growing with n. The conditional e-variable SQ,COND is identical to SQ,RIP in the anti-simple case but in the simple case it is hard to compare to UI; in general neither one outperforms the other. Again, with composite Q, the situation changes.
+2.2. P, Q both multivariate Gaussian location
+We now consider the case that P is a d-dimensional Gaussian location family as before, but now Q is composite: it is itself the full d-dimensional Gaussian location family with nondegenerate covariance matrix Σq ≠ Σp. The mean-value parameter spaces are Mq = Mp = Rd. We again establish explicit formulae and corresponding expected logarithmic growth of our various e-variables. Since Q is composite, we need a method to estimate or ‘learn’ a distribution in Q given a data sequence X1, . . . , Xn. As stated in the introduction, we use two standard methods for this. The first method, usually called the plug-in method, is to use at each i a regularized ML estimator based on the past and defining Q as the product of predictive distributions. We use the variation studied by [9] who, following [6], call this the prequential ML method, setting, for each i,
+Q∗ (Ui | Ui−1) := Q  ̆μ|i−1 (Ui), where  ̆μ|n :=
+x0n0 + Ín
+i=1 xi
+n + n0
+(2.12)
+for some fixed constant n0 > 0 (not necessarily an integer) and x0 ∈ Mp. We take n0 > 0 to ensure that  ̆μ|0 is well-defined and also, when later applied to exponential families rather than Gaussians, to make sure that the relevant KL divergences remain finite.
+
+
+10
+Whenever we use an e-variable of the form SQ∗,· with Q∗ defined by (2.12), we abbreviate this to S  ̆μ,·. We use this method for e-variables of UI and sequential RIPr type. In particular, we set
+S(n)
+ ̆μ,UI =
+În
+i=1 q  ̆μ|i−1 (Ui )
+p ˆμ|n (Un) , S (n)
+ ̆μ,SEQ-RIP =
+n Ö
+i=1
+q  ̆μ|i−1 (Ui )
+pfq  ̆μ|i−1 (Ui ) (Ui) , (2.13)
+where pfq  ̆μ|i−1 (Ui ) (Ui) is the RIPr of Q  ̆μ|i−1 (Ui) onto CONV(P (Ui)) as in (1.3).
+The second method to learn the alternative as data comes in, known as Robbins’ method of mix
+tures [19], is to set Q∗ to a Bayes marginal distribution, Q∗ (Un) := QW1 (Un) where qW1 (Un) =
+∫
+qμ (Un)dW1 ( μ) for some prior W1 on Mq. In Theorem2below we uniquely consider Gaussian priors, i.e. priors of the form W1 = N ( μ1, Π1) where we implicitly fix the dimension to d, i.e. μ1 ∈ Rd and Π1 a d × d nondegenerate covariance matrix. We use this method for the UI e-variables and for the growth-optimal e-variables, i.e. of RIPr type, in the anti-simple case. In particular, we set
+S(n)
+W1,UI =
+qW1 (Un)
+p ˆμ|n (Un) , S (n)
+W1,RIP =
+qW1 (Un)
+pfqW1 (Un ) (Un) (2.14)
+with pfqW1 (Un ) the RIPr of QW1 (Un) onto CONV(P (Un)) as in (1.2).
+Theorem 2. Let P, Q be as above, and let R be a distribution on X(= U) with mean ER [X] = μ∗ and with covariance matrix Σr . Let U1, U2, . . . be i.i.d. ∼ R. Then DR (Qμ∗ ∥Pμ∗ ) is finite and we have:
+1. (UI) Let S (n)
+ ̆μ,UI be as in (2.13) above. We have:
+E
+Un∼R [log S (n)
+ ̆μ,UI] = n · D R (Qμ∗ ∥Pμ∗ ) −
+dr q
+2 log n + O  ̆μ,UI (1), (2.15)
+where, with OA, OB given by (2.23) below,
+O  ̆μ,UI (1) = −
+dr p
+2 −1
+2 · OA (∥x0 − μ∗∥2
+2) −
+dr q
+2 · OB (1).
+Similarly, let S(n)
+W1,UI be as in (2.14) above. We have:
+E
+Un∼R [log S (n)
+W1,UI] = n · D R (Qμ∗ ∥Pμ∗ ) − d
+2 log
+n
+2π
++ OW1,UI (1), (2.16)
+where a precise expression for OW1,UI is given in (2.23) below; up to o(1), it is:
+OW1,UI (1) =
+drq − dr p
+2 +1
+2 log det Σq + log w1 ( μ∗) + o(1). (2.17)
+2. (COND) Let S(n)
+COND be as in (1.6) above. We have:
+E
+R [log S (n)
+COND] =(n − 1) · DΣr (Σq ∥Σp) = n · D R (Qμ∗ ∥Pμ∗ ) − DΣr (Σq ∥Σp). (2.18)
+3. (seq-RIPr, Simple and Anti-Simple Case) Suppose that Σq − Σp is negative semidefinite. Let
+S(n)
+ ̆μ,SEQ-RIP be as in (2.13) above. We have: Pfq  ̆μ|i−1 (Ui ) (Ui) = P  ̆μ|i−1 (Ui) and
+E
+R [log S (n)
+ ̆μ,SEQ-RIP] = n · D R (Q μ∗ ∥Pμ∗ ) +
+dr p − drq
+2 log n + OSEQ-RIP (1), (2.19)
+
+
+E-values for exponential families: the general case 11
+where OSEQ-RIP (1) = −OA ( ∥x0 − μ∗ ∥2
+2) − dr p −drq
+2 · OB (1). If Σq − Σp is positive semidefinite,
+then S (n)
+ ̆μ,SEQ-RIP = 1 is trivial.
+4. (RIPr, General Case) Let S(n)
+W1,RIP be as in (2.14) so that S (n)
+W1,RIP is the GRO e-variable. Then for
+all n such that Π1 + (Σq − Σp)/n is positive semidefinite (in particular, in the Anti-Simple case, Σ
+q − Σp is itself positive semidefinite so this will then hold for all n),
+pfqW1 (Un ) (Un) = pW0 (Un) where W0 = N ( μ1, Π1 + (Σq − Σp)/n), (2.20)
+and we have
+S(n)
+W1,RIP =
+qW1 (Un)
+pW0 (Un) = S (n)
+COND. (2.21)
+Remark 3 (Plug-In vs. Bayesian Q∗). We studied the sequential RIPr (Part 3 of the theorem) only in combination with a plug-in Q∗ and the global RIPr (Part 4) only in combination with a Bayesian Q∗, but this was done for mathematical convenience only: one could in principle (though the analysis seems substantially more complicated in both cases) also study the RIPr for plug-in Q∗ or the sequential RIPr for Bayesian Q∗.
+Remark 4 (Comparing e-power of the various methods). To determine e-power, we focus on the well-specified case again with R = Qμ∗ so that Σr = Σq. Theorem2then implies:
+Corollary 2.[e-power and growth optimality] Under the conditions of Theorem2, EQ [log S(n)
+COND] >
+nε for some ε > 0 and all n > 1, and we have,
+E
+Qμ∗ [log S (n)
+W1,UI/S (n)
+ ̆μ,UI] = O (1), EQμ∗ [log S (n)
+COND/S (n)
+ ̆μ,UI] = d
+2 log n + O (1).
+E
+Qμ∗ [log S (n)
+ ̆μ,SEQ-RIP/S (n)
+ ̆μ,UI] =
+dq p
+2 log n + O (1) with dq p ≤ d, in simple case. (2.22)
+E
+Qμ∗ [log S (n)
+ ̆μ,SEQ-RIP] = 0, EQμ∗ [log S (n)
+W1,RIP/S (n)
+COND] = 0 in anti-simple case,
+where dq p is as in (2.11), and we used the inequality in, (2.5). The inequality in (2.22) becomes strict in the strict simple case. Importantly, we only know how to explicitly calculate SW1,RIP in the anti-simple case (then it is equal to SCOND) and we never need to specify any prior W1 or  ̆μ when calculating SCOND.
+One may now check that this is consistent with the results (1.10)-(1.12) provided informally in the introduction, where SUI may stand for both SW1,UI and S  ̆μ,UI and SRIP stands for SW1,RIP. ((1.9) will be implied by Corollary4later on).
+
+
+12
+Remark 5 (The O (1) terms). Precise expressions for OA, OB, OW1,UI are as follows.
+OA (∥x0 − μ∗∥2
+2) =
+n∑︁−1
+i=0
+1
+(1 + i/n0)2 ( μ∗ − x0)⊤Σ−1
+q (μ∗ − x0).
+OB (1) = − log n +
+n∑︁−1
+i=1
+i
+(n0 + i)2 .
+OW1,UI (1) = −
+dr p
+2 − DΣr Σq ||Σq + nΠ1 + d
+2 log
+n
+2π
+−1
+2
+OC (∥ μ∗ − μ1∥2
+2).
+OC (∥ μ∗ − μ1∥2
+2) = ( μ∗ − μ1)⊤ (Π1 + Σq/n)−1 ( μ∗ − μ1).
+(2.23)
+The OA and OC terms measure alignment between prior belief (x0 or μ1) and true μ∗, and become 0 if the belief is correct. OB satisfies, for all n: OB (1) ≤ γ + 1/(2n) (where γ = 0.577 . . . is Euler’s constant).
+Remark 6 (Relation to optimal e-variables for group invariant testing). Perez et al. [18] showed that if Q and P are both location families (not necessarily exponential families) then the Bayes factor obtained by equipping both models with the (improper) right Haar prior gives an e-variable; it is even the GROW (worst-case growth optimal) e-variable for the two models. The right Haar prior for a location family is just the Lebesgue measure on μ. We may apply this result to our Gaussian location families. Using the fact [13] that the resulting e-variable satisfies S(n)
+HAAR (U1) = 1 and
+S(n)
+HAAR (Un) = qW1 |X1 ( X2, . . . , Xn)/pW0 |X1 ( X2, . . . , Xn),
+where W1|X1 = N (X1, Σq) and W0|X1 = N (X1, Σp) are the formal Bayes posteriors (based on the right Haar prior), after observing X1, we may employ the same techniques as used in proving Theorem2to prove (see AppendixAfor details) that
+E
+R [log S (n)
+HAAR] =(n − 1) · DΣr (Σq ∥Σp), (2.24)
+and thus has the same e-power as the conditional e-variable. This e-power must then also be worstcase growth optimal (GROW) in the sense of [11], and by the results in that paper, we must have that
+S(n)
+HAAR = S(n)
+COND are in fact equal.
+3. Multivariate exponential family
+We now extend our results to general exponential families. We first formalize the simplicity condition which we mentioned in the introduction. Then, in Section3.2, we present Theorem3, the analogue to Theorem1(simple alternative) and then, in Section3.3, Theorem4, the analogue to Theorem2.
+3.1. The Simple and Anti-Simple Cases of Grünwald et al. [10]
+In some special situations which we shall collectively refer to as The Simple Case, S(1)
+Q,RIP reduces to a simple likelihood ratio between Q and a single element of P. This is the upshot of the central result of [10], which we now summarize. [10] provides extensive discussion.
+
+
+E-values for exponential families: the general case 13
+Fix a regular exponential family null hypothesis P for outcome U with sufficient statistic X as in (1.5). Recall the canonical parameterizations of such a family: we may take any μ ∈ Mp and define
+pCAN
+β (U) = 1
+Zp (β) · e
+Íd
+j=1 βj tj (U) · pμ (U), (3.1)
+where Z p ( β) is the normalizing constant and we define the canonical parameter space Bp = {β : Z p ( β) < ∞}. As is well known, the set of distributions {PCAN
+β : β ∈ Bp } where PCAN
+β has density
+pCAN
+β , coincides with P. Next, let Q be a distribution on U under which X has mean μ. Suppose X has a moment generating function under Q and Q is mutually absolutely continuous with ν so it has density relative to ν. It will be convenient to denote this density by qμ, explicitly listing the mean μ. We may now generate a second exponential family QGEN with carrier density qμ and the same sufficient statistic X as P. The elements of this family are defined like (3.1) but with pμ replaced by qμ and Z p by Zq and Bp by B
+q. We adopt precisely the same notational conventions for QGEN as we did for Q, in particular MGEN
+q
+is its mean parameter space and ΣGEN
+q ( μ) is its d × d covariance matrix function. The family QGEN thus created is often a natural choice to take as a composite alternative when the null is fixed to be P, corresponding to testing a particular value of a natural notion of effect size, as illustrated in Section4. Note that there exist a variety of canonical parameterizations of an exponential family, depending on which pμ we take to be the carrier density in (3.1). For general regular exponential families on U that share the same sufficient statistic, we say that canonical parameterizations of P and Q match if
+PCAN
+0 and QCAN
+0 are both well-defined and have the same mean, i.e. for some μ ∈ Mq ∩ Mp, we have E
+PCAN
+0 [X] = EQCAN
+0 [X] = μ.
+Definition 1. Fix an exponential family P as above.
+1.Let Q be an exponential family for U. We say that P and Q are matching pairs if they are both regular and they have the same sufficient statistic X and their elements are mutually absolutely continuous and we have that (a) Mq ⊆ Mp and, (b), for every matching canonical parameterization of P and Q, we have that Bp ⊆ Bq. 2.Let Q be a collection of distributions on U so that each Q ∈ Q, together with sufficient statistic X, generates the same exponential family QGEN. (i) We say that we are in the simple case if QGEN is a matching pair with P and, for all μ ∈ MGEN
+q , ΣGEN
+q ( μ) − Σp ( μ) is negative semidefinite. We say that we are in the strictly simple case if we are in the simple case and, for all μ ∈ MGEN
+q, ΣGEN
+q ( μ) − Σp ( μ) is negative definite. (ii) We are in the μ-anti-simple case if μ ∈ MGEN
+q ∩ Mp and
+ΣGEN
+q ( μ) − Σp ( μ) is positive semidefinite (P and QGEN are not required to be matching pairs). We are in the strict μ-anti-simple case if μ ∈ MGEN
+q and ΣGEN
+q ( μ) − Σp ( μ) is positive definite.
+We note that [10] only formalized the simple case; the μ-anti-simple case is new. In the following subsection we will be concerned with simple alternative Q = {Q}, and then QGEN is well-defined as soon as X has a moment generating function under Q. Then, in Section3.3, we consider Q that are themselves exponential families with sufficient statistic X. As is well-known, each member of a regular exponential family generates that same exponential family, so in that case we simply have Q = QGEN. [10] proved the following result:
+Theorem. [Corollary of Theorem 1 of [10]] Consider a testing problem with null P and alternative Q and suppose we are in the simple case. Then for every μ∗ ∈ Mq, the RIPr of Q (n)
+μ∗ is given by P(n)
+μ∗ so
+
+
+14
+that the RIPr e-variable is given by
+S(n)
+Qμ∗ ,RIP =
+qμ∗ (Un)
+pμ∗ (Un) .
+[10] gives many examples of P and Q that are ‘matching pairs’ and that fall under the ‘simple case’. These include, for example, Bernoulli k-sample tests, the k-sample tests of Example1below, and also a variation of linear regression with Gaussian noise. A prime example was already used implicitly in the previous section: if P and Q are both sets of multivariate Gaussians, we have Mp = Mq = Bp = Bq = Rd so we have matching pairs. Since in this case, the covariance matrices Σp and Σq do not depend on μ, we are in the simple case as soon as Σq − Σp is negative semidefinite.
+3.2. Q simple, P multivariate exponential family
+We now assume P to be a regular exponential family and consider simple alternative Q = {Q} with Q a distribution on U with density q, mean EQ [X] = μ∗ and covariance matrix Σq. Below we state Theorem3which extends Theorem1to this setting. The results for UI, COND, SEQ-RIP and RIP will very closely follow those of that previous theorem, but, because of the added generality, regularity conditions are needed for some of them. We first discuss the most involved one, the COND condition: We say that a d-dimensional random vector X is of lattice form if there exist real numbers b1, . . . , bd and h1, . . . , hd such that, for all j ∈ {1, . . . , d}, all u ∈ U, X j (u) ∈ {b j + sh j : s ∈ Z}. Obviously, most random variables with finite or countable support that are commonly encountered are of lattice form. Being either of this form or having a continuous density (with respect to Lebesgue measure) is the standard condition for the (multivariate) local central limit theorem [3] to hold, which is instrumental in the proof of (3.4) below. Concretely, we require the following:
+Condition 1. (COND) X has a moment generating function under Q and R in Theorem3below. Moreover, either X has a bounded continuous density (denoted q[x], r [x], p[x]
+μ respectively), with respect to Lebesgue measure under Q, R and all μ ∈ Mp, or X is of lattice form (and then has probability mass
+functions q[ x] , r [ x] , p[ x]
+μ respectively). The support X ⊆ Rd (X is countable in the lattice case) under Q, R and all P ∈ P coincides. Moreover, there is A, a > 0 such that
+sup
+s∈R:s≥ A
+sup
+(
+log
+p[x]
+μ∗ (x)
+q[x] (x) : x ∈ X, ∥x − μ∗∥2 ≤ s
+)
+sa
+< ∞. (3.2)
+Since all our results are only relevant for the case that DR (Q∥Pμ∗ ) < ∞ anyway, requirement (3.2) merely says that the likelihood ratios cannot be super-exponentially far apart, so in that sense it is quite weak; yet it requires R to have exponentially small tails. From inspecting the proof it can be seen that if X has just three moments under R, the result (3.4) still holds if q and pμ∗ are only polynomially apart, i.e. if (3.2) holds with the logarithm removed from the equation; we have not bothered to formalize this. The requirement that X has a moment generating function under Q (rather than R) is essential for the proof though. We further need a condition to prove a lower bound of the e-power of SUI:
+Condition 2.(UI ≥) R as in Theorem3below is such that for some 0 < γ < 1/2, for all n:
+E
+R
+h
+1∥ ˆμ|n −μ∗ ∥2 ≥n−γ · n · D (P ˆμ|n ∥Pμ∗ )
+i
+= o(1).
+
+
+E-values for exponential families: the general case 15
+This condition refers to D (P ˆμ|n ∥Pμ∗ ) also for cases in which ˆμ|n ∉ Mp; in AppendixB.1we extend the definition to that case. We suspect the condition is quite weak: it is readily verified for onedimensional models such as e.g. Poisson, negative binomial, exponential and so on (we illustrate that it holds for the Poisson distribution, when X has ≥ 3 moments under R, in AppendixC.1), but, unlike for the ‘dual’ Condition3that we will discuss in the next subsection, we have not been able to come up with a general easy-to-verify ‘n-free’ condition that implies Condition2for multivariate families. In this section, the covariance matrices in P, Q and R are dependent on μ. We thus extend our notation for the trace (2.5) to dab ( μ) := TR(Σa ( μ)Σ−1
+b ( μ)). We also use (and will keep using in Theorem4 and the proofs) the nonstandard notation f (n) ≤ O (1), to mean that there is a positive constant M > 0 such that, for all n ∈ N, we have f (n) ≤ M; f (n) ≤ o(1) means that there is a sequence of positive numbers M1, M2, . . . tending to 0 such that for all n ∈ N, we have f (n) ≤ Mn.
+Theorem 3. Let P and Q = {Q} be null and alternative as in Section1.1, where Q has mean E
+Q [X] = μ∗ with μ∗ ∈ Mp and covariance matrix Σq. Let R be a distribution on X with the same mean ER [X] = μ∗ and with covariance matrix Σr , such that the first 3 moments of X exist under R and Q and DR (Q∥Pμ∗ ) is well-defined and finite. Then, letting U1, U2, . . . be i.i.d. ∼ R, we have:
+1. (UI) Let S (n)
+Q,UI = q (Un )
+p ˆμ|n (Un ) be as in (1.7). We have:
+E
+Un∼R [log S (n)
+Q,UI] ≤ nDR (Q∥Pμ∗) −
+dr p ( μ∗)
+2 + o(1). (3.3)
+If, moreover, R is such that Condition2(“ UI≥”) holds, then (3.3) holds with ≤ replaced by =. 2. (COND) Let S(n)
+Q,COND = q (Un | Z )
+p(Un |Z ) be defined as in (1.6) and DΣr (·∥·) as in (2.3). Suppose Condition1(“ COND”) holds. We have:
+E
+Un∼R [log S (n)
+Q,COND] ≥ nD R (Q ∥Pμ∗ ) − DΣr (Σq ∥Σp ( μ∗)) + o(1). (3.4)
+Moreover, if Condition1(“ COND”) also holds with the role of q and pμ∗ interchanged, (3.4) holds with equality.
+3. (seq-RIPr/RIPr Simple Case, seq-RIPr Anti-Simple Case) Let S(n)
+Q,RIP, S(n)
+Q,SEQ-RIP be defined
+as in (1.2) and (1.3). Suppose that we are in the simple case of Definition1. Then we have, for all n, that
+S(n)
+Q,RIP = S(n)
+Q,SEQ-RIP = q (Un)
+pμ∗ (Un) ; EUn∼R [log S (n)
+Q,RIP] = nD R (Q ∥Pμ∗ ). (3.5)
+If Σq − Σp ( μ∗) is positive definite (‘strict anti-simple case’) then we have:
+E
+Q [log S (n)
+Q,SEQ-RIP] = n(D (Q ||Pμ∗ ) − ε ) (3.6)
+where 0 < ε = D (Q ∥Pμ∗ ) − D (Q ∥Pfq(U) ) ≤ D (Q ∥Pμ∗ ), where ≤ becomes an equality, and e-power (3.5) becomes 0, if inf D (Q∥PW ) = 0, the infimum being over all priors W on Mp.
+4. (RIPr, Anti-Simple Case) Let S(n)
+Q,RIP, S(n)
+Q,COND be defined as in (1.2) and (1.6) and DΣq (·∥·) as
+in (2.3). If Σq − Σp ( μ∗) is positive semidefinite, then, letting W0,(n) = N ( μ∗, (Σq − Σp)/n) be a Gaussian distribution on Mp, we have
+E
+Q [log S (n)
+Q,RIP] ≤ EQ
+"
+log
+q (U n )
+pW0,(n) (Un)
+#
+≤ nD (Q||Pμ∗ ) − DΣq (ΣqΣ−1
+p ( μ∗)) + o(1). (3.7)
+
+
+16
+Moreover, combining (3.7) with (3.4) shows that if Condition1(‘ COND’) holds, then (3.7) holds with equality up to o(1) and also EQ [log S(n)
+Q,RIP] = EQ [log S (n)
+Q,COND] + o(1).
+Note the very close resemblance between each part of this result and the corresponding part in Theorem1. We briefly remark on some specifics. First, for the UI part: the case in which it holds with equality is related to the celebrated Wilks phenomenon: if we let Q ∈ P and set R = Q, the theorem is still valid and the problem becomes ‘well-specified’. The DR (Q∥Pμ∗ ) term then becomes 0 and we are left with d/2, the expectation of a χ2-random variable with d/2 degrees of freedom, in accordance with Wilks’ result [14]. For the anti-simple case, we only consider the well-specified setting with R = Q because the statement for general R is rather involved. Theorem3shows that in the anti-simple case, the RIPr-prior that achieves GRO against Q at sample size n can be approximated, in the e-power sense, by a Gaussian with variance of order O (1/n), but it does not tell us if the approximation is good enough to get something close to a real e-value if we use this prior in the denominator. Note that even though we do not know if the Gaussian prior gives us an e-variable, we can still find another e-variable that provably is close to GRO – the theorem shows that we can simply use SQ,COND. Performing a similar analysis as in Corollary1, we find:
+Corollary 3.[e-power and growth optimality] The relations of Corollary1still hold in the setting of Theorem3, with dq p = dq p ( μ∗) now dependent on μ∗.
+Theorem3provides a general asymptotic analysis, but we note that the Gaussian case of Theorem1 is not the only case in which asymptotics are not required. For example, another case which does not require asymptotics for all e-variables except UI occurs if there is P ∈ P whose marginal distribution P(X) for X coincides with Q(X). In case P and Q are matching pairs we are then simultaneously in the (nonstrict) simple and anti-simple cases. We then have
+DR (Q ∥Pμ∗ ) = EX∼R log
+q(X)
+pμ∗ ( X) + EU∼R log
+q (U | X )
+pμ∗ (U | X) = EU∼R log
+q (U | X )
+pμ∗ (U |X) .
+Proposition 1. Suppose that Q (X) = Pμ∗ (X) for some μ∗ ∈ Mp. Then for all n, S(n)
+Q,RIP = S(n)
+Q,SEQ-RIP = S(n)
+Q,COND = q (Un | X n)/p (Un | X n) so that
+E
+Un∼R [log S (n)
+Q,RIP] = EUn∼R [S (n)
+Q,SEQ-RIP] = EUn∼R [log S (n)
+COND] = n · DR (Q∥Pμ∗).
+Proof of Proposition1. The results for SQ,RIP and SQ,SEQ-RIP follow from Theorem3, the Simple Case,
+since Σq = Σp ( μ∗). This only leaves the proof for SQ,COND, which follows by inspecting the proof for Part 2 (‘COND’) of Theorem3and noting that the result directly follows from (6.4).
+Example 1.[Two-sample tests] Let P◦ = {P◦
+μ : μ ∈ M◦} be a regular 1-dimensional exponential family with sufficient statistic Y and mean-value parameter space M◦. Set U = (Ya,Yb), X = Ya + Yb, and, for arbitrary μa, μb ∈ M◦, let Rμa,μb be the distribution under which Ya ∼ P◦
+μa and Yb ∼ P◦
+μb independently.
+Let P = {Rμ,μ : μ ∈ M◦} stand for the null hypothesis, representing that (Ya,Yb) are i.i.d. with the same mean μ. Then (see e.g. [12] for details) P is an exponential family with mean-value parameter space M
+p = 2M◦. Since ERμ,μ [X] = 2μ, the parameter μ∗ in the mean-value parameterization corresponding to μ, i.e. the μ∗ for which Pμ∗ = Rμ,μ, must satisfy μ∗ = 2μ. Now, fix arbitrary μa, μb ∈ M◦ with
+
+
+E-values for exponential families: the general case 17
+μa ≠ μb and let Q = {Rμa,μb } be the corresponding simple alternative. Consider the cases that (a) the underlying model is the Gaussian location family, i.e. M◦ = R and P◦
+μ = N (μ, σ2) for some fixed σ2, or (b), that the underlying model is Poisson, i.e. M◦ = R+ and P◦
+μ is Poisson with mean μ. [12] show that in both these cases (as well as their generalization from 2- to k-sample testing), the condition of Proposition1holds. Thus, in both the Gaussian location and the Poisson case, nonasymptotic results can be obtained. They also looked at several other exponential families P◦. In all such other cases, the premise of Proposition1does not apply and asymptotic analysis is needed. With the Bernoulli model, we are in the simple case; with the exponential, beta and Gaussian scale families, we are not [10,12]. We provide some simulations pertaining to Bernoulli and exponential distribution 2-sample tests in Section4.
+[10] provides several more examples of exponential families that fall under the simple case. Intriguingly, this includes a variation of Gaussian linear regression which is different from the standard version involving t-statistics of [17,18]. We may thus apply Theorem3and4to this regression variation. In contrast to the earlier Gaussian location results and the Gaussian- and Poisson k-sample tests of Example1, we cannot avoid asymptotics here, due to the appearance of non-central χ2 distributions in the analysis [10, Section 4.3.2 and 4.4].
+3.3. P, Q both multivariate exponential families
+In the section, we provide similar results as above but with composite Q. That is, Q = {Qμ : μ ∈ M
+q } and P = {Pμ : μ ∈ Mp }, where Q and P are matching pairs of exponential families as in Definition1. The results involving the prequential plug-in method now require the following condition, referring to the sampling distribution R in Theorem3which has ER [X] = μ∗ ∈ Mp.
+Condition 3.(Plug-in) There (a) exists an odd integer m ≥ 3 such that the first m moments of X exist under R, and (b), for some 0 < γ < 1/2,
+E
+R
+h
+1∥ ˆμ|n −μ∗ ∥2 ≥n−γ · n · D (Q μ∗ ∥Q  ̆μ|n )
+i
+= o(1). (3.8)
+As we show in Lemma3, (B.8), in AppendixB.1, a sufficient condition for (3.8) is that (a) holds, and (c) there also exist real s > 1 and A > 0 such that {μ : ∥ μ − μ∗ ∥2 < A} ⊂ Mq and for all x0 ∈ Mq, 0 < α < 1,
+sup
+μ∈Mq:∥ μ−μ∗ ∥2 ≥ A
+D (Q μ∗ ∥Q (1− α) μ+αx0 )
+∥ μ − μ∗∥m−s
+2
+< ∞. (3.9)
+As is well-known, locally both D (Qμ ∥Qμ∗ ) and D (Qμ∗ ∥Qμ) are equal, up to lower order terms,
+to the quadratic form ( μ∗ − μ)⊤Σ−1
+q (μ∗ − μ) ≍ ∥μ∗ − μ∥2
+2. The UI≥ Condition2implies that, up to
+o(1), the KL divergence D (Qμ ∥Qμ∗ ), for fixed μ∗ and varying μ, is determined by this local quadratic behaviour. The plug-in Condition3implies the same for D (Qμ∗ ∥Qμ). As can be seen, as μ moves
+farther away from μ∗, this allows for a faster-than-quadratic increase of the KL divergences, but it should be at most polynomial in the l2-distance, and the rate of increase should be ‘matched’ by sufficiently high moments of R existing. The plug-in condition appears to be quite weak and is easily verified with appropriate values for m (details omitted) for 1-dimensional exponential families such as the Bernoulli, Poisson, geometric, binomial and negative binomial model. Below, and in the appendix, we verify it for some standard 2-dimensional models. Nevertheless, it does not always hold: for the 1-dimensional regular family Q with X = U ∈ Mq = R generated by the Landau distribution [1], we find
+
+
+18
+that D (Qμ∗ ∥Qμ◦ ) grows exponentially in μ◦ as μ◦ → ∞, thereby violating the condition. The appearance of the ‘anchor’ x0 derives from the existence of a similar regularization term in the definition of  ̆μ. Note that the condition would in some cases not hold without it; for example, in the Bernoulli model,
+supμ∈ (0,1) D (Pμ∗ ∥Pμ) = D (Pμ∗ ∥P1) = ∞.
+Example 2.[Gaussian location-scale] Let Q be the 2-dimensional family of Gaussian distributions N (μ, σ2). In terms of the mean-value parameterization, we get μ = (μ1, μ2) with μ1 = μ and μ2 =
+μ2 + σ2 and Mq = {(μ1, μ2) : μ1 ∈ R, μ2 > μ2
+1} so that Qμ with μ = (μ1, μ2) represents N (μ1, μ2 − μ2
+1).
+A standard calculation gives, with μ∗ = (μ∗
+1, μ∗2
+1 + σ∗2), and μ◦ = (μ◦
+1, μ◦
+2), that
+D(Qμ∗ ∥Qμ◦) = 1
+2 log
+μ◦
+2 − μ◦2
+1
+σ∗2 +
+σ∗2 + (μ∗
+1 − μ◦
+1)2
+μ◦
+2 − μ◦2
+1
+−1
+!
+. (3.10)
+Now let μ◦ = (1 − α) μ + αx0. In AppendixC.2, we show (this involves some work) that for every 0 < α < 1, every x0 = (x0,1, x0,2) ∈ Mq, we have
+inf
+μ ∈ Mq
+(μ◦
+2 − μ◦2
+1 ) = α(x0,2 − x2
+0,1). (3.11)
+with μ◦ = (μ◦
+1, μ◦
+2) a function of μ and x0,2 > x2
+0,1 (so (3.11) > 0) because x0 ∈ Mq. This implies that the
+second term in (3.10) is O (σ∗2 + (μ∗
+1 − μ◦
+1)2). As we also show in the appendix, this then easily implies
+that for every μ∗ ∈ Mq, every A > 0, we have (3.9). with m − s = 2, verifying Condition3as soon as R has 5 or more moments.
+With similar arguments, one can show (3.9) holds with m − s = 2 for Q the family of Gamma distributions; details are in AppendixC.1.
+Theorem 4. Let P and Q be two regular exponential families that are matching pairs in the sense of Definition1and such that P ∩ Q = ∅ and Mq ⊆ Mp, as above. Consider a distribution R as above with mean ER [X] = μ∗ ∈ Mq ⊆ Mp and with covariance matrix Σr , such that the first 3 moments of X exist under R and DR (Q∥P) is finite for all Q ∈ Q, P ∈ P. Let U1, U2, . . . be i.i.d. ∼ R. We have:
+1. (UI) Let S (n)
+ ̆μ,UI be as in (2.13). Suppose Condition3(“ plug-in”) holds. We have:
+E
+R [log S (n)
+ ̆μ,UI] ≤ nD R (Qμ∗ ∥Pμ∗ ) −
+drq ( μ∗)
+2 log n + O (1). (3.12)
+Moreover, suppose that R has density r, that W1 is a prior on Mq with continuous and strictly
+positive density in a neighborhood of μ∗, and such that for some ε > 0, we have E
+R | log pμ∗ (U)/r (U)|1+ε < ∞. Then:
+E
+R [log S (n)
+W1,UI] ≤ nD R (Qμ∗ ∥Pμ∗ ) − d
+2 log
+n
+2π
++ OW1,UI (1), (3.13)
+where OW1,UI (1) was given up to o(1) in (2.17). If moreover Condition2(“ UI≥”) holds for R then (3.12) and (3.13) hold with equality. 2. (COND) Let S(n)
+COND be as in (1.6) and DΣr (·∥·) be as in (2.3). Suppose Condition1(“ COND”) holds for R, Q = Qμ∗ and Pμ∗ . We have:
+E
+R [log S (n)
+COND] ≥ nDR (Qμ∗ ∥Pμ∗ ) − DΣr (Σq ( μ∗) ∥Σp ( μ∗)) + o(1). (3.14)
+
+
+E-values for exponential families: the general case 19
+Moreover, if Condition1holds with the role of q and pμ∗ interchanged, (3.14) holds with equality.
+3. (seq-RIPr, Simple and Anti-Simple Case) Suppose Condition3(“ plug-in”) holds. Let S(n)
+ ̆μ , S E Q - R I P
+be as in (2.13). If we are in the simple case of Definition1, then we have: Pfq  ̆μ|i−1 (Ui ) (Ui) =
+P  ̆μ|i−1 (Ui) and
+E
+R [log S (n)
+ ̆μ,SEQ-RIP] = nD R (Q μ∗ ∥Pμ∗ ) +
+dr p ( μ∗) − drq ( μ∗)
+2 log n + OSEQ-RIP (1) + o(1), (3.15)
+where OSEQ-RIP (1) is as below (2.19). On the other hand, if Σq ( μ∗) − Σp ( μ∗) is positive definite (‘strict anti-simple case’) then for some ε > 0, for all n,
+E
+Q [log S (n)
+ ̆μ,SEQ-RIP] ≤ n(D (Qμ∗ ∥Pμ∗ ) − ε ). (3.16)
+4. (RIPr, General Case) Let S(n)
+W1,RIP be defined as in (1.2) with W1 a prior with support contained
+in Mp ∩ Mq and with positive continuous density in a neighborhood of μ∗, and let DΣr (·∥·) be as in (2.3). We have
+E
+Q [log S (n)
+W1,RIP] ≤ EQ log
+qW1 (Un)
+pW1 (Un) = nD (Q||Pμ∗ ) − DΣq (μ∗) (Σq ( μ∗) ∥Σp ( μ∗)) + o(1),
+(3.17)
+and if additionally Condition1(‘ COND’) holds, then the inequality becomes an equality.
+Note again the close similarity to the corresponding Theorem2. The theorem implies the following corollary, which, like Corollary2, commensurates with (1.9)-(1.12) in the introduction.
+Corollary 4.[e-power and growth optimality] Suppose Condition1(‘ COND’) and3( plug-in) holds for R = Q = Qμ∗ , P and Q. Then for some ε > 0, it holds EQ [log S(n)
+COND] ≥ nε − o(1), and
+E
+Qμ∗ [log S (n)
+COND/S (n)
+ ̆μ , U I ]
+(a)
+≥d
+2 log n + O (1).
+E
+Q [log S (n)
+RIP /S(n)
+COND] = o(1).
+E
+Qμ∗ [log S (n)
+ ̆μ,SEQ-RIP/S (n)
+ ̆μ , U I ]
+(a)
+≥
+dqp (μ∗)
+2 log n + O (1) with dq p ≤ d, in the simple case.
+E
+Q [log S (n)
+SEQ-RIP/S (n)
+COND] ≤ −nε + o(1) for some ε > 0, in the strict anti-simple case.
+where (a) becomes an equality if Condition2holds, and dq p ( μ∗) is as in (2.5), with dq p ( μ∗) ≤ d in the simple case (with strict inequality in the strictly simple case) following in the same way as in (2.5).
+In the next section, we illustrate the theorem with some simulations pertaining to the two-sample setting of Example1.
+4. Examples and Simulations
+To illustrate our asymptotic results we complement them with some finite-sample size simulations. For simplicity, we restrict ourselves to two simple 2-sample tests as in Example1, which, however, are quite
+
+
+20
+different in that they fall under the simple- and anti-simple case, respectively. Thus, with details as in Example1, let P◦ be a 1-dimensional exponential family, set U = (Ya, Yb), X = Ya + Yb, and let Rμa,μb express that Ya ∼ P◦
+μa and Yb ∼ P◦
+μb independently such that P = {Rμ,μ : μ ∈ M◦} stands for the null hypothesis, representing that (Ya,Yb) are i.i.d. with the same mean μ.
+4.1. The Simple Case: Bernoulli 2-Sample Test
+In this case P◦ is the Bernoulli model, so that, recast in the mean-value parameterization, the null can be written as P = {Pμ : μ ∈ Mp } where Mp = (0, 2), and Pμ expresses that Ya,Yb are independent Bernoulli, both with mean μ/2. The results of [12] imply that this is an instance of the simple case for Q as defined below. We start with point alternative {Q} with Q = Rμa,μb . Under Q, Ya and Yb are independent Bernoulli, with mean μa and μb respectively. Note that 2μ∗ = EQ [X] = μa + μb. We use Q to generate a full alternative Q := QGEN with the same sufficient statistic X = Ya + Yb as P, as in Section3.1. Let δ(μa, μb) := log(μa (1 − μb))/((1 − μa)μb) be the log odds ratio corresponding to (μa, μb). As shown by [10, Section 4.3], the generated alternative QGEN will correspond to the set of all (μ′
+a, μ′
+b) that have the same log odds ratio δ∗ := δ(μa, μb) as the original Q, i.e. all (μ′
+a, μ′
+b) ∈ (0, 1)2
+such that δ(μ′
+a, μ′
+b) = δ∗. It is easy to see that for any (μa, μb) with δ(μa, μb) = δ∗, we can write
+QGEN = {Qμ′
+a , μ′
+b
+: (μ′
+a, μ′
+b) ∈ Mδ∗ } with
+M
+δ∗ =
+(
+μaeβ
+1 − μa + μaeβ
+,
+μbeβ
+1 − μb + μbeβ
+⊤
+:β∈R
+)
+. (4.1)
+Figure1illustrates various MGEN
+q with different δ∗ values. Note that when δ∗ = 0, Mδ∗ = Mp. The log odds ratio has long been a standard notion of effect size in two-sample tests, and this approach implicitly adopts it. Of course, in practice we would often want to test the larger alternative hypothesis that δ ≥ δ∗. Clearly all types of e-variables we develop in this paper can be used in that setting as well, since the validity of e-values is independent of the actually chosen alternative; we suspect that they still have close to optimal e-power in a worst-case sense (the GROW sense of [11]) if used to test δ ≥ δ∗ and we plan to investigate whether this is really so in future work. For now, we concentrate on testing δ = 0 against alternative δ∗. Our simulations supplement Theorem4, exploring e-powers for all e-variables appearing in that result, and, for reasons to become clear, also for a “pseudo” e-variable. That is, we consider
+S(n)
+W1,RIP, S (n)
+W1,UI, S (n)
+ ̆μ,UI, S (n)
+ ̆μ,SEQ-RIP, S (n)
+COND,
+qW1 (Un)
+pW1 (Un) . (4.2)
+For the simulations, first we fix δ∗, then we employ W1 as a uniform prior over the correspond
+ing Mδ∗ . Specifically, for the given δ∗, we draw β uniformly from the interval [−10, 10] and use it to determine the corresponding parameters (μ′
+a, μ′
+b)⊤ ∈ MGEN
+q as described by (4.1), where we set
+(μa, μb) such that δ∗ (μa, μb) = δ∗ and μa = 1 − μb. For computing S(n)
+ ̆μ,UI and S (n)
+ ̆μ,SEQ-RIP, we set
+ ̆μ|n = (1 + Ín
+i=1 xi)/(n + 1). A distribution Q∗ ∈ QGEN, corresponding to a specific point in Figure1
+for the selected δ∗, is selected from QGEN to generate i.i.d. data sequences Un. Note that, turning to the mean-value parameterizaiton for QGEN, we can write Q = Qμ∗ where μ∗ = μa + μb for the specific (μa, μb) with Q = Rμa,μb . For each sequence, we compute the logarithm of the quantities in (4.2). Repeating this process under Q∗, we then take the empirical mean of these logarithms to approximate the e-powers under Q∗. Our figures depict the quantity nD (Qμ∗ ||Pμ∗ ) − EQ∗ [log S(n) ], which may be thought of as the loss in e-power of a tester employing S(n) compared to an oracle tester who has
+
+
+E-values for exponential families: the general case 21
+access to Qμ∗ and can use the GRO optimal e-variable relative to Qμ∗ . We perform simulations for
+δ∗ = 1 and δ∗ = 2, selecting three points for each δ∗ to generate data sequences, as well as a single point for the more extreme δ∗ = 2 log 19 ≈ 5.9 corresponding to (μa, μb) = (0.95, 0.05). Two instances are presented in Figure2and3; other instances, all exhibiting the same qualitative behavior, are in Figure7 in AppendixD.
+Theorem4indicates that the e-powers of the optimal S(n)
+W1,RIP and of S (n)
+COND and
+qW1 (Un )
+pW1 (Un ) become
+identical (hence optimal) as n increases. Our simulations indicate that converges already happens at quite small n. It turns out that calculating S(n)
+W1,RIP directly (via numerical optimization of the KL
+divergence) is highly computationally intensive for large δ∗; we could not do it for δ∗ ≈ 5.9 in Figure3. But, interestingly, and as our main take-away from this section, the experiments indicate that this need not bother us: we know from Theorem4that the e-power of the valid and optimal S(n)
+W1 , R I P
+must lie inbetween that of the (valid) e-variable S(n)
+COND and the (pseudo-) e-variable
+qW1 (Un )
+pW1 (Un ) , i.e.
+it must be squeezed in between the small space between the red and blue lines in Figure3. Consequently, we may use S(n)
+COND – which is much easier to calculate – as a safe substitute of S(n)
+W1 , R I P
+while sacrificing essentially negligible e-power. We also note that, as a basic calculation shows, dq p ( μ∗) = (μa (1 − μa) + μb (1 − μb))/(2μ ̄ (1 − μ ̄), where μ ̄ = (μa + μb)/2 which implies via (3.14) that the red curve corresponding to SCOND in Figure3should converge to DΣr (Σq ( μ∗) ∥Σp ( μ∗)) = DGAUSS (dq p) ≈ 0.425; we see that this convergence takes place already at quite small n.
+Turning to S (n)
+ ̆μ,SEQ-RIP, we see from (3.15) that its e-power will be asymptotically smaller than that of
+the optimal S(n)
+W1,RIP by a logarithmic amount −c log n + O (1), with
+c=
+dqp (μ∗) − d
+2 = − (μa − μb)2
+2(μa + μb) (2 − (μa + μb)) ≤ 0, (4.3)
+which follows using d = 1 and the above expression of dq p. (4.3) is close to 0 for all (μa, μb)⊤ ∈ (0, 1)2 with μa ≠ μb except for values close to the upper-left and lower-right corner in Figure1. This is nicely in accord with our simulations: Figure2and Figure7indicate that the e-power of S(n)
+ ̆μ,SEQ-RIP is
+just slightly lower than that of the optimal S(n)
+W1,RIP for δ∗ ∈ {1, 2}, but if we sample from (μa, μb) =
+(0.95, 0.05)⊤ with corresponding δ∗ ≈ 5.9, then c in (4.3) is close to 1/2, and indeed, as Figure3 demonstrates, the e-power loss of S(n)
+ ̆μ,SEQ-RIP starts behaving like the sub-optimal S (n)
+ ̆μ,UI and S (n)
+W1 , U I ,
+which are also suboptimal by a logarithmic amount, with constant factor c = d/2 = 1/2.
+4.2. The Anti-Simple Case: Exponential 2-Sample Test
+Consider the setting and notations described in the beginning of Section4but now let P◦ be the family of exponential distributions rather than Bernoulli. Hao et al. [12] implicitly demonstrate that, for arbitrary μa, μb > 0 with μa ≠ μb and μ∗ = μa + μb, the RIPr of Qμ∗ = Rμa,μb on P = {Pμ : μ ∈ (0, ∞)}, the model under which (Ya,Yb) are i.i.d. exponentially distributed with arbitrary mean μ, is not Pμ∗ (X). This means that for every μ∗ ∈ Mq, we are now in the μ∗-strict-anti-simple case. We investigate the same (pseudo-) e-variables (4.2) as before, while, as above in Figure3, excluding
+S(n)
+W1,RIP for computational reasons. This is of no great concern since, as stated earlier, Theorem4shows
+that, under Q, the asymptotic e-power of S(n)
+W1,RIP lies between that of S (n)
+COND and
+qW1 (Un )
+pW1 (Un ) , both of which
+are easily computed. Our simulation results (we include just one plot but tried several more) invariably
+
+
+22
+0.0 0.2 0.4 0.6 0.8 1.0 a
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+b
+=0 =1 =2 = 2log19
+Figure 1. Parameter space visualization under the Bernoulli model, with starting points indicated in the figure for generating MGEN
+q.
+0 100 200 300 400 500
+sample size
+0
+1
+2
+3
+4
+loss in e-power
+S (n)
+W1, RIP
+S (n)
+W1, UI
+S (n)
+, UI
+S (n)
+, SEQ RIP
+S (n)
+COND
+qW1 (U n)/pW1 (U n)
+Figure 2. δ∗ = 1. E-powers are computed for multiple (pseudo) e-variables for the 2-sample Bernoulli test. The data sequences are generated from Q∗ = Qμ∗ = Rμa,μb with μa = 2/7 ≈ 0.286, μb = 2/(5e + 2) ≈ 0.128 with
+mean μ∗ = μa + μb ≈ 0.41 and D (Q∗||Pμ∗ ) ≈ 0.0385.
+0 100 200 300 400 500
+sample size
+0.0
+0.5
+1.0
+1.5
+2.0
+2.5
+3.0
+3.5
+loss in e-power
+S (n)
+W1, UI
+S (n)
+, UI
+S (n)
+, SEQ RIP
+S (n)
+COND
+qW1 (U n)/pW1 (U n)
+Figure 3. δ∗ = 2 log 19 ≈ 5.9. E-powers are computed for multiple (pseudo) e-variables for the 2-sample Bernoulli test. The data sequences are generated from Q∗ = Qμ∗ Rμa,μb with (μa, μb) = (0.95, 0.05) so μ∗ = 1, Pμ∗ =
+R0.5,05 and D (Q∗ ||Pμ∗ ) ≈ 0.9893.
+
+
+E-values for exponential families: the general case 23
+show that EQ [log SCOND] closely approximates EQ
+h
+log
+qW1 (Un )
+pW1 (Un )
+i
+even at quite small sample sizes (in
+Figure4they are indistinguishable). Thus, our first take-away from the experiments is that SCOND serves as a practical and computationally efficient alternative of SW1,RIP. To describe the simulations in more detail, we start by setting Q = Rμa,μb for some (μa, μb) > 0 and calculate the corresponding Q := QGEN with the same sufficient statistic X = Ya + Yb as P. Defining
+δ(μa, μb) := 1
+μa
+−1
+μb
+, it turns out that QGEN is the set of all distributions Rμ′
+a , μ′
+b
+with δ(μ′
+a, μ′
+b) = δ(μa, μb) for the (μa, μb) we started with. Thus δ is our new notion of effect size. Following a similar calculation as for the Bernoulli case, the mean parameter space of QGEN turns out to be:
+MGEN
+q = μa
+1 − μaβ
+,
+μb
+1 − μbβ
+⊤
+: β ∈ S , (4.4)
+which, for fixedd δ∗, is the same for every (μa, μb) with δ(μa, μb) = δ∗. Here S is the set of β such that both μ1
+1−μ1 β and μ2
+1−μ2β are positive.
+The simulation setup mirrors the Bernoulli case, with the exception that we now fix δ∗ = −1. We continue to use W1 as a uniform prior over MGEN
+q . Specifically, we fix a particular (μa, μb) with δ(μa, μb) = δ∗ (here we arbitrarily took μa = 2, μb = 2/3), and we sample β uniformly from S ∩ [−10, 10] and compute the corresponding parameters (μ′
+a, μ′
+b)⊤ ∈ MGEN
+q as described by (4.4). The simulation results are presented in Figure4and are consistent with Theorem4. It is seen that the analysis very closely resembles that of the Bernoulli model. The one difference worth noting relates to S (n)
+ ̆μ,SEQ-RIP. Since the 2-sample test under an exponential model falls into the anti-simple
+category, the e-power of S(n)
+ ̆μ,SEQ-RIP should align with equation (3.16). Specifically, we expect that
+nD (Qμ∗ ∥Pμ∗ ) − EQ∗ [log S (n)
+ ̆μ,SEQ-RIP] ≥ nε for some ε > 0, which is indeed witnessed by Figure4. Since
+calculating S(n)
+ ̆μ,SEQ-RIP is computationally very intensive, we had to limit the computatin to a maximum
+sample size of n = 200. Nonetheless, the results clearly indicate that the e-power of S(n)
+ ̆μ,SEQ-RIP will be
+lower than that of S(n)
+W1,UI and S (n)
+ ̆μ,UI for sufficiently large n — even though it is interesting to see that
+there is a large initial regime in which S(n)
+ ̆μ,SEQ-RIP outperforms universal inference.
+0 25 50 75 100 125 150 175 200
+sample size
+0
+1
+2
+3
+4
+5
+loss in e-power
+S (n)
+W1, UI
+S (n)
+, UI
+S (n)
+, SEQ RIP
+S (n)
+COND
+qW1 (U n)/pW1 (U n)
+Figure 4. δ = −1. E-powers are computed for multiple (pseudo) e-variables under exponential model. The data sequences are generated from Q∗ with mean μ∗. D (Q∗||Pμ∗ ) ≈ 0.2877 when μ∗ = (2, 2/3).
+
+
+24
+5. Proofs for Section2
+5.1. Preparation for both proofs
+We gradually build up a series of remarkable properties of KL divergences between multivariate Gaussians. These will then readily lead to the proofs of Theorem1and2. Let P, Q, R and RG be distributions on X = U ∈ Rd. Suppose that, under R, ER [X] = μ∗ and the nondegenerate covariance matrix is Σr , that RG is Gaussian with the same mean and covariance, and suppose that Q and P are Gaussian with EQ [X] = EP [X] = μ∗ and nondegenerate covariance matrices Σ
+q and Σp respectively. In Section2.2we introduced the notation DΣr (Σq ∥Σp). The following equation implies that DΣr (Σq ∥Σp) = DR (Q∥P), as claimed in (2.4); even more generally, if P is replaced by P0 with mean μ0 and still covariance matrix Σp, we obtain a generalization of the well-known formula for the KL divergence between two multivariate normals that do not necessarily have the same mean:
+DR (Q ∥P0) = ER log
+q(X)
+p0 ( X) = ERG log
+q(X)
+p0 (X) (5.1)
+= DGAUSS (Σr Σ−1
+p ) − DGAUSS (Σr Σ−1
+q )+1
+2 (μ∗ − μ0)⊤Σ−1
+p (μ∗ − μ0)
+= DΣr (Σq ∥Σp) + 1
+2 (μ∗ − μ0)⊤Σ−1
+p (μ∗ − μ0),
+with DGAUSS as in (2.1) and DΣr as in (2.3). Here the first equality is definition, the second follows by writing out the definitions, and in the third we used the standard (easily derived) formula for the KL divergence between two multivariate Gaussians. The following is a standard result (see for example [4, Chapter 2.3.]):
+Proposition 2. The marginal distribution of ˆμ|n ∈ Rd under PW , with W = N ( μ∗, Π) is given by:
+ˆμ|n ∼ N ( μ∗, Π + Σp/n). (5.2)
+Proposition2will be used in several in the proofs of results; directly for SSEQ-RIP and indirectly via its use in the proof of the following lemma, which will itself be used in the proofs for SCOND and SRIP in both Theorem1and2.
+Lemma 1. Let P and Q be two d-dimensional Gaussian location families for i.i.d. data U, U1, U2, . . . as in Section2.1, with nondegenerate covariance matrices Σp and Σq. Let R be a distribution as above, with ER [X] = μ∗, extended to U1, U2, . . . by independence. Let W0 and W1 be arbitrary prior distributions on Mp = Mq = Rd (which may be degenerate, i.e. put all their mass on a single point). We have:
+SCOND =
+qW1 (Un |Z)
+pW0 (Un |Z) =
+qμ∗ (Un |Z)
+pμ∗ (Un |Z) and (5.3)
+DR (Q(n)
+W1 |Z ∥ P (n)
+W0 |Z) = D R (Q (n)
+μ∗ |Z ∥ P(n)
+μ∗ |Z) = (n − 1)DR (Qμ∗ ∥Pμ∗ ). (5.4)
+Further, let either (i) W1 put mass 1 on {μ∗} and W0 = N ( μ∗, Π0) with Π0 such that
+Π0 + Σp/n = Σq/n, (5.5)
+
+
+E-values for exponential families: the general case 25
+or (ii) W1 = N ( μ∗, Π1) with Π1 some nondegenerate covariance matrix and W0 = N ( μ∗, Π0) with Π0 such that
+Π0 + Σp/n = Π1 + Σq/n. (5.6)
+In both case (i) and (ii) we have:
+qW1 (Un)
+pW0 (Un) =
+qW1 (Un | Z)q◦
+W1 (Z)
+pW0 (Un | Z) p◦
+W0 (Z) = S (n)
+Q,COND = S(n)
+Q,RIP. (5.7)
+where q◦
+W1 denotes the density of Z under QW1 , and similarly for p◦
+W0 , and we have q◦
+W0 = p◦
+W0 .
+Proof. We have, by the fact that scaled sums of Gaussians are Gaussians, with Z = n−1/2 Ín
+i=1 Xi =
+n1/2 · ˆμ|n, that
+DR (Qμ∗ (Z)∥Pμ∗ (Z)) = DR (Qμ∗ ∥Pμ∗).
+(5.3) now follows by sufficiency. Further, abbreviating Q (Un) to Q (n) and similarly for P(n) ,
+nDR (Qμ∗ ∥Pμ∗) = DR (Q(n)
+μ∗ ∥P(n)
+μ∗ ) = DR (Q(n)
+μ∗ |Z ∥ P(n)
+μ∗ |Z) + DR (Qμ∗ (Z) ∥Pμ∗ (Z)). (5.8)
+Combining (5.3) and (5.8) now gives (5.4). Next, (5.2) implies that if (i) holds, then we get by (5.2) that ˆμ|n and therefore Z has the same distribution under qW1 as under pW0 and then the first two equations of (5.7) follow by (5.3); the same reasoning holds under (ii). To show the final equality of (5.7), note that, for both choices of W1, if a corresponding prior satisfying (5.5) or, respectively, (5.6) exists, the Bayes factor qW1 (Un)/pW0 (Un) is equal to SCOND and hence becomes an e-variable. From Theorem 1 (specifically Corollary 1) of [11] we know that for every W1 on Mq, there can be at most one corresponding prior W0 such that this Bayes factor is an e-variable, and if this prior exists, this e-variable is the GRO e-variable relative to Q; the equality follows.
+We need one more proposition before giving the actual proof of Theorem1and2. It provides variations of standard results, whose proofs we delegate to AppendixA— note the intriguing similarity between (5.12) and (5.10) if  ̆μ|n is chosen equal to ˆμ|n; the reader may recognize these as variations of the asymptotic equalities used in the derivation of Akaike’s classic AIC criterion.
+Proposition 3. Let μ ̆ be as before with n0 ≥ 0, and let W1 = N ( μ1, Π1) be a multivariate normal on R
+d. We have, with OA–OC as in (2.23):
+E
+U ,U n ∼ R
+"
+log
+qμ∗ (U)
+q  ̆μ|n (U)
+#
+= EUn∼R
+h
+D (Q μ∗ ∥Q  ̆μ|n )
+i
+=
+1 2
+1
+(1 + (n/n0))2 ( μ∗ − x0)⊤Σ−1
+q (μ∗ − x0) + n
+(n0 + n)2 drq = 1
+n
+dr q
+2 +O
+1
+n2 , (5.9)
+where the second equality holds if n0 > 0. If n0 = 0 (i.e.  ̆μ|n is chosen equal to ˆμ|n) and n > 1 we get:
+E
+U ,U n ∼ R
+h
+n · log qμ∗ (U)/q ˆμ|n (U)
+i
+= EUn∼R
+h
+n · D (Qμ∗ ∥Q ˆμ|n )
+i
+=
+dr q
+2
+. (5.10)
+
+
+26
+We further have:
+E
+Un∼R
+"
+log
+qμ∗ (Un)
+În
+i=1 q  ̆μ|i−1 (Ui )
+#
+=
+n ∑︁
+i=1
+E
+Ui−1∼R
+h
+D (Q μ∗ ∥Q  ̆μ|i−1 )
+i
+= (5.11)
+dr q
+2 log n + 1
+2
+OA (∥x0 − μ∗∥2
+2) + OB (1) ·
+dr q
+2
+.
+E
+Un∼R
+"
+log
+q ˆμ|n (Un)
+qμ∗ (Un)
+#
+= EUn∼R
+h
+n · D (Q ˆμ|n ∥Qμ∗ )
+i
+=
+dr q
+2
+. (5.12)
+E
+Un∼R log
+qμ∗ (Un)
+qW1 (Un) = DΣr (Σq ∥ (nΠ1 + Σq)) + 1
+2
+OC (∥ μ∗ − μ1∥2
+2) = (5.13)
+d
+2 log
+n
+2π
+−1
+2 log det Σq − log w1 ( μ∗) −
+dr q
+2 + o(1).
+5.2. Proof of Theorem1
+Finiteness of DR (Q∥P) is immediate from evaluating the definition.
+UI. (2.6) follows almost immediately from Proposition3, (5.12) applied with model P in the role of Q, i.e. all q’s replaced by p’s and using that ER [log(qμ∗ (Un)/pμ∗ (Un))] = nDR (Qμ∗ ∥Pμ∗ ).
+COND. (2.7) is a direct consequence of (5.3) and (5.4) in Lemma1.
+seq-RIPr. Assume first that Σq − Σp is negative semidefinite. According to Theorem 1 in [10], this implies that the RIPr of Q(U) (i.e. Q restricted to a single outcome) is equal to Pμ∗ (U), i.e. the single element of P with the same mean as Q. This implies that SQ,SEQ-RIP is as in (2.8). Thus, q(Un)/pμ∗ (Un) is an e-variable. The corollary of Theorem 1 of [11] (‘there can be only one e-variable with Q in the numerator and an element P′ of P in the denominator, and if it exists then P′ is the RIPr so q/p is growth-rate optimal’) implies that Pμ∗ (Un) is the RIPr of Q (Un), and hence S(n)
+Q,SEQ-RIP = S(n)
+Q,RIP.
+Now assume Σq − Σp is positive semidefinite. S(n)
+Q,SEQ-RIP = 1 then follows because in this case, using the result for the Bayes marginal distribution (5.2) applied with n = 1, we find that there exists a prior W0 such that pW0 (X) = q(X), namely, W0 = N ( μ∗, (Σq − Σp)). It follows that the RIPr of Q onto P for a single outcome U must be given by this very prior, i.e. Pfq(U) (U) = PW0 (U), and then the corresponding ratio is 1.
+RIPR, Anti-Simple Case. If we set Π0 = Σq −Σp
+n then by positive semidefinitess of Σq − Σp, the prior
+W0 = N ( μ∗, Π0) is well-defined and (5.5) holds and we can conclude (5.7) with prior W1 that puts all
+mass on μ∗ (i.e. on Q). (5.7) implies the result (2.9) and the fact that PW1 is the RIPr.
+5.3. Proof of Theorem2
+Finiteness of DR (Q∥P) is immediate from evaluating the definition. Concerning UI, (2.15) can be obtained from simple algebra from Proposition3, combined with (5.12) and (5.11), the former applied with model P in the role of Q, i.e. all q’s replaced by p’s (evidently it is
+
+
+E-values for exponential families: the general case 27
+still valid then), and using that ER [log(qμ∗ (Un)/pμ∗ (Un))] = nDR (Qμ∗ ∥Pμ∗ ). (2.16) can be obtained similarly from (5.12) and (5.13). As to COND, (2.18) is a direct consequence of Lemma1, (5.4) and (5.3). To prove Part 3, seq-RIPr, we ‘sequentialize’ the reasoning of Theorem1, Part 3: first consider the case that Σq − Σp is negative semidefinite. According to Theorem 1 in [10], this implies that the RIPr of Q  ̆μ|i−1 (Ui) onto CONV(P (Ui)) is an element of P. More specifically, the theorem says it is P  ̆μ|i−1 (Ui), i.e. the element of P with the same mean. This proves the first part of the result. (2.19) then follows by applying (5.11) in Proposition3twice, first directly, with elements of Q, and then again with P in the role of Q, i.e. replacing all q’s by p’s, and then piecing together both equations by simple algebra. Now consider the positive semidefinite case. The fact that S(n)
+ ̆μ,SEQ-RIP = 1 now follows because, at each i, using the result for the Bayes marginal distribution (5.2) applied with n = 1, we find that with the prior W0 = N (  ̆μ|i−1, Σq − Σp), we get q  ̆μ (Ui) = pW0 (Ui). It follows that the sequential RIPr Pfq  ̆μ|i−1 (Ui ) (Ui) must be given by this very prior, i.e. Pfq  ̆μ|i−1 (Ui ) (Ui) = PW0 (Ui), and then the
+corresponding ratio is 1. Since this holds for each i, the result follows. Finally, to prove the anti-simple case for RIPr, all results follow analogously to the RIPr Anti-Simple Case of Theorem1. In particular, (2.20) and (2.21) follow by the same reasoning, but now using case (ii) insteaed of (i) in Lemma1.
+6. Proofs for Section3
+6.1. Preparation for both proofs
+We start with Proposition4, a direct asymptotic analogue of Proposition3, for general exponential families. It will play an analogous role in the proofs. The one (important!) difference to Proposition3 is that now W1 is not required to be Gaussian. Note again the symmetry, now between (6.1) and (6.2).
+Proposition 4. Let Q be a regular exponential family as in Section3. Extend the definition of D (P ˆμ|n ∥Pμ∗ ) as in (B.2), AppendixB.1, so that it is defined on the whole co-domain of ˆμ|n. Further,
+suppose that the first m moments of X under R exist, with m ≥ 3 odd, and ER [X] = μ∗ ∈ Mq. Let W1 be a fixed distribution on Mq with density w that is strictly positive and continuous in a neighborhood of μ∗. If Condition3(‘ plug-in’) holds, then we have:
+E
+Un∼R
+h
+D (Q μ∗ ∥Q  ̆μ|n )
+i
+=1
+n
+dr q
+2 + O n−5/4 so that
+E
+U ,U n ∼ R
+h
+n · log qμ∗ (U)/q  ̆μ|n (U)
+i
+= EUn∼R
+h
+n · D (Qμ∗ ∥Q  ̆μ|n )
+i
+=
+dr q
+2 + O (n−1/4) (6.1)
+and EUn∼R
+"
+log
+qμ∗ (Un)
+În
+i=1 q  ̆μ|i−1 (Ui )
+#
+=
+n ∑︁
+i=1
+E
+Ui−1∼R
+h
+D (Q μ∗ ∥Q  ̆μ|i−1 )
+i
+=
+dr q
+2 log n + O (1).
+We further have:
+E
+Un∼R
+"
+log
+qμ∗ (Un)
+q ˆμ|n (Un)
+#
+= −EUn∼R
+h
+n · D (Q ˆμ|n ∥Qμ∗ )
+i
+≤−
+dr q
+2 + o(1), (6.2)
+
+
+28
+where the inequality becomes an equality if further Condition2(‘ UI≥’) holds. And finally, if R has density r and for some ε > 0, ER | log qμ∗ (U)/r (U)|1+ε < ∞, then
+E
+Un∼R log
+qμ∗ (Un)
+qW1 (Un) = d
+2 log
+n
+2π
+−1
+2 log det Σq ( μ∗) − log w1 ( μ∗) −
+drq ( μ∗)
+2 + o(1). (6.3)
+Proof. The proposition arises as an immediate corollary of Lemma3, which provides one-sided versions of the statements above. It is stated in AppendixB.1and proved in AppendixB.3. To prove the corollary, take α = 1/4 in Lemma3and simply piece together the right equations in each case.
+6.2. Proof of Theorem3
+Part 1, UI. is proved in exactly the same way as the UI proof for the Gaussian case, Theorem1, using Proposition4instead of Proposition3. As to Part 2, COND, With Z := n1/2 ˆμ|n defined as in the proof of Theorem1in the Gaussian case, we can write
+S(n)
+Q,COND = q (Un | Z)
+p(Un | Z) = q(Un)
+pμ∗ (Un) ·
+p◦
+μ∗ (Z)
+q◦(Z) ,
+where p◦ and q◦ are the densities, under P and Q respectively, of Z = √
+n ˆμ|n. Taking logarithms and expectation this gives
+E
+R [log S (n)
+Q,COND] = nDR (Q∥Pμ∗) + ER
+h
+log p◦
+μ∗ (Z)/q◦(Z)
+i
+. (6.4)
+The difference to the Gaussian case is that p◦
+μ∗ and q◦ are now not Gaussian densities, but rather the densities or mass functions of two distributions which, by the Central Limit theorem (CLT), both converge to a normal distribution. This already suggests that the desired result (3.4) might hold, but the convergence implied by the standard CLT is too weak: we need convergence, including rates, of the densities (not just the distributions) to the density of a normal. This is provided by a version of the multivariate local central limit theorem due to Bhattacharya and Rao [3]. The actual proof, bounding the final term in (6.4) and thereby giving (3.4), follows by Lemma6provided in AppendixB, which crucially uses the results from [3] and combines them with exponential concentration bounds. As to Part 3, seq-RIPr, the simple case goes precisely as in the Gaussian case of Theorem1. It remains to prove (3.6) in the strict anti-simple case. Since Σq − Σp ( μ∗) is now assumed positive definite, it follows from [10, Proposition 2] that q(Un)/pμ∗ (Un) is not an e-variable. Yet Pμ∗ achieves minμ∈Mp D (Q∥Pμ). For such a combination, Theorem 1 in [11] gives that the infimum over all distributions P ∈ CONV(P (U)) of D (Q(U) ∥P(U)) lies outside P (U), which implies that
+E
+Q log q(U)/pfq(U) (U) = EQ log q(U)/pμ∗ (U) − ε (6.5)
+for some ε > 0. The result then follows by the definition (1.3). Finally, as to RIPr, the anti-simple case: (3.7) is based on the following:
+Lemma 2. In the setting of Theorem3, the anti-simple case (i.e. Σq − Σp ( μ∗) is positive semidefinite), we have, with W0,(n) as in the theorem statement: D (Q (Un) ∥PW0,(n) (Un))] ≤ nD (Q||Pμ∗ ) −
+D GAUSS (Σq Σ−1
+p ) + o(1).
+
+
+E-values for exponential families: the general case 29
+We place the proof in AppendixB.5. Now note that
+E
+Q
+h
+log S (n)
+Q,COND
+i
+≤ EQ
+h
+log S (n)
+Q,RIP
+i
+= inf
+W
+D Q (Un) PW (Un) ≤ D Q (Un) PW0,(n) (Un) ,
+where the first inequality follows from (1.8), the infimum is over all priors on Mp and the equality follows from Theorem 1 in [11] (see also underneath (1.2)). The second inequality is immediate. Together with the equality it implies (3.7). The first equality together with (3.4) (use R = Q) implies that, if Condition1(‘ COND’) holds, then (3.7) holds with equality.
+6.3. Proof of Theorem4
+Part 1, UI is proved in exactly the same way as the UI proof for the Gaussian case, using Proposition4 instead of Proposition3. Part 2, COND, follows in exactly the same way as the corresponding result in Theorem3. Part 3, seq-RIPr, the simple case, follows again in exactly the same way as the corresponding proof for the Gaussian case, seq-RIPr in Theorem2, with all applications of Proposition3 replaced by corresponding applications of Proposition4. As to Part 3, seq-RIPr, the anti-simple case, (3.16) follows by extending the proof of (3.6) with straightforward continuity arguments; details are in AppendixB.6. Finally, for Part 4, RIPr, to prove (3.17), we equip Mp with the same prior W1 as M
+q (with density set to 0 on the set Mp \ Mq). We then use the familiar Laplace approximation of the Bayesian marginal likelihood given by (6.3), both for Q and P. Thus, we apply these bounds twice, both times with R = Q and then first with qW1 and qμ∗ and then with pW1 and pμ∗ respectively; the moment regularity condition automatically holds, because it reduces to the expectation under Q of an expression that is a quadratic form of X, and Q is a member of an exponential family with sufficient statistic X, implying that such expectations are finite. This gives that
+E
+Q log
+qW1 (Un)
+pW1 (Un) = nD (Qμ∗ ∥Pμ∗ ) + EQ log
+qW1 (Un)
+qμ∗ (Un) + log
+pμ∗ (Un)
+pW1 (Un)
+= nD(Qμ∗ ∥Pμ∗) + 1
+2 log det Σq ( μ∗)
+det Σp ( μ∗) + d
+2−
+dqp (μ∗)
+2 + o(1),
+where in the second equality we used (6.3). The result follows by recognizing that the latter three terms together are equal to −DGAUSS (ΣqΣ−1
+p ).
+7. Implications, conclusions and future work
+It is of interest to determine when a sequence of e-variables (S(n) )n≥1 constitutes an e-process, since in that case we can use it not just in optional continuation but also in optional stopping scenarios. While S (n)
+SEQ-RIP and S (n)
+UI provide e-processes by construction, e-processness is not so clear for SCOND and SRIP. In AppendixEwe provide the definition of e-process and a proposition that allows us to identify several P and Q for which they are not e-processes; on the other hand, we also identify cases in which they do provide an e-process. As discussed there, one may informally conjecture that with the conditional and RIPr e-variables we ‘almost’ obtain an e-process, leading perhaps to ‘approximate’ handling of optional stopping. Investigating further and formalizing ‘approximate optional stopping’ (perhaps based on asymptotic anytime-validity [27]) is a main avenue for further research.
+
+
+30
+8. Acknowledgements
+Peter Grünwald is also affiliated with the Mathematical Institute of Leiden University. We had substantial, generous and much appreciated help from Michael Lindon (Netflix) with an earlier version of Theorem 1, Part 3. Shaul K. Bar-Lev and Gérard Letac pointed us towards the Landau family (see discussion underneath Condition3). We would also like to thank Tyron Lardy for various discussions. This work is partly supported by the China Scholarship Council State Scholarship Fund Nr.202006280045.
+Supplementary Material
+This supplementary material contains Appendices A to D, which include the proofs of technical lemmas and propositions and contain additional details for Section 3 and Section 6.
+References
+[1]B AR-LEV, S. K. (2023). The Exponential Dispersion Model Generated by the Landau Distribution —A Comprehensive Review and Further Developments. Mathematics 11 4343.https://doi.org/10.3390/ math11204343
+[2]B ARNDORFF-NIELSEN, O. (2014). Information and exponential families: in statistical theory. John Wiley. https://doi.org/10.1002/9781118857281 [3]B HATTACHARYA, R. N. and RAO, R. R. (1976). Normal approximation and asymptotic expansions. John Wiley.https://doi.org/10.1137/1.9780898719895.ch1 [4]B ISHOP, C. (2006). Pattern recognition and machine learning. Springer.https://doi.org/10.5555/1162264 [5]B ROWN, L. D. (1986). Fundamentals of Statistical Exponential Families with Applications in Statistical Decision Theory. Lecture Notes-Monograph Series 9 i–279.https://doi.org/10.1214/lnms/1215466757 [6]D AWID, A. P. (1984). Present position and potential developments: Some personal views: statistical theory, the prequential approach. J. Roy. Statist. Soc. Ser. A 147 278–290.https://doi.org/10.2307/2981683
+[7]E FRON, B. (2022). Exponential families in theory and practice. IMS Textbooks. Cambridge University Press. https://doi.org/10.1017/9781108773157 [8]G RÜNWALD, P. (2007). The minimum description length principle. MIT press.https://doi.org/10.7551/ mitpress/4643.001.0001 [9]G RÜNWALD, P. and DE ROOIJ, S. (2005). Asymptotic log-loss of prequential maximum likelihood codes. In COLT 652–667. Springer.https://doi.org/10.1007/11503415_44 [10]G RÜNWALD, P., LARDY, T., HAO, Y., LEV, S. K. B. and DE JONG, M. (2024). Optimal E-Values for Exponential Families: the Simple Case. arXiv preprint arXiv:2404.19465.https://doi.org/10.48550/arXiv. 2404.19465 [11]G RÜNWALD, P., DE HEIDE, R. and KOOLEN, W. (2024). Safe Testing. J. R. Stat. Soc. Ser. B. Stat. Methodol. https://doi.org/10.1093/jrsssb/qkae011 [12]H AO, Y., GRÜNWALD, P., LARDY, T., LONG, L. and ADAMS, R. (2024). E-values for k-Sample Tests with Exponential Families. Sankhya A 86 596–636.https://doi.org/10.1007/s13171-024-00339-9 [13]H ENDRIKSEN, A., DE HEIDE, R. and GRÜNWALD, P. (2021). Optional Stopping with Bayes Factors: A Categorization and Extension of Folklore Results, with an Application to Invariant Situations. Bayesian Anal. 16 961 – 989.https://doi.org/10.1214/20-BA1234 [14]K OTŁOWSKI, W. and GRÜNWALD, P. (2011). Maximum Likelihood vs. Sequential Normalized Maximum Likelihood in On-line Density Estimation. In COLT. Proc. Mach. Learn. Res. (PMLR) 19 457–476.https: //proceedings.mlr.press/v19/kotlowski11a.html [15]L ARDY, T., GRÜNWALD, P. and HARREMOËS, P. (2024). Reverse Information Projections and Optimal E-statistics. IEEE Trans. Inform. Theory 70 7616-7631.https://doi.org/doi:10.1109/TIT.2024.3444458 [16]L ARSSON, M., RAMDAS, A. and RUF, J. (2024). The numéraire e-variable and reverse information projection. arXiv preprint arXiv:2402.18810.https://doi.org/10.48550/arXiv.2402.18810
+
+
+E-values for exponential families: the general case 31
+[17]L INDON, M., HAM, D. W., TINGLEY, M. and BOJINOV, I. (2024). Anytime-Valid Linear Models and Regression Adjusted Causal Inference in Randomized Experiments. arXiv preprint arXiv:2210.08589. [18]P ÉREZ-ORTIZ, M. F., LARDY, T., DE HEIDE, R. and GRÜNWALD, P. (2024). E-Statistics, Group Invariance and Anytime Valid Testing. Ann. Statist. 52 1410–1432.http://dx.doi.org/10.1214/24-AOS2394 [19]R AMDAS, A., GRÜNWALD, P., VOVK, V. and SHAFER, G. (2023). Game-theoretic statistics and safe anytime-valid inference. Statist. Sci. 38 576–601.https://doi.org/10.1214/23-STS894 [20]S HAFER, G. (2021). Testing by betting: a strategy for statistical and scientific communication (with discussion and response). J. Roy. Statist. Soc. Ser. A 184 407–478.https://doi.org/10.1111/rssa.12647 [21]T SE, T. and DAVISON, A. C. (2022). A note on universal inference. Stat 11 e501.https://doi.org/10.1002/ sta4.501 [22]T URNER, R. J., LY, A. and GRÜNWALD, P. D. (2024). Generic e-variables for exact sequential k-sample tests that allow for optional stopping. J. Statist. Plann. Inference 230 106116.https://doi.org/10.1016/j.jspi. 2023.106116 [23]V OVK, V. and WANG, R. (2021). E-values: Calibration, combination and applications. Ann. Statist. 49 17361754.https://doi.org/10.1214/20-AOS2020 [24]W ANG, Q., WANG, R. and ZIEGEL, J. (2022). E-backtesting. arXiv preprint arXiv:2209.00991.https: //dx.doi.org/10.2139/ssrn.4206997 [25]W ASSERMAN, L., RAMDAS, A. and BALAKRISHNAN, S. (2020). Universal inference. Proc. Natl. Acad. Sci. USA 117 16880–16890.https://doi.org/10.1073/pnas.1922664117 [26]W AUDBY-SMITH, I. and RAMDAS, A. (2024). Estimating means of bounded random variables by betting. J. R. Stat. Soc. Ser. B. Stat. Methodol. 86 1–27. With Discussion.https://doi.org/10.1093/jrsssb/qkad009 [27]W AUDBY-SMITH, I., ARBOUR, D., SINHA, R., KENNEDY, E. H. and RAMDAS, A. (2024). Time-uniform central limit theory and asymptotic confidence sequences. Ann. Statist. 52 2613–2640.https://doi.org/10. 1214/24-aos2408MR4842820
+Supplementary Material
+Appendix A: Proofs underlying Theorem1and2: Gaussian case
+Proof of Proposition3. We first prove (5.12). The first equality follows by simple algebra (it is also a consequence of the robustness property of exponential families, see Lemma3later on). We first establish that the first expression is equal to the third. Filling in the densities we find:
+E
+R
+h
+log q ˆμ|n (Un)/qμ∗ (Un)
+i
+=1
+2
+n ∑︁
+i=1
+E
+R
+h
+( Xi − μ∗)⊤Σ−1
+q ( Xi − μ∗)
+i
+−1
+2
+n ∑︁
+i=1
+E
+R
+h
+( Xi − ˆμ|n)⊤Σ−1
+q ( Xi − ˆμ|n)
+i .
+We have ER [Xi − μ∗] = 0 and COVR (Xi − μ∗, Xi − μ∗) = Σr . By the property of expectation of a quadratic form, we get that for the i-th term in the first sum above that it is equal to TR(Σr Σ−1
+q ). It is
+easy to show ER [Xi − ˆμ|n] = 0 and COVR ( Xi − ˆμ|n, Xi − ˆμ|n) = 1 − 1
+n Σr . Again by the property of
+expectation of a quadratic form, we thus get for the i-th term in the second sum:
+E
+Xn∼R
+h
+( Xi − ˆμ|n)⊤Σ−1
+q ( Xi − ˆμ|n)
+i
+= TR 1 − 1
+n
+Σ
+r Σ−1
+q,
+
+
+32
+so that the right-hand side of (5.12) becomes 1
+2 TR(Σr Σ−1
+q ).
+We proceed to prove (5.9). The first equality is straightforward. Filling in the densities, we find that it is equal to
+1
+2 EX,Xn∼R
+h
+( X −  ̆μ|n)⊤Σ−1
+q ( X −  ̆μ|n)
+i
+−1
+2 ER
+h
+(X − μ∗)⊤Σ−1
+q (X − μ∗)
+i .
+We already showed the second term is equal to (1/2)TR(Σr Σ−1
+q ). As to the first term, it is easy to
+show ER [X −  ̆μ|n] = n0 (μ∗−x0 )
+n0+n and COVR ( X −  ̆μ|n, X −  ̆μ|n) = 1 + n
+(n0+n)2 Σr . By the property of
+expectation of a quadratic form, we have
+E
+X∼R
+h
+( X −  ̆μ|n)⊤Σ−1
+q ( X −  ̆μ|m)
+i
+=
+n2
+0
+(n0 + n)2 ( μ∗ − x0)⊤Σ−1
+q (μ∗ − x0)
++ TR 1 + n
+(n0 + n)2 Σr Σ−1
+q,
+and from this the second equality in (5.9) follows. The third equality is immediate, and so is (5.10). (5.11) follows by repeatedly applying, for each i, the first equality in (5.9) and then the second equality in (5.9), both with i in the role of n. We now prove (5.13). If W1 = N ( μ1, Π1) is a normal prior, we find
+DR (Qμ∗ (Z) ∥QW1 (Z)) = DΣr (Σq ∥ (nΠ1 + Σq)) + 1
+2 ( μ∗ − μ1)⊤ (Π1 + Σq/n)−1 ( μ∗ − μ1) (A.1)
+by combining (5.2) and (5.1) above (setting P in (5.1) to QW (Z)) . This gives the first equality in (5.13). In combination with (5.4) and (5.10), which we already proved, and using that
+− log w1 ( μ∗) = 1
+2 (μ∗ − μ1)⊤Π−1
+1 (μ∗ − μ1) + d
+2 log 2π + 1
+2 log det Π1,
+we get the second equality, by plugging it into (A.1) directly; the o(1) derives from Π1 + Σq
+n → Π1 as n increases.
+Proof of (2.24). We have:
+E
+Un∼R [log S (n)
+HAAR] = (n − 1)DΣr (Σq ∥Σp)+
+E
+X1∼R EX2,...,Xn log
+qW1 |X1 ( X2, . . . , Xn)
+qμ∗ ( X2, . . . , Xn) − log
+pW0 |X1 ( X2, . . . , Xn)
+pμ∗ ( X2, . . . , Xn)
+= ER −DΣr (Σq ∥ ((n − 1)Σq + Σq)) − 1
+2 ( μ∗ − X1)⊤ (Σq + Σq/(n − 1))−1 ( μ∗ − X1) +
+E
+R DΣr (Σp ||((n − 1)Σp + Σp)) + 1
+2 ( μ∗ − X1)⊤ (Σp + Σp/(n − 1))−1 ( μ∗ − X1) +
+(n − 1)DΣr (Σq ∥Σp) (A.2)
+= −DΣr (Σq ∥nΣq) − 1
+2 TR(Σr (Σq + Σq/(n − 1))−1)
+
+
+E-values for exponential families: the general case 33
++ DΣr (Σp ||nΣp) + 1
+2 TR(Σr (Σp + Σp/(n − 1))−1) + (n − 1)DΣr (Σq ∥Σp)
+= −1
+2 TR(Σr ( (nΣq)−1 − Σ−1
+q )−1
+2 TR(Σr (Σq · n/(n − 1))−1)
++1
+2 TR(Σr ( (nΣp)−1 − Σ−1
+p )+1
+2 TR(Σr (Σp · n/(n − 1))−1) + (n − 1)DΣr (Σq ∥Σp)
+= (n − 1)DΣr (Σq ∥Σp),
+where for (A.2) we used (5.13) in Proposition3, and in the final equation we used definition (2.3).
+Appendix B: Proofs underlying Theorem3and4: the general case
+B.1. Definitions for and statement of Lemma3
+Condition2and Lemma3refer to the KL divergence D (P ˆμ|n ∥Pμ∗ ), which is undefined if ˆμ|n ∉ Mp (which may happen even for the simple Bernoulli model if ˆμ|n ∈ {0, 1}). It is highly convenient to extend its definition to such cases, and this can be done in a straightforward manner. We first set  ̄Mp to be the union of the mean-value parameter space Mp of P and the set of values that ˆμ|n = n−1 Í
+Xi can take. For all ˆμ|n ∈  ̄Mp \ Mp, we first set
+p ˆμ|n (Un)
+pμ∗ (Un) := sup
+μ∈Mp
+pμ (Un)
+pμ∗ (Un) , (B.1)
+and we note that then, in terms of the canonical parameterization, by (3.1), with β∗ the canonical parameter corresponding to μ∗ and Xi = (t1 (Ui), . . . , td (Ui))⊤,
+log
+p ˆμ|n (Un)
+pμ∗ (Un) = sup
+β∈Bp
+(β − β∗)⊤
+n ∑︁
+i=1
+Xi − log(Z p ( β)/Z p ( β∗)),
+which can be written as a function of ˆμ|n. Therefore, for ˆμ|n ∈  ̄Mp \ Mp, we can unambiguously set
+D (P ˆμ|n ∥Pμ∗ ) := 1
+n
+log
+p ˆμ|n (Un)
+pμ∗ (Un) , (B.2)
+since the expression on the right only depends on Un through ˆμ|n. The rationale underlying definition (B.2) is that (B.2) holds any way as long as ˆμ|n ∈ Mp. This is a well-known result, with straightforward proof, sometimes referred to as the KL robustness property for exponential families [8, Chapter 19]. We have thus extended it to hold for all ˆμ|n ∈  ̄Mp by definition (B.1), and thereby already proved the first statement in Lemma3below. We only give the remaining results in the lemma under existence of an odd number of moments m under R, since, for even m′, if X has m′ moments then it also has m = m′ − 1 moments and due to certain cancellations, the result one obtains with m′ in the proof would not be stronger than what one obtains for m.
+
+
+34
+Lemma 3. First, extend the definition of D (P ˆμ|n ∥Pμ∗ ) as above. Then the robustness property for exponential families holds for all Un ∈ Un:
+nD (P ˆμ|n ∥Pμ∗ ) = log
+p ˆμ|n (Un)
+pμ∗ (Un) . (B.3)
+Suppose that the first m moments of X under R exist, with m ≥ 3 odd, and ER [X] = μ∗. Fix 0 < α < 1/2. Let Σp be a general d × d positive definite matrix. We have:
+E
+R 1∥ ˆμ|n −μ∗ ∥2 ≥nα−1/2 · n · 1
+2 ( ˆμ|n − μ∗)⊤Σ−1
+p ( ˆμ|n − μ∗) = O n− (m−2) α−1/2 , (B.4)
+E
+R n· 1
+2 ( ˆμ|n − μ∗)⊤Σ−1
+p ( μ∗) ( ˆμ|n − μ∗) =
+TR(Σr Σ−1
+p (μ∗))
+2
+. (B.5)
+Next, let P be a regular exponential family with μ∗ ∈ Mp. Fix c > 0 and let M′ ⊂ Mp be an open neighborhood of μ∗. Let (W0,(n) )n∈N be any sequence of distributions on Mp with continuous densities
+w0,(n) such that for every n, w0,(n) ( μ) > c for all μ ∈ M′. We have:
+E
+R
+"
+1∥ ˆμ|n −μ∗ ∥2 ≥nα−1/2 · log
+pμ∗ (Un)
+pW0,(n) (Un)
+#
+≤ O (n− (m−2) α−1/2), (B.6)
+and, if W0,(n) is as above and for some ε > 0, ER | log pμ∗ (U)/r (U)|1+ε < ∞, then
+E
+R 1∥ ˆμ|n −μ∗ ∥2 ≥nα−1/2 · log
+pW0,(n) (Un)
+pμ∗ (Un) ≤ O (n− αm· (1∧ε ) ). (B.7)
+Now let  ̆μ|n be defined as in (2.12), with n0 > 0. If (c) in Condition3(‘ plug-in’) holds (with P· in the role of Q·), then
+E
+R
+h
+1∥ ˆμ|n −μ∗ ∥2 ≥nα−1/2 · n · D (Pμ∗ ∥ P  ̆μ|n )
+i
+= O (n−mα+1/2). (B.8)
+With
+f (n) := ER 1∥ ˆμ|n −μ∗ ∥2<nα−1/2 · n · 1
+2 ( ˆμ|n − μ∗)⊤Σ−1
+p ( μ∗) ( ˆμ|n − μ∗) ,
+we have, with W now a fixed distribution on Mp with density w that is positive and continuous in a neighborhood of μ∗,
+E
+R
+h
+1∥ ˆμ|n −μ∗ ∥2<nα−1/2 · n · D (P ˆμ|n ∥ Pμ∗ )
+i
+= f (n) + O nα−1/2 , (B.9)
+E
+R
+h
+1∥ ˆμ|n −μ∗ ∥2<nα−1/2 · n · D (Pμ∗ ∥ P  ̆μ|n )
+i
+= f (n) + O nα−1/2 , (B.10)
+E
+R
+"
+1∥ ˆμ|n −μ∗ ∥2<nα−1/2 · log
+p ˆμ|n (Un)
+pW (Un)
+#
+(B.11)
+=d
+2 log
+n
+2π
+− log w( μ∗) − 1
+2 log det Σp ( μ∗) + o(1).
+
+
+E-values for exponential families: the general case 35
+B.2. Preparatory results for Lemma3and Lemma2
+Throughout the proofs for Lemma3and Lemma2and Theorem3, Part 3 (AppendixB.4), we will use the following additional notations and abbreviations:
+μ∗ = 0, Σp := Σp (0), Σq := Σq (0), K := (Σq − Σp)−1, J ( μ) := Σp ( μ)−1, J := J (0) = Σ−1
+p . (B.12)
+Note that the first equation, μ∗ = 0 — which will allow substantially shortening equations — is really a definition rather than a notation; but we can enforce this without loss of generality — since μ∗ is fixed throughout all proofs, we can get the same result as for 0 with arbitrary μ∗ simply by adding μ∗ as a constant to each outcome X and transforming the resulting equations. Or, alternatively, one may modify all equations by putting in ‘−μ∗’ at the appropriate places and note that nothing in the derivation changes. We will make repeated use of the following basic results whose proof can be found in, for example, [9].
+Lemma 4. Fix n0 ≥ 0 and x0 ∈ R. Let X, X1, . . . be (scalar-valued) i.i.d. random variables, define
+μ ̆ |n := (n0 · x0 +
+n Í
+i=1
+Xi)/(n + n0). Suppose the first m ∈ N moments of X exist and let δ > 0. Then
+Pr(|μ ̆n − E[X] | ≥ δ) = O (n−⌈ m
+2 ⌉ δ−m). As a consequence, via the union bound, for fixed d, our ddimensional regularized MLE  ̆μ|n also satisfies Pr(∥  ̆μ|n − μ∗ ∥2 ≥ δ) = O (n−⌈ m
+2 ⌉δ−m).
+Lemma 5. Consider the setting of Lemma4. If the first m moments of (scalar) X exist, then E μ ̆ |n − E[X] m = O (n−⌈ m
+2 ⌉).
+We also need the following two propositions:
+Proposition 5. Let 0 < α < 1/2 and fix c > 0. Then there is a constant C > 0 such that for all large n, for all μ = ( μ1, . . . , μd), μ′ = ( μ′
+1, . . . , μ′
+d) with (∥ μ∥2 ∨ ∥ μ′ ∥2) < nα−1/2, we have
+D(Pμ′ ∥Pμ) − 1
+2 (μ − μ′)⊤J(μ − μ′) ≤ C
+∑︁
+i, j,k∈[d]
+|μi − μ′
+i | · |μ j − μ′
+j | · |μk − μ′
+k | ≤ Cn3α−3/2.
+Proof. Note that for all n large enough, with An := {μ : ∥ μ∥2 < nα−1/2} and A′
+n := {μ : ∥ μ∥2 <
+nα−1/2}, we have that An ∪ A′
+n ∈ Mp. A third order Taylor-expansion of D (P0 ∥Pμ) in terms of μ then gives that:
+D(Pμ′ ∥Pμ) = 1
+2 (μ − μ′)⊤J(μ − μ′) + O ©
+«
+∑︁
+i, j,k∈[d]
+|Ci, j,k ||μi − μ′
+i | · |μ j − μ′
+j | · |μk − μ′
+k |a
+®
+¬
+,
+where Ci, j,k are the corresponding third-order derivatives. But since, for large n, An is a closed set in the interior of Mp, these derivatives are bounded; the result follows.
+Proposition 6. We have:
+sup
+Un:∥ ˆμ|n ∥2<nα−1/2
+D (P0 ∥P ˆμ|n ) − D (P0 ∥P  ̆μ|n ) = O (nα−3/2).
+
+
+36
+Proof. Define f ( μ) := D (P0 ∥Pμ) and g( μ) := ∇ f ( μ). A first-order Taylor approximation gives that
+D (P0 ∥P  ̆μ|n ) = D (P0 ∥P ˆμ|n ) + (  ̆μ|n − ˆμ|n)⊤g( μ′) = D (P0 ∥P ˆμ|n ) + n0
+n + n0
+(x0 − ˆμ|n)⊤ · g( μ′), (B.13)
+where μ′ is some point with ∥ μ′ ∥2 < nα−1/2, and the second equation is straightforward rewriting.
+We can write g( μ) = (g1 ( μ), . . . , gd ( μ))⊤ with g j ( μ) = (∂/∂ μ j ) f ( μ). Taylor approximating g j ( μ) itself gives for each j = 1..d:
+g j ( μ′) = g j (0) + ∂
+∂ μ1
+g j (μ◦
+[ j]), . . . ,
+∂
+∂ μd
+g j (μ◦
+[ j])
+⊤
+μ′
+for d points μ◦
+[ j] = (μ◦
+[ j],1, . . . , μ◦
+[ j ],d)⊤, where, for j = {1, . . . , d}, we have ∥ μ◦
+[ j ] ∥2 < n1/2− α. But
+since ∂
+∂μ j
+g j ( μ) = ∂2
+∂μ2
+j
+f ( μ) and for all large n, the set {μ : ∥ μ∥2 < n1/2−α} ∈ Mp, these d second
+derivatives are uniformly bounded. Also, g(0) = 0 since the KL divergence is minimized at 0 and, for exponential families, is a smooth function in the mean-value parameters. It follows that the final term in (B.13) is O (n−1nα−1/2), and the result follows.
+B.3. Proof of Lemma3
+Throughout the proof, we adopt the notations of (B.12). (B.3) was already proven. (B.11) is a wellknown result, see for example [8, Chapter 8]. (B.5) is also known; basically, the expectation on the right can be computed exactly like we did in the proof of Proposition3, yielding the desired result.
+Proof of (B.4). In a variation of the proof of Markov’s inequality, we can write the left-hand side, for fixed γ > 0, as
+E
+R
+"
+1∥ ˆμ|n ∥2 ≥nα−1/2 ·
+( ˆμ⊤
+|nΣ−1
+p ˆμ|n)γ+1
+( ˆμ⊤
+|nΣ−1
+p ˆμ|n)γ
+#
+≤ C · ER
+" ( ˆμ⊤
+|nΣ−1
+p ˆμ|n)γ+1
+nγ (2 α−1)
+#
+= C · ER
+" ( ˆμ⊤
+|nΣ−1
+p ˆμ|n)m/2
+nm α − m/2−2 α+1
+#
+= O n−mα+m/2+2α−1 · n− (m+1)/2
+= O n−mα+2α−3/2 = O n− (m−2) α−3/2
+for some constant C > 0, where we used that Σ−1
+p is positive definite and fixed, independent of ˆμ|n. In the second line we set γ = m/2 − 1, using that the m-th moment of the expectation exists, and then again the fact that Σ−1
+p is positive definite and Lemma5, using that m is odd. (B.4) follows by multiplying left- and right-hand side by n.
+Proof of (B.6). Assume without loss of generality that n is large enough so that An := {μ : ∥ μ∥2 ≤
+n−1/2} is contained in Mp and for some constant c > 0, w (0),n ( μ) ≥ c for all μ ∈ An. Then
+− log
+∫
+pμ (Un)w0,(n) ( μ)d μ
+p0 (Un) ≤ − log
+∫
+1An · minμ′ ∈ An
+pμ′ (Un) w0,(n) ( μ)d μ
+p0 (Un) (B.14)
+= max
+μ ∈ An
+− log
+pμ (Un)
+p0 (Un) − log W0,(n) (An) = n · max
+μ ∈ An
+f ( ˆμ|n, μ) + O
+d
+2 log n ,
+
+
+E-values for exponential families: the general case 37
+where
+f ( μ◦, μ) = D (Pμ◦ ∥Pμ) − D (Pμ◦ ∥P0),
+and we used the robustness property of exponential families (B.3) in the final step. We now move to the canonical parameterization to further analyze the function f . Let βμ be the function mapping mean-value parameter vector μ to the corresponding canonical parameter vector. For general μ◦ ∈ Mp, we can write
+∇μ f (μ◦; μ) = ∇μ D(Pμ◦ ∥PCAN
+βμ ) − D (Pμ◦ ∥P0) =
+∇μ −( βμ − β0)⊤ μ◦ + log Z ( βμ) = J ( μ) · ( μ − μ◦),
+which can be found by the fact that J ( μ) is the matrix of partial derivatives of βμ as a function of μ, and that μ is the gradient of log Z ( β), and using the chain rule of differentiation. A first order Taylor approximation of f ( ˆμ|n, μ) around μ = 0, and then bounding its value on the set {μ : || μ||2 ≤ n−1/2}, now gives:
+n · f ( ˆμ|n, μ) = − nμ⊤J ( μ′) · ( μ′ − ˆμ|n)
+= − nμ⊤J ( μ′)c μ + nμ⊤J ( μ′) · ˆμ|n ≤ nμ⊤J ( μ′) · ˆμ|n
+=O (nμ⊤ · ˆμ|n) = O (n · ∥ μ∥2 · ∥ ˆμ|n ∥2) = O (√
+n · ∥ ˆμ|n ∥2),
+for μ′ = cμ, for some c ∈ [0, 1]. Here we used that the maximum eigenvalue of J ( μ′) is bounded away from 0 since μ is inside a compact set in the interior of the parameter space, and we used CauchySchwartz.
+This gives that (B.14) is O (√
+n · ∥ ˆμ|n ∥2 + (d/2) log n). On the set with ∥ ˆμ|n ∥2 ≥ nα−1/2, we can
+weaken this to give that (B.14) is O (n · ∥ ˆμ|n ∥2
+2). We can now bound this further using (B.4) from Lemma3, and the result follows.
+Proof of (B.7). Let An denote the event that ∥ ˆμ|n − μ∗ ∥2 ≥ nα−1/2. We have, with W = W0,(n) :
+E
+R 1An · log
+pW (Un)
+pμ∗ (Un) = ER 1An · log
+pW (Un)
+r (Un) + ER 1An · log
+r (Un)
+pμ∗ (Un) . (B.15)
+By Lemma4we have R(An) = O (n(1/2− α)m · n−(m+1)/2 = O (n− αm−1/2), which we use to further bound the first term by
+R(An) · ER 1An · log
+pW (Un | An)
+r (Un | An) | An + R(An) log
+PW (An)
+R(An) ≤
+R(An) log(1/R(An)) = O (n−αm),
+where the penultimate inequality follows by Jensen and the fact that PW (An) ≤ 1. The second term in (B.15) can be bounded by Hölder’s inequality, for arbitrary ε > 0, as
+(R(An)) ε /(1+ε ) · ER log
+r (Un)
+pμ∗ (Un)
+1+ε ! 1/(1+ε )
+= O (n(− αm−1/2) ε ),
+
+
+38
+and it can be seen that both terms in (B.15) go to 0 with increasing n. The result follows.
+Proof of (B.8). Fix A > 0 as in Condition3(‘ plug-in’) with P in the role of Q. Define E j = {μ ∈ M ̄ p : ∥ μ∥2 ∈ [ A + j − 1, A + j]}. With α = n0/(n + n0), we have:
+E
+R
+h
+1∥ ˆμ|n −μ∗ ∥2 ≥ A · D (Pμ∗ ∥P  ̆μ|n )
+i
+≤
+∑︁
+j ∈N
+R( ˆμ|n ∈ E j ) max
+ˆμ|n ∈ E j
+D (Pμ∗ ∥P(1− α) ˆμ|n+αx0 )
+(a=)
+∑︁
+j ∈N
+R( ˆμ|n ∈ E j )O (( A + j )m−s) ≤
+∑︁
+j ∈N
+R ∥ ˆμ|n ∥2 ≥ A + j − 1) · O (( A + j)m−s)
+(b=)
+∑︁
+j ∈N
+O n−⌈m/2⌉ · ( A + j − 1)−m · ( A + j )m−s = O (n−⌈m/2⌉ ) ·
+∑︁
+j ∈N
+j −s (=c) O (n−m/2−1/2),
+where (a) follows from Part (c) of Condition3, (b) follows from Lemma4, and (c) follows from the assumption s > 1 in Part (c) of Condition3, and we use that m is odd. It follows that
+E
+R
+h
+1∥ ˆμ|n −μ∗ ∥2 ≥ A · D (Pμ∗ ∥P  ̆μ|n )
+i
+= O (n−m/2−1/2). (B.16)
+We now show how (B.16) implies the result. A second order Taylor approximation gives:
+E
+R
+h
+1∥ ˆμ|n ∥2 ≥nα−1/2 · nD (Pμ∗ ∥ P  ̆μ|n )
+i
+≤ER
+"
+1
+nα−1/2 ≤ ∥ ˆμ|n ∥2 ≤ A
+1 2
+n sup
+μ:∥μ∥2≤ A
+n ˆμ|n + n0x0
+n + n0
+⊤
+J (μ) nμ + n0x0
+n + n0
+!!#
++
+E
+R
+h
+1∥ μ ∥2> A · nD (Pμ∗ ∥P  ̆μ|n )
+i .
+The second term is, from the above, O (n1/2−m/2). The first term can be bounded further, using that the supremum over μ is on a bounded set in the interior of the parameter space, so that the eigenvalues of J (μ) are all bounded on this set, and using again Lemma4, by
+O (n · A2 R(nα−1/2 ≤ ∥ ˆμ|n ∥2 ≤ A) = O n · R(∥ ˆμ|n ∥2 ≥ nα−1/2)
+= O (n · n−⌈m/2⌉ n−m( α−1/2) ) = O (n−mα+1/2).
+The result follows.
+Proof of (B.9) and (B.10). We first prove (B.9). Combining Proposition6with the first inequality in Proposition5(in which we bound | ˆμi | by nα−1/2), we find that, absorbing d-factors into the O (·)notation:
+E
+h
+1∥ ˆμ|n ∥2<nα−1/2 · D (P0 ∥ P  ̆μ|n )
+i
+=E
+h
+1∥ ˆμ|n ∥2<nα−1/2 · D (P0 ∥P ˆμ|n ) + O nα−3/2 i
+=
+E
+     
+1∥ ˆμ|n ∥2<nα−1/2 · ©
+«
+1
+2 μ⊤J μ + O ©
+«
+nα−1/2 ∑︁
+j,k∈[d]
+| ˆμ j || ˆμk |a
+®
+¬
+a ®
+¬
++ O nα−3/2
+     
+=
+
+
+E-values for exponential families: the general case 39
+E 1∥ ˆμ|n ∥2<nα−1/2 · 1
+2 μ⊤J μ + O nα−1/2 max
+k∈[d]
+| ˆμk |2 + O nα−3/2 =
+E 1∥ ˆμ|n ∥2<nα−1/2 · 1
+2 μ⊤J μ + O nα−3/2 ,
+where in the final equality we used Lemma5. This proves (B.9). The proof of (B.10) is analogous (now only using Proposition5, with the components of D (·∥·) interchanged, and without the need to ‘match’  ̆μ|n with ˆμ|n); we omit further details.
+B.4. Proof for COND part
+Throughout the proof, we adopt the notations of (B.12). We write p◦
+μ∗ and q◦ as the densities of Z = n1/2 ˆμ|n under Pμ∗ and Q = Qμ∗ , respectively.
+Lemma 6. Under the regularity Condition1(‘ COND’), we have:
+E
+R
+"
+log
+p◦
+μ∗ (√
+n ˆμ|n)
+q◦(√
+n ˆμ|n)
+#
+≥ −DΣr (Σq ( μ∗) ∥Σp ( μ∗)) + o(1). (B.17)
+Proof. For the continuous case (X has Lebesgue density), the proof is based on the following immediate corollary of Theorem 19.2 of Bhattacharya and Rao [3] (page 192): consider an i.i.d. sequence of random vectors X, X1, X2, . . ., with X ∼ Ψ with EΨ [X] = 0 where Ψ has bounded continuous (Lebesgue) density and a moment generating function (in particular, all moments of each component of X exist). Then we have for ψ the density of n−1/2 (Ín
+i=1 Xi) that, for all integers t ≥ 1, uniformly for all y ∈ Rd,
+1+
+t ∑︁
+j =1
+n− j/2 f j (y) − o
+n − t /2
+φΣ(y) ≤ ψ(y)
+φΣ(y) ≤ 1 +
+t ∑︁
+j =1
+n− j/2 f j (y) + o
+n − t /2
+φΣ (y) , (B.18)
+where φΣ is the density of a normal distribution with mean 0 and covariance matrix Σ and the f j : R
+d → R are specific 3 j-degree degree polynomials in the components of y (to see how this follows using Theorem 19.2. of [3, page 192] note that what we call t is, in their notation, s − 2, note that their P0 (−φ(0, V) : { χv }) = φ0,V is the density of a normal distribution with mean 0 and covariance matrix V, and their P1 (−φ(0, V) : { χv }) (y) = f (x)φ0,V [3, page 55–56]); their precondition on the characteristic function is equivalent to our condition of bounded Lebesgue density by their Theorem 19.1 and their precondition on moments being finite holds automatically because we assume Q has a moment generating function. Below we only give the proof for the continuous case, based on (B.18); the proof for the discrete (lattice) case goes in exactly the same way, but now we use Theorem 22.1 of [3], which is their analogue of Theorem 19.2 for the discrete, lattice case; we omit details and continue with the continuous case. We again adopt the notations (B.12), i.e. we set μ∗ = 0 and we write Σp := Σp ( μ∗) = Σp (0). For fixed A > 0, we define
+A
+n=
+(
+xn : ∥ ˆμ|n ∥2 ≤
+√︂
+A log n
+n
+)
+B
+n = {xn : max{∥ Xi ∥2 : i ∈ [n]} ≤ n}
+
+
+40
+B ̄n, j = {xn : n + j − 1 < max{∥ Xi ∥ : i ∈ [n]} ≤ n + j },
+and A ̄n, B ̄n their respective complements. The expectation in (B.17) can be rewritten as
+E
+R
+"
+1An log
+p◦
+μ∗ (√
+n ˆμ|n)
+q◦(√
+n ˆμ|n)
+#
++ ER
+"
+1A ̄n∩Bn log
+p◦
+μ∗ (√
+n ˆμ|n)
+q◦(√
+n ˆμ|n)
+#
++ ER
+"
+1A ̄n∩B ̄n log
+p◦
+μ∗ (√
+n ˆμ|n)
+q◦(√
+n ˆμ|n)
+#
+.
+(B.19)
+We now use the local central limit theorem with expansion as in (B.18) above to analyze (minus) the first term. Since Σp is positive definite, we find
+1/φΣp (y) = O exp 1
+2 ∥y∥2
+2λmax, p ,
+where λmax, p is the maximum eigenvalue of Σ−1
+p . Setting y = n−1/2 Ín
+i=1 xi and plugging in ∥y∥ ≤
+√︁
+A log n which will hold on the set An (note scaling takes care of 1/√
+n) we find that n−t/2
+φΣp (y) = o(1) if
+t ≥ Aλmax, p. The same derivation holds with Σq instead of Σp, so we get
+n − t /2
+φΣp (y) = o(1),
+n − t /2
+φΣq (y) = o(1),
+if t ≥ A ·max{λmax, p, λmax,q }. We then find that the remainder terms n−t/2 f j (y) are all O ((log n)3 j /n) j/2) =
+o(1) on all y corresponding to xn in An. We can thus set ψ to p◦ and use the left inequality in (B.18) with this t and then set ψ to q◦ and using the right inequality with the same t to get
+E
+R
+"
+1An log
+q◦(√
+n ˆμ|n)
+p◦
+μ∗ (√
+n ˆμ|n)
+#
+≤ER
+"
+1An log
+φΣq (√
+n ˆμ|n) (1 + o(1))
+φΣp (√
+n ˆμ|n) (1 − o(1))
+#
+=DΣr (Σq ( μ∗) ∥Σp ( μ∗)) + o(1), (B.20)
+where the final equality follows because Q(An) → 1, which follows because we assume that Q has a moment generating function. This deals with the first term in (B.19). Now consider the second term in (B.19). Since we assume R has a moment generating function, we can with some work (details omitted) employ the Cramèr-Chernoff method to get that for all B > 0, if we take A sufficiently large, we get:
+R ∥ ˆμ|n ∥2 ≥
+√︂
+A log n
+n
+!
+= O (n−B). (B.21)
+Now fix B = a + 2, with a the exponent in Condition1, and choose A large enough so that (B.21) holds and then t large enough so that (B.20) also holds. For the second term we then get,
+E
+R
+"
+1A ̄n∩Bn log
+p◦
+μ∗ (√
+n ˆμ|n)
+q◦(√
+n ˆμ|n)
+#
+= O (n−a−2) · sup
+xn ∈ A ̄n∩Bn
+log
+pμ∗ (xn)
+q(xn) = (B.22)
+=O (n−a−2) · sup
+xn ∈ A ̄n∩Bn
+n ∑︁
+i=1
+log
+pμ∗ (xi)
+q(xi) ≤ O (n−a−2) · n · sup
+xn ∈ Bn
+max
+i∈ [n] log
+pμ∗ (xi)
+q(xi)
+=O (n−1),
+
+
+E-values for exponential families: the general case 41
+where we in the penultimate equality we used xn ∈ Bn and Condition1. The first equality follows
+because with Gε (V n) = {xn : |√
+n( ˆμ|vn − ˆμ| xn )| ≤ ε }, we have:
+sup
+vn ∈ A ̄n∩Bn
+p◦
+μ∗ (√
+n ˆμ|vn )
+q◦(√
+n ˆμ|vn ) = sup
+vn ∈ A ̄n∩Bn
+lim
+ε ↓0
+ε −1 ∫
+G
+ε (vn ) pμ∗ (xn)dxn
+ε −1 ∫
+G
+ε (vn ) q (xn)dxn (B.23)
+= sup
+vn ∈ A ̄n∩Bn
+lim
+ε ↓0
+∫
+G
+ε (vn ) pμ∗ (xn)dxn
+∫
+G
+ε (vn ) q (xn)dxn
+= sup
+vn ∈ A ̄n∩Bn
+pμ∗ (vn)
+q(vn) ,
+where the final inequality follows by the assumed continuity of pμ∗ and q. (B.22) gives the second term. For the third term we get, with again a the exponent in Condition1 and using, in the first inequality below, analogously to (B.23):
+E
+R
+"
+1A ̄n∩B ̄n log
+p◦
+μ∗ (√
+n ˆμ|n)
+q◦(√
+n ˆμ|n)
+#
+≤
+∑︁
+j ∈N
+R(A ̄n, B ̄n, j ) · n · (n + j)a
+≤
+∑︁
+j ∈N
+R(∃i ∈ [n] : |Xi | ≥ n + j − 1) · n · (n + j)a ≤ n2 ∑︁
+R(|X | ≥ n + j − 1) (n + j)a
+≤2n2 min
+k
+E
+R[|X|k]
+∑︁
+j ∈N
+(n + j − 1)−k (n + j)a
+≤2 min
+k
+E
+R[|X|k]
+∑︁
+j ∈N
+(n + j − 1)−k (n + j )2+a = O n−1
+where the penultimate equality follows by the fact that we can employ Markov’s inequality with X k, for all k, and the final equality is obtained by setting k = a + 4. This proves (B.17) and hence (3.4). The statement right below (3.4) follows by the fact that the role of pμ∗ and q becomes completely symmetric if Condition1(‘ COND’) holds with q and pμ∗ interchanged.
+B.5. Proof of Lemma2, underlying Anti-Simple case part of Theorem3
+Proof. We use the notations as summarized in (B.12). Fix 0 < α < 1/6. Without loss of generality, let μ∗ = 0. The integral below is over Mp. Since n remains fixed throughout the proof, we abbreviate
+W0, (n) to W and w0, (n) to w. Let S (n)
+Q,RIP′ = q (Un )
+pW (Un ) . It is easy to get that
+E
+Un∼Q [log S (n)
+Q,RIP′ ] = nD (Q ||Pμ∗ ) + EUn∼Q
+"
+log
+pμ∗ (Un)
+∫
+w( μ) pμ (Un)d μ
+#
+,
+so we just need to focus on the second term. By (B.6) in Lemma3, we can write it as:
+E
+Q
+"
+log
+pμ∗ (Un)
+∫
+w( μ) pμ (Un)d μ
+#
+= EQ
+"
+1∥ ˆμ|n ∥2<nα−1/2 · log
+pμ∗ (Un)
+∫
+wn ( μ) pμ (Un)d μ
+#
++ o(1) = (B.24)
+E
+Q
+"
+1∥ ˆμ|n ∥2<nα−1/2 · log
+pμ∗ (Un)
+p ˆμ|n (Un)
+#
++ EQ
+"
+1∥ ˆμ|n ∥2<nα−1/2 · log
+p ˆμ|n (Un)
+∫
+w( μ) pμ (Un)d μ
+#
++ o(1) =
+
+
+42
+−1
+2 TR ΣqΣ−1
+p + EQ
+"
+1∥ ˆμ|n ∥2<nα−1/2 · log
+p ˆμ|n (Un)
+∫
+w( μ) pμ (Un)d μ
+#
++ o(1),
+where the final equality is obtained by Lemma3, (B.9). So we just need to upper bound the expectation in (B.24). For this, we fix any β with α < β < 1/6 and note that, uniformly for all Un ∈ Un with ∥ ˆμ∥2 ≤ nβ−1/2, we have:
+− log
+∫
+w ( μ)
+pμ (Un)
+p ˆμ|n (Un) d μ = − log
+∫
+w ( μ) exp −nD (P ˆμ|n ∥Pμ) d μ ≤
+− log
+∫
+μ:∥ μ ∥2 ≤nβ−1/2
+w ( μ) exp −nD (P ˆμ|n ∥Pμ) d μ ≤
+− log
+∫
+μ:∥ μ ∥2 ≤nβ−1/2
+w( μ) exp − n
+2 ( μ − ˆμ|n)⊤J ( μ − ˆμ|n) + O n · n3β−3/2 d μ ≤
+− log
+∫
+μ:∥ μ ∥2 ≤nβ−1/2
+w( μ) exp − n
+2 ( μ − ˆμ|n)⊤J ( μ − ˆμ|n) d μ + o(1) ≤
+d
+2 log 2π
+n
+−1
+2 log det K
+− log
+∫
+μ:∥ μ ∥2 ≤nβ−1/2
+exp − n
+2 μ⊤K μ + ( μ − ˆμ|n)⊤J ( μ − ˆμ|n) d μ + o(1), (B.25)
+where we first used the robustness property of exponential families (Lemma3, (B.3)) and then for the second inequality, we used the second inequality in Proposition5(with the α in that proposition set to α ∨ β = β). The third inequality uses that β was set < 1/6, and in the final line we used the definition of w as the density of a Gaussian with mean 0 and covariance K −1/n. By a little computation, we can rewrite the expression in the exponent in the integral in (B.25) as
+μ⊤K μ + ( μ − ˆμ|n)⊤J ( μ − ˆμ|n) = ( μ − m)⊤ (K + J) ( μ − m) + C,
+where m = (K + J)−1J ˆμ|n and C = ˆμ⊤
+|n
+J ˆμ|n − m⊤ (K + J)m. which can be simplified to C = ˆμ⊤
+|nΣ−1
+q ˆμ|n
+by first noting C = ˆμ⊤
+|n (J − J (K + J)−1J) ˆμ|n and then
+J − J(K + J)−1J = J I − (K + J)−1J = J I − (I + J−1K)−1 =
+J I − (I − J−1(I + KJ−1)−1K) = J J−1(I + KJ−1)−1K = (K−1 + J−1)−1 = Σ−1
+q,
+where the third equality follows by the reduced Woodbury matrix identity (see e.g. wikipedia). It follows that (B.25) can be further rewritten as
+d
+2 log 2π
+n
+−1
+2 log det K + n
+2 · ˆμ⊤
+|nΣ−1
+q ˆμ|n (B.26)
+− log
+∫
+μ:∥ μ ∥2 ≤nβ−1/2
+exp − n
+2 ( μ − m)⊤ (K + J) ( μ − m) d μ + o(1),
+where m = (K + J)−1J ˆμ|n does not depend on μ and has norm ∥ m∥2 = O (∥ ˆμ|n ∥2) = O (nα−1/2) (recall
+that we are only evaluating the integral for values of ˆμ|n with ∥ ˆμ|n ∥2 < nα−1/2). Now note (a) the
+
+
+E-values for exponential families: the general case 43
+distance between m and the boundary of the set over which we integrate, {μ : ∥ μ∥2 ≤ nβ−1/2} is
+therefore of order nβ−1/2 − nα−1/2 = n−1/2g(n) for a function g(n) with limn→∞ g(n) = ∞ (recall we chose β larger than α) ; and (b) since K and J are inverses of positive definite matrices, they are themselves positive definite and so is K + J. Therefore the integral in (B.26) converges, with increasing n, to a Gaussian integral with covariance (K + J)/n, so we can rewrite (B.26) as:
+d
+2 log 2π
+n
+−1
+2 log det K + n
+2 · ˆμ⊤
+|nΣ−1
+q ˆμ|n − d
+2 log 2π
+n
++1
+2 log det(K + J) + o(1)
+=1
+2 log det(K + J)
+det K
++n
+2 · ˆμ⊤
+|nΣ−1
+q ˆμ|n + o(1),
+and then plugging this back into (B.24) we see that (B.24) can be bounded as
+−1
+2 TR ΣqΣ−1
+p +1
+2 log det(K + J)
+det K
++n
+2 · EQ
+h
+1∥ ˆμ|n ∥2<nα−1/2 · ˆμ⊤
+|nΣ−1
+q ˆμ|n
+i
++ o(1),
+so that , by (B.4) and (B.5) (recall we set μ∗ = 0), (B.24) can be further bounded as
+1
+2 log det(K + J)
+det K
++d
+2−
+TR ΣqΣ−1
+p
+2 + o(1) (B.27)
+=1
+2 log det(Σ−1
+p Σq) + d
+2−
+TR ΣqΣ−1
+p
+2 + o(1) = −DGAUSS (Σq Σ−1
+p ) + o(1).
+The penultimate equality holds by direct computation, using the definitions of K and J. But (B.27) implies the result.
+B.6. Proof of (3.16) in Theorem4
+Let Aγ := {μ′ ∈ Mp ∩ Mq : ∥ μ′ − μ∗ ∥2 ≤ γ}.
+Define S (1)
+Qμ′ := qμ′ (U )
+pfqμ′ (U) (U) and note that S (1)
+Qμ′ is an e-variable for all μ′ ∈ Aγ, and in particular
+S(1)
+Qμ∗ is the GRO (optimal) e-variable relative to Qμ∗ . Therefore, we must have, for some ε > 0, that
+E
+Qμ∗
+"
+log
+qμ′ (U)
+pfqμ′ (U) (U)
+#
+= EQμ∗
+h
+log S (1)
+Qμ′
+i
+≤ EQμ∗
+h
+log S (1)
+Qμ∗
+i
+= EQμ∗ log
+qμ∗ (U)
+pμ∗ (U) − ε,
+where the final equality follows because, by the same reasoning as in the proof of Theorem3, Part 3, we have (6.5), with Qμ∗ in the role of Q. But, taking expectations over U1, U2, . . . i.i.d. ∼ Qμ∗ , from the above we immediately get, using Fubini’s theorem,
+E
+U n ∼Qμ∗
+"
+log
+n Ö
+i=1
+q  ̆μ|i−1 (U ̄i )
+pfq  ̆μ|i−1 (U ̄i )
+#
+=
+n ∑︁
+i=1
+E
+Ui−1∼Qμ∗ EU∼Qμ∗
+"
+log
+q  ̆μ|i−1 (U)
+pfq  ̆μ|i−1 (U) (U)
+#
+≤n(D(Qμ∗ ∥Pμ∗) − ε),
+and the result is proved.
+
+
+44
+Appendix C: Additional details for Section3: checking UI and plug-in regularity conditions for example families
+C.1. Condition UI for the Poisson model
+Example 3.[Poisson] Let P be the Poisson family, given in its standard parameterization as pμ (x) =
+Pμ (X = k) = μk·e−μ
+k! with parameter μ > 0, and suppose X has m moments under R. Standard and
+straightforward computations show that this is an exponential family with mean-value parameter μ =
+E
+Pμ [X] and D (Pμˆ|n ∥Pμ∗ ) = μˆ |n log μˆ|n
+μ∗ + μ∗ − μˆ |n. Fix 0 < γ < 1/2 and define E j = {μ ∈ (0, ∞) : |μ − μ∗| ∈ [n−γ + j − 1, n−γ + j]}. We have
+E
+R 1∥ μˆ −μ∗ ∥2 ≥n−γ · D (Pμˆ ∥Pμ∗ ) ≤
+∑︁
+j ∈N+
+R(μˆ |n ∈ E j ) max
+μˆ|n ∈ E j
+D (Pμˆ|n ∥Pμ∗ )
+=
+∑︁
+j ∈N+
+R(μˆ |n ∈ E j ) max
+μˆ|n ∈ E j
+μˆ |n log μˆ |n
+μ∗ + μ∗ − μˆ |n
+≤R |μˆ |n − μ∗| ≥ n−γ · ((− log μ∗) · O (1) + μ∗ − O (1))
++
+∑︁
+j ∈N+
+R |μˆ |n − μ∗| ≥ n−γ + j · O ((n−γ + j + 1) log(n−γ + j + 1))
+(=a)O n−⌈m/2⌉ · nγm−γ +
+∑︁
+j ∈N+
+O n−⌈m/2⌉ · (n−γ + j )−m · O ( j log j )
+=O n−⌈m/2⌉ · nγm−γ + O (n−⌈m/2⌉ ) ·
+∑︁
+j ∈N+
+j1−m log j := f (n, m, γ),
+where (a) follows from Lemma4in AppendixB.2. Plugging in any m ≥ 3 and γ = 1/3 we find that f (n, m, γ) = O (n−4/3) = o(n−1), which proves the result.
+C.2. Proof for Example2: plug-in condition for the full Gaussian
+Proof of (3.11). We first consider the case of a μ located on the boundary ∂Mq of Mq (actually this cannot happen because Mq is open, but it is still useful for proving the result as it constitutes a limiting worst-case). In this case, for fixed 0 < α < 1 and x0, we have:
+μ◦
+2 − μ◦2
+1 = (1 − α) μ2 + αx0,2 − μ◦2
+1 = (1 − α)μ2
+1 + αx0,2 − ((1 − α) μ1 + αx0,1)2. (C.1)
+Taking the first derivative of μ◦
+2 − μ◦2
+1: d
+dμ1 ( μ◦
+2 − μ◦2
+1 ) = 2(1 − α)α(μ1 − x0,1), we find
+arg min
+μ ∈ ∂Mq
+(μ◦
+2 − μ◦2
+1 ) = (x0,1, x2
+0,1). (C.2)
+(note again μ◦ is a function of μ). Then (3.11) holds with the infimum over ∂Mq instead of Mq, as seen by plugging (C.2) into (C.1). The situation is depicted in Figure5(a). l denotes μ◦
+2 − (μ◦
+1)2, l∗ denotes
+x0,2 − x2
+0,1, and the statement (3.11) says that αl∗ ≤ l.
+
+
+E-values for exponential families: the general case 45
+.
+x0
+. .μ
+μ∘
+μ2
+μ1
+0
+μ2 = μ2
+1
+.
+(μ∘
+1, μ∘2
+1) l*
+l
+μ′
+.
+.μ′∘
+.l′
+(a) Gaussian mean parameter space
+.
+x0
+. .μ
+μ∘
+μ2
+μ1
+0
+μ2 = eμ1
+.
+(μ∘
+1, eμ∘
+1)
+δ2
+μ′
+μ′∘ .
+.
+.
+.
+μb
+. .
+δ1
+δ1′
+(b) Gamma mean parameter space
+Figure 5. In the left figure, the area above the black curve μ2 = μ2
+1 is the Gaussian mean parameter space Mq. The
+blue curve is obtained by vertically shifting the black one upwards such that μ′ is located on it. (3.11) expresses that αl∗ is not larger than any other l for every μ, l′ for every μ′ with x0 ∈ Mq and α ∈ (0, 1).
+Now consider the case of a μ′ ∈ Mq not located on the boundary, and the corresponding μ′◦. In terms of the figure, we now need to prove αl∗ ≤ l′, where l′ denotes μ′◦
+2 − (μ′◦
+1 )2. Let δ be the vertical translation distance between the black curve and the blue curve in the figure, i.e. the blue curve is y = x2 + δ. Extending the boundary-μ analysis to this case, we find l′ − δ ≥ α(l∗ − δ). This implies l′ > αl∗ (the boundary case above is really the worst-case). Note that the same reasoning still applies when x0 is below the blue curve — then l∗ is a negative real number and also l might be negative in some cases. (3.11) follows.
+Proof that (3.9) holds. For μ ∈ Sq ⊂ {μ ∈ Mq : ∥ μ − μ∗ ∥2 ≥ A} where Sq is compact, we have
+max
+μ ∈ Sq
+D (Qμ∗ ∥Qμ◦ )
+∥μ−μ∗ ∥2
+2
+< ∞ because D (Qμ∗ ∥Qμ◦ )
+∥μ−μ∗ ∥2
+2
+is continuous w.r.t. μ. Thus, we just need to check points
+that tend to the boundary of Mq. For this, let ( μ[m])m∈N be a sequence in {μ ∈ Mq : ∥ μ − μ∗ ∥2 ≥ A} such that the limit in (C.3) below exists. We know by (3.11) that
+lim
+m→∞
+D(Qμ∗ ∥Qμ◦
+[m] )
+∥ μ[m] − μ∗∥2
+2
+=O
+log ( ( μ◦
+2)[m] − ( μ◦2
+1 )[m])
+∥ μ[m] − μ∗∥2
+2
+!
++O
+−2μ∗
+1 ( μ◦
+1)[m] + ( μ◦2
+1 )[m]
+∥ μ[m] − μ∗∥2
+2
+!
+. (C.3)
+We need to show that for all such sequences with μ[m] tending to the boundary of Mq, the above limit is
+finite. We first note that by (3.11), we cannot have that μ◦
+2 − μ◦2
+1 → 0, because μ◦
+2 − μ◦2
+1 ≥ α(x0,2 − x2
+0,1).
+Thus, we only need to consider the sequences with either μ◦
+2 − μ◦2
+1 → ∞ or |μ◦
+1| → ∞. Using that
+∥μ − μ∗∥2
+2 = (μ1 − μ∗
+1)2 + (μ2
+1 + σ2
+1 − μ∗2
+1 − σ∗2
+1 )2, it is easily checked that (C.3) is finite on all such sequences.
+C.3. Plug-in regularity conditions for Gamma model
+Example 4.[Gamma] The argument follows analogous stages as the one for the Gaussian case, Exam
+ple2. Let Q be the GAMMA(α, β) family with densities q(x; α, β) = xα−1e−x/β
+Γ( α)βα , for x > 0 and α, β > 0.
+
+
+46
+In terms of the mean-value parameterization, we can parameterize this family by μ = (μ1, μ2) with μ1 = ψ(α) + log β and μ2 = αβ, where ψ(α) is the digamma function. We first claim
+M
+q = {(μ1, μ2) : μ1 ∈ R, μ2 > eμ1 }. (C.4)
+To see this, rewrite μ = (ψ(α) − log α + log(αβ), αβ). For any fixed c = αβ, we have that ψ(α) − log α is increasing and ψ(α) − log α ∈ (−∞, 0), α ∈ (0, ∞). Then the mean parameter space Mq is located on the upper left part of f (αβ) = e αβ, i.e. μ2 = eμ1 , which proves (C.4); see Figure5(b). Next, it is well-known that
+D (Qμ∗ ∥Qμ◦ ) = α◦ log
+β◦
+β∗ − log Γ(α∗)
+Γ(α◦) + (α∗ − α◦)ψ(α∗) − 1
+β∗ − 1
+β◦ α∗ β∗. (C.5)
+with (α◦, β◦) the parameters in the standard parameterization corresponding to (μ◦
+1, μ◦
+2).
+Now let μ◦ = (1 − k) μ + kx0. Further below we show that for every 0 < k < 1, every x0 = (x0,1, x0,2) ∈ M
+q, we have
+μ◦
+1 − log μ◦
+2 = ψ (α◦) − log α◦ and 0 < α◦ ≤ αx0 , (C.6)
+where αx0 is a constant depending on x0. And we also show
+μ◦
+2 − eμ◦
+1 = (α◦ − eψ( α◦) ) β◦ and β◦ ≥
+k (x0,2 − ex0,1 )
+αx0 − e ψ ( αx0 ) . (C.7)
+This provides constraints on the values that D (Qμ∗ ∥Qμ◦ ) in (C.5) can take. As we also show below, it
+implies that for every μ∗ ∈ Mq, every A > 0,
+sup
+μ∈Mq:∥ μ−μ∗ ∥2> A
+D(Qμ∗ ∥Qμ◦)
+∥μ − μ∗∥2
+2
+< ∞, (C.8)
+verifying Condition3as soon as R has 5 or more moments.
+Detailed proofs for Example4. To prove (C.6) and (C.7), we first need to prove the following formulas (recall μ◦ is a function of μ):
+sup
+μ ∈ Mq
+(μ◦
+1 − log μ◦
+2) =k (x0,1 − log x0,2), (C.9)
+inf
+μ ∈ Mq
+(μ◦
+2 − eμ◦
+1 ) =k (x0,2 − ex0,1 ). (C.10)
+Proof of (C.9). Reasoning analogously to the Gaussian case, Example2, we first consider the case that μ is located on the boundary ∂Mq of Mq. In this limiting case, for every fixed 0 < k < 1, we get
+δ1 := μ◦
+1 − log μ◦
+2 = (1 − k) log μ2 + k · x0,1 − log (1 − k) μ2 + k · x0,2 .
+Take the first derivative of δ1 w.r.t. μ2, we get
+arg max
+μ ∈ ∂Mq
+(μ◦
+1 − log μ◦
+2) = (log x0,2, x0,2).
+
+
+E-values for exponential families: the general case 47
+This implies (C.9) holds (with Mq replaced by ∂Mq), by plugging (log x0,2, x0,2) into the above formula.
+In the case of a μ′ not located on the boundary (an instance is shown with corresponding μ′◦ in Figure5(b)), we may consider the line connecting x0 and μ′ in the figure; it intersects the boundary of M
+q at some point μb. Letting μ′◦ = (1 − k′) μb + k′x0, we have k′ > k since μ′◦ = (1 − k) μ′ + k · x0. Using the above worst-case result, we get, in terms of Figure5(b),
+δ′
+1 ≤ k′ (x0,1 − log x0,2) < k (x0,1 − log x0,2),
+where the last inequality holds since x0,1 − log x0,2 < 0. (C.9) now follows.
+Proof of (C.10). We still consider the worst-case, μ on the boundary, and the case with μ′ in the interior of Mq, as above. In the boundary case, for every fixed 0 < k < 1, we have:
+δ2 := μ◦
+2 − eμ◦
+1 = (1 − k)eμ1 + k · x0,2 − exp (1 − k) μ1 + k · x0,1 .
+Take the first derivative of δ2 w.r.t. μ1, we get arg minμ∈∂Mq (μ◦
+2 − eμ◦
+1 ) = (x0,1, ex0,1 ). Then this implies (C.10) holds (with Mq replaced by ∂Mq) by plugging (x0,1, ex0,1 ) into the above formula. The case with
+μ′ ∈ Mq, not on the boundary, can now be proved in the same way as (C.9); we omit further details.
+Proof of (C.6) and (C.7). ψ(α◦) − log α◦ is increasing and ψ(α◦) − log α◦ = μ◦
+1 − log μ◦
+2 ≤ k (x0,1 −
+log x0,2) from (C.9), which implies that α◦ is bounded by some αx0 depending on x0. Further, (α◦ −
+eψ( α◦) ) β◦ = μ◦
+2 − eμ◦
+1 ≥ k (x0,2 − ex0,1 ) from (C.10), α◦ − eψ( α◦) is increasing and 0 < α◦ ≤ αx0 , which
+implies β◦ ≥ k (x0,2−e
+x0,1 )
+αx0 −e
+ψ ( αx0 ) .
+Proof of (C.8). We have || μ − μ∗||2
+2 = (ψ (α) + log β − ψ (α∗) − log β∗)2 + (αβ − α∗ β∗)2. Reasoning
+analogously to the Gaussian case (C.3), we need to show that for any sequence ( μ[m])m∈N with all
+μ[m] ∈ {μ ∈ Mq : ∥ μ − μ∗ ∥2 ≥ A}, that tends to the boundary of Mq, we have
+lim
+m→∞
+D (Qμ∗ ∥Q (μ◦)[m] )
+∥ μ[m] − μ∗∥2
+2
+< ∞.
+We already know 0 < α◦ ≤ αx0 and β◦ ≥ k (x0,2−e
+x0,1 )
+αx0 −e
+ψ(αx0 ) , so the above limit satisfies, for some constant
+C,
+lim
+m→∞
+D (Qμ∗ ∥Q (μ◦)[m] )
+∥ μ[m] − μ∗∥2
+2
+=O
+©
+«
+α◦
+[m] log β◦
+[m] + C + log Γ(α◦
+[m])
+(ψ (α[m] ) − log α[m] + log β[m] )2 + (α[m] β[m] )2
+a ® ®
+¬
+(C.11)
+=O
+α◦
+[m] log β◦
+[m]
+(ψ (α[m] ) + log β[m] )2
+!
++O
+log Γ(α◦
+[m])
+(ψ (α[m] ) + log β[m] )2
+!
+,
+where we also plugged in (C.5) and the definition of μ in terms of α, β. Any sequence tending to the boundary has μ◦
+2 − eμ◦
+1 → 0 or μ◦
+2 → ∞ or μ◦
+1 → ∞, i.e. α◦ → 0 or α◦ → ∞ or β◦ → 0 or β◦ → ∞.
+Again using that α◦ is bounded above and β◦ is bounded below, we just need to check the cases (a) β◦ → ∞, α◦ → α∗ with α∗ ∉ {0, ∞}, (b) β◦ → β∗, with β∗ ∉ {0, ∞}, α◦ → 0, and (c) β◦ → ∞, α◦ → 0. In Case (a), β◦ → ∞, and then μ◦
+1 = ψ (α◦) + log β◦ → ∞, so ψ (α) + log β = μ1 → ∞ since μ◦
+1=
+(1 − k)μ1 + k · x0,1 and then the first term in (C.11) is o(1) and the second O (1). In Case (b), the first
+
+
+48
+term in (C.11) is o(1) and we can evaluate the second term by L’Hôpital’s rule:
+lim
+α◦→0
+log Γ(α◦)
+ψ (α◦)2 = lim
+α◦→0
+ψ (α◦)
+2ψ (α◦) · ψ′ (α◦) = lim
+α◦→0
+1
+2ψ′ (α◦) < ∞,
+since ψ′ (α◦) =
+∞
+Í
+k=0
+1
+( α◦+k)2 . It remains to show Case (c); but this follows by combining Case (a) and
+Case (b) above.
+Appendix D: Additional simulation results for the setting of Section4
+The figures in this appendix are described in the main text, in Section4.
+0 100 200 300 400 500
+sample size
+0
+1
+2
+3
+4
+loss in e-power
+(a) μ∗ = (0.62, 0.38), D (Q∗ | | Pμ∗ ) ≈ 0.0606
+0 100 200 300 400 500
+sample size
+0
+1
+2
+3
+4
+loss in e-power
+S (n)
+W1, RIP
+S (n)
+W1, UI
+S (n)
+, UI
+S (n)
+, SEQ RIP
+S (n)
+COND
+qW1 (U n)/pW1 (U n)
+(b) μ∗ = (0.83, 0.65), D (Q∗ | | Pμ∗ ) ≈ 0.0458
+Figure 6. δ = 1. E-powers are computed for multiple (pseudo) e-variables. The data sequences are generated from Q∗ with mean μ∗.
+Appendix E: Additional material on e-process-ness for Section7
+To define an e-process, suppose that U = Rd for some d > 0 and let σ(Un) be the σ-algebra generated by U1, . . . , Un. We call (σ(Un))n∈N the filtration induced by the data or ‘data filtration’ for short.
+An e-process relative to the data filtration is a random process (S(n) )n∈N defined relative to the data
+filtration such that for each stopping time τ (defined again relative to the data filtration), S(τ) is an e-variable. We refer to [19] for more background on e-processes. The following result (proof further below) enables us to determine some scenarios in which either SCOND or SRIP do not provide e-processes.
+Proposition 7. Suppose P = {Pθ : θ ∈ Θ0} is a set of distributions (not necessarily an exponential family) for U, extended to n outcomes by independence, where Pθ has density p θ , and Q is a distribution for random process (Un)n≥0 with densities (q(Un))n≥0. Let W1, W2, . . . be a sequence of distributions
+
+
+E-values for exponential families: the general case 49
+0 100 200 300 400 500
+sample size
+0
+1
+2
+3
+4
+5
+loss in e-power
+S (n)
+W1, RIP
+S (n)
+W1, UI
+S (n)
+, UI
+S (n)
+, SEQ RIP
+S (n)
+COND
+qW1 (U n)/pW1 (U n)
+(a) μ∗ = (0.79, 0.34), D (Q∗ | | Pμ∗ ) ≈ 0.2161
+0 100 200 300 400 500
+sample size
+0
+1
+2
+3
+4
+loss in e-power
+(b) μ∗ = (0.46, 0.10), D (Q∗ | | Pμ∗ ) ≈ 0.1673
+0 100 200 300 400 500
+sample size
+0
+1
+2
+3
+4
+loss in e-power
+(c) μ∗ = (0.97, 0.81), D (Q∗ | | Pμ∗ ) ≈ 0.0712
+Figure 7. δ = 2. E-powers are computed for multiple (pseudo) e-variables. The data sequences are generated from Q∗ with mean μ∗.
+on Θ such that for every n, we have that S(n) := q(Un)/pWn (Un) is an e-variable for samples of size n. Suppose that for some n,
+Q (PWn (Un) ≠ PWn+1 (Un)) > 0. (E.1)
+Then the process (S(n) )n≥0 is not an e-process relative to the data filtration.
+Note that (E.1) implies that, but is stronger than, Wn ≠ Wn+1. The proposition implies that if the
+process of RIPr e-variables (S(n)
+Q,RIP)n=1,2,... takes on the form (PWn (Un))n=1,2,... for some sequence W1, W2, . . . as above, then the RIPr does not yield an e-process relative to the data filtration. In particular, this will be the case in the Gaussian anti-simple cases of Theorem1and Theorem2. In these cases, SRIP is equal to SCOND, implying that SCOND also does not provide an e-process. Although we have no formal proof, the proof for the anti-simple case for general exponential family nulls with simple alternative (anti-simple case in Theorem3) suggests that the same holds for SCOND and SRIP in the strict anti-simple setting, since then the RIPr prior W0 can be approximated by a Gaussian prior with variance of order ≍ 1/n, i.e. again changing over time.
+
+
+50
+However, an interesting phenomenon happens in the case of composite alternative Q, both in the Gaussian and in the general case. First, in the anti-simple setting in the general case (Theorem4, Part 4, anti-simple case) the RIPr prior W0 is approximated by taking a prior identical to the prior W1 that was put on Q, and this prior does not change with the sample size. Similarly, in the Gaussian case with composite alternative, the exact RIPr prior changes with n, but only very minimally so. This suggests that somehow, with the conditional and RIPr e-variables we ‘almost’ obtain an e-process, leading perhaps to ‘approximate’ handling of optional stopping. Investigating this further and formalizing ‘approximate optional stopping’ is a main avenue for further research. To strengthen this conjecture further, consider the sequence of e-variables (S(n)
+HAAR)n≥0 based on the
+right-Haar (uniform) prior on Mp and Mq, as in Section2.2. It is known that (S(n)
+HAAR)n≥0 defines an eprocess, but relative to a coarser filtration generated by (V n)n≥0 with V n = (X(2) − X1, . . . , X(n) − X1), which still allows optional stopping to all practical intents and purposes [13,18]. Theorem2implies, by the equality of SHAAR and SCOND, that, at least in the anti-simple case, when RIP = COND, since the prior W0 in (2.20) depends on n, by Proposition7, then SHAAR does not define an e-process for the original, data-based filtration; but the fact that it is an e-process in a coarser filtration suggests that perhaps something similar holds (“being an approximate e-process in a coarser filtration”), for other conditional e-variables as well; the insights on asymptotic anytime-validity by [27] may be of use here. Finally, we note that there do exist exponential family settings in which SCOND provides an e-process relative to the data filtration. This happens in the settings of Proposition1, i.e. in Example1, in which we are in the nonstrict simple and anti-simple settings at the same time.
+Proof of Proposition7. If S(n)
+n≥0 were an e-process relative to null hypothesis P, then, as is immediate
+from the definition of e-process, it must also be an e-process relative to the simple null hypothesis {PWi } for any i ≥ 0. Thus, if EUn∼PWn [q(Un)/pWn+1 (Un)] > 1, then (S (n) )n≥0 cannot form an eprocess and the result is proved. Therefore, we may assume that EUn∼PWn [q(Un)/pWn+1 (Un)] ≤ 1,
+or equivalently, EUn∼Q
+h pWn (Un )
+pWn+1 (Un )
+i
+≤ 1. Using Jensen’s inequality, which by our assumption (E.1) is
+strict, now gives
+E
+Un∼Q
+pWn+1 (Un)
+pWn (Un) > 1/ EUn∼Q
+pWn (Un)
+pWn+1 (Un) ≥ 1,
+or equivalently, EUn∼PWn+1 [q(Un)/pWn (Un)] > 1, and the result again follows.
