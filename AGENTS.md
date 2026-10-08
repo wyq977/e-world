@@ -75,8 +75,10 @@ from it with Better BibTeX keys. To stage a paper:
    `zotero_get_attachment_path`).
 2. Pick the attachment by the version policy above.
 3. Copy into `inbox/<citekey>/`: the PDF as `paper.pdf`, its
-   `.zotero-ft-cache` as `paper.txt` (or run `scripts/pdf2txt.sh`), and a
-   draft `meta.yaml` with `zotero_item`, `zotero_attachment`, `version`,
+   `.zotero-ft-cache` as `paper.txt`, and a draft `meta.yaml`. Zotero caps
+   its cache (about 100 pages), so compare the PDF page count with the
+   form feeds in the text; if the text is short, regenerate it with
+   `scripts/pdf2txt.sh paper.pdf paper.txt`. Also write with `zotero_item`, `zotero_attachment`, `version`,
    `arxiv`, `doi`, `url`, `added`, `added_by`.
 4. Report which attachment you chose and why, and stop.
 
@@ -136,6 +138,18 @@ to the bib. Log as `lint`.
   expected log growth under the alternative [grunwaldSafeTesting2024]".
 - `wiki/log.md` is append-only. Entry headers are
   `## [YYYY-MM-DD] ingest|query|lint | <subject>` so `grep "^## \["` works.
+
+## Shared view (Claude Artifact)
+
+The human checks the wiki through a Claude Artifact, which other Claude
+sessions can also read by URL. The repo stays the source of truth; the
+Artifact is regenerated from it and republished, never edited by hand.
+
+- Reading queue: https://claude.ai/artifact/KFhexm2aZpiG915dYsfCuc
+  built by `scripts/build_candidates_page.py` from `wiki/candidates.md`.
+  Republish after every change to `candidates.md`.
+- `wiki/candidates.md` is the agent's proposal list for the human. Rows move
+  from `missing` to `bib` to `staged` only through the human's actions.
 
 ## Public list
 
