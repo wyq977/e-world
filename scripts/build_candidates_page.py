@@ -21,9 +21,9 @@ for line in md.splitlines():
 
 def status_key(s):
     s = s.lower()
-    return "staged" if s.startswith("staged") else "bib" if s.startswith("bib") else "missing"
+    return "ingested" if s.startswith("ingested") else "staged" if s.startswith("staged") else "bib" if s.startswith("bib") else "missing"
 
-counts = {"staged": 0, "bib": 0, "missing": 0}
+counts = {"ingested": 0, "staged": 0, "bib": 0, "missing": 0}
 for t in tiers:
     for r in t["rows"]:
         counts[status_key(r["status"])] += 1
@@ -85,6 +85,7 @@ td.t {{ min-width:0; }}
 .who {{ color:var(--muted); font-size:.88rem; }}
 .chip {{ display:inline-block; font-size:.78rem; font-weight:600; padding:2px 8px; border-radius:4px; white-space:nowrap; }}
 .chip.staged {{ background:var(--ok-bg); color:var(--ok); }}
+.chip.ingested {{ background:var(--accent); color:var(--bg); }}
 .chip.bib {{ background:var(--mid-bg); color:var(--mid); }}
 .chip.missing {{ background:var(--no-bg); color:var(--no); }}
 td.e {{ font-size:.88rem; color:var(--muted); }}
@@ -98,16 +99,17 @@ footer a {{ color:var(--accent); }}
 <main>
 <h1>E-world Reading Queue</h1>
 <p class="sub">Proposed ingestion order for the e-value literature wiki, foundations first. The agent proposes; only a human adds a paper to the bibliography or stages its PDF.</p>
-<div class="summary"><span><b>{total}</b> titles</span><span><b>{counts["staged"]}</b> staged</span><span><b>{counts["bib"]}</b> in bib, not staged</span><span><b>{counts["missing"]}</b> missing</span></div>
+<div class="summary"><span><b>{total}</b> titles</span><span><b>{counts["ingested"]}</b> ingested</span><span><b>{counts["staged"]}</b> staged</span><span><b>{counts["bib"]}</b> in bib, not staged</span><span><b>{counts["missing"]}</b> missing</span></div>
 <div class="filters" role="group" aria-label="Filter by status">
 <button id="f-all" data-f="all" aria-pressed="true">All</button>
+<button id="f-ingested" data-f="ingested" aria-pressed="false">Ingested</button>
 <button id="f-missing" data-f="missing" aria-pressed="false">Missing</button>
 <button id="f-bib" data-f="bib" aria-pressed="false">In bib</button>
 <button id="f-staged" data-f="staged" aria-pressed="false">Staged</button>
 </div>
 {sections}
 <p class="legend"><b>Evidence</b>: <i>book ×N</i> is the approximate number of times the paper is cited in Ramdas and Wang, <i>Hypothesis testing with e-values</i> (2025). <i>SAVI</i> marks the 2022 Safe Anytime-Valid Inference workshop reading list. <i>web</i> marks an October 2026 web check.</p>
-<footer>Generated from <code>wiki/candidates.md</code> in the e-world repository. Status: <i>staged</i> = PDF copied to inbox, awaiting <code>make approve</code>; <i>bib</i> = in e-world.bib, PDF not yet staged; <i>missing</i> = not in the bibliography.</footer>
+<footer>Generated from <code>wiki/candidates.md</code> in the e-world repository. Status: <i>ingested</i> = source page exists in the wiki; <i>staged</i> = PDF copied to inbox, awaiting <code>make approve</code>; <i>bib</i> = in e-world.bib, PDF not yet staged; <i>missing</i> = not in the bibliography.</footer>
 </main>
 <script>
 (function(){{

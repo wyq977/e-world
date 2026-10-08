@@ -1,6 +1,6 @@
 # Candidate reading list
 
-Proposed ingestion order, foundations first. **Status**: `staged` = in inbox/
+Proposed ingestion order, foundations first. **Status**: `ingested` = source page in the wiki; `staged` = in inbox/
 awaiting approval; `bib` = in e-world.bib, not yet staged; `missing` = not in
 the bib. Evidence: `book:N` = cited N times in Ramdas and Wang's book
 (counted from the text, approximate); `SAVI` = on the SAVI 2022 contributed
@@ -12,12 +12,12 @@ Only the human adds to the bib or raw/. Tick a row by staging it.
 
 | # | Title | Authors, year | Status | Evidence |
 |---|---|---|---|---|
-| 1 | Hypothesis testing with e-values | Ramdas, Wang 2025 | staged | survey; its bibliography seeds this list |
-| 2 | Safe testing | Grünwald, de Heide, Koolen 2024 | staged | book:5, SAVI |
+| 1 | Hypothesis testing with e-values | Ramdas, Wang 2025 | ingested | survey; its bibliography seeds this list |
+| 2 | Safe testing | Grünwald, de Heide, Koolen 2024 | ingested | book:5, SAVI |
 | 3 | Testing by betting: a strategy for statistical and scientific communication | Shafer 2021 | bib | book:2, SAVI |
 | 4 | E-values: calibration, combination, and applications | Vovk, Wang 2021 | bib | book:7 |
 | 5 | Game-theoretic statistics and safe anytime-valid inference | Ramdas, Grünwald, Vovk, Shafer 2023 | bib | web: cited as the standard survey |
-| 6 | Universal inference | Wasserman, Ramdas, Balakrishnan 2020 | staged | book:2, SAVI |
+| 6 | Universal inference | Wasserman, Ramdas, Balakrishnan 2020 | ingested | book:2, SAVI |
 | 7 | Admissible anytime-valid sequential inference must rely on nonnegative martingales | Ramdas, Ruf, Larsson, Koolen 2020 | missing | book:5, SAVI |
 | 8 | The numeraire e-variable and reverse information projection | Larsson, Ramdas, Ruf 2025 | missing | book:9 (most cited) |
 | 9 | Time-uniform, nonparametric, nonasymptotic confidence sequences | Howard, Ramdas, McAuliffe, Sekhon 2021 | bib | book:2, SAVI |
@@ -59,7 +59,7 @@ Only the human adds to the bib or raw/. Tick a row by staging it.
 | 22 | Reverse information projections and optimal e-statistics | Lardy, Grünwald, Harremoës 2024 | missing | core of RIPr theory |
 | 23 | E-statistics, group invariance and anytime-valid testing | Pérez-Ortiz, Lardy, de Heide, Grünwald 2024 | missing | |
 | 24 | Optimal e-values for exponential families: the simple case | Grünwald, Lardy, Hao, Bar-Lev, de Jong 2024 | bib | book:2 |
-| 25 | E-values for exponential families: the general case | Hao, Grünwald 2025 | staged | |
+| 25 | E-values for exponential families: the general case | Hao, Grünwald 2025 | ingested | |
 | 26 | Anytime-valid t-tests and confidence sequences for Gaussian means with unknown variance | Wang, Ramdas 2025 | missing | book:5 |
 | 27 | Testing exchangeability: fork-convexity, supermartingales and e-processes | Ramdas, Ruf, Larsson, Koolen 2022 | missing | book:2, SAVI |
 | 28 | Testing randomness online | Vovk 2021 | missing | book:7 |
