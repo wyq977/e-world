@@ -1,7 +1,7 @@
 ---
 slug: mixture-and-plug-in-methods
 title: Mixture and plug-in methods for composite alternatives
-sources: 10
+sources: 12
 updated: 2026-10-08
 ---
 
@@ -21,6 +21,8 @@ When the alternative is composite, two standard devices produce a single likelih
 - The Gaussian mixture 'universal' test martingale (K+1)^{−1/2} exp((Σx)²/(2(K+1))) survives misspecification where a fixed-δ product collapses [vovkEvaluesCalibrationCombination2021, eq. 23, Fig. 1]; for Bernoulli data every martingale is a mixture, by de Finetti's representation [villeEtudeCritiqueNotion1939, Ch. V §3].
 - If a simple e-variable exists for every point of a composite alternative, an e-variable for the whole alternative follows by mixtures or prequential plug-in [grunwaldOptimalEValuesExponential2024, Sec. 1.2].
 - Applied prequential plug-ins: Bayes posterior mean per block with REGROW-tuned Beta priors [turnerGenericEvariablesExact2024, eq. 3.5, Prop. 2]; two-virtual-point smoothed MLE for the hazard ratio, tracking the oracle and beating a misspecified GROW test [terschureAnytimevalidLogrankTest2024, eq. 3.7, Fig. 1].
+- 'Empirical E': renormalise a data-optimised e-variable by its supremum null expectation, turning redundancy into regret; predictive recursion praised as an alternative to Robbins mixtures and plug-in; learning the robustification weight by mixtures [grunwaldAuthorsReplyDiscussion2024, Secs 2–4].
+- Composite alternatives handled only by Bayes mixtures and NML, whose redundancy bounds the e-variable's regret [giuffridaTestingMaximumEntropy2025, eq. 22, Thm 1].
 
 ## Variants and related concepts
 - [universal-inference](universal-inference.md), [exponential-family-e-values](exponential-family-e-values.md).
@@ -33,6 +35,8 @@ When the alternative is composite, two standard devices produce a single likelih
 - [howardTimeuniformNonparametricNonasymptotic2021](../sources/howardTimeuniformNonparametricNonasymptotic2021.md) — mixtures as boundaries.
 - [vovkEvaluesCalibrationCombination2021](../sources/vovkEvaluesCalibrationCombination2021.md), [villeEtudeCritiqueNotion1939](../sources/villeEtudeCritiqueNotion1939.md) — mixture martingales.
 - [grunwaldOptimalEValuesExponential2024](../sources/grunwaldOptimalEValuesExponential2024.md), [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — applied plug-ins.
+- [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — empirical E, predictive recursion.
+- [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — universal numerators.
 
 ## Disagreements / open issues
 - RIPr for plug-in alternatives and sequential RIPr for Bayesian alternatives are not analysed [haoEValuesExponentialFamilies2025, Remark 3].

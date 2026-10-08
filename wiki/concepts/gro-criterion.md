@@ -1,7 +1,7 @@
 ---
 slug: gro-criterion
 title: GRO, GROW, REGROW and log-optimality
-sources: 10
+sources: 12
 updated: 2026-10-08
 ---
 
@@ -24,6 +24,8 @@ Growth-rate optimality (GRO) chooses, for a given alternative Q, the [e-variable
 - A simple e-variable (likelihood ratio against one null element) exists iff the RIPr is a point in the null; then it is unique, GRO at every n and stopping-time log-optimal; Theorem 1 gives eight equivalent conditions for exponential families, chiefly Σ_p − Σ_q ⪰ 0 [grunwaldOptimalEValuesExponential2024, Prop. 1, Thm 1].
 - The survey unifies REGROW (γ = 1) and GROW (γ = 0) in one formula and shows the right-Haar t-test e-process is GROW and REGROW for every γ and τ because the expected log of the RIPr e-variable is constant in σ; Jeffreys' prior is asymptotically REGROW [ramdasGametheoreticStatisticsSafe2023, Sec. 3.2.4, eq. 15, Sec. 4.1.2].
 - GRO without a convex null: the block k-sample e-variable is GRO whenever the single-outcome model is convex; any valid 'mixture of means' ratio on a convex parameter set is GRO; Wald's SPRT product is not [turnerGenericEvariablesExact2024, Thm 1, Prop. 3, Sec. 8.2]; GRO for every closed convex null in the 2 × 2 table [turnerExactAnytimevalidConfidence2023, Thm 2]; conditional GROW for θ ≤ θ1 in survival data [terschureAnytimevalidLogrankTest2024, Sec. 3.1].
+- Greenland's one-shot chi-square challenge (y = 3.84, p = 0.05): naive e-variables need p ≤ 0.0000077, a REGROW-style exponentiated-Cauchy prior gives E = 1.81 and needs p ≤ 0.0007, Johnson's UMP Bayes factor with a point prior at δ* = 7.378 needs p ≤ 0.007, the best among likelihood-ratio e-variables; REGROW is 'not the method of choice' for one-shot n = 1 tests [grunwaldAuthorsReplyDiscussion2024, Sec. 2]. GROW point priors break test and confidence-interval consistency (Ly); REGROW or nonlocal priors fix it; REGROW is the reference-Bayes-like variant with no efficient general construction [grunwaldAuthorsReplyDiscussion2024, Sec. 3].
+- 'Regret' as the name for REGROW relative to the oracle point-alternative GRO e-variable; universal numerators give regret (d_1/2) log m + O(1) and ((d_1 − d_0)/2) log m for nested maximum entropy models; Jeffreys' prior is regret-suboptimal in the 2 × 2 canonical test [giuffridaTestingMaximumEntropy2025, eqs 12–22, 87, Fig. 5]; see [mdl-and-maximum-entropy-e-values](mdl-and-maximum-entropy-e-values.md).
 
 ## Variants and related concepts
 - [numeraire](numeraire.md), the assumption-free form.
@@ -38,6 +40,8 @@ Growth-rate optimality (GRO) chooses, for a given alternative Q, the [e-variable
 - [grunwaldOptimalEValuesExponential2024](../sources/grunwaldOptimalEValuesExponential2024.md) — simple e-variables, exponential-family criterion.
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — GROW/REGROW unification.
 - [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md), [turnerExactAnytimevalidConfidence2023](../sources/turnerExactAnytimevalidConfidence2023.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — GRO in applied constructions.
+- [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — one-shot regimes, Ly's incompatibility.
+- [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — regret rates.
 
 ## Disagreements / open issues
 - Ly's discussion: GROW point priors leave δ+ inside anytime-valid confidence intervals forever; the authors answer with REGROW or nonlocal priors [grunwaldSafeTesting2024, discussion and reply].

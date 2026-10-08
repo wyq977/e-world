@@ -1,7 +1,7 @@
 ---
 slug: e-power
 title: E-power and sample size
-sources: 9
+sources: 11
 updated: 2026-10-08
 ---
 
@@ -23,6 +23,8 @@ The e-power of an [e-variable](e-variable.md) E against an alternative Q is E_Q[
 - The survey justifies the log via Kelly compounding, Breiman's exponent and hitting-time optimality by Wald's identity, and frames type-II error as low e-power; at fixed n GRO loses power to UMP tests and sequences are 1.5–2× wider, but expected stopping times under optional stopping are about the same or smaller [ramdasGametheoreticStatisticsSafe2023, Sec. 3.1, App. B].
 - GROW approximately minimises the worst-case expected number of events to rejection, E[N_τ] ≈ ln(1/α)/E[ln R]; survival data need a larger design maximum but equal or fewer mean events than the fixed-sample logrank test [terschureAnytimevalidLogrankTest2024, App. A.1, Sec. 7, Fig. 4].
 - Expected log growth and worst-case regret used to tune the Beta(γ, γ) prior to γ ≈ 0.18 and to compare with Fisher's exact and chi-square tests at 80% power [turnerGenericEvariablesExact2024, eqs 2.5, 2.7, Figs 2–5]; growth rate of a simple e-variable equals inf over the convex hull of KL [grunwaldOptimalEValuesExponential2024, eq. 1.5].
+- The reply calls e-power a 'sore point': defined for single e-variables but meaningful only under optional continuation; Wang's examples of e-power −∞ for an almost-surely growing e-variable and +∞ for its reciprocal are recorded, Rényi-projection utilities proposed as remedy, GRO predicted to remain the default; for d × d Gaussians the finite-n e-power gap between GRO and universal inference is 'extreme' when n is not much larger than d [grunwaldAuthorsReplyDiscussion2024, Secs 1–2].
+- E-power of the microcanonical approximation is sandwiched between its own value and that of a non-e-variable pseudo approximation; the gap is the convergence diagnostic [giuffridaTestingMaximumEntropy2025, eqs 43–49].
 
 ## Variants and related concepts
 - [gro-criterion](gro-criterion.md), optimising e-power.
@@ -36,6 +38,8 @@ The e-power of an [e-variable](e-variable.md) E against an alternative Q is E_Q[
 - [koolenLogoptimalAnytimevalidEvalues2022](../sources/koolenLogoptimalAnytimevalidEvalues2022.md) — implied target under optional stopping.
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — justification of the log, costs at fixed n.
 - [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md), [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md), [grunwaldOptimalEValuesExponential2024](../sources/grunwaldOptimalEValuesExponential2024.md) — applied comparisons.
+- [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — concessions and the GRO vs UI gap.
+- [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — sandwich diagnostic.
 
 ## Disagreements / open issues
 - Whether log growth is the right objective is contested: the Safe Testing authors concede GRO rests on independence and bounded variance of log E and that it fails to explain stitching rates [grunwaldSafeTesting2024, Sec. 8]; Wang's Pareto counterexamples show rejection probability and e-power can point in opposite directions.

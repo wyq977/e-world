@@ -1,7 +1,7 @@
 ---
 slug: e-variable
 title: E-variable
-sources: 11
+sources: 12
 updated: 2026-10-08
 ---
 
@@ -32,6 +32,7 @@ An e-variable is a [0, ∞]-valued statistic E with E_P[E] ≤ 1 under every dis
 - The survey's 'unit bet' terminology and the remark that statisticians always used e-values via likelihood ratios, interesting only for composite nulls [ramdasGametheoreticStatisticsSafe2023, Sec. 2.1].
 - Local e-variables (null restricted to a canonical neighbourhood) need not be global, but locality for all alternatives in the generated family implies globality [grunwaldOptimalEValuesExponential2024, Sec. 2, Thm 1, Fig. 3].
 - Constructive e-variables for composite nulls without invariance: the k-sample block e-variable [turnerGenericEvariablesExact2024, Thm 1], the lifted single-outcome e-variable for general two-sample nulls [turnerExactAnytimevalidConfidence2023, Thm 1], the one-event partial-likelihood ratio for survival data [terschureAnytimevalidLogrankTest2024, eq. 3.3]; see [k-sample-and-contingency-table-e-values](k-sample-and-contingency-table-e-values.md), [survival-e-values](survival-e-values.md).
+- Two constructions from the reply: the robustified (1 − γ)E + γ with γ learnable by mixtures, and the renormalised empirical e-variable [grunwaldAuthorsReplyDiscussion2024, Secs 3–4].
 
 ## Variants and related concepts
 - [e-process](e-process.md), the sequential object.
@@ -48,6 +49,7 @@ An e-variable is a [0, ∞]-valued statistic E with E_P[E] ≤ 1 under every dis
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — unit bets, taxonomy.
 - [grunwaldOptimalEValuesExponential2024](../sources/grunwaldOptimalEValuesExponential2024.md) — local vs global e-variables.
 - [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md), [turnerExactAnytimevalidConfidence2023](../sources/turnerExactAnytimevalidConfidence2023.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — constructive composite-null e-variables.
+- [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — robustified and empirical e-variables.
 
 ## Disagreements / open issues
 - Wang's discussion of Safe Testing shows that e-variables with high rejection probability can have e-power minus infinity, so "good e-variable" is not a single ordering [grunwaldSafeTesting2024, discussion].

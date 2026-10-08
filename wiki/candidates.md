@@ -96,6 +96,8 @@ Only the human adds to the bib or raw/. Tick a row by staging it.
 | 49 | E-values for adaptive clinical trials: anytime-valid monitoring in practice | Sokolova, Sokolov 2026 | missing | web, preprint |
 | 81 | Generic e-variables for exact sequential k-sample tests that allow for optional stopping | Turner, Ly, Grünwald 2024 | ingested | JSPI; in bib |
 | 82 | Exact anytime-valid confidence intervals for contingency tables and beyond | Turner, Grünwald 2023 | ingested | SPL; in bib |
+| 83 | Testing maximum entropy models with e-values | Giuffrida, Garlaschelli, Grünwald 2025 | ingested | arXiv 2509.01064; in bib |
+| 84 | Authors' reply to the discussion of 'Safe testing' | Grünwald, de Heide, Koolen 2024 | ingested | JRSSB; in bib |
 
 ## Tier 6 — e-posteriors, post-hoc decisions and evidence
 

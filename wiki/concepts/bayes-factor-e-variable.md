@@ -1,7 +1,7 @@
 ---
 slug: bayes-factor-e-variable
 title: Bayes factors as e-variables, and the safe t-test
-sources: 8
+sources: 10
 updated: 2026-10-08
 ---
 
@@ -22,6 +22,8 @@ A Bayes factor with the null in the denominator is an [e-variable](e-variable.md
 - The k-sample block e-variable is 'almost' a Bayes factor: Bayes marginal numerator, prequential denominator; no Gunel–Dickey Bayes factor is an e-variable; SWEPIS comparison with Bayes factors of 1–5.4 [turnerGenericEvariablesExact2024, eqs 3.7–3.8, App. S3, Sec. 7].
 - Survey: Bayes factors are mixture test martingales for simple nulls, the Jeffreys/Rouder Bayesian t-test gains type-I safety through the right-Haar e-process, prior-posterior ratio martingales, and when e-processes and Bayes factors coincide or diverge [ramdasGametheoreticStatisticsSafe2023, Secs 3.2.3, 4.1.2, 8.1.1, App. A].
 - The Bayes-mixture logrank numerator is a Bayes factor between the mixture and θ0, anytime valid under any prior, framed as luckiness rather than Bayesian inference [terschureAnytimevalidLogrankTest2024, App. A.4].
+- Johnson's UMP Bayes factor is an e-variable with an α-dependent point prior; right-Haar prior non-uniqueness vanishes for e-posteriors; Mulder's fractional Bayes factor point is left unanswered [grunwaldAuthorsReplyDiscussion2024, Secs 2–3].
+- The microcanonical GRO e-variable is a Bayes factor with a discrete null prior, while the pseudo approximation is a Bayes factor with a continuous null prior that is not an e-variable, by the uniqueness in Safe Testing's Theorem 1 [giuffridaTestingMaximumEntropy2025, eqs 27, 32, 44–45].
 
 ## Variants and related concepts
 - [gro-criterion](gro-criterion.md), [mixture-and-plug-in-methods](mixture-and-plug-in-methods.md).
@@ -34,6 +36,7 @@ A Bayes factor with the null in the denominator is an [e-variable](e-variable.md
 - [shaferTestingBettingStrategy2021](../sources/shaferTestingBettingStrategy2021.md) — discussion and reply.
 - [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — applied cases.
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — survey treatment.
+- [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md), [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — UMP Bayes factors, microcanonical Bayes factors.
 
 ## Disagreements / open issues
 - Cauchy (Jeffreys) prior case for the t-test is open [grunwaldSafeTesting2024, Sec. 4.3].

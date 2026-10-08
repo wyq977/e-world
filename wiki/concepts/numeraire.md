@@ -1,7 +1,7 @@
 ---
 slug: numeraire
 title: Numeraire e-variable
-sources: 4
+sources: 5
 updated: 2026-10-08
 ---
 
@@ -18,6 +18,7 @@ For a composite null and a point alternative Q, the numeraire is the Q-almost-su
 - Removes the finite-KL condition of Safe Testing's Theorem 1, which fails for example for infinite-horizon exchangeability [grunwaldSafeTesting2024, discussion by Vovk, reply].
 - The exponential-family paper notes that nonparametric mean tests built by betting are sequential RIPr e-variables in disguise, a view the numeraire makes precise [haoEValuesExponentialFamilies2025, Sec. 1].
 - The survey's open problems anticipate the numeraire: when the per-τ RIPr is an e-process, how much universal inference loses to it, and fast RIPr algorithms [ramdasGametheoreticStatisticsSafe2023, Sec. 8.2.4].
+- The Safe Testing authors' reply adopts the numeraire as the general form of their GRO e-variable and RIPr, with the caveat that for exchangeability nulls on infinite sequences the numeraire has infinite e-power and a coarsened filtration is needed [grunwaldAuthorsReplyDiscussion2024, Sec. 1].
 
 ## Variants and related concepts
 - [gro-criterion](gro-criterion.md).
@@ -28,6 +29,7 @@ For a composite null and a point alternative Q, the numeraire is the Q-almost-su
 - [grunwaldSafeTesting2024](../sources/grunwaldSafeTesting2024.md) — discussion and reply.
 - [haoEValuesExponentialFamilies2025](../sources/haoEValuesExponentialFamilies2025.md) — passing use.
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — open problems.
+- [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — endorsement and caveat.
 
 ## Disagreements / open issues
 - Larsson, Ramdas and Ruf 2025, "The numeraire e-variable and reverse information projection", is the primary source and is not yet in the bib; see gaps.

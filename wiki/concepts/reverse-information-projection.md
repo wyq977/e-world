@@ -1,7 +1,7 @@
 ---
 slug: reverse-information-projection
 title: Reverse information projection (RIPr)
-sources: 10
+sources: 12
 updated: 2026-10-08
 ---
 
@@ -23,6 +23,8 @@ The reverse information projection of an alternative Q onto a convex set of null
 - For convex nulls Θ_0 ⊂ [0,1]² in the 2 × 2 table the RIPr of a point alternative is a point mass at the unique block-KL minimiser, on the boundary of Θ_0; closed-form stationarity for linear boundaries [turnerExactAnytimevalidConfidence2023, Thm 2, eq. 11]; in the generic k-sample construction the per-outcome mixture of the streams' alternatives plays the RIPr role, and for exponential or negative binomial families the mean-matched element is not the RIPr [turnerGenericEvariablesExact2024, eq. 3.6, Sec. 8.1].
 - The survey treats the per-τ RIPr as a sub-probability measure, GRO among functions of X^τ, sometimes an e-process and sometimes not; the independence-test denominator ∫ q(Y | x) dR(x) is a RIPr [ramdasGametheoreticStatisticsSafe2023, Sec. 3.3.2, eq. 17, Sec. 4.2].
 - Sequential RIPr for the Cox model with covariates is valid for any prior but not yet computable; a Li–Barron algorithm is proposed [terschureAnytimevalidLogrankTest2024, Thm B.1, App. B.2].
+- The reply doubts Bon and Robert's conjecture that the RIPr prior on a bounded Gaussian location null is an endpoint point mass: experiments show the mass spreads over many points, a single point only when the alternative prior's mean lies outside the interval [grunwaldAuthorsReplyDiscussion2024, Sec. 3].
+- A new exactly solvable family: for microcanonical maximum entropy nulls the RIPr prior is the push-forward of the alternative's universal distribution onto the null sufficient statistic; for canonical nulls the RIPr stays uncomputable and the microcanonical RIPr gives a valid lower bound [giuffridaTestingMaximumEntropy2025, eqs 29–31, 47].
 
 ## Variants and related concepts
 - [gro-criterion](gro-criterion.md), [numeraire](numeraire.md).
@@ -37,6 +39,8 @@ The reverse information projection of an alternative Q onto a convex set of null
 - [grunwaldOptimalEValuesExponential2024](../sources/grunwaldOptimalEValuesExponential2024.md) — degeneracy criterion.
 - [turnerExactAnytimevalidConfidence2023](../sources/turnerExactAnytimevalidConfidence2023.md), [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md) — contingency-table RIPrs.
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — survey view, survival with covariates.
+- [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — spread of RIPr priors.
+- [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — microcanonical RIPr.
 
 ## Disagreements / open issues
 - No general fast algorithm for computing the RIPr prior is given; numerical accuracy for infinite sample spaces is unclear [grunwaldSafeTesting2024, Sec. 2]; direct computation is infeasible for large effect sizes in the simulations [haoEValuesExponentialFamilies2025, Sec. 4].

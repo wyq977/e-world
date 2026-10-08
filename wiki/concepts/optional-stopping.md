@@ -1,7 +1,7 @@
 ---
 slug: optional-stopping
 title: Optional stopping and sequential decomposability
-sources: 8
+sources: 9
 updated: 2026-10-08
 ---
 
@@ -21,6 +21,7 @@ Optional stopping means ending a single data stream at a data-dependent time. An
 - Time-uniform validity makes arbitrary stopping harmless; the running-intersection and reset discussion shows a failure mode when stationarity is false [howardTimeuniformNonparametricNonasymptotic2021, Lemma 3, Sec. 6].
 - Ville derived the martingale condition from fairness under every non-randomised stopping rule, with expectation one when the game ends almost surely [villeEtudeCritiqueNotion1939, Ch. V §1].
 - Applied: block-wise stopping with pre-fixed block sizes, Fisher's exact test losing type-I control under the same stopping [turnerGenericEvariablesExact2024, Sec. 3.1, Fig. S4.1]; level α at any random time for survival data, no anytime-valid trial is 'doomed' [terschureAnytimevalidLogrankTest2024, Prop. 3.1, Sec. 8.3].
+- Composite alternatives under (RE)GROW may need a coarser filtration; interim analysis is a bonus 'not always' available; 'design by filtration change' floated as possibly unifiable with information projection [grunwaldAuthorsReplyDiscussion2024, Secs 1, 4].
 
 ## Variants and related concepts
 - [optional-continuation](optional-continuation.md), the study-level version.
@@ -33,6 +34,7 @@ Optional stopping means ending a single data stream at a data-dependent time. An
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — filtration choice.
 - [howardTimeuniformNonparametricNonasymptotic2021](../sources/howardTimeuniformNonparametricNonasymptotic2021.md), [villeEtudeCritiqueNotion1939](../sources/villeEtudeCritiqueNotion1939.md) — time-uniform validity, fairness.
 - [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — applied guarantees.
+- [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — filtration coarsening.
 
 ## Disagreements / open issues
 - When a GRO criterion admits a seqdec or ε-seqdec specification is open [grunwaldSafeTesting2024, eq. 31].

@@ -37,3 +37,12 @@ shaferTestingBettingStrategy2021, vovkEvaluesCalibrationCombination2021, ramdasG
 
 ## [2026-10-08] lint | concept layer after batch 2
 Five new concept pages: confidence-sequence-boundaries, survival-e-values, k-sample-and-contingency-table-e-values, martingale-history, e-detector. Twelve slugs proposed by the agents folded into existing pages (implied-target→e-power, family-wise-validity→e-merging, simple-e-variable→exponential-family-e-values, randomised-stopping-time and filtration-choice→optional-stopping, exponential-supermartingales→confidence-sequence-boundaries, history-of-savi→martingale-history). All twenty existing pages gained batch-2 results and sources. gaps.md gained 16 rows. Metadata defects noticed by agents, for the human to fix in raw/: vovkEvaluesCalibrationCombination2021/meta.yaml says publisher-oa but the text is arXiv 1912.06116v4; villeEtudeCritiqueNotion1939/meta.yaml carries a DOI and URL belonging to the next bib entry (staging bug, fixed in scripts/stage_from_zotero.sh). Also turnerGenericEvariablesExact2024/paper.txt ends at page 15, missing the tail of the reference list; turnerExactAnytimevalidConfidence2023 lacks its supplementary appendix.
+
+## [2026-10-08] ingest | grunwaldAuthorsReplyDiscussion2024
+Authors' reply to the discussion of Safe testing. Text layer is the January 2025 manuscript, not the typeset pages. Fourteen concept pages gained reply material; no new slugs.
+
+## [2026-10-08] ingest | giuffridaTestingMaximumEntropy2025
+Testing maximum entropy models with e-values (arXiv 2509.01064v1). New concept page mdl-and-maximum-entropy-e-values; k-sample, exponential-family, RIPr, GRO, e-power, Bayes-factor and mixture pages updated.
+
+## [2026-10-08] lint | remaining bib entries
+Not ingested and not planned: waldSequentialAnalysis1947 (no PDF in Zotero), johnsonUniformlyMostPowerful2013 (citekey not found in Zotero), and twelve background entries (Brown 1986, Diaconis–Ylvisaker 1979, Dickhaus 2012/2015, Eisinga 2011, Fog 2008, Grünwald 2019 MDL, Mieth 2016, Pérez 1994, Yamanishi 2023). Thirteen queue papers are in Zotero but not in the bib; listed to the human.

@@ -1,7 +1,7 @@
 ---
 slug: universal-inference
 title: Universal inference and the split likelihood ratio
-sources: 7
+sources: 8
 updated: 2026-10-08
 ---
 
@@ -22,6 +22,7 @@ A procedure is universal when its type-I error or coverage guarantee holds in fi
 - The survey places UI between the generalised likelihood ratio and the composite Bayes factor: always an e-process, dominated by the RIPr when the latter is an e-process, the only route for exchangeability and log-concavity where no supermartingale exists, possibly inadmissible, power open [ramdasGametheoreticStatisticsSafe2023, Sec. 3.3.1, eq. 16, Sec. 5.5, Secs 8.2.3–8.2.4].
 - The maximum-likelihood plug-in e-value (alternative over maximised null likelihood) is anytime-valid but strictly less log-optimal than the RIPr likelihood ratio: implied target 3.072 vs 3.466 at n = 10 for the Gaussian scale problem [koolenLogoptimalAnytimevalidEvalues2022, Sec. 4.3].
 - Running-MLE denominator over nuisance regression coefficients is the recommended practical route to the full Cox model; power suffers when the covariate dimension is large relative to the number of events [terschureAnytimevalidLogrankTest2024, Sec. 8.1, eq. 8.2].
+- Asymptotically equal e-power to GRO but extreme finite-n loss for multivariate Gaussians; UI is coherent across subsets of the null where GRO is not, a power–coherence trade-off; a GRO analogue of empirical-risk universal inference is called for [grunwaldAuthorsReplyDiscussion2024, Secs 2, 4, 5].
 
 ## Variants and related concepts
 - [reverse-information-projection](reverse-information-projection.md), for the RIPr split LRT and misspecification.
@@ -36,6 +37,7 @@ A procedure is universal when its type-I error or coverage guarantee holds in fi
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — positioning and open problems.
 - [koolenLogoptimalAnytimevalidEvalues2022](../sources/koolenLogoptimalAnytimevalidEvalues2022.md) — quantitative loss vs RIPr.
 - [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — Cox model with covariates.
+- [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — finite-n loss and coherence.
 
 ## Disagreements / open issues
 - The original authors say they do not fully understand how close to optimal the split LRT is beyond uniform and Gaussian cases [wassermanUniversalInference2020, Sec. 2]; the later numeraire and exponential-family results quantify the loss.

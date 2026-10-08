@@ -1,7 +1,7 @@
 ---
 slug: k-sample-and-contingency-table-e-values
 title: k-sample and contingency-table e-values
-sources: 6
+sources: 7
 updated: 2026-10-08
 ---
 
@@ -20,6 +20,7 @@ The problem is to test that k ≥ 2 independent i.i.d. streams share one distrib
 - Gaussian and Poisson k-sample tests are "simple" cases where the GRO e-variable is a likelihood ratio with E_P[S] = 1 for every null element; the Bernoulli case follows from concavity of the log [grunwaldOptimalEValuesExponential2024, Secs 4.1, 4.3.1]; in the Gaussian and Poisson k-sample settings the conditional and RIPr e-variables are also e-processes [haoEValuesExponentialFamilies2025, Prop. 1].
 - Log-optimality under optional stopping holds for the 2 × 2 table because the one-outcome RIPr lies in the null [koolenLogoptimalAnytimevalidEvalues2022, Thm 12].
 - SWEPIS stillbirth re-analysis: the effect-restricted e-variable stops before the sixth event in all permutations, any rejection means e ≥ 20 [turnerGenericEvariablesExact2024, Sec. 7].
+- GRO e-variables for 2 × 2 and 2 × k binary tables from the maximum-entropy viewpoint: exact microcanonical forms and canonical approximations with NML and Beta priors, a regime where k grows with m, and a regret-slope dichotomy at γ = 1 that differs from the γ ≈ 0.18 REGROW prior of the block construction because the e-variable and the criterion differ [giuffridaTestingMaximumEntropy2025, eqs 62–68, 75–85, 90–107]; see [mdl-and-maximum-entropy-e-values](mdl-and-maximum-entropy-e-values.md).
 
 ## Variants and related concepts
 - [exponential-family-e-values](exponential-family-e-values.md), [survival-e-values](survival-e-values.md).
@@ -32,6 +33,7 @@ The problem is to test that k ≥ 2 independent i.i.d. streams share one distrib
 - [koolenLogoptimalAnytimevalidEvalues2022](../sources/koolenLogoptimalAnytimevalidEvalues2022.md) — stopping-time log-optimality.
 - [grunwaldOptimalEValuesExponential2024](../sources/grunwaldOptimalEValuesExponential2024.md) — simple-case k-sample results.
 - [haoEValuesExponentialFamilies2025](../sources/haoEValuesExponentialFamilies2025.md) — e-process property in Gaussian/Poisson cases.
+- [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — maximum-entropy 2 × k tests.
 
 ## Disagreements / open issues
 - Theorem 2 of the confidence-sequence paper is proved only for the 2 × 2 table [turnerExactAnytimevalidConfidence2023].

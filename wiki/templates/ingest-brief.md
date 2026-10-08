@@ -15,8 +15,8 @@ Inputs
   version: from meta.yaml.
 
 Existing pages you may link to
-- Sources: grunwaldSafeTesting2024, wassermanUniversalInference2020, ramdasHypothesisTestingEvalues2025, haoEValuesExponentialFamilies2025, and the other papers in this batch: shaferTestingBettingStrategy2021, vovkEvaluesCalibrationCombination2021, ramdasGametheoreticStatisticsSafe2023, howardTimeuniformNonparametricNonasymptotic2021, grunwaldOptimalEValuesExponential2024, koolenLogoptimalAnytimevalidEvalues2022, terschureAnytimevalidLogrankTest2024, turnerGenericEvariablesExact2024, turnerExactAnytimevalidConfidence2023, villeEtudeCritiqueNotion1939. Link as [citekey](citekey.md). Mention any other work by author-year without a link.
-- Concepts (link as [Name](../concepts/slug.md)): bayes-factor-e-variable calibrator confidence-sets-and-sequences e-bh e-merging e-power e-process e-variable exponential-family-e-values gro-criterion mixture-and-plug-in-methods numeraire optional-continuation optional-stopping post-hoc-validity reverse-information-projection test-martingale testing-by-betting universal-inference villes-inequality.
+- Sources: every file in wiki/sources/ (run `ls wiki/sources`), plus the other papers of the current batch named in your prompt. Link as [citekey](citekey.md). Mention any other work by author-year without a link.
+- Concepts (link as [Name](../concepts/slug.md)): every file in wiki/concepts/ (run `ls wiki/concepts`); read a concept page before linking it so the link fits.
   Prefer these. Propose a NEW slug only for a concept with real substance in this paper that none of them covers (e.g. confidence-sequence boundaries, logrank/survival e-values, p-value calibration families, martingale history). List new slugs in "Concepts touched" as plain text with "(new)".
 
 Body sections (keep the template headings): Summary (3–6 sentences); Main results (list, one line each, with the paper's own numbering: Theorem/Proposition/Section); Setting and assumptions; Relation to other sources; Concepts touched; Versions (only if relevant); Open questions / gaps. Attach [citekey] to claims. Precise and quantitative. Under about 200 lines.

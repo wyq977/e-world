@@ -1,7 +1,7 @@
 ---
 slug: testing-by-betting
 title: Testing by betting
-sources: 8
+sources: 9
 updated: 2026-10-08
 ---
 
@@ -20,6 +20,7 @@ Testing by betting represents a hypothesis test as a sequential game: a bettor s
 - Betting readings of products (successive full-stake bets), U-statistics (fractions of capital in sub-bets) and family-wise validity ('made at least E*_k risking at most one against any Q in H_k') [vovkEvaluesCalibrationCombination2021, Secs 4–5].
 - The game tree with an opponent controlling stop/continue nodes and the null choosing chance moves [koolenLogoptimalAnytimevalidEvalues2022, Sec. 2.3]; the test martingale as capital in a sequential game with no expected earnings under the null [terschureAnytimevalidLogrankTest2024, Sec. 3.1].
 - Ville's gambler with betting fractions λ_n, μ_n and the reading of von Mises's impossibility of a gambling system, with the complaint that von Mises ignored the distribution of stakes [villeEtudeCritiqueNotion1939, Ch. IV §§2–3].
+- The payout is E, not log E; agreement with Shafer that free continuation is best treated game-theoretically [grunwaldAuthorsReplyDiscussion2024, Secs 1, 4].
 
 ## Variants and related concepts
 - [e-power](e-power.md), [gro-criterion](gro-criterion.md), [e-process](e-process.md).
@@ -31,6 +32,7 @@ Testing by betting represents a hypothesis test as a sequential game: a bettor s
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — the game and the central principle.
 - [vovkEvaluesCalibrationCombination2021](../sources/vovkEvaluesCalibrationCombination2021.md), [koolenLogoptimalAnytimevalidEvalues2022](../sources/koolenLogoptimalAnytimevalidEvalues2022.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — betting readings.
 - [villeEtudeCritiqueNotion1939](../sources/villeEtudeCritiqueNotion1939.md) — the original gambler.
+- [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — payout and game-theoretic framing.
 
 ## Disagreements / open issues
 - Shafer 2021 (in the bib) and Shafer and Vovk 2019 (not in the bib) are the primary sources and are not yet ingested.

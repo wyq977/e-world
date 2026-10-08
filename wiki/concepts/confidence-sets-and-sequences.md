@@ -1,7 +1,7 @@
 ---
 slug: confidence-sets-and-sequences
 title: E-confidence sets and confidence sequences
-sources: 8
+sources: 9
 updated: 2026-10-08
 ---
 
@@ -21,6 +21,7 @@ An e-confidence set inverts a family of [e-variables](e-variable.md) indexed by 
 - Shafer's (1/α)-warranty sets {θ : S(θ) < 1/α}: every confidence set is a warranty set from all-or-nothing bets, warranty sets nest in α, are valid under optional continuation, and warranty equals confidence in Protocol 5; a Hoeffding strategy gives capital ≥ 20 whenever |mean| > 2.72/√n for all n [shaferTestingBettingStrategy2021, Secs 4.2–4.3, reply].
 - Survey: inversion C_t = {θ : M^θ_t < 1/α}, explicit sub-Gaussian, empirical-Bernstein and betting sequences, asymptotic and reverse-submartingale sequences, e-confidence intervals versus credible and support intervals [ramdasGametheoreticStatisticsSafe2023, Sec. 2.8, eq. 12, Secs 5, 6.3, App. A].
 - Exact anytime-valid confidence sequences for risk difference, relative risk and odds ratio in 2 × 2 tables by inverting GRO e-variables over effect sizes; one-sided union for the non-convex odds-ratio level set [turnerExactAnytimevalidConfidence2023, eq. 12, Sec. 3.1]; hazard-ratio sequences from the prequential logrank statistic [terschureAnytimevalidLogrankTest2024, Sec. 6].
+- Ly's incompatibility: under GROW point priors a test and an anytime-valid confidence interval cannot both shrink and be consistent; the authors 'did not realize this' and point to REGROW and nonlocal priors; Cattaneo's minimum-e-value estimator under optional continuation is open [grunwaldAuthorsReplyDiscussion2024, Secs 3, 5].
 
 ## Variants and related concepts
 - [universal-inference](universal-inference.md), [villes-inequality](villes-inequality.md), [post-hoc-validity](post-hoc-validity.md).
@@ -33,6 +34,7 @@ An e-confidence set inverts a family of [e-variables](e-variable.md) indexed by 
 - [shaferTestingBettingStrategy2021](../sources/shaferTestingBettingStrategy2021.md) — warranty sets.
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — catalogue.
 - [turnerExactAnytimevalidConfidence2023](../sources/turnerExactAnytimevalidConfidence2023.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — exact applied sequences.
+- [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — test/interval consistency.
 
 ## Disagreements / open issues
 - Estimation is declared out of scope by the book, so confidence sequences are only sketched there [ramdasHypothesisTestingEvalues2025, Sec. 13.1.1].
