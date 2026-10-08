@@ -1,0 +1,810 @@
+International Journal of Approximate Reasoning 141 (2022) 69–82
+Contents lists available at ScienceDirect
+International Journal of Approximate Reasoning
+www.elsevier.com/locate/ijar
+Log-optimal anytime-valid E-values
+Wouter M. Koolen a,∗, Peter Grünwald a,b
+a Centrum Wiskunde & Informatica, Netherlands b Leiden University, Netherlands
+article info abstract
+Article history:
+Received 20 February 2021 Received in revised form 15 September 2021 Accepted 16 September 2021 Available online 24 September 2021
+Keywords: E-value Anytime-valid E-value Hypothesis testing Test martingales Betting score Implied target
+We consider the problem of measuring statistical evidence against a composite null hypothesis. We base our approach on the concept of an E-value, which measures evidence by the multiplication factor achieved by engaging in bets that are fair under the null. We adopt the log-optimality criterion for choosing among all possible E-values, which was considered earlier for a fixed sample size. We extend these ideas to sequential testing under optional stopping, by revisiting anytime-valid E-values. Our main contribution is the formulation of a sequential log-optimality criterion. We study its properties, and work out examples analytically and computationally. © 2021 The Author(s). Published by Elsevier Inc. This is an open access article under the CC BY license (http://creativecommons.org/licenses/by/4.0/).
+1. Introduction
+A core task in statistical testing is to measure evidence against a null hypothesis. The main contribution of this paper is to propose an optimality criterion for a certain class of evidence measures for sequential testing of composite nulls, study its properties theoretically and work out examples. Our work takes as the starting point the concept of an E-value, which is a random variable measuring statistical evidence against a null hypothesis. E-values1 are based on fair bets, and as such form the building blocks of statistical testing by means of Test Martingales, as studied by e.g. Shafer et al. [6], and also of the game-theoretic approach to probability and statistics advocated by Shafer and Vovk [7]. As summarised by Shafer [5], there is an ongoing discussion in the literature on the philosophy and methodology of statistical testing, the relative merits of E-values vs p-values for measuring evidence, and the practical advantage of E-values for communicating statistical results to laypeople in terms of the intuitive language of bets. Taking note of that interesting scientific discussion, here we take desirability of the E-value concept as given. Our main aim is to develop their theory for optimal sequential testing of composite null hypotheses. Technically, E-valuehood is a constraint; it does not guide us which E-value we should pick. This selection question was studied for composite nulls by Grünwald et al. [2], who propose a criterion for obtaining powerful E-values. They call their construction GROW, for growth-rate optimal in the worst-case. The core idea is to optimise the expectation of the log-evidence under some alternative. Their construction is, by design, for a fixed sample size. It was not immediately clear how to extend their ideas to the sequential case. One piece of the puzzle was supplied by Ramdas et al. [3], who study the
+* Corresponding author. E-mail addresses: wmkoolen@cwi.nl (W.M. Koolen), pdg@cwi.nl (P. Grünwald). 1 The name E-value is due to [10], see [2, Section 6] for historical context on the concept.
+https://doi.org/10.1016/j.ijar.2021.09.010 0888-613X/© 2021 The Author(s). Published by Elsevier Inc. This is an open access article under the CC BY license (http://creativecommons.org/licenses/by/4.0/).
+
+
+W.M. Koolen and P. Grünwald International Journal of Approximate Reasoning 141 (2022) 69–82
+concept of anytime-valid E-values, where the sample size is not fixed but determined by some exogenous stopping rule.2 The remaining missing step is to extend the optimality criterion to sequential testing. In this paper, we study how to obtain anytime-valid E-values that are similarly log-optimal. This contribution is structured as follows. In Section 2 we review the definitions and motivate the new optimality criterion. In Section 3 we study the resulting optimal anytime-valid E-values by means of primal and dual characterisations. In Section 4 we work out concrete examples, and extract their lessons. We conclude with a modest discussion in Section 5.
+2. Setup and problem motivation
+In this section we will go over the required definitions, then formulate the new optimisation problem, and discuss a “game-theoretic” view.
+2.1. Preliminaries
+In this section we set up notation. We purposefully strip things down to the bare minimum, so that we can focus on conveying our ideas crisply. In particular, we delay all measure theoretic considerations to the discussion Section 5. Let X be an outcome space of interest. In the examples we will consider the binary case X = {0, 1}, as well as the continuous case X = R. We will also fix a finite horizon T ≥ 1. We will consider probability distributions on sequences X T , as represented either by a probability mass function or a density. We will often work with i.i.d. distributions, i.e.
+P (xT ) = ∏T
+i=1 p(xi ) for some one-outcome distribution p on X . We will also encounter Bayesian mixtures, i.e. P (xT ) =
+∫
+Pθ (xT )w(θ ) dθ where w is a prior distribution over a suitably indexed family Pθ of distributions.
+We write X ≤T = ⋃T
+t=0 X t for the set of sequences of lengths up to T , and denote the zero-length sequence by .
+A process E : X ≤T → R assigns a value to each sequence of each length. We represent a randomised stopping time3 by a process τ : X ≤T → [0, 1], where τ (xm) indicates the conditional probability of stopping directly after having seen prefix xm. (We will impose τ (xT ) = 1 throughout to respect our time horizon T ). In particular, a distribution P on full-length sequences X T and a randomised stopping time τ induce the stopped distribution P τ on prefixes X ≤T , which is given for each xm ∈ X ≤T by
+P τ (xm) = P (xm) τ (xm)
+m∏−1
+i=0
+(1 − τ (xi))
+} {{ }
+prob. of stop. at time = m
+, (1)
+where P (xm) = ∑
+xm+1···xT P (xT ) denotes the probability of observing the prefix xm ∈ X ≤T according to the distribution P
+on X T . A deterministic stopping time is restricted to take values in {0, 1}. Our reason for studying randomised stopping times from the outset is twofold: they are closed under taking mixtures, which helps with arguments based on convex duality, and they are a more efficient representation for doing numerical computation (the alternative being explicitly maintaining a probability distribution over an enumeration of all deterministic stopping times). With this background established, we now turn to our main object of study: the anytime-valid E-value.
+Definition 1. We say that a non-negative process E ≥ 0 is an anytime-valid E-value for distribution P if Exm∼Pτ [E(xm)] ≤ 1 for any stopping time τ . We further say that E is an anytime-valid E-value for hypothesis class H if it is an anytime-valid E-value for every distribution P ∈ H.
+Note that, due to linearity of expectation, we may equivalently bound the expected value only for all deterministic stopping times. We will employ the following convenient notational shorthand. If E is a process and τ is a randomised stopping time, then we denote by Eτ the random variable that, under P , takes value Eτ = E(xm) with probability P τ (xm). In particular, this shortens the anytime-valid E-value requirement to EP [Eτ ] ≤ 1.
+Type-I error control. Anytime-valid E-values measure evidence against the null in a way that is robust to external optional stopping. More precisely, fix an anytime-valid E-value E and error budget α ∈ (0, 1). Let’s assume that we receive a stopped sample xm ∼ P τ , drawn from an (unknown) combination of any P ∈ H and randomised stopping time τ . Suppose further that our decision is to reject the (entire) null H when E(xm) ≥ 1
+α . Then the probability that we falsely reject the null is at
+most α. That is
+2 The terminology anytime-valid E-values used in this work emphasises the relation to the standard batch E-value. Ramdas et al. [3] adopt the name safe E-process to stress the contrast with non-negative (super)-martingales. 3 Our randomised stopping times are called behavioural stopping times in the literature. A common and equivalent (see e.g. [8]) definition of randomised stopping times is as random deterministic stopping times, where a deterministic stopping time is a {0, . . . , T }-valued random variable such that the event {τ ≤ t} is known (measurable) at time t ≤ T .
+70
+
+
+W.M. Koolen and P. Grünwald International Journal of Approximate Reasoning 141 (2022) 69–82
+Proposition 2 (Type-I error control). Let E be an anytime-valid E-value for null H. For any confidence parameter α ∈ (0, 1), any distribution P ∈ H and any randomised stopping time τ , the false rejection probability is at most
+PP
+{
+Eτ ≥ 1
+α
+}
+≤ α EP [Eτ ] ≤ α.
+Proof. The first inequality is Markov’s, while the second is the defining property of an anytime-valid E-value.
+We note that the error control holds for all stopping times, including “greedy” stopping at the first time t ∈ {0, 1, . . . , T } such that E(xt ) ≥ 1
+α . In particular, yet another way to present the same result is to claim that 1
+E is an anytime-valid p-value
+for H, see e.g. [3]. Even though anytime-valid E-values are always safe, they may still be rather useless, like for instance the uninformative constant E(xm) = 1. Next we turn to the question of obtaining useful anytime-valid E-values.
+2.2. The log-optimal anytime-valid E-value
+From now on, we fix an hypothesis class H of interest, which we will call the null, and denote by EH the set of anytimevalid E-values for H. We will now be concerned with the selection of an anytime-valid E-value for disqualifying H. To this end, we will choose an alternative (Q , σ ) consisting of a distribution Q ∈/ H and a randomised stopping time σ . We will interpret Q as encoding what we hope is a better explanation for the observations in case H is false, and we will think of σ as a prediction of the stopping time our E-value may be subjected to in that case. Here we will assume that one4 alternative (Q , σ ) is chosen, and we will revisit making this choice in the discussion Section 5. This will allow us to define optimality.
+Problem 3 (Log-optimal anytime-valid E-value). Fix null H and alternative (Q , σ ). The log-optimal anytime-valid E-value (LOAVEV) is the maximiser of the optimisation problem
+sup E ∈EH
+EQ [ln Eσ ] ,
+and, following [5], we call the maximum the implied target.
+We now follow up with a brief motivation for this problem formulation, by discussing the problem that it aims to answer.
+• We are looking for a measure of evidence against H that is defined at every sample size. • We want this measure to not report significant evidence against H whenever the data are generated according to any P ∈ H. This even has to hold under exogenous optional stopping. Not reporting significant evidence is formalised by the requirement that the expected value is at most one (see Proposition 2). • Yet we want power under the alternative, i.e. when data come from Q and stopping is done according to σ . Our notion of power is the logarithmic growth rate. This has also been dubbed implied target by Shafer [5], who gives it an interpretation as a measure of the a-priori usefulness of performing a hypothesis test based on E.
+The “power” objective EQ [ln Eσ ] takes its inspiration from the desire to do repeated testing, and can be motivated by a
+doubling rate argument (see e.g. [1, Section 6.1]). When n replications of the entire testing setup are drawn i.i.d. from Q σ , then 1
+n
+∑n
+i=1 ln Eiσ → EQ [ln Eσ ] by the weak law of the large numbers. Hence the evidence against the null accumulated by
+E over n interactions with Q σ is asymptotically equivalent to en EQ [ln Eσ ] almost surely. The LOAVEV is defined to maximise this rate of accumulation. (See also the discussion in Section 5, where we investigate the power and (subtle, implicit) assumptions of this rate-based argument.) After putting forward this problem, we need to characterise and analyse its solutions. In that respect, the contribution of this paper is twofold. First, we carefully work out the Lagrange dual problem to Problem 3. This dual form gives insight into the makeup of LOAVEVs, and it also presents opportunities for efficient numerical implementation. We then perform a sequence of analytical and numerical computations, answering questions about the makeup of optimal solutions. The main thrust is that we are able to solve the problem analytically in (a few) simple instances, and we can solve it numerically in more (small, finite) instances. Beyond these examples, the problem remains ill understood, and presents great opportunities for future exploration. We conclude this section with an illustration of the explicit temporal interaction in the LOAVEV problem.
+4 If we are entertaining several models Q σ , we may merge them into a single one by taking a Bayesian mixture.
+71
+
+
+W.M. Koolen and P. Grünwald International Journal of Approximate Reasoning 141 (2022) 69–82
+Fig. 1. Tree of situations for T = 2 time steps and binary outcomes. Outcomes are displayed in blue circles, while the final sequence output is displayed in yellow boxes. The transition probabilities from a chance node (teal) are given by the conditional probabilities from the data-generating distribution P (or Q ). The transition probabilities from an optional stopping node (orange) are given by the randomised stopping time τ (or σ ). The LOAVEV E from Problem 3 is a specific assignment of values to the yellow terminal nodes. (For interpretation of the colours in the figure(s), the reader is referred to the web version of this article.)
+2.3. A game-theoretic picture
+We include a visualisation in Fig. 1 to make Problem 3 even more intuitive, concrete and explicit, and to illustrate the point that our Problem 3 is already interesting in the most basic setup: a binary alphabet X and sample size T = 2. In the figure, the orange nodes represent optional stopping decisions, where one must either stop, resulting in a yellow terminal state labelled by the sequence of outcomes observed thus far, or one must continue. Upon continuing, one enters a teal node. The branching from each teal node models observing the next outcome, which is labelled in a blue circle. Problem 3 asks to optimise over any-time E-values E, which we can represent as labelling each yellow terminal node (or equivalently, the orange node right before it) with a non-negative real number. The constraint E ∈ EH asks that when an opponent controls the stopping decisions at the orange nodes, and when any element P ∈ H of the null controls all the conditional distributions P (xm+1|xm) of the next outcome in each teal node, then the expected value of the terminal state reached is at most one. In addition, when the stopping decisions at the orange nodes are made by our stopping time σ , and the conditional distributions of outcomes are those of the alternative Q , we ask to maximise the expected logarithm of the value of the yellow terminal state reached.
+3. Equivalence results
+We start with a representation theorem. A process M is called a test martingale for P if it is a non-negative martingale (meaning that EP
+[
+M (xm+1 )
+∣∣xm ]
+= M(xm) for all xm ∈ X <T ) starting from M( ) = 1. Let MP be the set of all test martingales for P . Then we have
+Lemma 4 (Primal representation).
+sup E ∈EH
+EQ [ln Eσ ] = sup
+(
+MP)
+P ∈H∈
+(
+MP )
+P ∈H
+xm∼EQ σ
+[
+ln Pi∈nfH M P (xm)
+] .
+The supremum ranges over collections of test martingales, one for each P ∈ H.
+Proof. If E is an anytime-valid E-value for H, then E is dominated by a test martingale, say E ≤ M P , for each P , as shown by Ramdas et al. [3, Corollary 24, item 2]. Conversely, infP∈H M P is an anytime-valid E-value because for every P ∈ H we
+have E P [infP ′∈H M P ′
+τ ] ≤ E P [MτP ] = 1.
+What is the point of this Lemma? Well, the constraint of being in EH requires checking something for each stopping time. This is both mathematically and computationally unwieldy. On the other hand, being a P -martingale is a simple check for each context X <T . In the finite-outcome case this reduces the number of variables from doubly exponential in T to merely singly exponential.
+Next we turn to our main theorem. Let KL denote the Kullback-Leibler divergence, i.e. KL (Q ‖P ) = ∑
+xm∈X ≤T Q (xm) ×
+ln Q (xm)
+P(xm) . Let B be the set of distributions on X ≤T that can be represented as Bayesian mixtures of stopped elements of H,
+i.e. P ̄ ∈ B iff P ̄ = E(P,τ )∼w [P τ ] for some joint prior distribution w on P ∈ H and randomised stopping times τ . We then have (proof in Appendix A)
+Theorem 5 (Primal-dual equivalence). For finite X ,
+sup E ∈EH
+EQ [ln Eσ ] = P ̄i∈nfB
+KL
+(
+Q σ ∥∥P ̄
+)
+.
+72
+
+
+W.M. Koolen and P. Grünwald International Journal of Approximate Reasoning 141 (2022) 69–82
+The restriction to a finite alphabet can be relaxed, though then some regularity conditions on H do need to be imposed.
+From the proof it will be clear that a certain minimax result suffices (which indeed holds in case X ≤T is finite). The upshot of this theorem is that instead of searching over anytime-valid E-values (or, equivalently, collections of testmartingales), we may perform a “Reverse Information Projection” (where “reverse” refers to minimising the KL in its second argument). Namely, we search among Bayesian mixtures (where the mixture is jointly over distributions P ∈ H and stopping times τ ) for the closest marginal to the alternative Q σ .
+Reduction to batch viewpoint. We may regard Theorem 5 as a specific reduction to the batch case considered by [2]. Here is how that works. The alternative (Q , σ ) encodes a distribution Q σ on X ≤T . We may also similarly reinterpret the null as the set of distributions on X ≤T given by
+H′ :=
+{
+P τ |P ∈ H and τ a randomised stopping time
+}
+.
+In this viewpoint of treating sampling an outcome from X≤T as a single experiment, our main Problem 3 can be seen to reduce to the batch problem on outcome space X ≤T with alternative Q σ and null H′. It should be noted that the importance of this reduction is currently limited, as no general solution to the batch problem, either in analytic or numerical sense is as of yet available. Moreover, the blowup in size of H′ compared to H may be substantial (there are doubly exponentially
+many stopping times, i.e. about 2|X |T−1 ), making a computational approach based on this reduction prohibitive. To aid in computation (and understanding), we propose the following alternative parametrisation. (We will not prove this proposition, instead we prove a stronger claim in the proof of Lemma 7 below.)
+Proposition 6 (Flow representation of stopped distributions). Fix a distribution P on X T . The following two claims define and establish a bijection:
+• Let τ be a randomised stopping time. Let φ : X <T → [0, 1] be defined by
+φ(xm) := P {Xm = xm and τ > m} = P (xm)
+m ∏
+i=0
+(
+1 − τ (xi)
+) .
+That is, φ (xm) is the probability that a draw Xτ ∼ P τ has proper prefix xm. Then
+1 ≥ φ( ), (2a)
+∀1 ≤ m ≤ T , ∀xm ∈ X m : φ (xm−1)P
+(
+xm
+∣∣xm−1 )
+≥ φ (xm)1m<T . (2b)
+• Conversely, let φ : X <T → [0, 1] satisfy (2). Then
+Pφ (xm) =
+{
+1 − φ( ) m = 0
+φ (xm−1)P
+(
+xm
+∣∣xm−1 )
+− φ (xm)1m<T m > 0
+equals P τ for some randomised stopping time τ .
+One way to think about φ is indicating the probability of visiting each teal node in Fig. 1 (note that we may indeed identify teal nodes with X <T ). The usefulness of this parametrisation is that it allows mixing over P , while keeping the problem concave. We obtain the following more concise problem (with proof in Appendix B):
+Lemma 7 (Dual representation). Let Q and P ∈ H be distributions on sequences X T . Then the value
+P ̄i∈nfB
+KL
+(
+Q σ ∥∥P ̄
+)
+is equal to the minimum w.r.t. φ : H × X <T → [0, 1] of the function
+∑
+1≤m≤T ,xm
+Q σ (xm) ln Q σ (xm)
+∑
+P ∈H
+(
+φ (P , xm−1)P
+(
+xm
+∣∣xm−1 )
+− φ (P , xm)1m<T
+)
+subject to the constraints
+∑
+P ∈H
+φ(P , ) = 1 − Q σ ( ),
+∀P ∈ H, 1 ≤ m ≤ T , xm : φ(P , xm−1)P
+(
+xm
+∣∣xm−1 )
+≥ φ (P , xm)1m<T .
+73
+
+
+W.M. Koolen and P. Grünwald International Journal of Approximate Reasoning 141 (2022) 69–82
+The two-argument function φ in the above lemma encodes a joint distribution over P ∈ H and randomised stopping times τ . The way to think about this is that φ(P , xm) is the probability of using hypothesis P ∈ H, and generating a sequence having xm as a proper prefix (see Proposition 6). With this interpretation, indeed φ (P , xm−1) is the probability of seeing xm−1 from P and not stopping yet, so that φ (P , xm−1)P (xm|xm−1) is the probability of seeing at least xm from P . Then
+as φ (P , xm) is the probability of seeing strictly more than xm from P , we have that φ (P , xm−1)P (xm|xm−1) − φ (P , xm) is the
+probability of seeing exactly xm from P . Finally, by summing over P , we find that ∑
+P ∈H
+(
+φ (P , xm−1)P (xm|xm−1) − φ (P , xm)
+)
+is the probability of seeing exactly xm. Taking stock, in Lemma 7 we obtained a minimisation problem that is concave in the function φ, which is itself specified by |H| · |X |T −1
+|X |−1 many variables. This is “only” singly exponential in the sample size. While still exponential, this reduction allows us to computationally explore non-trivial examples in Section 4.
+4. Examples
+We consider five examples. First we look at the simple cases of singleton nulls, followed by deterministic stopping times. Then we look at a null of i.i.d. zero-mean Gaussians, where we are able pin down the LOAVEV analytically, and we study a generalisation based on properties of a reverse information projection. The results are pleasing and simple in these four cases, yet they do not illustrate the general complexity of the LOAVEV problem, which is, after all, the main focus of this paper. To study the latter, we work out a further numerical example at two sample sizes.
+4.1. Singleton H = {P }
+Suppose we want to be safe w.r.t a singleton H = {P }. Then what is the LOAVEV? We claim it is the likelihood ratio
+Et = Qt
+Pt regardless of σ . But why? And what does this reveal about the |H| > 1 case?
+Theorem 8. Fix alternative (Q , σ ) and point null H = {P }. The likelihood ratio Et = Qt
+Pt is LOAVEV (regardless of the stopping time
+σ ).
+Proof. Let Et = Q t
+Pt be the likelihood ratio test martingale, and let Zt be any other P -test-martingale. Using the primal representation Lemma 4, to establish optimality of Et , we need to show that
+EQ σ [ln Eσ ] ≥ EQ σ [ln Zσ ] .
+Toward this goal, let f (α) = EQ σ [ln ((1 − α)Eσ + α Zσ )]. We will show that f is maximised at α = 0. Since f is concave, it suffices to check that f ′(0) ≤ 0. We have
+f ′(0) = EQ σ
+[ Zσ − Eσ
+Eσ
+]
+= EQ σ
+[
+Zσ
+Qσ Pσ
+]
+− 1 ≤ EPσ [Zσ ] − 1 ≤ 0,
+where the middle inequality arises due to P σ possibly putting mass where Q σ does not, and the last inequality uses that Zt is a test martingale for P . This proves that the likelihood ratio Et is LOAVEV.
+4.2. Deterministic stopping time σ
+In the previous section, we characterised the LOAVEV for the case of point nulls, and we saw that the randomised stopping time σ of the alternative is immaterial. In this section we look at another special case, namely that of alternatives with a deterministic stopping time σ . We show that the anytime-validity requirement evaporates from the problem, and we are back in the batch setting of Grünwald et al. [2] with the sample size n replaced by σ .
+Corollary 9. For alternative (Q , σ ) with deterministic stopping time σ , we have
+sup E ∈EH
+EQ [ln Eσ ] = inf
+w prior on H KL
+(
+Qσ
+∥∥∥∥
+∫
+P σ w(dP )
+) .
+Proof. Starting from Theorem 5, we see that the worst-case distribution is supported only on τ = σ , since moving any mass from τ = σ to σ strictly improves the objective.
+74
+
+
+W.M. Koolen and P. Grünwald International Journal of Approximate Reasoning 141 (2022) 69–82
+4.3. Null is normal with zero mean and unknown variance
+In this section we denote by N (μ, ξ 2) the Gaussian distribution with mean μ and variance ξ 2. As our null, we take the set of all zero-mean Gaussians H =
+{N (0, ξ 2)
+∣∣ξ 2 > 0
+}
+and as our point alternative Q = N (μ, ρ2) we take the fixed mean μ = 0 and variance ρ2. We first characterise the LOAVEV.
+Theorem 10. The LOAVEV is the likelihood ratio process
+E(xn) =
+P μ,ρ2 (xn)
+P 0,ρ2+μ2 (xn) =
+( μ2 + ρ2
+ρ2
+)n
+2
+exp
+( Un
+2(μ2 + ρ2) − Un − 2μSn + nμ2
+2ρ 2
+)
+, (3)
+where Sn = ∑n
+i=1 xi and Un = ∑n
+i=1 x2
+i.
+Proof. We will build on Theorem 5, by showing that the minimiser of the projection of N (μ, ρ2) onto the null H is the prior δρ2+μ2 that puts all mass in the point N (0, ρ2 + μ2). To this end, fix any other prior w on ξ 2. Let wα =
+α w + (1 − α)δρ2+μ2 , and let U = ∑n
+i=1 x2
+i . We will show that
+− Exn∼N (μ,ρ2)
+[ ln
+∫
+wα (ξ 2)(2π ξ 2)−n/2e− U
+2ξ2 dξ 2
+]
+(4)
+is maximised at α = 0. To do this, let’s check the derivative at α = 0. We have
+∂
+∂α (4)
+∣∣∣∣α=0
+= 1 − Exn∼N (μ,ρ2)
+⎡
+⎣
+∫
+w(ξ 2)(2π ξ 2)−n/2e− U
+2ξ2 dξ 2
+∫
+w0(ξ 2)(2π ξ 2)−n/2e− U
+2ξ2 dξ 2
+⎤
+⎦,
+which equals
+1 − Exn∼N (μ,ρ2)
+[∫
+w(ξ 2) (ξ 2)−n/2
+(ρ2 + μ2)−n/2 e
+U
+2(ρ2+μ2) − U
+2ξ2 dξ 2
+] .
+Swapping the expectations, and resolving the expectation over U gives
+1−
+∫
+w(ξ 2) (ξ 2)−n/2
+(ρ2 + μ2)−n/2
+en aμ2
+2(1−aρ 2 )
+(1 − aρ2)n/2 dξ 2 where a = 1
+μ2 + ρ2 − 1
+ξ2 .
+The integrand above is maximised at ξ 2 = ρ2 + μ2, where it takes value 1. This proves the displayed expression is nonnegative, establishing the desired optimality.
+It hence turns out that a likelihood ratio between the alternative N (μ, ρ2) and the closest element of the null, N (0, ρ2 + μ2) is the log-optimal anytime-valid E-value (LOAVEV). We next show something stronger, namely that it is a test super-martingale for every element of the null.
+Lemma 11. The LOAVEV E from (3) is a test super-martingale (non-negative super-martingale starting from 1) under every distribution N (0, ξ 2) ∈ H from the null.
+Proof. Non-negativity and initial value 1 are clear. We have to show that the expected multiplicative increment is ≤ 1 for any variance ξ 2. We have
+E (xn+1 )
+E(xn) =
+√
+μ2 + ρ2
+ρ2 exp
+(
+x2
+n+1
+2(μ2 + ρ2) − (xn+1 − μ)2
+2ρ 2
+)
+,
+and hence the expected multiplicative increment is
+Exn+1∼N (0,ξ 2)
+[
+E (xn+1 )
+∣∣xn ]
+E (xn )
+=
+√
+μ2 + ρ2
+ρ2 Exn+1∼N (0,ξ 2)
+[ e
+1 2
+(
+x2
+n+1
+μ2+ρ2 − (xn+1−μ)2
+ρ2
+)
+∣∣∣∣xn
+]
+=
+(μ2 + ρ2)
+√
+μ2(ρ2 + ξ 2) + ρ4 exp
+(
+− μ2 (μ2 + ρ2 − ξ 2)
+2
+(μ2(ρ2 + ξ 2) + ρ4)
+)
+.
+75
+
+
+W.M. Koolen and P. Grünwald International Journal of Approximate Reasoning 141 (2022) 69–82
+This expression is quasi-concave in ξ 2, and it is maximised by cancelling the derivative, revealing that the maximiser is ξ 2 = ρ2 + μ2 where the value is 1. This proves that E(xn) is a test super-martinagle for (every element of) the entire null H.
+We conclude this example by contrasting the result with another, intuitive anytime-valid E-value. Namely, the likelihood ratio of the alternative and the maximum likelihood element of the null (which is at the empirical second moment ξˆ 2 = Un
+n ). That is, we are looking at
+Eml(xn) :=
+P μ,ρ2 (xn)
+maxξ 2 P 0,ξ 2 (xn) =
+( Un nρ2
+)n/2
+e− Un−2μSn+n(μ2−ρ2)
+2ρ2 .
+This is an anytime-valid E-value. This can be seen, for example, by the fact that it is below the likelihood ratio with ξ 2 , which is a test martingale for ξ 2. By construction, Eml has a lower implied target than the LOAVEV. Let’s compare for a fixed n. Then the LOAVEV implied target (value of the LOAVEV problem) is the pleasantly simple
+n
+2 ln μ2 + ρ2
+ρ2 ,
+while the implied target EQ [ln Eml
+n ] of the ML E-value unfortunately does not admit a closed form expression. We can
+evaluate it numerically for specific inputs, for example at μ = 1, ρ2 = 1 and n = 10 we find implied targets 3.46574 and 3.07214. So indeed the ML-based E-value is slightly worse.
+4.4. Cases where the reverse information projection is a point
+In the Gaussian case we found that the LOAVEV is a likelihood-ratio-based test super-martingale. We now identify a more general condition under which the same happens. Throughout this section, we will be working with i.i.d. distributions in the null and alternative. We will keep denoting T -outcome i.i.d. distributions by capital letters ( P /Q / . . . ) and denote the corresponding one-outcome distributions by the corresponding small letters (p/q/ . . . ). We will further denote by P the set of one-outcome distribution whose i.i.d. extensions comprise the null H = {P | P is i.i.d. p for p ∈ P }.
+Theorem 12. Consider i.i.d. alternative Q and i.i.d. null H generated by P . Suppose that the single-outcome reverse information projection
+inf
+p∈conv(P )
+KL (q ‖p ) ,
+where p ranges over the convex hull (Bayesian mixture marginals) of P , is achieved by some point  ̃p ∈ P . Then the likelihood ratio process
+E(xm) =
+m ∏
+i=1
+q(xi )
+ ̃p(xi )
+is LOAVEV for every stopping time σ , and it is a test super-martingale for every P ∈ H.
+Note that the strong assumption driving this strong conclusion is that the minimiser over the convex hull of P happens to already be present in P .
+Proof. First let us verify that E is a test super-martingale for every P ∈ H, from which it follows in particular that E is an anytime-valid E-value. Unit starting value E( ) = 1 and non-negativity E ≥ 0 hold by definition. The expected value of the multiplicative increment is (recall that P /P ̃ /Q are i.i.d. p/  ̃p/q)
+Ex∼p
+[ q(x)
+ ̃p(x)
+]
+= Ex∼q
+[ p(x)
+ ̃p(x)
+]
+≤ 1,
+where the last step follows from optimality of  ̃p as follows. For α ∈ [0, 1], let g(α) = KL
+(
+q
+∥∥(1 − α)  ̃p + α p
+)
+. As  ̃p is the minimiser of the reverse information projection problem while p is a feasible choice, we must have g′(0) ≥ 0. We see that
+g′(0) = 1 − Eq
+[ p(x)  ̃p(x)
+]
+, proving this part of the claim.
+Now let us establish that E is log-optimal. To this end, fix any other anytime-valid E-value Z . Let
+f (α) = EQ
+[
+ln
+(
+(1 − α)Eσ + α Zσ
+)]
+,
+so that it suffices to show f ′(0) ≤ 0. We have
+76
+
+
+W.M. Koolen and P. Grünwald International Journal of Approximate Reasoning 141 (2022) 69–82
+f ′(0) = EQ
+[ Zσ − Eσ
+Eσ
+]
+=
+∑
+xm∈X ≤T
+Q (xm)
+(
+σ (xm)
+m∏−1
+i=0
+(1 − σ (xi))
+)
+Z (xm)
+E(xm) − 1
+(=)
+∑
+xm∈X ≤T
+P ̃ (xm)
+(
+σ (xm)
+m∏−1
+i=0
+(1 − σ (xi))
+)
+Z (xm) − 1
+= EP ̃ σ
+[
+Z (xm)
+]
+− 1 ≤ 0.
+In the first equality we differentiate and plug in α = 0, while in the second we expand the definition (1) of randomised
+stopping time. The equality marked ( ) uses the definition of E, which gives that Q (xm)/E(xm) = P ̃ (xm), where P ̃ is i.i.d.  ̃p.
+The second inequality uses that Z is an anytime-valid E-value in particular for P ̃ ∈ H.
+We conclude this section with four examples of cases where the reverse information projection falls in the null.
+• When the null H is generated by a convex set P , then (obviously) the minimiser over the convex hull is in P . This includes i.e. convex sets of i.i.d. Bernoulli distributions. • The mean-zero Gaussians vs fixed Gaussian case from Section 4.3. Note that the null is not convex in this case, yet the reverse information projection is a point. • 2 × 2 contingency tables. We take our elementary outcomes to be pairs of coin flips X = {0, 1}2 (this corresponds to two classes with equal occurrences). Let pθ1,θ2 be the distribution on (x1, x2) ∈ X 2 claiming that x1 and x2 are independent, with x1 ∼ Ber(θ1) and x2 ∼ Ber(θ2). In this example the null is the (i.i.d. extension of) P =
+{
+pθ,θ |θ ∈ [0, 1]
+}
+and the alternative is the i.i.d. extension of q = pθ1,θ2 for θ1 = θ2. We will show that the reverse information projection is the
+point  ̃p = pθ ̄,θ ̄ ∈ P where θ ̄ = θ1+θ2
+2 (as was established earlier by Turner 9, Section 2.3). Using that  ̃p is the reverse
+information projection of q onto P iff Ex∼p
+[ q(x)  ̃p(x)
+]
+≤ 1 for each p ∈ P (which we can see e.g. by reversing the steps
+in the first part of the proof of Theorem 12), it suffices to show that E(x1,x2)∼pθ1,θ2
+[ pθ,θ (x1,x2) pθ ̄,θ ̄ (x1,x2)
+]
+≤ 1 for every θ ∈ [0, 1].
+Using independence and ab ≤ ( a+b
+2 )2, we indeed find for every θ ∈ [0, 1] that
+E(x1 ,x2 )∼ p θ1 ,θ2
+[
+pθ,θ (x1, x2)
+pθ ̄,θ ̄ (x1, x2)
+]
+= Ex1∼θ1
+[ θ (x1)
+θ ̄(x1)
+]
+· Ex2∼θ2
+[ θ (x2)
+θ ̄(x2)
+]
+≤
+(1
+2 Ex1∼θ1
+[ θ (x1)
+θ ̄(x1)
+]
++1
+2 Ex2∼θ2
+[ θ (x2)
+θ ̄(x2)
+])2
+=
+(
+Ex∼θ ̄
+[ θ (x)
+θ ̄(x)
+])2
+= 1.
+The example readily extends to M × K contingency tables with M classes and K outcomes. Also note that that the null is not convex in this case (the Bernoulli model for one outcome is convex, but the i.i.d. Bernoulli model for pairs of outcomes in not convex). • Consider a one-dimensional exponential family with probability density pβ (x) = eβx−φ(β)r(x) compared to carrier density r, with log-partition function φ(β) = ln
+∫
+eβxr(x) dx. Consider the one-outcome null P =
+{
+pβ |β ∈ [a, b]
+}
+based on the parameter interval [a, b] and take the one-outcome alternative q = pβ1 for β1 < a outside the null interval (the case β1 > b is symmetric). We claim that  ̃p = pa is the reverse information projection, and hence we have LOAVEV test super-martingale process
+E(xm) =
+m ∏
+i=1
+eβ1xi −φ(β1)r(xi )
+eaxi −φ(a)r(xi ) = e(β1−a) ∑m
+i=1 xi −m
+(φ (β1 )−φ (a))
+.
+Again reversing the steps in the first part of the proof of Theorem 12, it suffices to show that for every β ∈ [a, b],
+Ex∼ p β1
+[ pβ (x)
+pa (x)
+]
+≤ 1.
+Expanding the definition of the exponential family density pβ , we have
+ln Ex∼pβ1
+[ pβ (x)
+pa (x)
+]
+= − φ(β1) − φ(β) + φ(a) + φ(β1 + β − a).
+77
+
+
+W.M. Koolen and P. Grünwald International Journal of Approximate Reasoning 141 (2022) 69–82
+Fig. 2. Numerical example with binary outcomes X = {0, 1} and horizon T = 3. The finite sequences X ≤T are displayed as the nodes of a binary tree. Each node xt is labelled with two numbers. In green, we show Q σ (xt ), i.e. the probability of seeing xt and then stopping under the alternative (Q , σ ). In black, we see the LOAVEV E-value E(xt ). The nodes marked with red dashes have the same statistics (two zeros and one one) yet they have different LOAVEV E-values.
+The argument is finished by invoking convexity of φ, which gives that φ(β1 + β − a) − φ(β1) is increasing in β1, which is ≤ a, and hence it is bounded above by φ(β) − φ(a).
+4.5. Numerical example
+For this example, our aim is to go fundamentally beyond the simple LOAVEVs of the previous examples, and explore the general case numerically. To keep things tractable, we take as our null the finite set of i.i.d. Bernoulli distributions H = {Ber(θ ) |θ ∈ {0.3, 0.4, 0.5, 0.6, 0.7} }. We take as our alternative the distribution on sequences {0, 1}T of coin flips formed by taking an equal parts Bayesian mixture of i.i.d. Bernoulli 0.2 and 0.8, i.e. Q = 1
+2 Ber(0.2) + 1
+2 Ber(0.8). We fix a time
+horizon T (we will study T = 3 and T = 6 below), and we let the randomised stopping time σ stop at a uniformly random time from {0, 1, . . . , T } (hence the conditional probability of stopping after t ∈ {0, . . . , T } rounds is 1/(1 + T − t)). We compute the LOAVEV using numerical convex optimisation (we used the CVX add-on for MATLAB). Note that Q σ puts mass on all sequences in {0, 1}≤T , rendering the objective strictly concave, ensuring the LOAVEV is unique. We now present the solution for T = 3 and T = 6, and comment on its features.
+4.5.1. Horizon T = 3
+For our first non-trivial case, we look at horizon T = 3. The resulting E-value is shown in Fig. 2. The implied target (value of the optimisation problem) is 0.002413. What is interesting is the following. We first argue that all ingredients of the problem only care about counts of outcomes; they do not care about the specific order of the data. Here is why: the elements of the null are i.i.d. and hence exchangeable. The alternative is a Bayesian mixture of i.i.d. distributions, and it hence is also exchangeable. The stopping time ignores the data altogether (the rule is to conditionally stop with probability 1/(1 + T − t), for an overall uniform probability 1
+T +1 of stopping after t ∈ {0, 1, . . . , T } rounds. The stopping probability is
+hence also not making distinctions dependent on the specific order of the data. Yet the LOAVEV is order-dependent. For example, we can see in Fig. 2 that the E-values for data sequences 001, 010 and 100 are different; they are 0.807, 0.890 and 1.029.
+4.5.2. Horizon T = 6
+The next example, displayed in Fig. 3 is at depth T = 6. We can observe the following features of the LOAVEV E.
+• We still see that E(xt ) depends on the sequence of outcomes xt , not just on the multiset. For example after 110 we have 0.814 while after 011 we have 0.923 (obtained by looking up in Fig. 3 the bit-mirrored 100). • We also see that nodes with the same sufficient statistics may experience different multiplication factors updating the LOAVEV value over the course of another outcome. For example in context either 100 or 010 (which have the same counts), observing a subsequent 0 causes a multiplicative update to E of 1.091
+0.923 = 1.182 or 0.851
+0.816 = 1.043 respectively. These updates are different, even though the states from which they occurred had the same statistics. • There is a set of situations where the process E is stopped. These situations are marked with green dashes in Fig. 3. It is not the case that the stopping time σ of the alternative stops there deterministically. This shows that the choice of stopping times in the LOAVEV can be interesting.
+78
+
+
+W.M. Koolen and P. Grünwald International Journal of Approximate Reasoning 141 (2022) 69–82
+Fig. 3. LOAVEV E-value for horizon T = 6. The nodes at depth 1 (marked with red dashes) are interesting, as we have E(x) < 1 for both outcomes x ∈ {0, 1}. The LOAVEV first drops deterministically, and subsequently rises back up, unlike any (super-)martingale. At the nodes marked with green dashes, the LAOVEV stops evolving before the final time T .
+• Even though the null is of size |H| = 5, the support of the Bayesian mixture in the dual formulation (or the active minimisers in the primal formulation) are only the two extreme points (0.3 and 0.7) of the null. Note that taking product distributions over T samples destroys convexity, even if the hypothesis set H had it at the level of 1 sample. • The implied target (i.e. the value of the LOAVEV optimisation problem) is 0.021367. For more discussion on the implied target, see [5]. • The LOAVEV E is doing something that a super-martingale cannot: it is losing evidence at first which is then later regained. To see this, observe that the two nodes at depth 1, marked with red dashes in Fig. 3, are both < 1. So the LOAVEV is losing evidence deterministically. To explain why this happens, we refer back to the characterisation in Lemma 4. We see that E is built from martingales (which preserve evidence on average) by taking a point-wise minimum.
+5. Discussion
+We conclude the paper with a short discussion.
+• How to pick the alternative (Q , σ )? In this paper we treat (Q , σ ) as given, and optimise power (as represented by the log-optimality or implied target objective function). What about a composite alternative, represented by a set H1 of candidate (Q , σ )? One natural option is to somehow represent H1 by a single candidate. This may be achieved e.g. by mixing with certain universal priors, as studied in the literature on universal coding. Another avenue is to take a
+79
+
+
+W.M. Koolen and P. Grünwald International Journal of Approximate Reasoning 141 (2022) 69–82
+(stratified) worst-case approach, as is done in [2]. In principle we can maximise the minimum implied target. If the alternative H1 is not separated from the null H, then this trivialises. We may remove from H1 the hypotheses too close to H, thus creating separation, and then maximise the minimum growth rate on the remainder. • We motivated our paper by the desire to do testing sequentially, and we obtained our log-optimal anytime-valid E-values to measure evidence against the composite null H under optional stopping. Now let’s talk briefly about a sequence of such optionally stopped interactions. Length two is already interesting. That is, suppose we receive x(1) ∈ X ≤T , followed by x(2) ∈ X ≤T . What total evidence against the null can we report based on both? The natural measure to report is the product Eprod := E(x(1))E(x(2)). It is clear that this is safe in the sense that the expectation
+Ex(1)∼P τ1 ,x(2)∼P τ2
+[
+E prod ]
+≤ 1 whenever P ∈ H and τ1, τ2 are arbitrary randomised stopping times. However, something even stronger holds. Namely, for every P1 ∈ H and for every P2 ∈ H adaptively chosen based on x(1), we also have
+Ex(1)∼P τ1
+1 ,x(2)∼P τ2
+2
+[
+E prod ]
+≤ 1. That is, Eprod is safe even if the true distribution is changing (possibly adversarially) in
+between experiments. This is the setting often studied in the literature on imprecise probability. On the one hand, we may think of robustness to a moving true distribution as a desirable safety feature. In that setting [10] study the special position product has among all e-merging functions. On the other hand, when a moving true distribution is deemed unrealistic (the classical viewpoint in statistics) we may also see this robustness as an impediment to power under the alternative. (An interesting extreme case of this phenomenon was recently studied by [4], who link it to fork-convexity.) Our Lemma 4 provides a path toward an alternative measure of evidence that removes this inefficiency. That is, we may decompose our one-experiment LOAVEV as a minimum of test martingales E(xm) = infP ∈H M P (xm). This allows us to construct the sharper measure Esmart := infP ∈H M P (x(1))M P (x(2)) ≥ Eprod. By taking the minimum only once we lose the ability to cope with changing P1, P2 ∈ H, and in return we can report the higher evidence Esmart ≥ Eprod against any fixed P ∈ H. It is an open question if any mileage can be extracted from the even stronger assumption that the subsequent experiments in addition also use the same stopping rule τ1 = τ2. • Can we somehow simplify the problem, for example to speed up the computations? Is there any additional structure allowing us to compute things more efficiently? It is tempting to believe there should be some remnants of sufficient statistics in the LOAVEV world. A process that is a function of the sufficient statistic is described by polynomially many numbers in T (one number for every possible outcome count vector), while our current non-statistics based processes consist of exponentially many numbers (one for each prefix). However, our numerical examples show that LOAVEVs are not literally sufficient-statistic based. It would be wonderful if we can understand and exploit what can be salvaged. • So far, we have always worked with the natural filtration Ft = σ ( Xt ). We are aware that in settings where both null and alternative are invariant under the same group, we may think of the group as a nuisance parameter. Doing this picture justice then leads to working with a reduced filtration (essentially taking the quotient by the group). This reduces the class of stopping times, and removes constraints form the definitions of test martingales and anytime-valid E-values. [2] obtain test martingales for the case where the null quotients to a point. It would be very interesting to develop the LOAVEV theory for the general case. • In Theorem 12 we see a phenomenon, namely that the null collapses to a point P ̃ , upon which the dependence on
+the stopping time σ evaporates, and the LOAVEV simplifies to the likelihood ratio E(xm) = Q (xm)/P ̃ (xm). This happens
+when, from the perspective of the alternative Q , there is a single closest element P ̃ of the null H at every stopping time. Beyond the i.i.d. case this phenomenon is not yet well understood. • We have assumed throughout for simplicity that some final horizon T can be specified. This is clearly not a very limiting assumption, as we will eventually face the heat death of the universe. Technically, when the support of σ is allowed to be unbounded, we find that Proposition 2, Lemma 4 and Theorems 12 and 8 stay valid, and the update of Problem 3 remains what we want. We would need to check Theorem 5 (which, following to the reduction to batch viewpoint discussion below it, intuitively remains plausible). On the other hand Proposition 6 and Lemma 7 would have to be redone. Then again, the role of the latter two was to simplify numerical computation, which will certainly require revision to deal with unbounded horizon.
+CRediT authorship contribution statement
+Wouter M. Koolen: Conceptualization, Formal analysis, Methodology, Software, Writing – original draft. Peter Grünwald: Conceptualization, Formal analysis, Methodology, Writing – original draft.
+Declaration of competing interest
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+Appendix A. Proof of Theorem 5
+We start from the left-hand side of the theorem, which is
+sup E ∈EH
+EQ [ln Eσ ] = sup
+E ∈EH
+Exm∼Q σ
+[
+ln E(xm)
+]
+.
+80
+
+
+W.M. Koolen and P. Grünwald International Journal of Approximate Reasoning 141 (2022) 69–82
+Introducing a collection of non-negative Lagrange multipliers λ(P , τ ), one for each anytime validity inequality constraint EP [Eτ ] ≤ 1, we find that the above problem is equal to
+inf
+λ(P ,τ )≥0 sup
+process E
+Exm∼Q σ
+[
+ln E(xm)
+]
++
+∫
+λ(P , τ )
+(
+1 − Exm∼P τ
+[
+E (xm )
+])
+d(P , τ ).
+Optimising for each E(xm) independently, by cancelling the derivative, gives inner maximiser
+E(xm) = Q σ (xm)
+∫
+λ(P , τ )P τ (xm) d(P , τ ) .
+Plugging this in, it remains to solve
+inf
+λ(P ,τ )≥0 Exm∼Q σ
+[
+ln Q σ (xm)
+∫
+λ(P , τ )P τ (xm) d(P , τ )
+] +
+∫
+λ(P , τ ) d(P , τ ) − 1.
+As the final step, we reparametrise by λ(P , τ ) = α w(P , τ ) for some prior w normalising to one and positive scale factor α ≥ 0. We then find that the optimal value for α is α = 1, where the problem becomes the right-hand side of the theorem, i.e.
+inf
+prior w on (P , τ )
+Exm∼Q σ
+[
+ln Q σ (xm)
+∫
+w(P , τ )P τ (xm) d(P , τ )
+] .
+Appendix B. Proof of Lemma 7
+Let T be the time horizon. Starting from the right-hand side of Lemma 4, we find that we are an infimum of test martingales. Unpacking what that means, we need to find process E and family of processes (M P )P∈H optimising
+max
+E ≥0 (M P )P ∈H
+Exm∼Q σ
+[
+ln E(xm)
+]
+subject to ∀P ∈ H, 0 ≤ m ≤ T , xm : M P (xm) ≥ E(xm)
+∀P ∈ H, 0 ≤ m < T , xm : M P (xm) ≥ EP
+[
+M P (xm+1)
+∣∣xm ]
+∀P ∈ H : 1 ≥ M P ( ).
+Introducing collections of Lagrange multipliers λ(P , xm) and ρ(P , xm) for the first two constraints, we find
+min
+λ≥0,ρ≥0 max
+E≥0,(M P )P ∈H
+∀P ∈H:1≥M P ( )
+Exm∼Q σ
+[
+ln E(xm)
+]
++
+∑
+0≤m≤T
+∑
+P ∈H
+∑
+xm
+λ(P , xm)
+(
+M P (xm) − E(xm)+
+)
+∑
+0≤m<T
+∑
+P ∈H
+∑
+xm
+ρ(P , xm)
+(
+M P (xm) − EP
+[
+M P (xm+1)
+∣∣xm ])
+.
+We solve for E to find
+E(xm) = Q σ (xm)
+∑
+P ∈H λ(P , xm)
+The coefficient on M P (xm) is ⎧
+⎪⎨
+⎪⎩
+λ(P , xm) + ρ(P , xm) m = 0,
+λ(P , xm) + ρ(P , xm) − ρ(P , xm−1)P
+(
+xm
+∣∣xm−1 )
+0<m< T,
+λ(P , xm) − ρ(P , xm−1)P
+(
+xm
+∣∣xm−1 )
+m= T.
+The first case reveals that, at optimality, M P ( ) = 1. From the second and third cases above we further obtain the constraint that, for each length m > 1, λ(P , xm) ≤ ρ(P , xm−1)P
+(
+xm
+∣∣xm−1 )
+− ρ(P , xm)1m<T . We are hence left with the optimisation problem
+min
+λ≥0,ρ≥0 Exm∼Q σ
+[
+ln Q σ (xm)
+∑
+P ∈H λ(P , xm)
+]
+−1+
+∑
+P ∈H
+(λ(P , ) + ρ(P , ))
+subject to
+81
+
+
+W.M. Koolen and P. Grünwald International Journal of Approximate Reasoning 141 (2022) 69–82
+∀P ∈ H, 1 ≤ m ≤ T , xm : λ(P , xm) ≤ ρ(P , xm−1)P
+(
+xm
+∣∣xm−1 )
+− ρ(P , xm)1m<T .
+We may further solve for λ. For 1 ≤ m ≤ T , we saturate the constraint. For m = 0 we find optimal value ∑
+P∈H λ(P , ) =
+Q σ ( ). This results in
+ρm≥i 0n
+∑
+1≤m≤T ,xm
+Q σ (xm) ln Q σ (xm)
+∑
+P ∈H
+(ρ(P , xm−1)P
+(
+xm
+∣∣xm−1 )
+− ρ(P , xm)1m<T
+)
+−1+ Qσ( )+
+∑
+P ∈H
+ρ(P , ),
+subject to ∀P ∈ H, 1 ≤ m ≤ T , xm : ρ(P , xm−1)P
+(
+xm
+∣∣xm−1 )
+≥ ρ(P , xm)1m<T .
+Finally, reparametrising by ρ = αφ with α ≥ 0 and ρ > 0 and the normalisation constraint ∑
+P∈H φ(P , ) = 1 − Q σ ( ), we obtain
+min
+α≥0,φ≥0
+∑
+1≤m≤T ,xm
+Q σ (xm) ln Q σ (xm)
+α∑
+P ∈H
+(
+φ (P , xm−1)P
+(
+xm
+∣∣xm−1 )
+− φ (P , xm)1m<T
+)
+− (1 − α)(1 − Q σ ( )),
+subject to
+∑
+P ∈H
+φ(P , ) = 1 − Q σ ( ),
+∀P ∈ H, 1 ≤ m ≤ T , xm : φ(P , xm−1)P
+(
+xm
+∣∣xm−1 )
+≥ φ (P , xm)1m<T .
+The optimal choice for α is 1, and we obtain
+φm≥i0n
+∑
+1≤m≤T ,xm
+Q σ (xm) ln Q σ (xm)
+∑
+P ∈H
+(
+φ (P , xm−1)P
+(
+xm
+∣∣xm−1 )
+− φ (P , xm)1m<T
+)
+subject to
+∑
+P ∈H
+φ(P , ) = 1 − Q σ ( ),
+∀P ∈ H, 1 ≤ m ≤ T , xm : φ(P , xm−1)P
+(
+xm
+∣∣xm−1 )
+≥ φ (P , xm)1m<T .
+References
+[1] T. Cover, J. Thomas, Elements of Information Theory, Wiley-Interscience, New York, 1991. [2] P.D. Grünwald, R. de Heide, W.M. Koolen, Safe testing, arXiv:1906.07801, 2019. [3] A. Ramdas, J. Ruf, M. Larsson, W.M. Koolen, Admissible anytime-valid sequential inference must rely on nonnegative martingales, arXiv:2009.03167, 2020. [4] A. Ramdas, J. Ruf, M. Larsson, W.M. Koolen, Testing exchangeability: fork-convexity, supermartingales and e-processes, Int. J. Approx. Reason. (2021). [5] G. Shafer, Testing by betting: a strategy for statistical and scientific communication, J. R. Stat. Soc., A 184 (2) (2020) 407–431. [6] G. Shafer, A. Shen, N. Vereshchagin, V. Vovk, Test martingales, Bayes factors and p-values, Stat. Sci. 26 (2011) 84–101. [7] G. Shafer, V. Vovk, Game-Theoretic Foundations for Probability and Finance, Wiley Series in Probability and Statistics, Wiley, Hoboken, NJ, 2019. [8] E. Solan, B. Tsirelson, N. Vieille, Random stopping times in stopping problems and stopping games, arXiv:1211.5802, 2012. [9] R.J. Turner, Safe tests for 2 × 2 contingency tables and the Cochran-Mantel-Haenszel test, Master’s thesis, Leiden University, 2019. [10] V. Vovk, R. Wang, E-values: calibration, combination and applications, Ann. Stat. 49 (2021) 1736–1754.
+82

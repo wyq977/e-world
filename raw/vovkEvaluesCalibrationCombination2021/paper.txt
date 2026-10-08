@@ -1,0 +1,1279 @@
+E-values: Calibration, combination, and
+applications
+Vladimir Vovk∗ Ruodu Wang†
+September 22, 2020
+Abstract
+Multiple testing of a single hypothesis and testing multiple hypotheses are usually done in terms of p-values. In this paper we replace p-values with their natural competitor, e-values, which are closely related to betting, Bayes factors, and likelihood ratios. We demonstrate that e-values are often mathematically more tractable; in particular, in multiple testing of a single hypothesis, e-values can be merged simply by averaging them. This allows us to develop efficient procedures using e-values for testing multiple hypotheses.
+1 Introduction
+The problem of multiple testing of a single hypothesis (also known as testing a global null) is usually formalized as that of combining a set of p-values. The notion of p-values, however, has a strong competitor, which we refer to as evalues in this paper. E-values can be traced back to various old ideas, but they have started being widely discussed in their pure form only recently: see, e.g., Shafer[2019], who uses the term “betting score” in the sense very similar to our “e-value”,Shafer and Vovk[2019, Section 11.5], who use “Skeptic’s capital”, andGru ̈nwald et al.[2020]. The power and intuitive appeal of e-values stem from their interpretation as results of bets against the null hypothesis [Shafer, 2019, Section 1]. Formally, an e-variable is a nonnegative extended random variable whose expected value under the null hypothesis is at most 1, and an e-value is a value taken by an e-variable. Whereas p-values are defined in terms of probabilities, e-values are defined in terms of expectations. As we regard an e-variable E as a bet against the null hypothesis, its realized value e := E(ω) shows how successful our bet is (it is successful if it multiplies the money it risks by a
+∗Department of Computer Science, Royal Holloway, University of London, Egham, Surrey, UK. E-mail:v.vovk@rhul.ac.uk. †Department of Statistics and Actuarial Science, University of Waterloo, Waterloo, Ontario, Canada. E-mail:wang@uwaterloo.ca.
+1
+arXiv:1912.06116v4 [math.ST] 19 Sep 2020
+
+
+large factor). Under the null hypothesis, it can be larger than a constant c > 1 with probability at most 1/c (by Markov’s inequality). If we are very successful (i.e., e is very large), we have reasons to doubt that the null hypothesis is true, and e can be interpreted as the amount of evidence we have found against it. In textbook statistics e-variables typically appear under the guise of likelihood ratios and Bayes factors. The main focus of this paper is on combining e-values and multiple hypothesis testing using e-values. The picture that arises for these two fields is remarkably different from, and much simpler than, its counterpart for p-values. To clarify connections between e-values and p-values, we discuss how to transform p-values into e-values, or calibrate them, and how to move in the opposite direction. We start the main part of the paper by defining the notion of e-values in Section2and reviewing known results about connections between e-values and p-values; we will discuss how the former can be turned into the latter and vice versa (with very different domination structures for the two directions). In Section3we show that the problem of merging e-values is more or less trivial: a convex mixture of e-values is an e-value, and symmetric merging functions are essentially dominated by the arithmetic mean. For example, when several analyses are conducted on a common (e.g., public) dataset each reporting an evalue, it is natural to summarize them as a single e-value equal to their weighted average (the same cannot be said for p-values). In Section4we assume, additionally, that the e-variables being merged are independent and show that the domination structure is much richer; for example, now the product of e-values is an e-value. The assumption of independence can be replaced by the weaker assumption of being sequential, and we discuss connections with the popular topic of using martingales in statistical hypothesis testing: see, e.g.,Duan et al.[2019] andShafer and Vovk[2019]. In Section5we apply these results to multiple hypothesis testing. In the next section, Section6, we briefly review known results on merging p-values (e.g., the two classes of merging methods inRu ̈ger[1978] andVovk and Wang[2019a]) and draw parallels with merging e-values; in the last subsection we discuss the case where p-values are independent. Section7 is devoted to experimental results; one finding in this section is that, for multiple testing of a single hypothesis in independent experiments, a simple method based on e-values outperforms standard methods based on p-values. Section8 concludes the main part of the paper. AppendixAdescribes numerous connections with the existing literature, including Bayes factors and multiple hypothesis testing. AppendixBdescribes the origins of the problem of calibrating p-values and gives interesting examples of calibrators. A short AppendixCdeals with merging infinite e-values. AppendixDexplores the foundations of calibration and merging of e-values and p-values; in particular, whether the universal quantifiers over probability spaces in the definitions given in the main paper are really necessary. AppendixE proves Theorem3.2in the main paper characterizing the domination structure of the e-merging functions. AppendixFpresents an informative minimax view of essential and weak domination. AppendixGdiscusses “cross-merging”:
+2
+
+
+how do we merge several p-values into one e-value and several e-values into one p-value? AppendixHcontains additional experimental results. Finally, AppendixIbriefly describes the procedure that we use for multiple hypothesis testing in combination with Fisher’s [1932] method of combining p-values. The journal version of this paper is to appear in the Annals of Statistics.
+2 Definition of e-values and connections with p
+values
+For a probability space (Ω, A, Q), an e-variable is an extended random variable E : Ω → [0, ∞] satisfying EQ[E] ≤ 1; we refer to it as “extended” since its values are allowed to be ∞, and we let EQ[X] (or E[X] when Q is clear from context) stand for
+∫
+X dQ for any extended random variable X. The values taken by e-variables will be referred to as e-values, and we denote the set of e-variables by EQ. It is important to allow E to take value ∞; in the context of testing Q, observing E = ∞ for an a priori chosen e-variable E means that we are entitled to reject Q as null hypothesis. Our emphasis in this paper is on e-values, but we start from discussing their connections with the familiar notion of p-values. A p-variable is a random variable P : Ω → [0, 1] satisfying
+∀ ∈ (0, 1) : Q(P ≤ ) ≤ .
+The set of all p-variables is denoted by PQ. A calibrator is a function transforming p-values to e-values. Formally, a decreasing function f : [0, 1] → [0, ∞] is a calibrator (or, more fully, p-to-e calibrator ) if, for any probability space (Ω, A, Q) and any p-variable P ∈ PQ, f (P ) ∈ EQ. A calibrator f is said to dominate a calibrator g if f ≥ g, and the domination is strict if f 6= g. A calibrator is admissible if it is not strictly dominated by any other calibrator. The following proposition says that a calibrator is a nonnegative decreasing function integrating to at most 1 over the uniform probability measure.
+Proposition 2.1. A decreasing function f : [0, 1] → [0, ∞] is a calibrator if and only if
+∫1
+0 f ≤ 1. It is admissible if and only if f is upper semicontinuous,
+f (0) = ∞, and
+∫1
+0 f = 1.
+Of course, in the context of this proposition, being upper semicontinuous is equivalent to being left-continuous.
+Proof. Proofs of similar statements are given in, e.g.,Vovk[1993, Theorem 7], Shafer et al.[2011, Theorem 3], andShafer and Vovk[2019, Proposition 11.7], but we will give an independent short proof using our definitions. The first “only if” statement is obvious. To show the first “if” statement, suppose that
+3
+
+
+∫1
+0 f ≤ 1, P is a p-variable, and P ′ is uniformly distributed on [0, 1]. Since
+Q(P < x) ≤ Q(P ′ < x) for all x ≥ 0 and f is decreasing, we have
+Q(f (P ) > y) ≤ Q(f (P ′) > y)
+for all y ≥ 0, which implies
+E[f (P )] ≤ E[f (P ′)] =
+∫1
+0
+f (p) dp ≤ 1.
+The second statement in Proposition2.1is obvious.
+The following is a simple family of calibrators. Since
+∫1
+0 κpκ−1 dp = 1, the functions fκ(p) := κpκ−1 (1)
+are calibrators, where κ ∈ (0, 1). To solve the problem of choosing the parameter κ, sometimes the maximum
+VS(p) := max
+κ∈[0,1]
+fκ(p) =
+{
+− exp(−1)/(p ln p) if p ≤ exp(−1)
+1 otherwise
+is used (see, e.g.,Benjamin and Berger[2019], Recommendations 2 and 3); we will refer to it as the VS bound (abbreviating “Vovk–Sellke bound”, as used in, e.g., the JASP package). It is important to remember that VS(p) is not a valid e-value, but just an overoptimistic upper bound on what is achievable with the class (1). Another way to get rid of κ is to integrate over it, which gives
+F (p) :=
+∫1
+0
+κpκ−1 dκ = 1 − p + p ln p
+p(− ln p)2 . (2)
+(See AppendixBfor more general results and references. We are grateful to Aaditya Ramdas for pointing out the calibrator (2).) An advantage of this method is that it produces a bona fide e-value, unlike the VS bound. As p → 0, F (p) ∼ p−1(− ln p)−2, so that F (p) is closer to the ideal (but unachievable) 1/p (cf. Remark2.3below) than any of (1). In the opposite direction, an e-to-p calibrator is a function transforming e-values to p-values. Formally, a decreasing function f : [0, ∞] → [0, 1] is an eto-p calibrator if, for any probability space (Ω, A, Q) and any e-variable E ∈ EQ, f (E) ∈ PQ. The following proposition, which is the analogue of Proposition2.1 for e-to-p calibrators, says that there is, essentially, only one e-to-p calibrator, f (t) := min(1, 1/t).
+Proposition 2.2. The function f : [0, ∞] → [0, 1] defined by f (t) := min(1, 1/t) is an e-to-p calibrator. It dominates every other e-to-p calibrator. In particular, it is the only admissible e-to-p calibrator.
+4
+
+
+Proof. The fact that f (t) := min(1, 1/t) is an e-to-p calibrator follows from Markov’s inequality: if E ∈ EQ and ∈ (0, 1),
+Q(f (E) ≤ ) = Q(E ≥ 1/ ) ≤ EQ[E]
+1/ ≤ .
+On the other hand, suppose that f is another e-to-p calibrator. It suffices to check that f is dominated by min(1, 1/t). Suppose f (t) < min(1, 1/t) for some t ∈ [0, ∞]. Consider two cases:
+• If f (t) < min(1, 1/t) = 1/t for some t > 1, fix such t and consider an e-variable E that is t with probability 1/t and 0 otherwise. Then f (E) is f (t) < 1/t with probability 1/t, whereas it would have satisfied P (f (E) ≤ f (t)) ≤ f (t) < 1/t had it been a p-variable.
+• If f (t) < min(1, 1/t) = 1 for some t ∈ [0, 1], fix such t and consider an e-variable E that is 1 a.s. Then f (E) is f (t) < 1 a.s., and so it is not a p-variable.
+Proposition2.1implies that the domination structure of calibrators is very rich, whereas Proposition2.2implies that the domination structure of e-to-p calibrators is trivial.
+Remark 2.3. A possible interpretation of this section’s results is that e-variables and p-variables are connected via a rough relation 1/e ∼ p. In one direction, the statement is precise: the reciprocal (truncated to 1 if needed) of an e-variable is a p-variable by Proposition2.2. On the other hand, using a calibrator (1) with a small κ > 0 and ignoring positive constant factors (as customary in the algorithmic theory of randomness, discussed in SectionA.2), we can see that the reciprocal of a p-variable is approximately an e-variable. In fact, f (p) ≤ 1/p for all p when f is a calibrator; this follows from Proposition2.1. However, f (p) = 1/p is only possible in the extreme case f = 1[0,p]/p.
+3 Merging e-values
+An important advantage of e-values over p-values is that they are easy to combine. This is the topic of this section, in which we consider the general case, without any assumptions on the joint distribution of the input e-variables. The case of independent e-variables is considered in the next section. Let K ≥ 2 be a positive integer (fixed throughout the paper apart from Section7). An e-merging function of K e-values is an increasing Borel function F : [0, ∞]K → [0, ∞] such that, for any probability space (Ω, A, Q) and random variables E1, . . . , EK on it,
+E1, . . . , EK ∈ EQ =⇒ F (E1, . . . , EK ) ∈ EQ (3)
+(in other words, F transforms e-values into an e-value). In this paper we will also refer to increasing Borel functions F : [0, ∞)K → [0, ∞) satisfying (3)
+5
+
+
+for all probability spaces and all e-variables E1, . . . , EK taking values in [0, ∞) as e-merging functions; such functions are canonically extended to e-merging functions F : [0, ∞]K → [0, ∞] by setting them to ∞ on [0, ∞]K \ [0, ∞)K (see PropositionC.1in AppendixC). An e-merging function F dominates an e-merging function G if F ≥ G (i.e., F (e) ≥ G(e) for all e ∈ [0, ∞)K). The domination is strict (and we say that F strictly dominates G) if F ≥ G and F (e) > G(e) for some e ∈ [0, ∞)K. We say that an e-merging function F is admissible if it is not strictly dominated by any e-merging function; in other words, admissibility means being maximal in the partial order of domination. A fundamental fact about admissibility is proved in AppendixE(PropositionE.5): any e-merging function is dominated by an admissible e-merging function.
+Merging e-values via averaging
+In this paper we are mostly interested in symmetric merging functions (i.e., those invariant w.r. to permutations of their arguments). The main message of this section is that the most useful (and the only useful, in a natural sense) symmetric e-merging function is the arithmetic mean
+MK (e1, . . . , eK ) := e1 + · · · + eK
+K , e1, . . . , eK ∈ [0, ∞). (4)
+In Theorem3.2below we will see that MK is admissible (this is also a consequence of Proposition4.1). But first we state formally the vague claim that MK is the only useful symmetric e-merging function. An e-merging function F essentially dominates an e-merging function G if, for all e ∈ [0, ∞)K , G(e) > 1 =⇒ F (e) ≥ G(e).
+This weakens the notion of domination in a natural way: now we require that F is not worse than G only in cases where G is not useless; we are not trying to compare degrees of uselessness. The following proposition can be interpreted as saying that MK is at least as good as any other symmetric e-merging function.
+Proposition 3.1. The arithmetic mean MK essentially dominates any symmetric e-merging function.
+In particular, if F is an e-merging function that is symmetric and positively homogeneous (i.e., F (λe) = λF (e) for all λ > 0), then F is dominated by MK. This includes the e-merging functions discussed later in Section6.
+Proof of Proposition3.1. Let F be a symmetric e-merging function. Suppose for the purpose of contradiction that there exists (e1, . . . , eK ) ∈ [0, ∞)K such that
+b := F (e1, . . . , eK ) > max
+( e1 + · · · + eK
+K ,1
+)
+=: a. (5)
+6
+
+
+Let ΠK be the set of all permutations of {1, . . . , K}, π be randomly and uniformly drawn from ΠK , and (D1, . . . , DK ) := (eπ(1), . . . , eπ(K)). Further, let (D′
+1, . . . , D′
+K ) := (D1, . . . , DK )1A, where A is an event independent of π and satisfying P (A) = 1/a (the existence of such random π and A is guaranteed for any atomless probability space by LemmaD.1in AppendixD). For each k, since Dk takes the values e1, . . . , eK with equal probability, we have E[Dk] = (e1+· · ·+eK )/K, which implies E[D′
+k] = (e1+· · ·+eK )/(Ka) ≤ 1.
+Together with the fact that D′
+k is nonnegative, we know D′
+k ∈ EQ. Moreover, by symmetry,
+E[F (D′
+1, . . . , D′
+K )] = Q(A)F (e1, . . . , eK ) + (1 − Q(A))F (0, . . . , 0) ≥ b/a > 1,
+a contradiction. Therefore, we conclude that there is no (e1, . . . , eK) such that (5) holds.
+It is clear that the arithmetic mean MK does not dominate every symmetric e-merging function; for example, the convex mixtures
+λ + (1 − λ)MK , λ ∈ [0, 1], (6)
+of the trivial e-merging function 1 and MK are pairwise non-comparable (with respect to the relation of domination). In the theorem below, we show that each of these mixtures is admissible and that the class (6) is, in the terminology of statistical decision theory [Wald,1950, Section 1.3], a complete class of symmetric e-merging functions: every symmetric e-merging function is dominated by one of (6). In other words, (6) is the minimal complete class of symmetric e-merging functions.
+Theorem 3.2. Suppose that F is a symmetric e-merging function. Then F is dominated by the function λ + (1 − λ)MK for some λ ∈ [0, 1]. In particular, F is admissible if and only if F = λ + (1 − λ)MK, where λ = F (0) ∈ [0, 1].
+The proof of Theorem3.2is put in AppendixEas it requires several other technical results in the appendix. Finally, we note that, for λ 6= 1, the functions in the class (6) carry the same statistical information.
+4 Merging independent e-values
+In this section we consider merging functions for independent e-values. An iemerging function of K e-values is an increasing Borel function F : [0, ∞)K → [0, ∞) such that F (E1, . . . , EK ) ∈ EQ for all independent E1, . . . , EK ∈ EQ in any probability space (Ω, A, Q). As for e-merging functions, this definition is essentially equivalent to the definition involving [0, ∞] rather than [0, ∞) (by PropositionC.1in AppendixC, which is still applicable in the context of merging independent e-values). The definitions of domination, strict domination, and admissibility are obtained from the definitions of the previous section by replacing “e-merging” with “ie-merging”.
+7
+
+
+Let i EK
+Q ⊆ EK
+Q be the set of (component-wise) independent random vectors in EK
+Q , and 1 := (1, . . . , 1) be the all-1 vector in RK . The following proposition has already been used in Section3(in particular, it implies that the arithmetic mean MK is an admissible e-merging function).
+Proposition 4.1. For an increasing Borel function F : [0, ∞)K → [0, ∞), if E[F (E)] = 1 for all E ∈ EK
+Q with E[E] = 1 (resp., for all E ∈ i EK
+Q with E[E] = 1), then F is an admissible e-merging function (resp., an admissible ie-merging function).
+Proof. It is obvious that F is an e-merging function (resp., ie-merging function). Next we show that F is admissible. Suppose for the purpose of contradiction that there exists an ie-merging function G such that G ≥ F and G(e1, . . . , eK ) > F (e1, . . . , eK ) for some (e1, . . . , eK ) ∈ [0, ∞)K . Take (E1, . . . , EK ) ∈ i EK
+Q with E[(E1, . . . , EK )] = 1 such that Q((E1, . . . , EK ) = (e1, . . . , eK )) > 0. Such a random vector is easy to construct by considering any distribution with a positive mass on each of e1, . . . , eK . Then we have
+Q(G(E1, . . . , EK ) > F (E1, . . . , EK )) > 0,
+which implies
+E[G(E1, . . . , EK )] > E[G(E1, . . . , EK )] = 1,
+contradicting the assumption that G is an ie-merging function. Therefore, no iemerging function strictly dominates F . Noting that an e-merging function is also an ie-merging function, admissibility of F is guaranteed under both settings.
+If E1, . . . , EK are independent e-variables, their product E1 . . . EK will also be an e-variable. This is the analogue of Fisher’s [1932] method for p-values (according to the rough relation e ∼ 1/p mentioned in Remark2.3; Fisher’s method is discussed at the end of Section6). The ie-merging function
+(e1, . . . , eK ) 7→ e1 . . . eK (7)
+is admissible by Proposition4.1. It will be referred to as the product (or multiplication) ie-merging function. The betting interpretation of (7) is obvious: it is the result of K successive bets using the e-variables E1, . . . , EK (starting with initial capital 1 and betting the full current capital E1 . . . Ek−1 on each Ek). More generally, we can see that the U-statistics
+Un(e1, . . . , eK ) := 1
+(K n
+)
+∑
+{k1 ,...,kn }⊆{1,...,K }
+ek1 . . . ekn , n ∈ {0, 1, . . . , K}, (8)
+and their convex mixtures are ie-merging functions. Notice that this class includes product (for n = K), arithmetic average MK (for n = 1), and constant 1 (for n = 0). Proposition4.1implies that the U-statistics (8) and their convex mixtures are admissible ie-merging functions.
+8
+
+
+The betting interpretation of a U-statistic (8) or a convex mixture of Ustatistics is implied by the betting interpretation of each component ek1 . . . ekn . Assuming that k1, . . . , kn are sorted in the increasing order, ek1 . . . ekn is the result of n successive bets using the e-variables Ek1 , . . . , Ekn ; and a convex mixture of bets corresponds to investing the appropriate fractions of the initial capital into those bets. Let us now establish a very weak counterpart of Proposition3.1for independent e-values (on the positive side it will not require the assumption of symmetry). An ie-merging function F weakly dominates an ie-merging function G if, for all e1, . . . , eK ,
+(e1, . . . , eK ) ∈ [1, ∞)K =⇒ F (e1, . . . , eK ) ≥ G(e1, . . . , eK ).
+In other words, we require that F is not worse than G if all input e-values are useful (and this requirement is weak because, especially for a large K, we are also interested in the case where some of the input e-values are useless).
+Proposition 4.2. The product (e1, . . . , eK ) 7→ e1 . . . eK weakly dominates any ie-merging function.
+Proof. Indeed, suppose that there exists (e1, . . . , eK ) ∈ [1, ∞)K such that
+F (e1, . . . , eK ) > e1 . . . eK .
+Let E1, . . . , EK be independent random variables such that each Ek for k ∈ {1, . . . , K} takes values in the two-element set {0, ek} and Ek = ek with probability 1/ek. Then each Ek is an e-variable but
+E[F (E1, . . . , EK )] ≥ F (e1, . . . , eK )Q(E1 = e1, . . . , EK = eK )
+> e1 . . . eK (1/e1) . . . (1/eK ) = 1,
+which contradicts F being an ie-merging function.
+Remark 4.3. A natural question is whether the convex mixtures of (8) form a complete class. They do not: Proposition4.1implies that
+f (e1, e2) := 1
+2
+( e1 1 + e1
++ e2
+1 + e2
+)
+(1 + e1e2)
+is an admissible ie-merging function, and it is easy to check that it is different from any convex mixture of (8).
+Testing with martingales
+The assumption of the independence of e-variables E1, . . . , EK is not necessary for the product E1 . . . EK to be an e-variable. Below, we say that the e-variables E1, . . . , EK are sequential if E[Ek | E1, . . . , Ek−1] ≤ 1 almost surely for all k ∈ {1, . . . , K}. Equivalently, the sequence of the partial products (E1 . . . Ek)k=0,1,...,K is a supermartingale in the filtration generated by E1, . . . , EK
+9
+
+
+(or a test supermartingale, in the terminology ofShafer et al.[2011],Howard et al.[2020b], andGru ̈nwald et al.[2020], meaning a nonnegative supermartingale with initial value 1). A possible interpretation of this test supermartingale is that the e-values e1, e2, . . . are obtained by laboratories 1, 2, . . . in this order, and laboratory k makes sure that its result ek is a valid e-value given the previous results e1, . . . , ek−1. The test supermartingale is a test martingale if E[Ek | E1, . . . , Ek−1] = 1 almost surely for all k (intuitively, it is not wasteful). It is straightforward to check that all convex mixtures of (8) (including the product function) produce a valid e-value from sequential e-values; we will say that they are se-merging functions. On the other hand, independent evariables are sequential, and hence se-merging functions form a subset of iemerging functions. In the class of se-merging functions, the convex mixtures of (8) are admissible, as they are admissible in the larger class of ie-merging functions (by Proposition4.1). For the same reason (and by Proposition4.2), the product function in (7) weakly dominates every other se-merging function. This gives a (weak) theoretical justification for us to use the product function as a canonical merging method in Sections5and7for e-values as long as they are sequential. Finally, we note that it suffices for E1, . . . , EK to be sequential in any order for these merging methods (such as Algorithm2in Section5) to be valid.
+5 Application to testing multiple hypotheses
+As inVovk and Wang[2019a], we will apply results for multiple testing of a single hypothesis (combining e-values in the context of Sections3and4) to testing multiple hypotheses. As we explain in AppendixA(SectionA.3), our algorithms just spell out the application of the closure principle [Marcus et al., 1976;Goeman and Solari,2011], but our exposition in this section will be selfcontained. Let (Ω, A) be our sample space (formally, a measurable space), and P(Ω) be the family of all probability measures on it. A composite null hypothesis is a set H ⊆ P(Ω) of probability measures on the sample space. We say that E is an e-variable w.r. to a composite null hypothesis H if EQ[Ek] ≤ 1 for any Q ∈ Hk. In multiple hypothesis testing we are given a set of composite null hypotheses Hk, k = 1, . . . , K. Suppose that, for each k, we are also given an e-variable Ek w.r. to Hk. Our multiple testing procedure is presented as Algorithm1. The procedure adjusts the e-values e1, . . . , eK, perhaps obtained in K experiments (not necessarily independent), to new e-values e∗
+1, . . . , e∗
+K ; the adjustment
+is downward in that e∗
+k ≤ ek for all k. Applying the procedure to the e-values e1, . . . , eK produced by the e-variables E1, . . . , EK , we obtain extended random variables E∗
+1, . . . , E∗
+K taking values e∗
+1, . . . , e∗
+K . The output E∗
+1, . . . , E∗
+K of Algorithm1satisfies a property of validity which we will refer to as family-wise validity (FWV); in SectionA.3we will explain its analogy with the standard family-wise error rate (FWER). A conditional e-variable is a family of extended nonnegative random vari
+10
+
+
+Algorithm 1 Adjusting e-values for multiple hypothesis testing Require: A sequence of e-values e1, . . . , eK . 1: Find a permutation π : {1, . . . , K} → {1, . . . , K} such that eπ(1) ≤ · · · ≤
+eπ(K).
+2: Set e(k) := eπ(k), k ∈ {1, . . . , K} (these are the order statistics). 3: S0 := 0
+4: for i = 1, . . . , K do 5: Si := Si−1 + e(i)
+6: for k = 1, . . . , K do 7: e∗
+π(k) := eπ(k)
+8: for i = 1, . . . , k − 1 do
+9: e := eπ(k)+Si
+i+1
+10: if e < e∗
+π(k) then
+11: e∗
+π(k) := e
+ables EQ, Q ∈ P(Ω), that satisfies
+∀Q ∈ P(Ω) : EQ[EQ] ≤ 1
+(i.e., each EQ is in EQ). We regard it as a system of bets against each potential data-generating distribution Q. Extended random variables E∗
+1, . . . , E∗
+K taking values in [0, ∞] are familywise valid (FWV ) for testing H1, . . . , HK if there exists a conditional e-variable (EQ)Q∈P(Ω) such that
+∀k ∈ {1, . . . , K} ∀Q ∈ Hk : EQ ≥ E∗
+k (9)
+(where EQ ≥ E∗
+k means, as usual, that EQ(ω) ≥ E∗
+k(ω) for all ω ∈ Ω). We can
+say that such (EQ)Q∈P(Ω) witnesses the FWV property of E∗
+1, . . . , E∗
+K.
+The interpretation of family-wise validity is based on our interpretation of e-values. Suppose we observe an outcome ω ∈ Ω. If EQ(ω) is very large, we may reject Q as the data-generating distribution. Therefore, if E∗
+k(ω) is very large, we may reject the whole of Hk (i.e., each Q ∈ Hk). In betting terms, we have made at least $E∗
+k(ω) risking at most $1 when gambling against any Q ∈ Hk. Notice that we can rewrite (9) as
+∀Q ∈ P(Ω) : EQ
+[
+max
+k:Q∈Hk
+E∗
+k
+]
+≤ 1.
+In other words, we require joint validity of the e-variables E∗
+k.
+We first state the validity of Algorithm1(as well as Algorithm2given below), and our justification follows.
+Theorem 5.1. Algorithms1and2are family-wise valid.
+11
+
+
+Let us check that the output E∗
+1, . . . , E∗
+K of Algorithm1is FWV. For I ⊆ {1, . . . , K}, the composite hypothesis HI is defined by
+HI :=
+( ⋂
+k∈I
+Hk
+) ⋂
+
+
+⋂
+k∈{1,...,K }\I
+Hc
+k
+
+ , (10)
+where Hc
+k is the complement of Hk. The conditional e-variable witnessing that
+E∗
+1, . . . , E∗
+K are FWV is the arithmetic mean
+EQ := 1
+|IQ|
+∑
+k∈IQ
+Ek, (11)
+where IQ := {k | Q ∈ Hk} and EQ is defined arbitrarily (say, as 1) when IQ = ∅. The optimal adjusted e-variables E′
+k can be defined as
+E′
+k := min
+Q∈Hk
+EQ ≥ min
+I ⊆{1,...,K }:k∈I
+1 |I |
+∑
+i∈I
+Ei, (12)
+but for computational efficiency we use the conservative definition
+E∗
+k := min
+I ⊆{1,...,K }:k∈I
+1 |I |
+∑
+i∈I
+Ei. (13)
+Remark 5.2. The inequality “≥” in (12) holds as the equality “=” if all the intersections (10) are non-empty. If some of these intersections are empty, we can have a strict inequality. Algorithm1implements the definition (13). Therefore, it is valid regardless of whether some of the intersections (10) are empty; however, if they are, it may be possible to improve the adjusted e-values. According to Holm’s [1979] terminology, we allow “free combinations”.Shaffer [1986] pioneered methods that take account of the logical relations between the base hypotheses Hk.
+To obtain Algorithm1, we rewrite the definitions (13) as
+E∗
+π(k) = min
+i∈{0,...,k−1}
+Eπ(k) + E(1) + · · · + E(i)
+i+1
+= min
+i∈{1,...,k−1}
+Eπ(k) + E(1) + · · · + E(i)
+i+1
+for k ∈ {1, . . . , K}, where π is the ordering permutation and E(j) = Eπ(j) is the jth order statistic among E1, . . . , EK , as in Algorithm1. In lines 3–5 of Algorithm1we precompute the sums
+Si := e(1) + · · · + e(i), i = 1, . . . , K,
+in lines 8–9 we compute
+ek,i := eπ(k) + e(1) + · · · + e(i)
+i+1
+12
+
+
+Algorithm 2 Adjusting sequential e-values for multiple hypothesis testing Require: A sequence of e-values e1, . . . , eK . 1: Let a be the product of all ek < 1, k = 1, . . . , K (and a := 1 if there are no such k).
+2: for k = 1, . . . , K do 3: e∗
+k := aek
+for i = 1, . . . , k − 1, and as result of executing lines 6–11 we will have
+e∗
+π(k) = min
+i∈{1,...,k−1}
+ek,i = min
+i∈{1,...,k−1}
+eπ(k) + e(1) + · · · + e(i)
+i+1 ,
+which shows that Algorithm1is an implementation of (13). The computational complexity of Algorithm1is O(K2). In the case of sequential e-variables, we have Algorithm2. This algorithm assumes that, under any Q ∈ P(Ω), the base e-variables Ek, k ∈ IQ, are sequential (remember that IQ is defined by (11) and that independence implies being sequential). The conditional e-variable witnessing that the output of Algorithm2is FWV is the one given by the product ie-merging function,
+EQ :=
+∏
+k∈IQ
+Ek ,
+where the adjusted e-variables are defined by
+E∗
+k := min
+I ⊆{1,...,K }:k∈I
+∏
+i∈I
+Ei. (14)
+A remark similar to Remark5.2can also be made about Algorithm2. The computational complexity of Algorithm2is O(K) (unusually, the algorithm does not require sorting the base e-values).
+6 Merging p-values and comparisons
+Merging p-values is a much more difficult topic than merging e-values, but it is very well explored. First we review merging p-values without any assumptions, and then we move on to merging independent p-values. A p-merging function of K p-values is an increasing Borel function F : [0, 1]K → [0, 1] such that F (P1, . . . , PK ) ∈ PQ whenever P1, . . . , PK ∈ PQ. For merging p-values without the assumption of independence, we will concentrate on two natural families of p-merging functions. The older family is the one introduced byRu ̈ger[1978], and the newer one was introduced in our paper Vovk and Wang[2019a]. Ru ̈ger’s family is parameterized by k ∈ {1, . . . , K}, and its kth element is the function (shown byRu ̈ger[1978] to be a p-merging function)
+(p1, . . . , pK ) 7→ K
+k p(k) ∧ 1, (15)
+13
+
+
+where p(k) := pπ(k) and π is a permutation of {1, . . . , K} ordering the p-values in the ascending order: pπ(1) ≤ · · · ≤ pπ(K). The other family [Vovk and Wang, 2019a], which we will refer to as the M -family, is parameterized by r ∈ [−∞, ∞], and its element with index r has the form ar,K Mr,K ∧ 1, where
+Mr,K (p1, . . . , pK ) :=
+( pr
+1 + · · · + pr
+K
+K
+)1/r
+(16)
+and ar,K ≥ 1 is a suitable constant. We also define Mr,K for r ∈ {0, ∞, −∞} as the limiting cases of (16), which correspond to the geometric average, the maximum, and the minimum, respectively. The initial and final elements of both families coincide: the initial element is the Bonferroni p-merging function
+(p1, . . . , pK ) 7→ K min(p1, . . . , pK ) ∧ 1, (17)
+and the final element is the maximum p-merging function
+(p1, . . . , pK ) 7→ max(p1, . . . , pK ).
+Similarly to the case of e-merging functions, we say that a p-merging function F dominates a p-merging function G if F ≤ G. The domination is strict if, in addition, F (p) < G(p) for at least one p ∈ [0, 1]K. We say that a pmerging function F is admissible if it is not strictly dominated by any p-merging function G. The domination structure of p-merging functions is much richer than that of e-merging functions. The maximum p-merging function is clearly inadmissible (e.g., (p1, . . . , pK ) 7→ max(p1, . . . , pK ) is strictly dominated by (p1, . . . , pK ) 7→ p1) while the Bonferroni p-merging function is admissible, as the following proposition shows.
+Proposition 6.1. The Bonferroni p-merging function (17) is admissible.
+Proof. Denote by MB the Bonferroni p-merging function (17). Suppose the statement of the proposition is false and fix a p-merging function F that strictly dominates MB. If F = MB whenever MB < 1, then F = MB also when MB = 1, since F is increasing. Hence for some point (p1, . . . , pK ) ∈ [0, 1]K ,
+F (p1, . . . , pK ) < MB(p1, . . . , pK ) < 1.
+Fix such (p1, . . . , pK ) and set p := min(p1, . . . , pK ); we know that Kp < 1. Since
+F (p, . . . , p) ≤ F (p1, . . . , pK ) < MB(p1, . . . , pK ) = Kp,
+we can take ∈ (0, p) such that F (p, . . . , p) < K(p − ). Let A1, . . . , AK , B be disjoint events such that Q(Ak) = p − for all k and Q(B) = (their existence is guaranteed by the inequality Kp < 1). Define random variables
+Uk :=
+
+ 
+ 
+p − if Ak happens
+p if B happens
+1 otherwise,
+14
+
+
+k = 1, . . . , K. It is straightforward to check that U1, . . . , UK ∈ PQ. By writing F := F (U1, . . . , UK ) and MB := MB(U1, . . . , UK ), we have
+Q(F ≤ K(p − )) = Q(MB ≤ K(p − )) + Q(F ≤ K(p − ) < MB)
+≥ Q(min(U1, . . . , UK ) ≤ p − ) + Q(U1 = · · · = Uk = p)
+=Q
+(K ⋃
+k=1
+Ak
+)
++ Q(B) =
+K
+∑
+k=1
+Q(Ak) +
+= K(p − ) + > K(p − ).
+Therefore, F is not a p-merging function, which gives us the desired contradiction.
+The general domination structure of p-merging functions appears to be very complicated, and is the subject ofVovk et al.[2020].
+Connections to e-merging functions
+The domination structure of the class of e-merging functions is very simple, according to Theorem3.2. It makes it very easy to understand what the emerging analogues of Ru ̈ger’s family and the M -family are; when stating the analogues we will use the rough relation 1/e ∼ p between e-values and p-values (see Remark2.3). Let us say that an e-merging function F is precise if cF is not an e-merging function for any c > 1. For a sequence e1, . . . , eK , let e[k] := eπ(k) be the order statistics numbered from the largest to the smallest; here π is a permutation of {1, . . . , K} ordering ek in the descending order: eπ(1) ≥ · · · ≥ eπ(K). Let us check that the R ̈ugertype function (e1, . . . , eK ) 7→ (k/K)e[k] is a precise e-merging function. It is an e-merging function since it is dominated by the arithmetic mean: indeed, the condition of domination
+k
+K e[k] ≤ e1 + · · · + eK
+K , (18)
+can be rewritten as
+ke[k] ≤ e1 + · · · + eK
+and so is obvious. As sometimes we have a strict inequality, the e-merging function is inadmissible (remember that we assume K ≥ 2). The e-merging function is precise because (18) holds as equality when the k largest ei, i ∈ {1, . . . , K}, are all equal and greater than 1 and all the other ei are 0. In the case of the M -family, let us check that the function
+F := (K1/r−1 ∧ 1)Mr,K (19)
+is a precise e-merging function, for any r ∈ [−∞, ∞]. For r ≤ 1, Mr,K is increasing in r [Hardy et al.,1952, Theorem 16], and so F = Mr,K is dominated
+15
+
+
+by the arithmetic mean MK; therefore, it is an e-merging function. For r > 1 we can rewrite the function F = K1/r−1Mr,K as
+F (e1, . . . , eK ) = K1/r−1Mr,K (e1, . . . , eK ) = K−1 (er
+1 + · · · + er
+K )1/r ,
+and we know that the last expression is a decreasing function of r [Hardy et al., 1952, Theorem 19]; therefore, F is also dominated by MK and so is a merging function. The e-merging function F is precise (for any r) since
+r ≤ 1 =⇒ F (e, . . . , e) = MK (e, . . . , e) = e
+r > 1 =⇒ F (0, . . . , 0, e) = MK(0, . . . , 0, e) = e/K,
+and so by Proposition3.1(applied to a sufficiently large e) cF is not an emerging function for any c > 1. But F is admissible if and only if r = 1 as shown by Theorem3.2.
+Remark 6.2. The rough relation 1/e ∼ p also sheds light on the coefficient, K1/r−1 ∧ 1 = K1/r−1 for r > 1, given in (19) in front of Mr,K . The coefficient K1/r−1, r > 1, in front of Mr,K for averaging e-values corresponds to a coefficient of K1+1/r, r < −1, in front of Mr,K for averaging p-values. And indeed, by Proposition 5 ofVovk and Wang[2019a], the asymptotically precise coefficient in front of Mr,K , r < −1, for averaging p-values is r
+r+1 K1+1/r. The extra factor
+r
+r+1 appears because the reciprocal of a p-variable is only approximately, but not exactly, an e-variable.
+Remark 6.3. Our formulas for merging e-values are explicit and much simpler than the formulas for merging p-values given inVovk and Wang[2019a], where the coefficient ar,K is often not analytically available. Merging e-values does not involve asymptotic approximations via the theory of robust risk aggregation (e.g.,Embrechts et al.[2015]), as used in that paper. This suggests that in some important respects e-values are easier objects to deal with than p-values.
+Merging independent p-values
+In this section we will discuss ways of combining p-values p1, . . . , pK under the assumption that the p-values are independent. One of the oldest and most popular methods for combining p-values is Fisher’s [1932, Section 21.1], which we already mentioned in Section4. Fisher’s method is based on the product statistic p1 . . . pK (with its low values significant) and uses the fact that −2 ln(p1 . . . pK ) has the χ2 distribution with 2K degrees of freedom when pk are all independent and distributed uniformly on the interval [0, 1]; the p-values are the tails of the χ2 distribution. Simes[1986] proves a remarkable result for Ru ̈ger’s family (15) under the assumption that the p-values are independent: the minimum
+(p1, . . . , pK ) 7→ min
+k∈{1,...,K}
+K
+k p(k) (20)
+16
+
+
+of Ru ̈ger’s family over all k turns out to be a p-merging function. The counterpart of Simes’s result still holds for e-merging functions; moreover, now the input e-values do not have to be independent. Namely,
+(e1, . . . , eK ) 7→ max
+k∈{1,...,K }
+k
+K e[k]
+is an e-merging function. This follows immediately from (18), the left-hand side of which can be replaced by its maximum over k. And it also follows from (18) that there is no sense in using this counterpart; it is better to use the arithmetic mean.
+7 Experimental results
+In this section we will explore the performance of various methods of combining e-values and p-values and multiple hypothesis testing, both standard and introduced in this paper. For our code, seeVovk and Wang[2020c]. In order to be able to judge how significant results of testing using e-values are, Jeffreys’s [1961, Appendix B] rule of thumb may be useful:
+• If the resulting e-value e is below 1, the null hypothesis is supported.
+• If e ∈ (1,
+√
+10) ≈ (1, 3.16), the evidence against the null hypothesis is not worth more than a bare mention.
+• If e ∈ (
+√
+10, 10) ≈ (3.16, 10), the evidence against the null hypothesis is substantial.
+• If e ∈ (10, 103/2) ≈ (10, 31.6), the evidence against the null hypothesis is strong.
+• If e ∈ (103/2, 100) ≈ (31.6, 100), the evidence against the null hypothesis is very strong.
+• If e > 100, the evidence against the null hypothesis is decisive.
+Our discussions in this section assume that our main interest is in e-values, and p-values are just a possible tool for obtaining good e-values (which is, e.g., the case for Bayesian statisticians in their attitude towards Bayes factors and p-values; cf. SectionA.1and AppendixB). Our conclusions would have been different had our goal been to obtain good p-values.
+Combining independent e-values and p-values
+First we explore combining independent e-values and independent p-values; see Figure1. The observations are generated from the Gaussian model N (μ, 1) with standard deviation 1 and unknown mean μ. The null hypothesis is μ = 0 and the alternative hypothesis is μ = δ; for Figures1and2we set δ :=
+17
+
+
+0 2000 4000 6000 8000 10000 number of observations
+101
+104
+107
+1010
+1013
+1016
+1019
+1022
+e-value
+product universal Fisher Fisher-VS
+Figure 1: Combining p-values using Fisher’s method vs combining e-values by multiplication (details in text).
+−0.1. The observations are IID. Therefore, one observation does not carry much information about which hypothesis is true, but repeated observations quickly reveal the truth (with a high probability). For Figures1and2, all data (10 ,000 or 1000 observations, respectively) are generated from the alternative distribution (there will be an example where some of the data is coming from the null distribution in AppendixH). For each observation, the e-value used for testing is the likelihood ratio
+E(x) := e−(x−δ)2/2/e−x2/2 = exδ−δ2/2 (21)
+of the alternative probability density to the null probability density, where x is the observation. It is clear that (21) is indeed an e-variable under the null hypothesis: its expected value is 1. As the p-value we take
+P (x) := N (x), (22)
+where N is the standard Gaussian distribution function; in other words, the p-value is found using the most powerful test, namely the likelihood ratio test given by the Neyman–Pearson lemma. In Figure1we give the results for the product e-merging function (7) and Fisher’s method described in the last subsection of Section6. (The other methods that we consider are vastly less efficient, and we show them in the following figure, Figure2.) Three of the values plotted in Figure1against each K = 1, . . . , 10,000 are:
+• the product e-value E(x1) . . . E(xK ); it is shown as the black line;
+• the reciprocal 1/p of Fisher’s p-value p obtained by merging the first K p-values P (x1), . . . , P (xK ); it is shown as the red line;
+• the VS bound applied to Fisher’s p-value; it is shown as the orange line.
+18
+
+
+The plot depends very much on the seed for the random number generator, and so we report the median of all values over 100 seeds. The line for the product method is below that for Fisher’s over the first 2000 observations but then it catches up. If our goal is to have an overall e-value summarizing the results of testing based on the first K observations (as we always assume in this section), the comparison is unfair, since Fisher’s p-values need to be calibrated. A fairer (albeit still unfair) comparison is with the VS bound, and the curve for the product method can be seen to be above the curve for the VS bound. A fortiori, the curve for the product method would be above the curve for any of the calibrators in the family (1). It is important to emphasize that the natures of plots for e-values and pvalues are very different. For the red and orange lines in Figure1, the values shown for different K relate to different batches of data and cannot be regarded as a trajectory of a natural stochastic process. In contrast, the values shown by the black line for different K are updated sequentially, the value at K being equal to the value at K − 1 multiplied by E(xK), and form a trajectory of a test martingale. Moreover, for the black line we do not need the full force of the assumption of independence of the p-values. As we discuss at the end of Section4, it is sufficient to assume that E(xK ) is a valid e-value given x1, . . . , xK−1; the black line in Figure1is then still a trajectory of a test supermartingale. What we said in the previous paragraph can be regarded as an advantage of using e-values. On the negative side, computing good (or even optimal in some sense) e-values often requires more detailed knowledge. For example, whereas computing the e-value (21) requires the knowledge of the alternative hypothesis, for computing the p-value (22) it is sufficient to know that the alternative hypothesis corresponds to μ < 0. Getting μ very wrong will hurt the performance of methods based on e-values. To get rid of the dependence on μ, we can, e.g., integrate the product e-value over δ ∼ N (0, 1) (taking the standard deviation of 1 is somewhat wasteful in this situation, but we take the most standard probability measure). This gives the “universal” test martingale (see e.g.,Howard et al.[2020b])
+SK := √1
+2π
+∫∞
+−∞
+exp(−δ2/2)
+K
+∏
+k=1
+exp(xkδ − δ2/2) dδ
+=1
+√
+K + 1 exp
+
+
+1
+2(K + 1)
+(K ∑
+k=1
+xk
+)2
+ . (23)
+This test supermartingale is shown in blue in Figure1. It is below the black line but at the end of the period it catches up even with the line for Fisher’s method (and beyond that period it overtakes Fisher’s method more and more convincingly). Arithmetic average (4) and Simes’s method (20) have very little power in the situation of Figure1: see Figure2, which plots the e-values produced by the averaging method, the reciprocals 1/p of Simes’s p-values p, the VS bound
+19
+
+
+0 200 400 600 800 1000 number of observations
+100
+2 × 100
+3 × 100
+e-value
+Simes Simes-VS Bonferroni average
+Figure 2: Combining p-values using Simes’s and Bonferroni’s methods and combining e-values using averaging (details in text).
+for Simes’s p-values, and the reciprocals of the Bonferroni p-values over 1000 observations, all averaged (in the sense of median) over 1000 seeds. They are very far from attaining statistical significance (a p-value of 5% or less) or collecting substantial evidence against the null hypothesis (an e-value of
+√
+10 or more according to Jeffreys).
+Multiple hypothesis testing
+Next we discuss multiple hypothesis testing. Figure3shows plots of adjusted e-values and adjusted p-values resulting from various methods for small numbers of hypotheses, including Algorithms1and2. The observations are again generated from the statistical model N (μ, 1). We are testing 20 null hypotheses. All of them are μ = 0, and their alternatives are μ = −4. Each null hypothesis is tested given an observation drawn either from the null or from the alternative. The first 10 null hypotheses are false, and in fact the corresponding observations are drawn from the alternative distribution. The remaining 10 null hypotheses are true, and the corresponding observations are drawn from them rather than the alternatives. The vertical blue line at the centre of Figure3separates the false null hypotheses from the true ones: null hypotheses 0 to 9 are false and 10 to 19 are true. We can see that at least some of the methods can detect that the first 10 null hypotheses are false. Since some of the lines are difficult to tell apart, we will describe the plot in words. The top two horizontal lines to the left of the vertical blue line are indistinguishable but are those labeled as Simes and Bonferroni in the legend; they correspond to e-values around 2 × 103. The following cluster of horizontal lines to the left of the vertical blue line (with e-values around 102) are those labeled as average, Simes-VS, and Bonferroni-VS, with average slightly higher. To the right of the vertical blue line, the upper horizontal lines (with e-values
+20
+
+
+0.0 2.5 5.0 7.5 10.0 12.5 15.0 17.5 hypothesis
+10 3
+10 2
+10 1
+100
+101
+102
+103
+e-value
+Simes Simes-VS Bonferroni Bonferroni-VS average Fisher Fisher-VS product
+Figure 3: Multiple hypothesis testing for 20 hypotheses using p-values and evalues, with some graphs indistinguishable (details in text).
+100) include all methods except for average and product; the last two are visible. Most of the methods (all except for Bonferroni and Algorithm1) require the observations to be independent. The base p-values are (22), and the base e-values are the likelihood ratios
+E(x) := 1
+2 exδ−δ2/2 + 1
+2 (24)
+(cf. (21)) of the “true” probability density to the null probability density, where the former assumes that the null or alternative distribution for each observation is decided by coin tossing. Therefore, the knowledge encoded in the “true” distribution is that half of the observations are generated from the alternative distribution, but it is not known that these observations are in the first half. We set δ := −4 in (24), keeping in mind that accurate prior knowledge is essential for the efficiency of methods based on e-values. A standard way of producing multiple testing procedures is applying the closure principle described in AppendixAand already implicitly applied in Section5to methods of merging e-values. In Figure3we report the results for the closures of five methods, three of them producing p-values (Simes’s, Bonferroni’s, and Fisher’s) and two producing e-values (average and product); see Section5for self-contained descriptions of the last two methods (Algorithms1 and2). For the methods producing p-values we show the reciprocals 1 /p of the resulting p-values p (as solid lines) and the corresponding VS bounds (as dashed lines). For the closure of Simes’s method we follow the appendix of Wright[1992], the closure of Bonferroni’s method is described inHolm[1979] (albeit not in terms of adjusted p-values), and for the closure of Fisher’s method we use Dobriban’s [2020] FACT (FAst Closed Testing) procedure. To make the plot more regular, all values are averaged (in the sense of median) over 1000 seeds of the Numpy random number generator.
+21
+
+
+0 25 50 75 100 125 150 175 200 hypothesis
+100
+101
+102
+e-value
+Simes Simes-VS Bonferroni Bonferroni-VS average Fisher Fisher-VS
+Figure 4: The analogue of Figure3without the product method, with 200 observations, and with some graphs indistinguishable (details in text).
+According to Figure3, the performance of Simes’s and Bonferroni’s methods is very similar, despite Bonferroni’s method not depending on the assumption of independence of the p-values. The e-merging method of averaging (i.e., Algorithm1) produces better e-values than those obtained by calibrating the closures of Simes’s and Bonferroni’s methods; remember that the line corresponding to Algorithm1should be compared with the VS versions (blue and green dashed, which almost coincide) of the lines corresponding to the closures of Simes’s and Bonferroni’s methods, and even that comparison is unfair and works in favour of those two methods (since the VS bound is not a valid calibrator). The other algorithms perform poorly. Figure4is an analogue of Figure3that does not show results for merging by multiplication (for large numbers of hypotheses its results are so poor that, when shown, differences between the other methods become difficult to see). To get more regular and comparable graphs, we use averaging (in the sense of median) over 100 seeds. Since some of the graphs coincide, or almost coincide, we will again describe the plot in words (referring to graphs that are straight or almost straight as lines). To the left of the vertical blue line (separating the false null hypotheses 0–99 from the true null hypotheses 100–199) we have three groups of graphs: the top graphs (with e-values around 2 × 102) are those labeled as Simes and Bonferroni in the legend, the middle graphs (with e-values around 101) are those labeled as average, Simes-VS, and Bonferroni-VS, and the bottom lines (with e-values around 100) are those labeled as Fisher and Fisher-VS. To the right of the vertical blue line, we have two groups of lines: the upper lines (with e-values 100) include all methods except for average, which is visible. Now the graph for the averaging method (Algorithm1) is very close to (barely distinguishable from) the graphs for the VS versions of the closures of Simes’s and Bonferroni’s methods, which is a very good result (in terms of
+22
+
+
+the quality of e-values that we achieve): the VS bound is a bound on what can be achieved whereas the averaging method produces a bona fide e-value. The two lines (solid and dotted) for Fisher’s method are indistinguishable from the horizontal axis; the method does not scale up in our experiments (which is a known phenomenon in the context of p-values: see, e.g.,Westfall[2011, Section 1]). And the four blue and green lines (solid and dotted) for Simes’s and Bonferroni’s methods are not visible to the right of 100 since they are covered by the lines for Fisher’s method. The behaviour of the lines for Simes’s, Bonferroni’s, and Fisher’s methods to the right of 100 demonstrates that they do not produce valid e-values: for validity, we have to pay by getting e-values below 1 when the null hypothesis is true in order to be able to get large e-values when the null hypothesis is false (which is the case for the averaging method, represented by the black line). Most of these remarks are also applicable to Figure3. A key advantage of the averaging and Bonferroni’s methods over Simes’s and Fisher’s is that they are valid regardless of whether the base e-values or p-values are independent.
+8 Conclusion
+This paper systematically explores the notion of an e-value, which can be regarded as a betting counterpart of p-values that is much more closely related to Bayes factors and likelihood ratios. We argue that e-values often are more mathematically convenient than p-values and lead to simpler results. In particular, they are easier to combine: the average of e-values is an e-value, and the product of independent e-values is an e-value. We apply e-values in two areas, multiple testing of a single hypothesis and testing multiple hypotheses, and obtain promising experimental results. One of our experimental findings is that, for testing multiple hypotheses, the performance of the most natural method based on e-values almost attains the Vovk–Sellke bound for the closure of Simes’s method, despite that bound being overoptimistic and not producing bona fide e-values.
+Acknowledgments
+The authors thank Aaditya Ramdas, Alexander Schied, and Glenn Shafer for helpful suggestions. Thoughtful comments by the associate editor and four reviewers of the journal version have led to numerous improvements in presentation and substance. V. Vovk’s research has been partially supported by Amazon, Astra Zeneca, and Stena Line. R. Wang is supported by the Natural Sciences and Engineering Research Council of Canada (RGPIN-2018-03823, RGPAS-2018-522590).
+23
+
+
+References
+Daniel J. Benjamin and James O. Berger. Three recommendations for improving the use of p-values. American Statistician, 73(Supplement 1):186–191, 2019.
+James O. Berger and Mohan Delampady. Testing precise hypotheses (with discussion). Statistical Science, 2:317–352, 1987.
+Edgar Dobriban. FACT: Fast closed testing for exchangeable local tests. Biometrika, 107:761–768, 2020.
+Joseph L. Doob. Stochastic Processes. Wiley, New York, 1953.
+Boyan Duan, Aaditya Ramdas, Sivaraman Balakrishnan, and Larry Wasserman. Interactive martingale tests for the global null. Technical Report arXiv:1909.07339 [stat.ME],arXiv.orge-Print archive, December 2019.
+Bradley Efron. Large-Scale Inference: Empirical Bayes Methods for Estimation, Testing, and Prediction, volume 1 of IMS Monographs. Cambridge University Press, Cambridge, 2010.
+Paul Embrechts, Bin Wang, and Ruodu Wang. Aggregation-robustness and model uncertainty of regulatory risk measures. Finance and Stochastics, 19: 763–790, 2015.
+Alexander Etz and Eric-Jan Wagenmakers. J. B. S. Haldane’s contribution to the Bayes factor hypothesis test. Statistical Science, 32:313–329, 2017.
+Ronald A. Fisher. Statistical Methods for Research Workers. Oliver and Boyd, Edinburgh, fourth edition, 1932. Section 21.1 on combining independent pvalues first appears in this edition and is present in all subsequent editions.
+Hans F ̈ollmer and Alexander Schied. Stochastic Finance: An Introduction in Discrete Time. De Gruyter, Berlin, third edition, 2011.
+Jelle J. Goeman and Aldo Solari. Multiple testing for exploratory research. Statistical Science, 26:584–597, 2011.
+Jelle J. Goeman, Jonathan D. Rosenblatt, and Thomas E. Nichols. The harmonic mean p-value: Strong versus weak control, and the assumption of independence. Proceedings of the National Academy of Sciences, 116:23382–23383, 2019.
+Peter Gru ̈nwald, Rianne de Heide, and Wouter M. Koolen. Safe testing. Technical ReportarXiv:1906.07801 [math.ST],arXiv.orge-Print archive, June 2020.
+G. H. Hardy, John E. Littlewood, and George P ́olya. Inequalities. Cambridge University Press, Cambridge, second edition, 1952.
+Sture Holm. A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics, 6:65–70, 1979.
+24
+
+
+Steven R. Howard, Aaditya Ramdas, Jon McAuliffe, and Jasjeet Sekhon. Exponential line-crossing inequalities. Technical ReportarXiv:1808.03204 [math.PR],arXiv.orge-Print archive, April 2020a.
+Steven R. Howard, Aaditya Ramdas, Jon McAuliffe, and Jasjeet Sekhon. Timeuniform, nonparametric, nonasymptotic confidence sequences. Technical ReportarXiv:1810.08240 [math.ST],arXiv.orge-Print archive, May 2020b. To appear in the Annals of Statistics.
+Harold Jeffreys. Theory of Probability. Oxford University Press, Oxford, third edition, 1961.
+Kaniav Kamary, Kerrie Mengersen, Christian P. Robert, and Judith Rousseau. Testing hypotheses via a mixture estimation model. Technical Report arXiv:1412.2044 [stat.ME],arXiv.orge-Print archive, December 2014.
+Robert E. Kass and Adrian E. Raftery. Bayes factors. Journal of the American Statistical Association, 90:773–795, 1995.
+Alexander S. Kechris. Classical Descriptive Set Theory. Springer, New York, 1995.
+Andrei N. Kolmogorov. Three approaches to the quantitative definition of information. Problems of Information Transmission, 1:1–7, 1965.
+Andrei N. Kolmogorov. Logical basis for information theory and probability theory. IEEE Transactions on Information Theory, IT-14:662–664, 1968.
+Leonid A. Levin. Uniform tests of randomness. Soviet Mathematics Doklady, 17:337–340, 1976.
+Ruth Marcus, Eric Peritz, and K. Ruben Gabriel. On closed testing procedures with special reference to ordered analysis of variance. Biometrika, 63:655–660, 1976.
+Per Martin-L ̈of. The definition of random sequences. Information and Control, 9:602–619, 1966.
+Laurent Mazliak and Glenn Shafer. The splendors and miseries of martingales, June 2009. Special Issue of the Electronic Journal for History of Probability and Statistics 5(1) (ed. by Laurent Mazliak and Glenn Shafer), www.jehps.net.
+Frank W. J. Olver, A. B. Olde Daalhuis, Daniel W. Lozier, Barry I. Schneider, Ronald F. Boisvert, Charles W. Clark, Bruce R. Miller, Bonita V. Saunders, Howard S. Cohl, and Marjorie A. McClain, editors. NIST Digital Library of Mathematical Functions, 2020. URL http://dlmf.nist.gov/. Release 1.0.28 of 2020-09-15.
+Ulrich Rieder. Measurable selection theorems for optimization problems. Manuscripta Mathematica, 24:115–131, 1978.
+25
+
+
+Bernhard R ̈uger. Das maximale Signifikanzniveau des Tests “Lehne H0 ab, wenn k unter n gegebenen Tests zur Ablehnung f ̈uhren”. Metrika, 25:171–178, 1978.
+Thomas Sellke, M. J. Bayarri, and James Berger. Calibration of p-values for testing precise null hypotheses. American Statistician, 55:62–71, 2001.
+Glenn Shafer. The language of betting as a strategy for statistical and scientific communication. Technical ReportarXiv:1903.06991 [math.ST],arXiv.orgePrint archive, March 2019. To appear as discussion paper in the Journal of the Royal Statistical Society A (read in September 2020).
+Glenn Shafer and Vladimir Vovk. Game-Theoretic Foundations for Probability and Finance. Wiley, Hoboken, NJ, 2019.
+Glenn Shafer, Alexander Shen, Nikolai Vereshchagin, and Vladimir Vovk. Test martingales, Bayes factors, and p-values. Statistical Science, 26:84–101, 2011.
+Juliet P. Shaffer. Modified sequentially rejective multiple test procedures. Journal of the American Statistical Association, 81:826–831, 1986.
+Alexander Shen, Vladimir A. Uspensky, and Nikolai Vereshchagin. Kolmogorov Complexity and Algorithmic Randomness. American Mathematical Society, Providence, RI, 2017.
+R. John Simes. An improved Bonferroni procedure for multiple tests of significance. Biometrika, 73:751–754, 1986.
+John D. Storey and Robert Tibshirani. Statistical significance for genomewide studies. Proceedings of the National Academy of Sciences, 100:9440–9445, 2003.
+Jean Ville. Etude critique de la notion de collectif. Gauthier-Villars, Paris, 1939.
+Vladimir Vovk. A logic of probability, with application to the foundations of statistics (with discussion). Journal of the Royal Statistical Society B, 55: 317–351, 1993.
+Vladimir Vovk and Ruodu Wang. Combining p-values via averaging. Technical ReportarXiv:1212.4966 [math.ST],arXiv.orge-Print archive, October 2019a. To appear in Biometrika.
+Vladimir Vovk and Ruodu Wang. True and false discoveries with e-values. Technical ReportarXiv:1912.13292 [math.ST],arXiv.orge-Print archive, December 2019b.
+Vladimir Vovk and Ruodu Wang. True and false discoveries with independent e-values. Technical ReportarXiv:2003.00593 [stat.ME],arXiv.orge-Print archive, March 2020a.
+Vladimir Vovk and Ruodu Wang. A class of ie-merging functions. Technical ReportarXiv:2003.06382 [math.ST],arXiv.orge-Print archive, July 2020b.
+26
+
+
+Vladimir Vovk and Ruodu Wang. Python code generating the figures in this paper. Jupyter notebook. Go to the abstract of this paper on arXiv, click on “v3”, click on “Other formats”, click on “Download source”, and extract the Jupyter notebook from the downloaded archive (perhaps adding .gz as its extension), May 2020c.
+Vladimir Vovk, Bin Wang, and Ruodu Wang. Admissible ways of merging p-values under arbitrary dependence. Technical ReportarXiv:2007.14208 [math.ST],arXiv.orge-Print archive, July 2020.
+Abraham Wald. Statistical Decision Functions. Wiley, New York, 1950.
+Larry Wasserman, Aaditya Ramdas, and Sivaraman Balakrishnan. Universal inference. Proceedings of the National Academy of Sciences of the USA, 117: 16880–16890, 2020.
+Peter H. Westfall. Discussion of “Multiple testing for exploratory research” by J. J. Goeman and A. Solari. Statistical Science, 26:604–607, 2011.
+Daniel J. Wilson. The harmonic mean p-value for combining dependent tests. Proceedings of the National Academy of Sciences, 116:1195–1200, 2019.
+S. Paul Wright. Adjusted p-values for simultaneous inference. Biometrics, 48: 1005–1013, 1992.
+A Comparisons with existing literature
+A.1 Bayes factors
+Historically, the use of p-values versus e-values reflects the conventional division of statistics into frequentist and Bayesian (although a sizable fraction of people interested in the foundations of statistics, including the authors of this paper, are neither frequentists nor Bayesians). P-values are a hallmark of frequentist statistics, but Bayesians often regard p-values as misleading, preferring the use of Bayes factors (which can be combined with prior probabilities to obtain posterior probabilities). In the case of simple statistical hypotheses, a Bayes factor is the likelihood ratio of an alternative hypothesis to the null hypothesis (or vice versa, as inShafer et al.[2011]). From the betting point of view of this paper, the key property of the Bayes factor is that it is an e-variable. For composite hypotheses, Bayes factors and e-values diverge. For example, a possible general definition of a Bayes factor is as follows [Kamary et al.,2014, Section 1.2]. Let (f 0
+θ | θ ∈ Θ0) and (f 1
+θ | θ ∈ Θ1) be two statistical models on the same sample space Ω, which is a measurable space, (Ω, A), with a fixed measure P , and Θ1 and Θ2 are measurable spaces. Each f n
+θ (ω), n ∈ {0, 1}, is a probability density as function of ω and a measurable function of θ ∈ Θn. The corresponding families of probability measures are (f 0
+θ P )θ∈Θ0 and (f 1
+θ P )θ∈Θ1 ,
+where f P is defined as the probability measure (f P )(A) :=
+∫
+A f dP , A ∈ A.
+27
+
+
+Make them Bayesian models by fixing prior probability distributions μ0 and μ1 on Θ0 and Θ1, respectively. This way we obtain Bayesian analogues of the null and alternative hypotheses, respectively. The corresponding Bayes factor is
+B(ω) :=
+∫
+Θ1 f 1
+θ (ω)μ1(dθ)
+∫
+Θ0 f 0
+θ (ω)μ0(dθ) , ω ∈ Ω. (A.1)
+If Θ0 is a singleton, then B is an e-variable for the probability measure Q := f 0P . In general, however, this is no longer true. Remember that, according to our definition in Section5, for B to be an e-variable w.r. to the null hypothesis Θ0 it needs to satisfy
+∫
+Bf0
+θ dP ≤ 1 for all θ ∈ Θ0. However, (A.1) only guarantees this property “on average”,
+∫
+Bf0
+θ dP μ0(dθ) ≤ 1. Therefore, for a composite null hypothesis a Bayes factor does not need to be an e-value w.r. to that null hypothesis (it is an e-value w.r. to its average). The literature on Bayes factors is vast; we only mention the fundamental book byJeffreys[1961], the influential review byKass and Raftery[1995], and the historical investigation byEtz and Wagenmakers[2017]. Jeffreys’s scale that we used in Section7was introduced in the context of Bayes factors, but of course it is also applicable to e-values in view of the significant overlap between the two notions.Kass and Raftery[1995, Section 3.2] simplify Jeffreys’s scale by merging the “strong” and “very strong” categories into one, which they call “strong”.
+A.2 Algorithmic theory of randomness
+One area where both p-values and e-values have been used for a long time is the algorithmic theory of randomness (see, e.g.,Shen et al.[2017]), which originated in Kolmogorov’s work on the algorithmic foundations of probability and information [Kolmogorov,1965,1968].Martin-L ̈of[1966] introduced an algorithmic version of p-values, and thenLevin[1976] introduced an algorithmic version of e-values. In the algorithmic theory of randomness people are often interested in low-accuracy results, and then p-values and e-values can be regarded as slight variations of each other: if e is an e-value, 1/e will be a p-value; and vice versa, if p is a p-value, 1/p will be an approximate e-value. We discussed this approximation in detail in the main paper; see, e.g., Remark2.3.
+A.3 Standard methods of multiple hypothesis testing
+Let us check what the notion of family-wise validity becomes when p-variables are used instead of e-variables. Now we have a procedure that, given p-variables Pk for testing Hk, k ∈ {1, . . . , K}, produces random variables P ∗
+1,...,P∗
+K taking values in [0, 1]. A conditional p-variable is a family of p-variables PQ, Q ∈ P(Ω). The procedure’s output P ∗
+1,...,P∗
+K is family-wise valid (FWV ) if there exists a conditional p-variable (PQ)Q∈P(Ω) such that
+∀k ∈ {1, . . . , K} ∀Q ∈ Hk : PQ ≤ P ∗
+k . (A.2)
+28
+
+
+In this case we can see that, for any Q ∈ P(Ω) and any ∈ (0, 1),
+Q(∃k ∈ {1, . . . , K} : Q ∈ Hk and P ∗
+k ≤ ) ≤ Q(PQ ≤ ) ≤ . (A.3)
+The left-most expression in (A.3) is known as the family-wise error rate (the standard abbreviation is FWER) of the procedure that rejects Hk when P ∗
+k≤ .
+The inequality between the extreme terms of (A.3) can be expressed as P ∗
+k being family-wise adjusted p-values. (See, e.g.,Efron[2010, Section 3.2].) On the other hand, we can check that any procedure satisfying (A.3) will satisfy (A.2) for some conditional p-variable (PQ): indeed, we can set
+PQ := min
+Q∈Hk
+P∗
+k.
+Remark A.1. Notice that calibrators maintain the FWV property. Namely, if pvariables P ∗
+1,...,P∗
+K are FWV and f is a calibrator, the e-variables f (P ∗
+1 ), . . . , f (P ∗
+K) are FWV. This follows immediately from the definitions (9) and (A.2). And in the opposite direction, if e-variables E∗
+1, . . . , E∗
+K are FWV and g is an e-to-p
+calibrator, the p-variables g(E∗
+1 ) ∧ 1, . . . , g(E∗
+K ) ∧ 1 are FWV.
+As we mentioned in Section5, Algorithms1and2can be obtained from the e-merging function (4) by applying the closure principle. In our description of this principle we will followEfron[2010, Section 3.3]. Suppose, for some > 0 and all I ⊆ {1, . . . , K}, we have a level- test function φI : Ω → {0, 1}:
+∀Q ∈ ∩i∈I Hi : EQ[φI ] ≤ ;
+φI = 1 means that the combined null hypothesis ∩i∈I Hi is rejected. (Such a collection of “local tests”, for all I and , is just a different representation of p-merging functions.) The principle then recommends the simultaneous test function ΦJ := min
+I⊇J φI , J ⊆ {1, . . . , K};
+this simultaneous test function rejects J if φ rejects all I such that J ⊆ I ⊆ {1, . . . , K}. If P1, . . . , PK are p-variables, f is a symmetric p-merging function, and φ is defined by
+φI = 1 ⇐⇒ f (Pi, i ∈ I) ≤
+(which is clearly a level- test function), we have
+ΦJ = 1 ⇐⇒ max
+I⊇J f (Pi, i ∈ I) ≤
+(omitting the dependence of φ and Φ on ). This corresponds to the simultaneous p-variable PJ := max
+I⊇J f (Pi, i ∈ I). (A.4)
+In this paper we are only interested in the case where J is a singleton (analogues for general J are considered inVovk and Wang[2019b,2020a], to be discussed later). This gives us the adjusted p-values
+P∗
+k = P{k} := max
+I3k f (Pi, i ∈ I).
+29
+
+
+The corresponding formula for the adjusted e-values is
+E∗
+k := Im3ikn f (Ei, i ∈ I).
+This coincides with
+• (13) when f is taken to be arithmetic average (which is implemented in Algorithm1),
+• and (14) when f is taken to be product (which is implemented in Algorithm2).
+When the J in (A.4) is allowed not to be a singleton and the p-values are replaced by e-values, we obtain the possibility of controlling false discovery proportion. This appears to us an interesting program of research; the ease of merging e-functions open up new possibilities. First steps in this directions are done inVovk and Wang[2019b] and (under the assumption of independence) inVovk and Wang[2020a].
+Empirical Bayes methods
+Several simple but informative models for multiple hypothesis testing have been proposed in the framework of empirical Bayes methods. Perhaps the simplest model [Efron,2010, Chapter 2], known as the two-groups model, is where we are given a sequence of real values z1, . . . , zN , each of which is generated either from the null probability density function f0 or from the alternative probability density function f1, w.r. to Lebesgue measure. Each value is generated from f0 with probability π0 and from f1 with probability π1, where π0 + π1 = 1. This gives the overall probability density function f := π0f0 + π1f1. From the Bayesian point of view, the most relevant value for multiple hypothesis testing is the conditional probability fdr(z) := π0f0(z)/f (z) that an observed value z has been generated from the null probability density function f0; it is knows as the local false discovery rate. The most natural e-value in this context is the likelihood ratio e := f1(z)/f0(z), and the local false discovery rate can be written in the form fdr(z) = π0/(π0 + π1e).Efron[2010, Section 5.1] refers to the ratio f1(z)/f0(z) as “Bayes factor”; as discussed in SectionA.1, in this case the notions of e-values and Bayes factors happen to coincide. A conventional threshold for reporting “interesting” cases zi is fdr(zi) ≤ 0.2, where in practice the true fdr(zi) is replaced by its empirical estimate [Efron, 2010, Section 5.1]. In terms of the likelihood ratio e, the criterion fdr(zi) ≤ 0.2 can be rewritten as e ≥ 4π0/π1 [Efron,2010, Exercise 5.1]; of course, the Bayesian decision depends on the ratio of the prior probabilities of the two hypotheses. When π0 ≥ 0.1 (which is a common case), we have e ≥ 4π0/π1 ≥ 36 [Efron,2010, (5.9)], and so in large-scale hypothesis testing we need at least very strong evidence on Jeffreys’s scale (Section7) to declare a case interesting. The two-groups model is highly idealized; e.g., all non-null z are assumed to be coming from the same distribution, f1. In the empirical Bayesian approach
+30
+
+
+the values z1, . . . , zN are assumed to satisfy some independence-type conditions (e.g.,Storey and Tibshirani[2003] assume what they call weak dependence), in order to be able to estimate relevant quantities and functions, such as f , from the data. In general, this approach makes different assumptions and arrives at different conclusions as compared with our approach.
+A.4 Test martingales in statistics
+This paper only scratches the surface of the huge topic of test martingales and their use in statistics. Martingales were introduced byVille[1939] and popularized byDoob[1953]; seeMazliak and Shafer[2009] for their fascinating history, including their applications in statistics. Recent research includes exponential line-crossing inequalities [Howard et al.,2020a], nonparametric confidence sequences [Howard et al.,2020b], and universal inference [Wasserman et al.,2020].
+B History and other classes of calibrators
+The question of calibration of p-values into Bayes factors has a long history in Bayesian statistics. The idea was first raised byBerger and Delampady[1987, Section 4.2] (who, however, referred to the idea as “ridiculous”; since then the idea has been embraced by the Bayesian community). The class of calibrators (1) was proposed inVovk[1993] and rediscovered inSellke et al.[2001]. A simple characterization of the class of all calibrators was first obtained inShafer et al. [2011]. A popular Bayesian point of view is that p-values tend to be misleading and need to be transformed into e-values (in the form of Bayes factors) in order to make sense of them. Recall that the calibrator (2) is a mixture of (1), and it is closer to 1/p than any of (1) as p → 0. Of course, (2) is not the only calibrator that is close to 1/p. Since
+∫ e−1−κ
+0
+v−1(− ln v)−1−κ dv = 1
+κ(1 + κ)κ ,
+where κ ∈ (0, ∞), each function
+Hκ(p) :=
+
+ 
+ 
+∞ if p = 0
+κ(1 + κ)κp−1(− ln p)−1−κ if p ∈ (0, exp(−1 − κ)]
+0 if p ∈ (exp(−1 − κ), 1]
+(B.1)
+is a calibrator [Shafer et al.,2011]. It is instructive to compare (B.1) with κ := 1 and (2); whereas the former benefits from the extra factor of 2, it kicks in only for p ≤ exp(−2) ≈ 0.135. We can generalize the calibrator (2) by replacing the uniform distribution on the interval [0, 1] by the distribution with density (1). Replacing κ in (2) by x to avoid clash of notation, we obtain the calibrator
+Fκ(p) :=
+∫1
+0
+xpx−1κxκ−1 dx = κγ(1 + κ, − ln p)
+p(− ln p)1+κ ,
+31
+
+
+where
+γ(a, z) :=
+∫z
+0
+ta−1 exp(−t) dt
+is one of the incomplete gamma functions [Olver et al.,2020, 8.2.1]. For κ := 1 we have γ(2, − ln p) = 1 − p + p ln p
+[Olver et al.,2020, 8.4.7], which recovers (2). For other positive values of κ, we
+can see that
+Fκ(p) ∼ κΓ(1 + κ)
+p(− ln p)1+κ
+as p → 0. The coefficient in (B.1) is better, Γ(1 + κ) < (1 + κ)κ for all κ > 0, but Fκ gives an informative e-value for all p, not just for p ≤ exp(−1 − κ).
+C Merging infinite e-values
+Let us check that, despite the conceptual importance of infinite e-values, we can dispose of them when discussing e-merging functions.
+Proposition C.1. For any e-merging function F , the function F ′ : [0, ∞]K → [0, ∞] defined by
+F ′(e) :=
+{
+F (e) if e ∈ [0, ∞)K
+∞ otherwise
+is also an e-merging function. Moreover, F ′ dominates F . Neither e-merging function takes value ∞ on [0, ∞)K .
+Proof. If E1, . . . , EK are e-variables, each of them is finite a.s.; therefore,
+F (E1, . . . , EK ) = F ′(E1, . . . , EK ) a.s.,
+and F ′ is an e-merging function whenever F is. For the last statement, we will argue indirectly. Suppose F (e1, . . . , eK ) = ∞ for some e1, . . . , eK ∈ [0, ∞). Fix such e1, . . . , eK ∈ [0, ∞) and let Ek, k ∈ {1, . . . , K}, be independent random variables such that Ek takes values in the set {0, ek} (of cardinality 2 or 1), takes value ek with a positive probability, and has expected value at most 1. (For the existence of such random variables, see LemmaD.1below.) Since E[F (E1, . . . , EK )] = ∞, F is not an e-merging function.
+As we mentioned in Section4, PropositionC.1continues to hold for iemerging functions.
+32
+
+
+D Atomless probability spaces
+In several of our definitions, such as those of a calibrator or a merging function, we have a universal quantifier over probability spaces. Fixing a probability space in those definitions, we may obtain wider notions. More generally, in this appendix we will be interested in dependence of our notions on a chosen statistical model. We start our discussion from a well-known lemma that we have already used on a few occasions. (Despite being well-known, the full lemma is rarely stated explicitly; we could not find a convenient reference in literature.) Remember that a probability space (Ω, A, Q) is atomless if it has no atoms, i.e., sets A ∈ A such that P (A) > 0 and P (B) ∈ {0, P (A)} for any B ∈ A such that B ⊆ A.
+Lemma D.1. The following three statements are equivalent for any probability space (Ω, A, Q):
+(i) (Ω, A, Q) is atomless;
+(ii)there is a random variable on (Ω, A, Q) that is uniformly distributed on [0, 1];
+(iii)for any Polish space S and any probability measure R on S, there is a random element on (Ω, A, Q) with values in S that is distributed as R.
+Typical examples of a Polish space in item (iii) that are useful for us in this paper are RK and finite sets.
+Proof. The equivalence between (i) and (ii) is stated inF ̈ollmer and Schied [2011, Proposition A.27]. It remains to prove that (ii) implies (iii). According to Kuratowski’s isomorphism theorem [Kechris,1995, Theorem 15.6], S is Borel isomorphic to R, N, or a finite set (the last two equipped with the discrete topology). The only nontrivial case is where S is Borel isomorphic to R, in which case we can assume S = R. It remains to applyF ̈ollmer and Schied [2011, Proposition A.27] again.
+If (Ω, A) is a measurable space and Q is a collection of probability measures on (Ω, A), we refer to (Ω, A, Q) as a statistical model. We say that it is rich if there exists a random variable on (Ω, A) that is uniformly distributed on [0, 1] under any Q ∈ Q.
+Remark D.2. Intuitively, any statistical model (Ω, A, Q) can be made rich by complementing it with a random number generator producing a uniform random value in [0, 1]: we replace Ω by Ω × [0, 1], A by A × U, and each Q ∈ Q by Q × U , where ([0, 1], U, U ) is the standard measurable space [0, 1] equipped with the uniform probability measure U . If Q = {Q} contains a single probability measure Q, being rich is equivalent to being atomless (by LemmaD.1).
+For a statistical model (Ω, A, Q), an e-variable is a random variable E : Ω → [0, ∞] satisfying sup
+Q∈Q
+EQ[E] ≤ 1.
+33
+
+
+(as in Section5). As before, the values taken by e-variables are e-values, and the set of e-variables is denoted by EQ. An e-merging function for (Ω, A, Q) is an increasing Borel function F : [0, ∞]K → [0, ∞] such that, for all E1, . . . , EK ,
+(E1, . . . , EK ) ∈ EK
+Q =⇒ F (E1, . . . , EK ) ∈ EQ.
+This definition requires that K e-values for (Ω, A, Q) be transformed into an e-value for (Ω, A, Q). Without loss of generality (as in AppendixC), we replace [0, ∞] by [0, ∞).
+Proposition D.3. Let F : [0, ∞)K → [0, ∞) be an increasing Borel function. The following statements are equivalent:
+(i) F is an e-merging function for some rich statistical model;
+(ii) F is an e-merging function for all statistical models;
+(iii) F is an e-merging function.
+Proof. Let us first check that, for any two rich statistical models (Ω, A, Q) and (Ω′, A′, Q′), we always have
+sup
+{
+EQ[F (E)] | Q ∈ Q, E ∈ EK
+Q
+}
+= sup
+{
+EQ′ [F (E′)] | Q′ ∈ Q′, E′ ∈ EK
+Q′
+}
+.
+(D.1) Suppose sup
+{
+EQ[F (E)] | Q ∈ Q, E ∈ EK
+Q
+}
+>c
+for some constant c. Then there exist E ∈ EK
+Q and Q ∈ Q such that EQ[F (E)] >
+c. Take a random vector E′ = (E′
+1, . . . , E′
+K ) on (Ω′, A′) such that E′ is dis
+tributed under each Q′ ∈ Q′ identically to the distribution of E under Q. This is possible as Q′ is rich (by LemmaD.1applied to the probability space ([0, 1], U, U ), U being the uniform probability measure). By construction, E′ ∈ EK
+Q′ and EQ′ [F (E′)] > c for all Q′ ∈ Q′. This shows
+sup
+{
+EQ[F (E)] | Q ∈ Q, E ∈ EK
+Q
+}
+≤ sup
+{
+EQ′ [F (E′)] | Q′ ∈ Q′, E′ ∈ EK
+Q′
+}
+,
+and we obtain equality by symmetry. The implications (ii) ⇒ (iii) and (iii) ⇒ (i) are obvious (remember that, by definition an e-merging function is an e-merging function for all singleton statistical models). To check (i) ⇒ (ii), suppose F is an e-merging function for some rich statistical model. Consider any statistical model. Its product with the uniform probability measure on [0, 1] will be a rich statistical model (cf. RemarkD.2). It follows from (D.1) that F will be an e-merging function for the product. Therefore, it will be an e-merging function for the original statistical model.
+34
+
+
+Remark D.4. The assumption of being rich is essential in item (i) of PropositionD.3. For instance, if we take Q := {δω | ω ∈ Ω}, where δω is the point-mass at ω, then EQ is the set of all random variables taking values in [0, 1]. In this case, the maximum of e-variables is still an e-variable, but the maximum function is not a valid e-merging function as seen from Theorem3.2.
+An ie-merging function for (Ω, A, Q) is an increasing Borel function F : [0, ∞]K → [0, ∞] such that, for all E1, . . . , EK ∈ EQ that are independent under any Q ∈ Q, we have F (E1, . . . , EK ) ∈ EQ. The proof of PropositionD.3 also works for ie-merging functions.
+Proposition D.5. PropositionD.3remains true if all entries of “e-merging function” are replaced by “ie-merging function”.
+Proof. The changes to the proof of PropositionD.3are minimal. In (D.1), the components of E and E′ should be assumed to be independent under any probability measure in Q and Q′, respectively. The components of the vector E′ constructed from E and Q will be independent under any Q′ ∈ Q′.
+PropositionD.3shows that in the definition of an e-merging function it suffices to require that (3) hold for a fixed atomless probability space (Ω, A, Q). PropositionD.5extends this observation to the definition of an ie-merging function. We can state similar propositions in the case of calibrators. A p-variable for a statistical model (Ω, A, Q) is a random variable P : Ω → [0, ∞) satisfying
+∀ ∈ (0, 1) ∀Q ∈ Q : Q(P ≤ ) ≤ .
+The set of p-variables for (Ω, A, Q) is denoted by PQ. A decreasing function f : [0, 1] → [0, ∞] is a calibrator for (Ω, A, Q) if, for any p-variable P ∈ PQ, f (P ) ∈ EQ.
+Proposition D.6. Let f : [0, 1] → [0, ∞] be a decreasing Borel function. The following statements are equivalent:
+(i) f is a calibrator for some rich statistical model;
+(ii) f is a calibrator for all statistical models;
+(iii) f is a calibrator.
+We refrain from stating the obvious analogue of PropositionD.6for e-to-p calibrators.
+E Domination structure of the class of e-merging
+functions
+In this appendix we completely describe the domination structure of the symmetric e-merging functions, showing that (6) is the minimal complete class of
+35
+
+
+symmetric e-merging functions. We start, however, with establishing some fundamental facts about e-merging functions. First, we note that for an increasing Borel function F : [0, ∞)K → [0, ∞], its upper semicontinuous version F ∗ is given by
+F ∗(e) = li↓m0 F (e + 1), e ∈ [0, ∞)K ; (E.1)
+remember that 1 := (1, . . . , 1). Clearly, F ∗ is increasing, is upper semicontinuous (by a simple compactness argument), and satisfies F ∗ ≥ F . On the other hand, for an upper semicontinuous (and so automatically Borel) function F : [0, ∞)K → [0, ∞], its increasing version F ̃ is given by
+F ̃(e) = sup
+e′ ≤e
+F (e′), e ∈ [0, ∞)K , (E.2)
+where ≤ is component-wise inequality. Clearly, F ̃ is increasing, upper semicontinuous, and F ̃ ≥ F . Notice that the supremum in (E.2) is attained (as the supremum of an upper semicontinuous function on a compact set), and so we can replace sup by max.
+Proposition E.1. If F is an e-merging function, then its upper semicontinuous version F ∗ in (E.1) is also an e-merging function.
+Proof. Take E ∈ EK
+Q . For every rational ∈ (0, 1), let A be an event independent of E with Q(A ) = 1 − , and E = (E + 1)1A (of course, here we use the convention that E = 0 := (0, . . . , 0) if the event A does not occur). For each , E[E ] ≤ (1 − )(1 + 1) ≤ 1. Therefore, E ∈ EK
+Q and hence
+1 ≥ E[F (E )] = (1 − )E [F (E + 1)] + F (0),
+which implies
+E [F (E + 1)] ≤ 1 − F (0)
+1− . Fatou’s lemma yields
+E[F ∗(E)] = E
+[
+li↓m0 F (E + 1)
+]
+≤ li↓m0 E [F (E + 1)] ≤ li↓m0
+1 − F (0)
+1 − = 1.
+Therefore, F ∗ is an e-merging function.
+Corollary E.2. An admissible e-merging function is always upper semicontinuous.
+Proof. Let F be an admissible e-merging function. Using PropositionE.1, we obtain that F ∗ ≥ F is an e-merging function. Admissibility of F forces F = F ∗, implying that F is upper semicontinuous.
+Proposition E.3. If F : [0, ∞)K → [0, ∞] is an upper semicontinuous function satisfying E[F (E)] ≤ 1 for all E ∈ EK
+Q , then its increasing version F ̃ in (E.2) is an e-merging function.
+36
+
+
+Proof. Take any E ∈ EK
+Q supported in [0, M ]K for some M > 0. Define
+u(x, y) := F (y) and D :=
+{
+(x, y) ∈ [0, M ]K × [0, M ]K | y ≤ x
+}
+;
+as a closed subset of a compact set, D is compact. Since F is upper semicontinuous, the sets
+Uc := {(x, y) ∈ D | F (y) ≥ c} and Uc(x) := {y | (x, y) ∈ Uc}
+are all compact (and therefore, Borel). Moreover, for each compact subset K of [0, M ]K , the set
+{
+x ∈ [0, M ]K | ∃y : (x, y) ∈ Uc & y ∈ K
+}
+is compact (and therefore, Borel). These conditions justify the use of Theorem 4.1 ofRieder[1978], which gives the existence of a Borel function g : [0, M ]K → [0, M ]K such that F (g(e)) = F ̃(e) and g(e) ≤ e for each e ∈ [0, M ]K . Hence, g(E) ∈ EK
+Q , and we have
+E[F ̃(E)] = E[F (g(E))] ≤ 1.
+An unbounded E ∈ EK
+Q can be approximated by an increasing sequence of bounded random vectors in EK
+Q , and the monotone convergence theorem implies
+E[F ̃(E)] ≤ 1.
+Proposition E.4. An admissible e-merging function is not strictly dominated by any Borel function G satisfying E[G(E)] ≤ 1 for all E ∈ EK
+Q.
+Proof. Suppose that an admissible e-merging function F is strictly dominated by a Borel function G satisfying E[G(E)] ≤ 1 for all E ∈ EK
+Q . Take a point e ∈ [0, ∞)K such that G(e) > F (e). Define a function H by H(e) := G(e) and H := F elsewhere. By CorollaryE.2, we know that F is upper semicontinuous, and so is H by construction. Clearly, E[H(E)] ≤ E[G(E)] ≤ 1 for all E ∈ EK
+Q. Using PropositionE.3, we obtain that H ̃ is an e-merging function. It remains to notice that H ̃ strictly dominates F .
+Proposition E.5. Any e-merging function is dominated by an admissible emerging function.
+Proof. Let R be any probability measure with positive density on [0, ∞) with mean 1. Fix an e-merging function F . By definition,
+∫
+F dRK ≤ 1, and such an inequality holds for any e-merging function. Set F0 := F and let
+ci := sup
+G:G≥Fi−1
+∫
+G dRK ≤ 1, (E.3)
+where i := 1 and G ranges over all e-merging functions dominating Fi−1. Let Fi be an e-merging function satisfying
+Fi ≥ Fi−1 and
+∫
+Fi dRK ≥ ci − 2−i, (E.4)
+37
+
+
+where i := 1. Continue setting (E.3) and choosing Fi to satisfy (E.4) for i = 2, 3, . . . . Set G := limi→∞ Fi. It is clear that G is an e-merging (by the monotone convergence theorem) function dominating F and that
+∫
+G dR =
+∫
+H dR for any e-merging function H dominating G. By PropositionE.1, the upper semicontinuous version G∗ of G is also an e-merging function. Let us check that G∗ is admissible. Suppose that there exists an e-merging function H such that H ≥ G∗ and H 6= G∗. Fix such an H and an e ∈ [0, ∞)K satisfying H(e) > G∗(e). Since G∗ is upper semicontinuous and H is increasing, there exists > 0 such that H > G∗ on the hypercube [e, e + 1] ⊆ [0, ∞)K , which has a positive RK -measure. This gives
+∫
+G dRK ≤
+∫
+G∗ dRK <
+∫
+H dRK ,
+a contradiction.
+The key component of the statement of completeness of (6) is the following proposition.
+Proposition E.6. Suppose that F is a symmetric e-merging function satisfying F (0) = 0. Then F is admissible if and only if it is the arithmetic mean.
+Proof. For the “if” statement, see Proposition4.1. Next we show the “only if” statement. Let F be an admissible symmetric e-merging function with F (0) = 0. As always, all expectations E below are with respect to Q. Suppose for the purpose of contradiction that there exists (e1, . . . , eK ) ∈ [0, ∞)K such that
+F (e1, . . . , eK ) > e1 + · · · + eK
+K ∈ [0, 1)
+(the case “ ∈ [1, ∞)” is excluded by Proposition3.1). We use the same notation as in the proof of Proposition3.1. Since F (0) = 0, we know that b > a > 0. Let δ := (b − a)/(1 − a) > 0, and define G : [0, ∞)K → [0, ∞] by G(0) := δ and G := F otherwise. It suffices to show that E[G(E)] ≤ 1 for all E ∈ EK
+Q ; by PropositionE.4this will contradict the admissibility of F . Since F is an e-merging function, for any random vector (E1, . . . , EK ) taking values in [0, ∞)K and any non-null event B independent of (E1, . . . , EK ) and (D1, . . . , DK ) we have the implication: if
+(E1, . . . , EK )1B + (D1, . . . , DK )1Bc ∈ EK
+Q,
+then
+E[F ((E1, . . . , EK )1B + (D1, . . . , DK )1Bc )] ≤ 1.
+Write β := Q(B). The above statement shows that if
+β
+K
+∨
+k=1
+E[Ek] + (1 − β)a ≤ 1,
+38
+
+
+or equivalently,
+K
+∨
+k=1
+E[Ek] ≤ 1 − (1 − β)a
+β , (E.5)
+then
+βE[F (E1, . . . , EK )] + (1 − β)b ≤ 1,
+or equivalently,
+E[F (E1, . . . , EK )] ≤ 1 − (1 − β)b
+β . (E.6)
+Next, take an arbitrary random vector (E1, . . . , EK ) such that
+Q((E1, . . . , EK ) ∈ [0, ∞)K \ {0}) = 1. (E.7)
+Further, take an arbitrary non-null event C independent of (E1, . . . , EK) such
+that
+K
+∨
+k=1
+E[Ek] ≤ 1
+Q(C) , (E.8)
+which implies (E1, . . . , EK )1C ∈ EK
+Q . We will show that
+E[G((E1, . . . , EK )1C )] ≤ 1.
+Write λ := Q(C) and choose β ∈ (0, 1] such that β/(1 − (1 − β)a) = λ. From
+∨K
+k=1 E[Ek] ≤ 1/λ we obtain (E.5), which implies (E.6). Using (E.6), we have
+E[G((E1, . . . , EK )1C )]
+= λE[F (E1, . . . , EK )] + (1 − λ)δ
+= λE[F (E1, . . . , EK )] + (1 − λ) b − a
+1−a
+≤β
+1 − (1 − β)a
+1 − (1 − β)b
+β+
+(
+1− β
+1 − (1 − β)a
+) b−a
+1 − a = 1.
+Finally, we note that for any E ∈ EK
+Q , if Q(E = 0) = 0, then E[G(E)] = E[F (E)] ≤ 1. If Q(E = 0) > 0, then E is distributed as (E1, . . . , EK )1C for some event C and (E1, . . . , EK) satisfying (E.7)–(E.8). In either case, we have E[G(E)] ≤ 1.
+Finally, we are able to prove Theorem3.2based on PropositionE.6.
+Proof of Theorem3.2. In view of PropositionE.5, it suffices to check the characterization of admissibility. The “if” statement follows from Proposition4.1. We next show the “only if” statement; let F be admissible. If F (0) ≥ 1, then F ≥ 1. The fact that F is an e-merging function further forces F = 1. Next, assume F (0) ∈ [0, 1) and let λ := F (0). Define another function G : [0, ∞)K → [0, ∞) by
+G(e) := F (e) − λ
+1−λ .
+39
+
+
+It is easy to see that G is a symmetric and admissible e-merging function satisfying G(0) = 0. Therefore, using PropositionE.6, we have G = MK. The statement of the theorem follows.
+F A maximin view of merging
+This appendix is inspired by the comments by the Associate Editor of the journal version of this paper.
+F.1 Informal maximin view
+This section is high-level and informal; in it (and in this appendix in general) we will only discuss the case of e-merging. In this paper, two particularly important sources of e-merging functions are:
+•F 0, the class of all increasing Borel functions F : [0, ∞)K → [0, ∞);
+•F S, the class of all symmetric functions in F0.
+In the rest of this appendix, F will stand for either F0 or FS. Let (Ω, A, Q) be an atomless probability space (cf. AppendixD). For E ∈ EK
+Q , let FE be the set of all functions F ∈ F such that
+E[F (E)] ≤ 1;
+intuitively, these are E-specific e-merging functions. We are looking for suitable e-merging functions to use, which can be interpreted as the problem of finding the “best elements”, in some sense, of ∩(FE : E ∈ EK
+Q ). More generally, we could specify a class M of joint models of K e-variables, and be interested in
+max
+( ⋂
+E∈M
+FE
+)
+, (F.1)
+where max(·) gives the best element(s) of a set, in some sense. In the case of admissibility, it will be literally the set of maximal elements, but it can also be the element essentially or weakly dominating all other elements if it exists. The problem (F.1) can be said to be a maximin problem, since the natural interpretation of ∩ (preceded by max) is minimum. For the e-merging and ie-merging functions, the informal problems are
+max
+
+
+⋂
+E∈E K
+Q
+FE
+
+ and max
+
+
+⋂
+E∈iE K
+Q
+FE
+
+.
+In the rest of this appendix, M will stand for either EK
+Q or iEK
+Q.
+40
+
+
+F.2 Formal maximin
+Our results about essential and weak domination, namely Propositions3.1 and4.2, have interesting connections with the maximin problem
+sup
+F ∈F
+min
+E∈M F (e)1{E[F (E)]≤1} (F.2)
+for a fixed e ∈ [0, ∞)K. The value (F.2) is the supremum of F (e) over all e-merging functions (if M = EK
+Q ) or over all ie-merging functions (if M = iE K
+Q ). Intuitively, this corresponds to an overoptimistic way of merging e-values choosing the best merging function in hindsight (which makes (F.2) somewhat similar to the VS bound). Notice that the minimum in (F.2) (either F (e) or 0) is indeed attained. Fix e ∈ [0, ∞)K. Propositions3.1and4.2show that
+max
+F ∈FS
+min
+E∈E K
+Q
+F (e)1{E[F (E)]≤1} = MK (e) ∨ 1,
+max
+F ∈FS
+min
+E∈iE K
+Q
+F (e)1{E[F (E)]≤1} = PK (e ∨ 1)
+= max
+F ∈F0
+min
+E∈iE K
+Q
+F (e)1{E[F (E)]≤1},
+where MK is the arithmetic mean and PK is the product function. This follows from the maximin problem having a universal optimizer for e large enough: MK(e) ≥ 1 in the e-merging case and e ≥ 1 in the ie-merging case. Let us check that
+max
+F ∈F0
+min
+E∈E K
+Q
+F (e)1{E[F (E)]≤1} = max(e) ∨ 1.
+To show this, first notice that, for each k = 1, . . . , K, (e1, . . . , eK ) 7→ ek is an e-merging function, and so is (e1, . . . , eK ) 7→ 1. This shows the ≥ part of the equality. On the other hand, for any function F ∈ F, if F (e) > a := max(e) ∨ 1 for some e, then by designing a vector E of e-variables with Q(E = e) = 1/a, we have E[F (E)] ≥ F (e)/a > 1, and hence F is not an e-merging function. This gives the ≤ part of the equality.
+F.3 The minimax formulation
+For a fixed e ∈ [0, ∞)K, we can also talk about the minimax problem corresponding to the maximin problem (F.2):
+inf
+E∈M max
+F ∈F F (e)1{E[F (E)]≤1}. (F.3)
+As usual, we have
+inf
+E∈M max
+F ∈F F (e)1{E[F (E)]≤1} ≥ sup
+F ∈F
+min
+E∈M F (e)1{E[F (E)]≤1}, (F.4)
+41
+
+
+but the two sides are not always equal. The minimax problem (F.3) is usually easy to solve. We first look at the case F = F0. Note that for fixed E ∈ EK
+Q , using the Neyman–Pearson argument, we have
+max
+F ∈F0
+F (e)1{E[F (E)]≤1} = 1
+Q(E ≥ e) ∈ [1, ∞],
+for which a maximizer (typically the unique maximizer) is
+e′ 7→ 1{e′≥e}
+Q(E ≥ e) .
+Therefore, the minimax problem (F.3) for F = F0 has value
+inf
+E∈M max
+F ∈F0
+F (e)1{E[F (E)]≤1} = inf
+E∈M
+1
+Q(E ≥ e) .
+Since M is EK
+Q or iEK
+Q , we can compute this as
+min
+E∈E K
+Q
+1
+Q(E ≥ e) = min
+E∈EQ
+1
+Q(E ≥ max(e)) = max(e) ∨ 1,
+min
+E∈iE K
+Q
+1
+Q(E ≥ e) =
+K
+∏
+k=1
+min
+Ek ∈EQ
+1
+Q(Ek ≥ ek) = PK (e ∨ 1). (F.5)
+In combination with results of SectionF.2, this shows that (F.4) holds as an equality in this case. Next, let us look at the case F = FS. For M = iEK
+Q , the coincidence of the minimax and maximin follows from the previous results, so we assume M = EK
+Q. Let
+Ae :=
+⋃
+π∈ΠK
+{e′ ∈ [0, ∞)K : e′ ≥ eπ},
+where ΠK is the set of all K-permutations and eπ := (eπ(1), . . . , eπ(K)). Using a Neyman–Pearson argument again, we have, for a fixed E ∈ EK
+Q,
+max
+F ∈FS
+F (e)1{E[F (E)]≤1} = 1
+Q(E ∈ Ae) ,
+for which a maximizer is
+e′ 7→ 1{e′∈Ae}
+Q(E ∈ Ae) .
+Let a := (1/MK (e)) ∧ 1, and the distribution of E′ be given by
+a K!
+∑
+π∈ΠK
+δeπ + (1 − a)δ0,
+δω being the point-mass at ω. It is clear that E′ ∈ EK
+Q and Q(E′ ∈ Ae) = a. It follows that
+inf
+E∈E K
+Q
+1
+Q(E ∈ Ae) ≤ 1
+Q(E′ ∈ Ae) = MK (e) ∨ 1. (F.6)
+42
+
+
+Hence, by (F.4) and the results of SectionF.2, the values of the maximin and the minimax again coincide (and the inf in (F.6) is actually attained and so can be replaced by min). The inequalities (F.5) and (F.6) give alternative proofs to the domination statements in Propositions3.1and (in the independent case)4.2, since our overoptimistic upper bound coincides with a valid e-merging (ie-merging in the independent case) function when MK(e) ≥ 1 (when e ≥ 1 in the independent case). For this, we do not need anything derived in the main paper or in SectionF.2above. However, the minimax approach (at least in the form presented here) does not produce the full domination structure of symmetric e-merging functions as given in Theorem3.2.
+G Cross-merging between e-values and p-values
+In this appendix we will briefly discuss functions performing “cross-merging”: either merging several e-values into a p-value or several p-values into an evalue. Formally, an e-to-p merging function is a decreasing Borel function F : [0, ∞]K → [0, 1] such that F (E1, . . . , EK ) is a p-variable whenever E1, . . . , EK are e-variables, and a p-to-e merging function is a decreasing Borel function F : [0, 1]K → [0, ∞] such that F (P1, . . . , PK ) is an e-variable whenever P1, . . . , PK are p-variables. The message of this appendix is that cross-merging can be performed as composition of pure merging (applying an e-merging function or a p-merging function) and calibration (either e-to-p calibration or p-to-e calibration); however, in some important cases (we feel in the vast majority of cases) pure merging is more efficient, and should be done, in the domain of e-values. Let us start from e-to-p merging. Given e-values e1, . . . , eK , we can merge them into one e-value by applying the arithmetic mean, the only essentially admissible symmetric e-merging function (Proposition3.1), and then by applying inversion e 7→ e−1 ∧ 1, the only admissible e-to-p calibrator (Proposition2.2). This gives us the e-to-p merging function
+F (e1, . . . , eK ) := K
+e1 + · · · + eK
+∧ 1. (G.1)
+The following proposition shows that in this way we obtain the optimal symmetric e-to-p merging function.
+Proposition G.1. The e-to-p merging function (G.1) dominates all symmetric e-to-p merging functions.
+Proof. Suppose that a symmetric e-to-p merging function G satisfies G(e) < F (e) for some e = (e1, . . . , eK ) ∈ [0, ∞)K . The following arguments are similar to the proof of Proposition3.1. As before, Π K is the set of all permutations on {1, . . . , K}, π is randomly and uniformly drawn from ΠK , and (D1, . . . , DK ) := (eπ(1), . . . , eπ(K)). Further, let (D′
+1, . . . , D′
+K ) := (D1, . . . , DK )1A, where A is an event independent of π and satisfying Q(A) = F (e). For each k, we have
+43
+
+
+E[D′
+k] = F (e)MK (e1, . . . , eK ) ≤ 1, and hence D′
+k ∈ EQ. By the symmetry of G,
+we have Q(G(D′
+1, . . . , D′
+K ) = G(e)) ≥ Q(A) = F (e), and hence
+Q (G(D′
+1, . . . , D′
+K ) ≤ G(e)) ≥ F (e) > G(e).
+This contradicts G being an e-to-p merging function.
+It is interesting that (G.1) can also be obtained by composing e-to-p calibration and improper pure p-merging. Given e-values e1, . . . , eK we first transform them into p-values 1/e1, . . . , 1/eK (in this paragraph we allow p-values greater than 1, as inVovk and Wang[2019a]).Wilson[2019] proposed the harmonic mean as a p-merging function. The composition of these two transformations again gives us the e-to-p merging function (G.1). The problem with this argument is that, asGoeman et al.[2019, Wilson’s second claim] point out, Wilson’s method is in general not valid (one obtains a valid method if the harmonic mean is multiplied by c ln K for K > 2 and for some constant c < exp(1), according to Vovk and Wang[2019a]). Despite the illegitimate application of the harmonic mean, the resulting function (G.1) is still a valid e-to-p merging function. At least in this context, we can see that e-to-p merging should be done by first pure merging and then e-to-p calibration, not vice versa (which would result in an extra coefficient of c ln K). Now suppose we are given p-values p1, . . . , pK , and we would like to merge them into one e-value. Let κ ∈ (0, 1). Applying the calibrator (1), we obtain e-values κpκ−1
+1 , . . . , κpκ−1
+K , and since the average of e-values is an e-value,
+F (p1, . . . , pK ) := κ
+K
+K
+∑
+k=1
+pκ−1
+k (G.2)
+is a p-to-e merging function. The following proposition will imply that all p-to-e merging functions (G.2) are admissible; moreover, it will show, in conjunction with Proposition2.1, that for any admissible (p-to-e) calibrator g, the function
+Mg(p1, . . . , pK ) := 1
+K
+K
+∑
+k=1
+g (pk )
+is an admissible p-to-e merging function.
+Proposition G.2. If F : [0, 1]K → [0, ∞] is an upper semicontinuous and decreasing Borel function, E[F (P)] = 1 for all P ∈ PK
+Q with margins uniform on [0, 1], and F = ∞ on [0, 1]K \ (0, 1]K , then F is an admissible p-to-e merging function.
+Proof. It is obvious (cf. the proof of Proposition2.1) that F is a p-to-e merging function. To show that F is admissible, consider another p-to-e merging function G such that G ≥ F . For independent P1, . . . , PK distributed uniformly on [0, 1],
+1 ≥ E[G(P1, . . . , PK )] ≥ E[F (P1, . . . , PK )] = 1,
+44
+
+
+forcing G = F almost everywhere on [0, 1]K. The upper semicontinuity of F and G being decreasing further guarantee that G = F on (0, 1]K; indeed, if G(e) > F (e) for e ∈ (0, 1]K, there exists > 0 such that G > H on the hypercube [e − 1, e] ⊆ (0, 1]K, which has a positive Lebesgue measure. Therefore, F is admissible.
+Let us see how we can obtain (G.2) reversing the order in which we do calibration and pure merging. If we first merge the p-values p1, . . . , pK by naively (improperly) assuming that their generalized mean
+(
+1 K
+K
+∑
+k=1
+pκ−1
+k
+)
+1 κ−1
+(G.3)
+is a p-value and then apply the calibrator (1), we will obtain exactly the p-to-e merging function (G.2). As shown inVovk and Wang[2019a, Table 1], (G.3) is not a valid p-value in general (and has to be multiplied by at least κ1/(κ−1) to get a valid p-value). This lack of validity, however, does not matter in this context: the final result (G.2) is still a valid p-to-e merging function. This shows that, in the context of p-to-e merging, one should first perform p-to-e calibration and then pure merging, not vice versa.
+Remark G.3. We can generalize (G.2) to
+F (p1, . . . , pK ) :=
+K
+∑
+k=1
+λk fk (pk ),
+where λk ≥ 0 sum to 1 and fk are calibrators. It is interesting that any p-to-e merging function is dominated by a p-to-e merging function of this form [Vovk et al.,2020, Theorem 4.1]. We can see that the classes of e-merging functions, e-to-p merging functions, and p-to-e merging functions admit simple explicit representations. But the class of p-merging functions is much more complex.
+Cross-merging under dependency assumptions
+In the main part of this appendix we have discussed cross-merging for arbitrarily dependent e-values and p-values. Cross-merging of independent p-values might be trivial (we can take any decreasing Borel F : [0, 1]K → [0, ∞] satisfying
+∫
+F dU ≤ 1, U being the uniform probability measure on [0, 1]K), but crossmerging of independent e-values raises interesting problems. Combining the only admissible e-to-p calibrator of Proposition2.2and the product ie-merging function (7), we obtain the “ie-to-p” merging function
+(e1, . . . , eK ) 7→ 1
+e1 . . . eK
+∧ 1;
+this is even an se-to-p merging function, in the sense of mapping any sequential e-values to a p-value. However, we can do better: by Ville’s theorem [Ville,
+45
+
+
+0 2000 4000 6000 8000 10000 number of observations
+100
+102
+104
+106
+108
+1010
+e-value
+Fisher Fisher-VS product true product false universal
+Figure 5: The analogue of Figure1where the alternative hypothesis is true half of the time (details in text).
+1939, p. 100],
+(e1, . . . , eK ) 7→ min
+k=0,...,K
+1
+e1 . . . ek
+∧1
+is also an se-to-p merging function. For further information, seeShafer et al. [2011]. Strengthening the assumption of e1, . . . , eK being sequential to their independence opens up new possibilities for their combination; cf.Vovk and Wang [2020b].
+H Additional experimental results
+In our experiments in the subsection “Combining independent e-values and pvalues” in Section7we considered the case where the alternative hypothesis was always true. In this appendix we will report results of experiments in the situation where it is true only part of the time. Figure5uses a similar setting to Figure1; in particular, the observations are generated from the Gaussian model N (μ, 1), the null hypothesis is μ = 0 and the alternative hypothesis is μ = −0.1. But now we generate only half (namely, the first half) of the data (10,000 observations overall) from the alternative distribution, and the rest from the null distribution. The e-variable is the likelihood ratio (24) of the “true” probability density to the null probability density, so that we assume it known that half of the observations are generated from the alternative distribution. The results for (24) are shown in Figure5as the black line (all graphs in that figure use the medians over 100 seeds). Comparing the black line with the red line (representing Fisher’s method), we can see that their final values are approximately the same. For the comparison to be fairer, we should compare the black line with the orange one (representing the VS bound for Fisher’s method); the final value for the black line is significantly higher.
+46
+
+
+Algorithm 3 FACT (FAst Closed Testing)
+Require: A sequence of p-values p1, . . . , pK . 1: Find a permutation π of {1, . . . , K} such that pπ(1) ≤ · · · ≤ pπ(K). 2: Define the order statistics p(k) := pπ(k), k ∈ {1, . . . , K}. 3: for i = 1, . . . , K do 4: Pi := F (p(i), . . . , p(K))
+5: for k = 1, . . . , K do 6: p∗
+π(k) := F (pπ(k))
+7: for i = k + 1, . . . , K do 8: p := F (pπ(k), p(i), . . . , p(K)) 9: if p > p∗
+π(k) then
+10: p∗
+π(k) := p
+11: for i = 1, . . . , k do 12: if Pi > p∗
+π(k) then
+13: p∗
+π(k) := Pi
+Despite the method of multiplication lagging behind Fisher’s and the VS bound for it over the first half of the data, it then catches up with them. As we said in SectionA.1, p-values are usually associated with frequentist statistics while e-values are closely connected to Bayesian statistics. As discussed in Section7, the latter often require stronger assumptions, which is typical of Bayesian statistics. This can be illustrated using the two ways of generating data that we consider in Section7and in this appendix so far: always using N (−0.1, 1) or first using N (−0.1, 1) and then N (0, 1). Whereas the p-value is always computed using the same formula (namely, (22)), the e-value is computed as the likelihood ratio (21) or the likelihood ratio (24). The fact that more knowledge is assumed in the case of e-values is further illustrated by the brown line in Figure5, which is the graph for the product rule that uses the “wrong” likelihood ratio (21) in the case where the alternative hypothesis is true half of the time (as for the other graphs in that figure). Over the first half of the data the product rule performs very well (as in Figure1), but then it loses all evidence gathered against the null hypothesis. Its final value is approximately 1, despite the null hypothesis being false. The blue line corresponds to the universal test martingale (23) and does not have this deficiency.
+I FACT algorithm
+Algorithm3is a generic procedure that turns any p-merging function F into a function performing multiple hypothesis testing. It is equivalent to the closed testing procedure provided the p-merging function F is symmetric and monotonically increasing in each (equivalently, any) of its arguments. It is a version of Dobriban’s [2020] Algorithm 2. When specialized to Fisher’s combination method, Algorithm3becomes
+47
+
+
+Algorithm 4 FACT on top of Fisher’s method Require: A sequence of p-values p1, . . . , pK . 1: Find a permutation π of {1, . . . , K} such that pπ(1) ≤ · · · ≤ pπ(K). 2: Define the order statistics p(k) := pπ(k), k ∈ {1, . . . , K}. 3: SK+1 := 0
+4: for i = K, . . . , 1 do
+5: Si := Si+1 − 2 ln p(i)
+6: Pi := 1 − F χ2
+2(K+1−i)(Si)
+7: for k = 1, . . . , K do 8: p∗
+π(k) := pπ(k)
+9: for i = K, . . . , k + 1 do
+10: p := 1 − F χ2
+2(K+2−i)(−2 ln pπ(k) + Si)
+11: if p > p∗
+π(k) then
+12: p∗
+π(k) := p
+13: for i = 1, . . . , k do 14: if Pi > p∗
+π(k) then
+15: p∗
+π(k) := Pi
+Algorithm4, where F χ2
+n stands for the χ2 distribution function with n degrees of freedom and line8uses the easy-to-check identity
+1 − F χ2
+2 (−2 ln p) = p.
+Algorithm4is used in our code [Vovk and Wang,2020c] for producing Figures3 and4.
+48

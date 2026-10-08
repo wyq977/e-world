@@ -1,0 +1,536 @@
+Statistics and Probability Letters 198 (2023) 109835
+Contents lists available atScienceDirect
+Statistics and Probability Letters
+journal homepage:www.elsevier.com/locate/stapro
+Exact anytime-valid confidence intervals for contingency tables and beyond
+Rosanne J. Turner a,b,∗, Peter D. Grünwald a,c
+a CWI, Amsterdam, part of NWO-I, Netherlands b University Medical Center Utrecht, Brain Center, Netherlands c Leiden University, Department of Mathematics, Netherlands
+article info
+Article history:
+Received 24 June 2022 Received in revised form 30 January 2023 Accepted 3 March 2023 Available online 21 March 2023
+Keywords:
+Confidence sequences Contingency tables Anytime-valid Effect size
+abstract
+E-variables are tools for retaining type-I error guarantee with optional stopping. We extend E-variables for sequential two-sample tests to general null hypotheses and anytime-valid confidence sequences. We provide implementations for estimating risk difference, relative risk and odds-ratios in contingency tables. © 2023 The Author(s). Published by Elsevier B.V. This is an open access article under the CC BY license (http://creativecommons.org/licenses/by/4.0/).
+1. Introduction
+We consider a setting where we collect samples from two distinct groups, denoted a and b. In both groups, data come in sequentially and are i.i.d. We thus have two data streams, Y1,a, Y2,a, . . . i.i.d. ∼ Pθa and Y1,b, Y2,b, . . . i.i.d. ∼ Pθb where
+we assume that θa, θb ∈ Θ, {Pθ : θ ∈ Θ} representing some parameterized underlying family of distributions, all assumed to have a probability density or mass function denoted by pθ on some outcome space Y. E-variables (Grünwald et al.,2023;Vovk and Wang,2021) are a tool for constructing tests that keep their Type-I error control under optional stopping and continuation. Previously,Turner et al.(2021) developed E-variables for testing equality of both data streams, i.e. with null hypothesis Θ⃗ 0 := {(θa, θb) ∈ Θ2 : θa = θb}. Here we first generalize these E-variables to more general null hypotheses in which we may have θa ̸= θb. We then use these generalized E-variables to construct anytime-valid confidence sequences; these provide confidence sets that remain valid under optional stopping (Darling and Robbins,1967;Howard et al.,2021).
+As inTurner et al.(2021), we first design E-variables for a single block of data (Y na
+a , Y nb
+b ), where a block is a set of data
+consisting of na outcomes Y na
+a = (Ya,1, . . . , Ya,na ) in group a and nb outcomes Y nb
+b = (Yb,1, . . . , Yb,nb ) in group b, for some
+pre-specified na and nb. An E-variable is then, by definition, any nonnegative random variable S = s′(Y na
+a , Y nb
+b ) such that
+sup
+(θa,θb)∈Θ⃗ 0
+EY na
+a ∼Pθa ,Y nb
+b ∼Pθb
+[s′(Y na
+a , Y nb
+b )]
+≤ 1. (1)
+(Turner et al.,2021) first defined such an E-variable for Θ⃗ 0 = {(θa, θb) ∈ Θ2 : θa = θb} so that it would tend to have high power against a given simple alternative Θ⃗ 1 = {(θ ∗
+a ,θ∗
+b )}. Their E-variable is of the following simple form (with
+∗ Correspondence to: National Research Institute for Mathematics and Computer Science in the Netherlands (CWI), Science Park 123, 1098 XG Amsterdam, Netherlands. E-mail address: Rosanne.Turner@cwi.nl(R.J. Turner).
+https://doi.org/10.1016/j.spl.2023.109835 0167-7152/© 2023 The Author(s). Published by Elsevier B.V. This is an open access article under the CC BY license (http://creativecommons.org/ licenses/by/4.0/).
+
+
+R.J. Turner and P.D. Grünwald Statistics and Probability Letters 198 (2023) 109835
+n = na + nb):
+s
+′(Y na
+a , Y nb
+b )=
+pθa∗ (Y na
+a)
+∏na
+i=1( na
+n pθa∗ (Ya,i) + nb
+n pθ∗
+b (Ya,i)) ·
+pθ ∗
+b (Y nb
+b)
+∏nb
+i=1( na
+n pθa∗ (Yb,i) + nb
+n pθ∗
+b (Yb,i)) . (2)
+These E-variables can be extended to sequences of blocks Y(1), Y(2), . . . by multiplication, and can be extended to composite alternatives by sequentially learning (θ ∗
+a ,θ∗
+b ) from the data, for example via a Bayesian prior on Θ⃗ 1. The na and nb used for the jth block Y(j) are allowed to depend on past data, but they must be fixed before the first observation in block j occurs. For simplicity, in this note we only consider the case with na and nb that remain fixed throughout; extension to the general case is straightforward. By a general property of E-variables, at each point in time, the running product of block E-variables observed so far is itself an E-variable, and the random process of the products is known as a test martingale (Grünwald et al.,2023;Shafer, 2021). An E-variable-based test at level α is a test which, in combination with any stopping rule τ , reports ‘reject’ if and only if the product of E-values corresponding to all blocks that were observed at the stopping time and have already been completed, is larger than 1/α. Such a test has a type-I error probability bounded by α irrespective of the stopping time τ that was used; see the aforementioned references for much more detailed introductions and, for example (Henzi and Ziegel,2021), for a practical application. In case {Pθ : θ ∈ Θ} is convex, the E-variable(2)has the so-called GRO-( growth-rate-optimality) property: it maximizes,
+over all E-variables (i.e. over all nonnegative random variables S = s′(Y na
+a , Y nb
+b ) satisfying(1)) the logarithmic growth rate
+EY na
+a ∼Pθa∗ ,Y nb
+b ∼Pθ∗
+b
+[log S] , (3)
+which implies that, under (θ ∗
+a ,θ∗
+b ), the expected number of data points before the null can be rejected is minimized (Grünwald et al.,2023). Below, inTheorem1in Section2, which generalizes Theorem 1 inTurner et al.(2021), we extend(2)to the case of general null hypotheses, Θ⃗ 0 ⊂ Θ2, allowing for the case that the elements of Θ⃗ 0 have two different components, and provide a condition under which it has the GRO property. From then onwards we focus on what we call ‘the 2 × 2 contingency table setting’ in which both streams are Bernoulli, θj denoting the probability of 1 in group j. For this case, Theorem2gives a simplified expression for the E-variable and shows that the GRO property holds if Θ⃗ 0 ⊂ [0, 1]2 is convex. Then we will extend this E-variable to deal with composite Θ⃗ 1 and use this to define anytime-valid confidence sequences. We illustrate these through simulations. All proofs are in Appendix A in the supplementary material.
+2. General null hypotheses
+In this section, we first construct an E-variable for general null hypotheses that generalizes(2). We then instantiate the new result to the 2 × 2 case. The following development and results require {Pθ : θ ∈ Θ} to be ‘nondegenerate’ in the sense that there exists θ ∈ Θ such that for all θ ′ ∈ Θ, D(Pθ ∥Pθ′ ) < ∞. This mild condition holds, for example, for exponential families; we tacitly assume nondegeneracy from now on. Our goal is thus to define an E-variable for a block of n = na + nb data points with ng points in group g, g ∈ {a, b}.
+For notational convenience we define, for θa, θb ∈ Θ, Pθa,θb as the joint distribution of Y na
+a ∼ Pθa and Y nb
+b ∼ Pθb , so that
+pθa,θb (yna
+a , ynb
+b )=
+∏na
+i=1 pθa (ya,i) ∏nb
+i=1 pθb (yb,i) so that we can write the null hypothesis as H0 := {Pθa,θb : (θa, θb) ∈ Θ⃗ 0}. Our strategy will be to first develop an E–variable for a modified setting in which there is only a single outcome, falling with probability na/n in group a and nb/n in group b. To this end, for θ⃗ = (θa, θb), we define p′
+θ⃗(Y |a) := pθa (y), p′
+θ⃗(Y |b) := pθb (y),
+all distributions with a ′ referring to the modified setting with just one outcome. We let W◦(Θ⃗ 0) be the set of all distributions on Θ⃗ 0 with finite support. For W ∈ W◦(Θ⃗ 0), we define p′
+W (Y |g) =
+∫
+p
+′
+θ⃗(Y |g)dW (θ⃗). We set p′
+W (yk|g) :=
+∏k
+i=1 p′
+W (yi|g). We further define, for given alternative Θ⃗ 1 = {(θ ∗
+a ,θ∗
+b )}, p◦(·|g), g ∈ {a, b} to be, if it exists, the conditional probability density satisfying
+EG∼Q ′ EY ∼Pθ∗
+G
+[− log p◦(Y | G)] = inf
+W ∈W◦(Θ⃗ 0)
+EG∼Q ′ EY ∼Pθ∗
+G
+[
+− log p′
+W (Y | G)] (4)
+with Q ′(G) the distribution for G ∈ {a, b} with Q ′(G = a) = na/n. Clearly we can rephrase(4)equivalently as:
+D(Q ′(G, Y )∥P◦(G, Y )) = inf
+W ∈W◦(Θ⃗ 0)
+D(Q ′(G, Y )∥P′
+W (G, Y )), (5)
+where D is the KL divergence. Here we extended the conditional distributions P′
+W (Y |G) and P◦(Y |G) (corresponding to densities p′
+W (Y |G) and p◦(Y |G)) to a joint distribution by setting P′
+W (G, Y ) := Q ′(G)P′
+W (Y |G) (and similarly for P◦) and we extended Q ′(G, Y ) := Q ′(G)Pθ∗
+G (Y ). We have now constructed a modified null hypothesis H′
+0 = {P′
+θ⃗(G, Y ) : θ⃗ ∈ Θ⃗ 0} of joint
+distributions for a single ‘group’ outcome G ∈ {a, b} and ‘data’ outcome Y ∈ Y. We let H ̄ ′
+0 = {PW (G, Y ) : W ∈ W◦(Θ⃗ 0)} be the convex hull of H′
+0. The p◦ satisfying(5)is commonly called the reverse information projection of Q ′ onto H ̄ ′
+0.Li(1999) shows that p◦ always exists under our nondegeneracy condition, though in some cases it may represent a sub-distribution (integrating to strictly
+2
+
+
+R.J. Turner and P.D. Grünwald Statistics and Probability Letters 198 (2023) 109835
+less than one); seeGrünwald et al.(2023, Theorem 1) (re-stated for convenience in the supplementary material) who, building on Li’s work, established a general relation between reverse information projection and E–variables. Part 1 of that theorem establishes that if the minimum in(4)(or(5)) is achieved by some W ◦ ∈ W◦ then p◦(·|·) = p′
+W
+◦ (·|·) and, with θ⃗∗ = (θ ∗
+a ,θ∗
+b ), for all θ⃗ ∈ Θ⃗ 0,
+EG∼Q ′ EY ∼P′
+θ⃗ |G
+[
+p
+′
+θ⃗∗ (Y |G)
+p
+◦(Y |G)
+]
+= EG∼Q ′ EY ∼P′
+θ⃗ |G
+[
+p
+′
+θ⃗∗ (G, Y )
+p
+◦(G, Y )
+]
+≤ 1. (6)
+This expresses that p′
+θ⃗∗ (Y |G)/p◦(Y |G) is an E-variable for our modified problem, in which within a single block we observe
+a single outcome in group g, with g chosen with probability ng /n. If we were to interpret the E–variable of the modified problem as in(6)as a likelihood ratio for a single outcome, its corresponding likelihood ratio for a single block of data in our original problem with ng outcomes in group g would be:
+s(yna
+a , ynb
+b ; na, nb, (θ ∗
+a ,θ∗
+b ); Θ⃗ 0) :=
+p
+′
+(θa∗,θ ∗
+b )(yna
+a |a)p′
+(θa∗,θ ∗
+b )(ynb
+b |b)
+p
+◦ (yna
+a |a)p◦(ynb
+b |b)
+=
+pθa∗ (yna
+a )pθ∗
+b (ynb
+b)
+p
+◦ (yna
+a |a)p◦(ynb
+b |b) . (7)
+The following theorem expresses that this ‘extension’ of the E-variable in the modified problem gives us an E-variable in our original problem:
+Theorem 1. S[na,nb,θa∗,θ∗
+b ;Θ⃗ 0] := s(Y na
+a , Y nb
+b ; na, nb, (θ ∗
+a ,θ∗
+b ); Θ⃗ 0) as in (7) is an E-variable, i.e. with s′(·) = s(·; na, nb, (θ ∗
+a ,θ∗
+b ); Θ⃗ 0),
+we have (1). Moreover, if H′
+0 = {P′
+θ⃗ : θ⃗ ∈ Θ⃗ 0} (the null hypothesis for the modified problem) is a convex set of distributions
+and Y is finite (so that H′
+0 = H ̄ ′
+0) and furthermore H′
+0 is compact in the weak topology, then (a) p◦(·|·) = p′
+θ⃗(·|·) for some
+θ⃗ ∈ Θ⃗ 0 and (b) S[na,nb,θa∗,θ∗
+b ;Θ⃗ 0] is the (θ ∗
+a ,θ∗
+b )-GRO E-variable for the original problem, maximizing (3) among all E-variables.
+In the case that H′
+0 is not convex and compact, we do not have a simple expression for p◦ in general, and we may have
+to find it numerically by minimizing(4). In the 2 × 2 table (Bernoulli Θ) case though, there are interesting H0 for which the corresponding H′
+0 is convex, and we shall now see that this leads to major simplifications.
+2.1. General convex Θ⃗ 0 for the 2 × 2 contingency table
+In this subsection and the next, {Pθa,θb } refers to the 2 × 2 model again, with Y = {0, 1} and θ denoting the probability
+of 1. We now let Θ⃗ 0 be any closed convex subset of [0, 1]2 that contains a point in the interior of [0, 1]2. Again, note that the corresponding H0 = {Pθ⃗ : θ⃗ ∈ Θ⃗ 0} need not be convex; still, H′
+0, the null hypothesis for the modified problem as defined above, must be convex if Θ⃗ 0 is convex, and this will allow us to design E-variables for such Θ⃗ 0. Let H1 = {Pθa∗,θ∗
+b}
+with (θ ∗
+a ,θ∗
+b ) in the interior of [0, 1]2, and let
+kl(θa, θb) := D(Pθa∗,θ∗
+b (Y na
+a , Y nb
+b )∥Pθa,θb (Y na
+a , Y nb
+b )) =
+∑
+yna
+a ∈{0,1}na ,ynb
+b ∈{0,1}nb
+pθa∗ (yna
+a )pθ∗
+b (ynb
+b ) log
+pθa∗ (yna
+a )pθ∗
+b (ynb
+b)
+pθa (yna
+a )pθb (ynb
+b)
+(8)
+stand for the KL divergence between Pθa∗,θ∗
+b and Pθa,θb restricted to a single block (note that in the previous subsection, KL
+divergence was defined for a single outcome Y ). The following result builds onTheorem1:
+Theorem 2. min(θa,θb)∈Θ⃗ 0 kl(θa, θb) is uniquely achieved by some (θ ◦
+a , θ◦
+b ). If (θ ∗
+a ,θ∗
+b ) ∈ Θ⃗ 0, then (θ ◦
+a , θ◦
+b ) = (θ ∗
+a ,θ∗
+b ). Otherwise, (θ ◦
+a , θ◦
+b ) lies on the boundary of Θ⃗ 0, but not on the boundary of [0, 1]2. The E–variable (7) is given by the distribution W that
+puts all its mass on (θ ◦
+a , θ◦
+b ), i.e.
+s(yna
+a , ynb
+b ; na, nb, (θ ∗
+a ,θ∗
+b ); Θ⃗ 0) =
+pθa∗ (yna
+a )pθ∗
+b (ynb
+b)
+pθa◦ (yna
+a )pθ◦
+b (ynb
+b)
+(9)
+is an E-variable. Moreover, this is the (θ ∗
+a ,θ∗
+b )-GRO E-variable relative to Θ⃗ 0.
+We can extend this E-variable to the case of a composite H1 = {Pθa,θb : (θa, θb) ∈ Θ⃗ 1} by learning the true (θ ∗
+a ,θ∗
+b ) ∈ Θ⃗ 1
+from the data (Turner et al.,2021). We thus replace, for each j = 1, 2, . . ., for the block Y(j) consisting of na points Y(j),a,1, . . . , Y(j),a,na in group a and nb points Y(j),b,1, . . . , Y(j),b,nb in group b, the ‘true’ θ ∗
+g for g ∈ {a, b} by an estimate θ ̆g | Y (j−1) based on the previous j − 1 data blocks. The E-variable corresponding to m blocks of data then becomes
+S (m)
+[na,nb,W1;Θ⃗ 0]
+=
+m
+∏
+j=1
+na
+∏
+i=1
+p
+θ ̆a|Y (j−1) (Y(j),a,i)
+p
+θ ̆a◦|Y (j−1) (Y(j),a,i)
+nb
+∏
+i=1
+p
+θ ̆b|Y (j−1) (Y(j),b,i)
+p
+θ ̆ ◦
+b |Y (j−1) (Y(j),b,i)
+(10)
+3
+
+
+R.J. Turner and P.D. Grünwald Statistics and Probability Letters 198 (2023) 109835
+Fig. 1. Examples of null hypothesis parameter spaces for two types of boundaries.
+where, for g ∈ {a, b}, θ ̆g |Y (j−1) can be an arbitrary estimator (function from Y (j−1) to θg ) and (θ ̆ ◦
+a | Y (j−1), θ ̆ ◦
+b | Y (j−1))
+is defined to achieve min(θa,θb)∈Θ⃗ 0 D(Pθ ̆a|Y (j−1),θ ̆b|Y (j−1) (Y na
+a , Y nb
+b )∥Pθa,θb (Y na
+a , Y nb
+b )). No matter what estimator we choose,(10) gives us an E-variable. In Section3, as inTurner et al.(2021), we implement this estimator by fixing a prior W and using the Bayes posterior mean, θ ̆g |Y (j−1) := Eθg ∼W|Y (j−1) [θg ]. Let us now illustrateTheorem2for two choices of Θ⃗ 0.
+Θ⃗ 0 with linear boundary. First, we let Θ⃗ 0(s, c), for s ∈ R, c ∈ R, stand for any straight line through [0, 1]2 : Θ⃗ 0(s, c) := {(θa, θb) ∈ [0, 1]2 : θb = s + cθa}. This can be extended to Θ⃗ 0(≤s, c) :=
+⋃
+s
+′≤s Θ⃗ 0(s′, c) and similarly to Θ⃗ 0(≥s, c) :=
+⋃
+s
+′≥s Θ⃗ 0(s′, c). For example, we could take Θ⃗ 0 = Θ⃗ 0(s, c) to be the solid line inFig.1(a) (which would correspond to s = 0.1, c = 1), or the whole area underneath the line (Θ⃗ 0(≤ s, c)) including the line itself, or the whole area above it including the line itself (Θ⃗ 0(≥s, c)). Now consider a Θ⃗ 0(s, c) that has nonempty intersection with the interior of [0, 1]2 and that is separated from the point alternative (θ ∗
+a ,θ∗
+b ), i.e. min(θa,θb)∈Θ⃗ 0 kl(θa, θb) > 0. Utilizing the independence of the
+observations, we can rewrite(8)as follows:
+kl(θa, θb) := naEY ∼pθa∗
+[
+log
+pθa∗ (Y )
+pθa (Y )
+]
++ nbEY ∼pθ∗
+b
+[
+log
+pθ ∗
+b (Y )
+pθb (Y )
+]
+.
+As we defined θb to be completely determined as θb = s + cθa, substituting and combining with simple differentiation w.r.t. θa gives that the minimum is achieved by the unique (θ ◦
+a , θ◦
+b ) ∈ Θ⃗ 0 satisfying:
+na
+(
+−
+θ
+∗
+a
+θ
+◦
+a
++
+1 − θ∗
+a 1 − θ◦
+a
+)
++ nb · c ·
+(
+−
+θ
+∗
+b
+θ
+◦
+b
++
+1 − θ∗
+b 1 − θ◦
+b
+)
+= 0. (11)
+This can now be plugged into the E-variable(9)if the alternative is the simple alternative, or otherwise into its sequential form(10). In the basic case in which Θ⃗ 0 = {(θa, θb) ∈ [0, 1]2 : θa = θb}, the solution to(11)reduces to the familiar θ
+◦
+a = θ◦
+b = (naθ ∗
+a + nbθ ∗
+b )/n fromTurner et al.(2021). If (θ ∗
+a ,θ∗
+b ) lies above the line Θ⃗ 0(s, c), then byTheorem2, min (θa,θb)∈Θ⃗ 0(≤s,c) kl(θa, θb) must lie on Θ⃗ 0(s, c).Theorem2 gives that it must be achieved by the (θ ◦
+a , θ◦
+b ) satisfying(11). Similarly, if ( θ ∗
+a ,θ∗
+b ) lies below the line Θ⃗ 0(s, c), then
+min(θa,θb)∈Θ⃗ 0(≥s,c) kl(θa, θb) is again achieved by the (θ ◦
+a , θ◦
+b ) satisfying(11).
+Θ⃗ 0 with log odds ratio boundary. Similarly, we can consider Θ⃗ 0(δ), Θ⃗ 0(≤ δ), Θ⃗ 0(≥δ) that correspond to a given log odds effect size δ. That is, we now take
+Θ⃗ 0(δ) :=
+{
+(θa, θb) ∈ [0, 1]2 : log θb(1 − θa)
+(1 − θb)θa
+=δ
+}
+Θ⃗ 0(≤δ) :=
+{
+(θa, θb) ∈ [0, 1]2 : log θb(1 − θa)
+(1 − θb)θa
+≤δ
+}
+Θ⃗ 0(≥δ) :=
+{
+(θa, θb) ∈ [0, 1]2 : log θb(1 − θa)
+(1 − θb)θa
+≥δ
+}
+.
+For example, we could now take Θ⃗ 0 = Θ⃗ 0(≤δ) to be the area under the curve (including the curve boundary itself) in Fig.1(b), which would correspond to δ = 2. Now let δ and point alternative (θ ∗
+a ,θ∗
+b ) be such that δ > 0 and Θ⃗ 0(≤δ) is
+4
+
+
+R.J. Turner and P.D. Grünwald Statistics and Probability Letters 198 (2023) 109835
+separated from (θ ∗
+a ,θ∗
+b ), i.e. min(θa,θb)∈Θ⃗ 0(≤δ) kl(θa, θb) > 0. Let (θ ◦
+a , θ◦
+b ) := arg min(θa,θb)∈Θ⃗ 0(δ) kl(θa, θb). AsFig.1(b) suggests, Θ⃗ 0(≤δ) is convex.Theorem2now tells us that min (θa,θb)∈Θ⃗ 0(≤δ) kl(θa, θb) is achieved by (θ ◦
+a , θ◦
+b ). Plugging these into(9) thus gives us an E-variable. (θ ◦
+a , θ◦
+b ) can easily be determined numerically. Similarly, if δ < 0, Θ⃗ 0(≥δ) is convex and closed and if (θ ∗
+a ,θ∗
+b ) is separated from Θ⃗ 0(≥δ), the (θ ◦
+a , θ◦
+b ) minimizing KL on Θ⃗ 0(δ) gives an E-variable relative to Θ⃗ 0(≥δ).
+3. Anytime-valid confidence for the 2 × 2 case
+We will now use the E-variables defined above to construct anytime-valid confidence sequences. Let δ = δ(θa, θb) be a notion of effect size such as the log odds ratio (see above) or absolute risk θb − θa or relative risk θb/θa. A (1 − α)-anytimevalid (AV) confidence sequence (Darling and Robbins,1967;Howard et al.,2021) is a sequence of random (i.e. determined by data) subsets CSα,(1), CSα,(2), . . . of Γ , with CSα,(m) being a function of the first m data blocks Y (m), such that for all
+(θa, θb) ∈ [0, 1]2,
+Pθa ,θb
+(
+∃m ∈ N : δ(θa, θb) ̸∈ CSα,(m)
+)
+≤ α.
+We first consider the case in which for all values γ ∈ Γ that δ can take, Θ⃗ 0(γ ) := {(θa, θb) ∈ [0, 1]2 : δ(θa, θb) = γ } is
+a convex set, as it will be for absolute and relative risk. Fix a prior W1 on [0, 1]2. Based on(10)we can make an exact (nonasymptotic) AV confidence sequence
+CSα,(m) =
+{
+δ
+: S(m)
+[na,nb,W1;Θ⃗ 0(δ)]
+≤
+1 α
+}
+(12)
+where S(m)
+[na,nb,W1;Θ⃗ 0(δ)]
+is defined as in(10)and is a valid E-variable byTheorem2. To see that ( CSα,(m))m∈N really is an AV confidence sequence, note that, by definition of the CSα,(m), we have
+Pθa ,θb
+(
+∃m ∈ N : δ(θa, θb) ̸∈ CSα,(m)
+) is given by
+Pθa ,θb
+(
+∃m ∈ N : S(m)
+[na,nb,W1;Θ⃗ 0(δ)]
+≥
+1 α
+)
+≤ α,
+by Ville’s inequality (Grünwald et al.,2023;Turner et al.,2021). Here the CSα,(m) are not necessarily intervals, but, potentially losing some information, we can make a AV confidence sequence consisting of intervals by defining CIα,(m) to be the smallest interval containing CSα,(m). We can also turn any confidence sequences (CSα,(m))m∈N into an alternative AV confidence sequence with sets CS′
+α,(m) that are always a subset of CSα,(m) by taking the running intersection
+CS′
+α,(m) :=
+⋂
+j=1..m
+CSα ,(j) .
+In this form, the confidence sequences CS′
+α,(m) can be interpreted as the set of δ’s that have not yet been rejected in a setting in which, for each null hypothesis Θ⃗ 0(δ) we stop and reject as soon as the corresponding E-variable exceeds 1/α. The running intersection can also be applied to the intervals (CIα,(m))m∈N. To simplify calculations, it is useful to take W1 a prior under which θa and θb have independent beta distributions with parameters αa, βa, αb, βb. We can, if we want, infuse some prior knowledge or hopes by setting these parameters to certain values — our confidence sequences will be valid irrespective of our choice (Howard et al.,2021). In case no such knowledge can be formulated (as in the simulations below), we advocate the prior, which, among all priors of the simple form asymptotically achieves the REGROW criterion (a criterion related to minimax log-loss regret, seeGrünwald et al.(2023)), i.e for the case na = nb = 1 we set W1 to an independent beta prior on θa and θb with γ = 0.18 as was empirically found to be the ‘best’ value (Turner et al.,2021).
+Log odds ratio effect size. The situation is slightly trickier if we take the log odds ratio as effect size, for Θ⃗ 0(δ) is then not convex. Without convexity,Theorem2cannot be used and hence the validity of AV confidence sequences as constructed above breaks down. We can get nonasymptotic anytime-valid confidence sequences after all as follows. First, we consider a one-sided AV confidence sequence for the submodel of positive effect sizes {(θa, θb) : δ(θa, θb) ≥ 0}, defining
+CS+
+α,(m) = {δ ≥ 0 : S(m)
+[na,nb,W1;Θ⃗ 0(≤δ)]
+≤ α−1, }
+where we note that Θ⃗ 0(≤ δ) is convex (since δ ≥ 0) and also contains (θa, θb) with δ(θa, θb) < 0. This confidence sequence can give a lower bound on δ. Analogously, we consider a one-sided AV confidence sequence for the submodel {(θa, θb) : δ(θa, θb) ≤ 0}, defining
+CS−
+α,(m) = {δ ≤ 0 : S(m)
+[na,nb,W1;Θ⃗ 0(≥δ)]
+≤ α−1},
+and derive an upper bound on δ. ByTheorem2, both sequences ( CS+
+α,(m))m=1,2,... and (CS−
+α,(m))m=1,2,... are AV confidence sequences for the submodels with δ ≥ 0 and δ ≤ 0 respectively. Defining CSα,(m) = CS+
+α,(m) ∪ CS−
+α,(m), we find, for (θa, θb)
+with δ(θa, θb) > 0,
+Pθa ,θb
+(
+∃m ∈ N : δ(θa, θb) ̸∈ CSα,(m)
+)
+= Pθa,θb
+(
+∃m ∈ N : δ(θa, θb) ̸∈ CS+
+α,(m)
+)
+≤ α,
+5
+
+
+R.J. Turner and P.D. Grünwald Statistics and Probability Letters 198 (2023) 109835
+Fig. 2. Depiction of parameter space with running intersection of confidence sequence for data generated under various effect sizes, at different time points m in a data stream. The asterisks indicate the maximum likelihood estimator at that time point. The significance threshold was set to 0.05. The design was balanced, with data block sizes na = 1 and nb = 1.
+and analogously for (θa, θb) with δ(θa, θb) < 0. We have thus arrived at a confidence sequence that works for all δ, positive or negative.
+3.1. Simulations
+In this section some numerical examples of confidence sequences for the two types of effect sizes are given. All simulations were run with code available in our software package (Ly et al.,2022).
+Risk difference. Risk difference is defined as the difference between success probabilities in the two streams: δ = θb − θa. Fig.2shows running intersections of confidence sequences with δ as the risk difference for simulations for various distributions and stream lengths. These sequences are constructed by testing null hypotheses based on Θ⃗ 0(s, c), with c = 1 and s = δ. CIα,(m) for the risk difference on Θ⃗ 0 is an interval, corresponding to the ‘beam’ of (θa, θb) ∈ [0, 1]2 bounded by
+the lines θb = θa + δl and θb = θa + δr with δl > δr being values such that S(m)
+[na,nb,W1;Θ⃗ 0(δl)]
+= S(m)
+[na,nb,W1;Θ⃗ 0(δr)]
+= 1/α.
+In Appendix B we illustrate the calculations leading toFig.2. Figure B.1 in the Appendix illustrates that the running intersection indeed improves the confidence sequence, albeit slightly.
+Relative risk. Relative risk is defined as the ratio between the success probabilities in group b and a: δ = θb/θa. Hence, confidence sequences for this effect size measure can again be constructed using the linear boundary form Θ⃗ 0(s, c) again, but now with s = 0 and c = δ.Fig.2shows running intersections of confidence sequences with δ as the relative risk.
+Log odds ratio boundary. If the maximum likelihood estimate based on Y (m) lies in the upper left corner as inFig.3(a), the confidence sets CS(m) we get at time m have a one-sided shape such as the shaded region, or the shaded region in Fig.3(c), if the estimate lies in the lower right corner. Again, we can improve these confidence sequences by taking the running intersection; running intersections over time are illustrated inFigs.3(b) and3(d).
+4. Conclusion
+We have shown how E-variables for data streams can be extended to general null hypotheses and non-asymptotic always-valid confidence sequences. We specifically implemented the confidence sequences for the 2 × 2 contingency tables setting; the resulting confidence sequences are efficiently computed and show quick convergence in simulations. For estimating risk differences or relative risk ratios between proportions in two groups, to our knowledge, such exact confidence sequences did not yet exist. For the log odds ratio we could also have used the sequential probability ratio (SPR) in Wald’s SPR test (Wald,1945) test, which can be re-interpreted as a (product of) E-variables (Grünwald et al., 2023). However, the SPR does not satisfy the GRO property making it sub-optimal (see alsoAdams,2020); moreover, as should be clear from the development, our method for constructing confidence sequences can be implemented for any effect size notion with convex rejection sets Θ⃗ 0(≤ δ) and Θ⃗ 0(≥ δ), not just the log odds ratio. A main goal for future work is to useTheorem2to provide such sequences for sequential two-sample settings that go beyond the 2 × 2 table.
+6
+
+
+R.J. Turner and P.D. Grünwald Statistics and Probability Letters 198 (2023) 109835
+Fig. 3. One-sided confidence sequences for odds ratios. 500 data blocks were generated under Pθa,θb with θa = 0.2 and log of the odds ratio (lOR)
+2.5 for figures a and b, and θa = 0.8 and lOR −2.5 for figures c and d. The asterisks indicate the maximum likelihood estimator at n = 500. The significance threshold was set to 0.05. The design was balanced, with data block sizes na = 1 and nb = 1. Note that CS− is empty for (a) and (b) and CS+ for (c) and (d) in these confidence sequences.
+Declaration of competing interest
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+Data availability
+No data was used for the research described in the article.
+Acknowledgments
+Funding: This work is part of the Enabling Personalized Interventions (EPI) project, which is supported by the Dutch Research Council (NWO), Netherlands in the Commit2Data –Data2Person program under contract 628.011.028.
+Appendix A. Supplementary data
+Supplementary material related to this article can be found online athttps://doi.org/10.1016/j.spl.2023.109835.
+References
+Adams, Reuben J., 2020. Safe Hypothesis Tests for 2 ×2 Contingency Table. (Master thesis). Delft Technical University, Delft, Netherlands. Darling, D.A., Robbins, H., 1967. Confidence sequences for mean, variance, and median. Proc. Natl. Acad. Sci. USA 58 (1), 66–68. Grünwald, Peter, de Heide, Rianne, Koolen, Wouter, 2023. Safe testing. Journal of the Royal Statistical Society, Series B (accepted for publication). Henzi, Alexander, Ziegel, Johanna F., 2021. Valid sequential inference on probability forecast performance. Biometrika.
+7
+
+
+R.J. Turner and P.D. Grünwald Statistics and Probability Letters 198 (2023) 109835
+Howard, Steven R., Ramdas, Aaditya, McAuliffe, Jon, Sekhon, Jasjeet, 2021. Time-uniform, nonparametric, nonasymptotic confidence sequences. Ann. Statist. Li, J.Q., 1999. Estimation of Mixture Models (Ph.D. thesis). Yale University, New Haven, CT. Ly, Alexander, Turner, Rosanne J., Ter Schure, Judith, 2022. R-package safestats. CRAN. Shafer, Glenn, 2021. Testing by betting: a strategy for statistical and scientific communication. Journal of the Royal Statistical Society Series A Turner, Rosanne J., Ly, Alexander, Grünwald, Peter, 2021. Generic E-variables for exact sequential k-sample tests that allow for optional stopping. arXiv preprintarXiv:2106.02693. Vovk, Vladimir, Wang, Ruodu, 2021. E-values: Calibration, combination, and applications. Ann. Statist. Wald, Abraham, 1945. Sequential tests of statistical hypotheses. Ann. Math. Stat. 16 (2), 117–186.
+8

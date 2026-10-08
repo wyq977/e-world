@@ -1,0 +1,697 @@
+Optimal E-Values for Exponential Families: the Simple Case
+Peter Gru ̈nwald12, Tyron Lardy2, Yunda Hao1, Shaul K. Bar-Lev3, and Martijn de Jong2
+1Centrum Wiskunde & Informatica, Amsterdam, The Netherlands 2Leiden University, Leiden, The Netherlands 3Holon Institute of Technology, Holon, Israel
+May 1, 2024
+Abstract
+We provide a general condition under which e-variables in the form of a simple-vs.-simple likelihood ratio exist when the null hypothesis is a composite, multivariate exponential family. Such ‘simple’ e-variables are easy to compute and expected-log-optimal with respect to any stopping time. Simple e-variables were previously only known to exist in quite specific settings, but we offer a unifying theorem on their existence for testing exponential families. We start with a simple alternative Q and a regular exponential family null. Together these induce a second exponential family Q containing Q, with the same sufficient statistic as the null. Our theorem shows that simple e-variables exist whenever the covariance matrices of Q and the null are in a certain relation. Examples in which this relation holds include some k-sample tests, Gaussian location- and scale tests, and tests for more general classes of natural exponential families.
+1Introduction
+Exponential families play a central role in statistical modelling, as they include the Bernoulli-, Gaussian-, Poisson-, and many more models. An important task is to test whether these models are well-specified, that is, whether observed data are indeed distributed by an element of an exponential family. Many classic goodness-of-fit tests are well-suited for this purpose [Anderson and Darling, 1954, Lilliefors, 1967, Stephens, 1974]. However, the vast majority of these methods are based on p-values, and thus designed for fixed sample size experiments. Here, we are instead interested in hypothesis tests that are based on e-values [Gru ̈nwald et al., 2024]. An e-value is the value taken by an e-variable, which is a test statistic that is suitable for experiments with a flexible design. That is, when sample sizes are not pre-specified, or when the decision to conduct new experiments may depend on past data; see e.g. Ramdas et al. [2023] for a comprehensive overview. The most straightforward example of e-variables are likelihood ratios between simple alternatives and simple null hypotheses. E-variables for composite hypotheses, and in particular ‘good’ e-variables, are generally more complicated. However, e-variables in the form of a likelihood ratio with a single, special element of the null representing the full, composite null sometimes still exist. We refer to such e-variables as ‘simple’ e-variables. Simple e-variables, if they exist, can easily be computed, and are known to be optimal in an expected-log-optimality sense [Koolen and Gr ̈unwald, 2021, Gru ̈nwald et al., 2024]. That is, if we combine evidence from a repeated experiment where data is collected using a fixed stopping rule, then using the simple e-variable will asymptotically result in the most evidence against the null,
+1
+arXiv:2404.19465v1 [stat.ME] 30 Apr 2024
+
+
+among all e-variables; details can be found in Section 1.3. As such, it is desirable to find out whether or not simple e-variables exist in specific settings. Indeed, the main result of this paper, Theorem 1, provides a set of equivalent conditions under which simple e-variables exist for exponential family nulls. We briefly describe it here, assuming prior knowledge on e-variables and exponential families — all relevant definitions are given in Section 1.1–1.3. We fix a regular multivariate exponential family null P for data U with some sufficient statistic vector X = t(U ) and a distribution Q for U , outside of P, and with density q. As our most important regularity condition, we assume that Q has a moment generating function and that there exists Pμ∗ ∈ P with the same mean of X, say μ∗, as Q. It is known that Pμ∗ is the Reverse Information Projection (RIPr) of Q onto P [Li, 1999], that is, it achieves minP ∈P D(Q∥P ). Denoting the density of Pμ∗ by pμ∗, it follows by Theorem 1 of Gr ̈unwald et al. [2024] that q(U )/pμ∗(U ) would be an e-variable in case infP ∈conv(P) D(Q∥P ) = minP ∈P D(Q∥P ). Our theorem establishes a sufficient condition for when this is actually the case. It is based on constructing a second exponential family Q with densities proportional to exp(βT t(U ))q(U ) for varying β: Q contains Q and has the same sufficient statistic as P. In some cases, but not all, Q may be thought of as the composite alternative we are interested in. Letting Σp(μ) and Σq(μ) denote the covariance matrices of the Pμ ∈ P and Qμ ∈ Q with mean μ, Theorem 1 below implies the following: under a further regularity condition on the parameter spaces of P and Q, simple e-variables exist whenever Σp(μ) − Σq(μ) is positive semidefinite for all μ in the mean-value parameter space of Q (additionally, three equivalent conditions will be given). If this happens, then we may further conclude that for every element Qμ′ of the constructed Q, the likelihood ratio qμ′(U )/pμ′(U ) is an e-variable, where Pμ is the element of P to which Qμ is projected. An example pair (Q, P) to which the theorem applies is when, under Q, U ∼ N (m, s2) for fixed m, s2 and P = {N (0, σ2) : σ2 > 0} is the univariate (scale) family of normal distributions. This situation is illustrated in Figure 1 and is treated in detail in Section 4.3.2. The proof of Theorem 1 is based on convex duality properties of exponential families. In the remainder of this introductory section, we fix notation and definitions of exponential families and e-variables. In Section 2 we show how, based on the constructed family Q, one can often easily construct local e-variables, i.e. e-variables with the null restricted to a subset of P. Then, in Section 3 we present our main theorem , extending the insight to global e-variables. Section 4 provides several examples. This includes cases for which simple e-variables were already established, such as certain k-sample tests [Turner et al., 2024, Hao et al., 2024], as well as cases for which it was previously unknown whether simple e-variables exist, such as for a broad class of natural exponential families. Theorem 1 can thus be seen as a unification and generalization of known results on the existence of simple e-variables, leading to deeper understanding of why they sometimes exist. Section 5 provides the proof for Theorem 1. Finally, Section 6 provides a concluding discussion and points out potential future directions.
+1.1Formal Setting
+We study general hypothesis testing problems in which the null hypothesis P is a regular (and hence full) d-dimensional exponential family. Here and in the sequel, we will freely use standard properties of exponential families without explicitly referring to their definitions and proofs, for which we refer to e.g. [Barndorff-Nielsen, 1978, Brown, 1986, Efron, 2022]. Each member of P is a distribution for a random element U , that takes values in some set U, with a density relative to some given underlying measure ν on U . The sufficient statistic vector is denoted by X = (X1, . . . , Xd) with Xj = tj(U ) for given measurable functions t1, . . . , td. We furthermore define Mp to be the mean-value parameter space of P, i.e. the set of all μ such that EP [X] = μ for some P ∈ P. For
+2
+
+
+−15
+−10
+−5
+0
+5
+10
+15
+0 10 20 30
+σ2
+μ
+(m, s2)
+(−3.0,9.0)
+(2.0,4.0)
+(5.0,5.0)
+Figure 1: The family Q for various (m, s2). The coordinate grid represents the parameters of the full Gaussian family, the horizontal line shows the parameter space of P, the sloped lines show the parameters of the distributions in Q, and the dashed lines show the projection of (m, s2) onto the parameter space of P. For example, we may start out with Q expressing U ∼ N (m, s2) with m = −3.0, s2 = 9.0, represented as the green dot on the green line. Its RIPr onto P is the green point on the yellow line. The corresponding family Q, constructed in terms of Q and P, is depicted by the green solid line. The theorem implies that the likelihood ratio between any point on the green line and its RIPr onto the yellow line is an e-variable; similarly for the red and blue lines.
+any μ ∈ Mp, we denote by Pμ the unique element of P with EPμ[X] = μ, so that P = {Pμ : μ ∈ Mp}. As usual, this parameterization of P is referred to as its mean-value parameterization. Furthermore, we use Σp to denote the variance function of P. That is, for all μ ∈ Mp, Σp(μ) is the covariance matrix corresponding to Pμ. Since P is an exponential family, the density of any member of P can be written, for each fixed μ∗ ∈ Mp, as
+pβ;μ∗ (u) = 1
+Zp(β; μ∗) exp
+
+
+d
+X
+j=1
+βj tj (u)
+
+ · pμ∗(u), (1.1)
+where Z(β; μ∗) =
+R
+exp(P βjtj(u))pμ∗(u)dν, and β ∈ Rd such that Zp(β; μ∗) < ∞. Therefore, P can also be parameterized as P = {Pβ;μ∗ : β ∈ Bp,μ∗}, where Bp;μ∗ ⊂ Rd denotes the canonical parameter space with respect to μ∗, i.e. the set of all β for which Zp(β; μ∗) < ∞. We use βp(μ′; μ∗) to denote the β ∈ Bp,μ∗ such that EPβ;μ∗ [X] = μ′ and μp(·; μ∗) = β−1
+p (·; μ∗) to be its inverse. That
+is, βp(·; μ∗) maps mean-value parameters to corresponding canonical parameters and μp(·; μ∗) vice versa. Note that pμ∗ = p0,μ∗, and that we can see from the notation (one versus two subscripts) whether a density is given in the mean- or canonical representation, respectively. The reason for explicitly denoting the mean μ∗ of the carrier density, which is unconventional, is that it will be convenient to simultaneously work with different canonical parameterizations, i.e. with respect to a different element of Mp, below. These are all linearly related to one another in the sense that for each μ1, μ2 ∈ Mp, there is a fixed vector γ such that for all β ∈ Bp,μ1 it holds that
+3
+
+
+pβ;μ1 = pβ+γ;μ2. This can be seen by taking γ = −βp(μ2; μ1), since one then has
+pβ;μ1 (u) = 1
+Zp(β; μ1) exp
+
+
+d
+X
+j=1
+(βj + γj)tj(u)
+
+ exp
+
+
+d
+X
+j=1
+−γj tj (u)
+
+ pμ1 (u)
+= Zp(−γ; μ1)
+Zp(β; μ1) exp
+
+
+d
+X
+j=1
+(βj + γj)tj(u)
+
+ p−γ;μ1 (u)
+=1
+Zp(β + γ; μ2) exp
+
+
+d
+X
+j=1
+(βj + γj)tj(u)
+
+ pμ2 (u) = pβ+γ;μ2 (u).
+(1.2)
+1.2The Composite Alternative Generated by A Simple One
+We are mostly concerned with testing the null hypothesis P against simple alternative hypotheses of the form {Q} for some distribution Q on U. In particular, we will consider distributions Q that admit a moment generating function and that have a density q relative to the underlying measure ν. While the former is a strong condition, it holds in many cases of interest. For our analysis, it will be beneficial to define a second exponential family Q for U with distributions Qβ;μ∗ and corresponding densities
+qβ;μ∗ (u) = 1
+Zq(β; μ∗) · exp
+
+
+d
+X
+j=1
+βj tj (u)
+
+ · q(u), (1.3)
+where μ∗ is the mean of X under Q, and Zq(β; μ∗) is the normalizing constant. The notational conventions that we use for Q will be completely analogous to that for P, e.g. βq(·, μ∗), μq(·, μ∗), Σq, etc. Since Q is assumed to have a moment generating function, the canonical domain Bq,μ∗ is nonempty and contains a neighborhood of 0. Similarly, the mean-value space Mq is also nonempty and contains a neighborhood of μ∗. We further have the following: if we take any other Q′ ∈ Q, say Q′ = Qμ′ for μ′ ∈ Mq, then the ‘constructed’ family around Q′, i.e. {qβ;μ′ : β ∈ Bq;μ′} coincides with Q (as was the case for P, by (1.2)). We may think of the null P and the generated family Q as two different exponential families that share the same sufficient statistic. Moreover, as we shall see below, there are many examples where their mean-value spaces are equal, that is, Mq = Mp. In this case P and Q are “matching” pairs: they share the same sufficient statistic as well as the same set of means for this statistic. This is true in many cases that are of practical interest. The most straightforward example is when Q is originally chosen from some exponential family with the same sufficient statistic and mean-value space as P. In this case, the generated family Q coincides with the exponential family that Q was picked from. This example also highlights that, while the exposition below is focused on simple alternatives, the results are still applicable if one is interested in a composite alternative H1. To this end, take any Q ∈ H1 and use the results below to determine whether a simple e-variable with respect to Q exists. If one exists for every Q, an e-variable for the full alternative can easily be constructed either by the method of mixtures or the prequential (sequential plug-in learning) method [Ramdas et al., 2023]. This is particularly easy in cases where the alternative Q, that we construct around Q for our analysis, equals H1, the original alternative of interest, which will be the case in some of our examples. It turns out that it then suffices to check our conditions for a single Q ∈ H1.
+4
+
+
+1.3E-variables
+We use e-variables to gather evidence against the null hypothesis P. An e-variable is a non-negative statistic with expected value bounded by one under the null, i.e. a non-negative statistic S(U ) such that EP [S(U )] ≤ 1 for all P ∈ P. We give only a brief introduction to e-variables here and refer to e.g. [Gru ̈nwald et al., 2024, Ramdas et al., 2023] for detailed discussions. The realization of an e-variable on observed data will be referred to as an e-value, though the two terms are often used interchangeably. Large e-values give evidence against the null hypothesis, since by Markov’s inequality we have that Q(S(U ) ≥ 1
+α ) ≤ α for any e-variable S(U ) and Q ∈ P. The focus here is on a static setting, where e-variables are computed for a single block of data (i.e. one observation of U ). However, the main application of e-variables is in anytime-valid settings, where data arrives sequentially and one wants a type-I error guarantee uniformly over time. Indeed, it is well-known that the product of sequentially computed e-variables again gives an e-variable, even if the definition of each subsequent e-variable depends on past e-values, which leads to an easy extension of the methods described here to such anytime-valid settings [Ramdas et al., 2023, Gru ̈nwald et al., 2024]. Since large e-values give evidence against the null, we look for e-variables that are, on average, ‘as large as possible’ under the alternative hypothesis. In particular, we study growth-rate optimal (GRO) e-variables, an optimality criterion embraced implicitly or explicitly by most of the e-community [Ramdas et al., 2023]. Gru ̈nwald et al. [2024] define the GRO e-variable for single outcome U , relative to a simple alternative {Q}, to be the e-variable S that, among all e-variables, maximizes the growth-rate EU∼Q[log S(U )] (also known as e-power [Wang et al., 2023, Zhang et al., 2023]). Gru ̈nwald et al. show that the GRO e-variable is given by:
+q(U )
+p
+⇝
+q(U ) , (1.4)
+where p
+⇝
+q denotes the reverse information projection of Q on the convex hull of the null P. The reverse information projection of Q on conv(P) is defined as the distribution that uniquely achieves infP ∈conv(P) D(Q∥P ), which is known to exist whenever the latter is finite [Li, 1999, Lardy et al., 2023]. Here, D(Q∥P ) denotes the Kullback-Leibler (KL) divergence between Q and P , both defined as distributions for U [Kullback and Leibler, 1951]. In this article, all reverse information projection will be on conv(P), so we will not explicitly mention the domain of projection everywhere (i.e. referring to it simply as ‘the reverse information projection of Q’). The growth rate achieved by the GRO e-variable is given by
+EQ log q(U )
+p
+⇝
+q(U ) = D(Q∥P
+⇝
+q) = inf
+P ∈conv(P)
+D(Q∥P ). (1.5)
+However, due to the fact that, with the exception of the Bernoulli and multinomial models, exponential families are not convex sets of distributions, finding the reverse information projection can be quite challenging [Lardy, 2021, Hao et al., 2024]. In this paper we provide a simple and easily verifiable condition under which
+inf
+P ∈conv(P)
+D(Q∥P ) = min
+P ∈P D(Q∥P ), (1.6)
+that is, the infimum is achieved by an element of P, so that the problem greatly simplifies. In that case, the GRO e-variable simply takes on the form of a likelihood ratio between Q and
+a particular member of P, i.e.
+q(U )
+p(U ) , (1.7)
+5
+
+
+which we will refer to as a simple e-variable relative to Q. We will frequently use the fact (following from Corollary 1 of [Gr ̈unwald et al., 2024, Theorem 1]) that there can be at most one simple e-variable with respect to any fixed alternative, i.e. of the form (1.7). This is captured by the following proposition.
+Proposition 1. Fix a probability measure Q on U . If there exists a simple e-variable relative to Q, then it must be the GRO e-variable for testing P against alternative {Q}.
+A big advantage of simple e-variables—besides their simplicity—is that their optimality extends beyond the static setting. That is, suppose we were to observe independent copies U1, U2, . . . of the data and assume that a simple e-variable of the form (1.7) exists. As alluded to before, we can measure the total evidence as Qn
+i=1 q(Ui)/p(Ui), which defines an e-variable for any fixed n ∈ N. Instead of thinking of this as multiplication of individual e-variables, one can think of it as a likelihood ratio of U1, . . . , Un. Proposition 1 then implies that Qn
+i=1 q(Ui)/p(Ui) is the GRO e-variable for testing P against {Q} based on n data points. This statement shows that for any fixed sample size n, the best e-variable (in the GRO sense of 1.5) is the simple likelihood ratio. Moreover, for applications where the sample size is not fixed beforehand, Koolen and Gru ̈nwald [2021, Theorem 12] show that a more flexible statement is also true: if τ is any stopping time that is adapted to the data filtration, then q(U τ )/p(U τ ) is also a maximizer of E[ln Sτ ] over all processes S = (Sn)n∈N with E[Sτ ] ≤ 1. While we will not explicitly consider this type of sequential optimality in the following, it is one of the main motivating factors behind this work. We assume throughout this paper that, for any considered alternative Q, there exists a μ∗ ∈ Mp such that EX∼Q[X] = μ∗. By a standard property of exponential families, the KL divergence from Q to P is then minimized by the element of P with the same mean as Q. If (1.6) holds, then Pμ∗ must therefore be the reverse information projection of Q. It follows that, if a simple e-variable with respect to Q exists, then it is given by q(U )/pμ∗(U ).
+2Existence of Simple Local E-Variables
+Here we will show how the family Q is related to the question of whether q(U )/pμ∗(U ) is a local GRO e-variable around μ∗. We say that a nonnegative statistic S(U ) is a local e-variable around μ∗ if there exists a connected open subset B′
+μ∗ of Bp;μ∗ ∩ Bq;μ∗ containing 0 such that S is an e-variable
+relative to P′ = {Pβ : β ∈ B′
+μ∗ }, i.e. supβ∈B′
+μ∗ EPβ;μ∗ [S] ≤ 1. If S also maximizes EQ[ln S(U )]
+among all e-variables relative to P′, then we say that S is a local GRO e-variable with respect to Q. A local (GRO) e-variable may not be an e-variable relative to the full null hypothesis P, but it is a an e-variable relative to some smaller null hypothesis, restricted to all distributions in the null with mean in a neighborhood of μ∗. Investigating when local e-variables exist provides the basic insight on top of which the subsequent, much stronger Theorem 1 about ‘global’ e-variables is built. As stated in Section 1.2, we may view P and Q as two families with the same sufficient statistic, only differing in their carrier, which for P is pμ∗ = p0;μ∗ and for Q is q0;μ∗ = q. Note that from now on we can and will denote the original Q by Qμ∗. Define the function f (·; μ∗) : Bp;μ∗ ∩ Bq;μ∗ → R as
+f (β; μ∗) := log EPβ;μ∗
+qμ∗ (U )
+pμ∗(U ) = log Zq(β; μ∗) − log Zp(β; μ∗), (2.1)
+where the equality comes from the fact that we can rewrite the density in the numerator as qμ∗(U ) = Zq(β; μ∗) exp(Pd
+j=1 βjtj(u))−1qβ;μ∗(U ) and similar for the density in the denominator.
+It should be clear that the function f (·; μ∗) is highly related to the question we are interested
+6
+
+
+in. Indeed, qμ∗(U )/pμ∗(U ) is a local e-variable relative to P′ = {Pβ : β ∈ B′
+μ∗} if and only if
+supβ∈B′
+μ∗ f (β; μ∗) ≤ 0. Equivalently, since f (0; μ∗) = 0, we have that qμ∗/pμ∗ is a local e-variable
+around μ∗ if and only if there is a local maximum at 0. To investigate when this happens, a standard result on exponential families gives the following:
+∇f (β; μ∗) = EQβ;μ∗ [X] − EPβ;μ∗ [X] (2.2)
+In particular, it follows that ∇f (0; μ∗) = μ∗ − μ∗ = 0. Thus, qμ∗/pμ∗ is a local e-variable around μ∗ if and only if the d × d Hessian matrix of second partial derivatives of f (·; μ∗), is negative semidefinite in 0. By (2.1)-(2.2) and using a convex duality property of exponential families, this is equivalent to
+Ip(0; μ∗) − Iq(0; μ∗) = Σp(μ∗) − Σq(μ∗) is positive semidefinite,
+where Ip and Iq denote the Fisher information matrix in terms of the canonical parameter spaces of P and Q, respectively. We have thus proven our first result:
+Proposition 2. qμ∗(U )/pμ∗(U ) is a local e-variable around μ∗ (and therefore, by Proposition 1, a GRO local e-variable) if and only if Σp(μ∗) − Σq(μ∗) is positive semidefinite.
+The surprising result that follows below essentially adds to this that, if for every μ∗ ∈ Mq, qμ∗/pμ∗ is a local e-variable, then also for every μ∗, we have that qμ∗/pμ∗ is a full, global e-variable!
+3Existence of Global E-Variables (Main Result)
+The theorem below gives eight equivalent characterizations of when a global GRO e-variable exists. Not all characterizations are equally intuitive and informative: the simplest ones are Part 1 and 3. To appreciate the more complicated characterizations as well, it is useful to first recall some convex duality properties concerning derivatives of KL divergences with regular exponential families [see e.g. Gru ̈nwald, 2007, Section 18.4.3]:
+βp(μ; μ∗) = ∇μD(Pμ∥Pμ∗), (3.1)
+Σ−1
+p (μ) ij = d2
+dμidμj
+D(Pμ∥Pμ∗), (3.2)
+and analogous for Q. That is, the gradient of the KL divergence in its first argument at μ is given by the canonical parameter vector corresponding to μ, and the Hessian is given by the Fisher information, i.e. the inverse covariance matrix.
+Theorem 1. Let P be a regular exponential family with mean-value parameter space Mp. Fix a distribution Q for U with EQ[X] = μ∗ for some μ∗ ∈ Mp ⊆ Rd and consider the corresponding Q as defined above. Suppose that Mq is convex, Mq ⊆ Mp, and Bp;μ ⊆ Bq;μ for all μ ∈ Mq. Then the following statements are equivalent:
+1. Σp(μ) − Σq(μ) is positive semidefinite for all μ ∈ Mq.
+2. (βp(μ; μ′) − βq(μ; μ′))T · (μ − μ′) ≤ 0 for all μ, μ′ ∈ Mq.
+3. D(Qμ∥Qμ′) ≥ D(Pμ∥Pμ′) for all μ, μ′ ∈ Mq.
+4. log Zp(β; μ) ≥ log Zq(β; μ) for all μ ∈ Mq, β ∈ Bp;μ.
+7
+
+
+5. qμ(U )/pμ(U ) is a global e-variable for all μ ∈ Mq.
+6. qμ(U )/pμ(U ) is the global GRO e-variable w.r.t. Qμ for all μ ∈ Mq.
+7. qμ(U )/pμ(U ) is a local e-variable for all μ ∈ Mq.
+8. qμ(U )/pμ(U ) is a local GRO e-variable w.r.t. Qμ for all μ ∈ Mq.
+Note that the canonical parameter space of a full exponential family is always convex, but the mean-value space need not be [Efron, 2022], so the convexity requirement, while it holds in all examples that we will consider below, is not void. Furthermore, in the one-dimensional case, the first statement simplifies to σ2
+p(μ) ≥ σ2
+q (μ) for all μ ∈ Mq. Similarly, the second statement reduces
+to βq(μ; μ′) ≥ βp(μ; μ′) for all μ ∈ Mq such that μ > μ′ and βq(μ; μ′) ≤ βp(μ; μ′) for all μ ∈ Mq such that μ < μ′ for all μ′ ∈ Mq. Using standard properties of Loewner ordering, it can be established that Σp(μ) − Σq(μ) is positive semidefinite if and only if Σ−1
+q (μ) − Σ−1
+p (μ) is [see e.g. Agrawal, 2018]. Therefore, statement 1 in Theorem 1 can be thought of as a condition on the second derivative of D(Pμ∥Pμ∗)− D(Qμ∥Qμ∗), whereas statement 2 refers to its first derivative, and statement 3 to the difference in KL divergence itself. It is somewhat surprising that signs of differences between the second derivatives and separately signs of differences between the first derivatives are sufficient to determine signs of difference between a function itself. Finally, we note that it is sometimes easy to check that either Mp = Mq or Bp;μ∗ = Bq;μ∗. The following proposition shows that, in the 1-dimensional setting, this is already sufficient to apply the theorem (we do not know whether the analogous result holds in higher dimensions — we suspect it does not):
+Proposition 3. Let P be a 1-dimensional regular exponential family with mean-value parameter space Mp ⊆ R. Fix a distribution Q for U with EQ[X] = μ∗ for some μ∗ ∈ Mp and consider the corresponding Q as defined above. Suppose that for all μ ∈ Mq, we have σ2
+p(μ) ≥ σ2
+q (μ), i.e. the first condition of Theorem 1 holds. Then:
+1.If Mq = Mp then for all μ′ ∈ Mq, Bp;μ′ ⊆ Bq;μ′, i.e., Theorem 1 is applicable.
+2.If for some μ ∈ Mq, we have that Bp;μ = Bq;μ then Mq ⊆ Mp. Hence if for all μ ∈ Mq, we have that Bp;μ = Bq;μ, then Theorem 1 is applicable.
+The proof is simple and we only sketch it here: for part 1, draw the graphs of βp(μ; μ′) and βq(μ; μ′) as functions of μ ∈ Mq, noting that both functions must take the value 0 at the point μ = μ′. Using that 1/σ2
+p(μ) is the derivative of βp(μ; μ′) and similarly for σ2
+q (μ), the function
+βq(μ; μ′) must lie above βp(μ; μ′) for μ > μ′, and below for μ < μ′. Therefore the co-domain of βq must include that of βp. The second part goes similarly, essentially by flipping the above graph of two functions by 90 degrees.
+4Examples
+In this section we discuss a variety of settings to which Theorem 1 can be applied. In some cases, this gives new insights into whether simple e-variables exist, and in others it simply gives a reinterpretation of existing results. The examples are broadly divided in terms of the curvature of the function f (·; μ∗), as defined in (2.1). Instances where f (·; μ∗) is constant will be referred to as having ‘zero curvature’, those with a constant second derivative as having ‘constant curvature’, and ‘nonconstant curvature’ otherwise.
+8
+
+
+4.1Zero Curvature: Gaussian and Poisson k-sample tests
+Hao et al. [2024] provide GRO e-values for k-sample tests with regular exponential families. In their setting, data arrives in k ∈ N groups, or samples, and they test the hypothesis that all of the data points are distributed according to the same element of some exponential family. That is, let U = (Y1, . . . , Yk) for Yi ∈ Y, so that U = Yk for some measurable space Y. Furthermore, fix a one-dimensional regular exponential family on Y, given in its mean-value parameterization as Pstart = {Pμ : μ ∈ Mstart} with sufficient statistic tstart(Y ). The composite null hypothesis P
+considered in the k-sample test expresses that Y1, . . . , Yk
+i.i.d.
+∼ Pμ for some μ ∈ Mstart. On the other hand, the simple alternative Q that Hao et al. consider is characterized by μ = (μ1, . . . , μk) ∈ Mk
+start, and expresses that the Y1, . . . , Yk are independent with Yi ∼ Pμi for i = 1 . . . k. They show that, for the case that Pstart is either the Gaussian location family or the Poisson family,
+S(U ) :=
+k
+Y
+i=1
+pμi (Yi)
+pμ ̄(Yi) , with μ ̄ = 1
+k
+k
+X
+i=1
+μi,
+is a simple e-value relative to Q, and that its expectation is constant as the null varies. That is, for any μ′ ∈ Mstart, it holds that
+EU∼Pμ′ ×···×Pμ′ [S(U )] = 1. (4.1)
+This finding can now be re-interpreted as an instance of Theorem 1, as we will show in detail for the Poisson family; the analysis for the Gaussian location family is completely analogous. In the Poisson case, tstart(Y ) = Y , so that P defines an exponential family on U with sufficient statistic
+X = Pk
+i=1 Yi and mean-value space Mp = R+. The latter follows because the sum of Poisson data is itself Poisson distributed with mean equal to the sum of means of the original data. Under the alternative, the mean of the sufficient statistic is given by μ∗ := EQ[Pk
+i=1 Yi] = Pk
+i=1 μi, so that the elements of the auxiliary exponential family Q as in (1.3) can be written as
+qβ;μ∗ (Y1, . . . , Yk) = 1
+Zq(β; μ∗) · exp β
+k
+X
+i=1
+Yi
+!
+· q(Y1, . . . , Yk). (4.2)
+Note in particular that Q is, by construction, a one-dimensional exponential family with sufficient statistic Pk
+i=1 Yi, which does not equal (yet may be viewed as a subset of) the full k-dimensional
+exponential family from which Q was originally chosen. The normalizing constant Zq(β; μ∗) is equal to the moment generating function of X under Q, which is given by
+Zq(β; μ∗) = EQ
+"
+exp β
+k
+X
+i=1
+Yi
+!#
+= exp μ∗(eβ − 1) .
+It follows that
+EQβ;μ∗
+"k X
+i=1
+Yi
+#
+=d
+dβ log Zq(β; μ∗) = μ∗eβ,
+which shows that mean-value space of the alternative is again given by Mq = R+. Therefore, the assumptions of Theorem 1 are satisfied. The element of P with mean μ∗ is given by Pμ ̄ × · · · × Pμ ̄, so that
+qμ∗ (U )
+pμ∗ (U ) =
+k
+Y
+i=1
+pμi (Yi)
+pμ ̄(Yi) .
+9
+
+
+Under Pμ∗, the sufficient statistic Pk
+i=1 Yi has the same distribution as under Qμ∗, so that Zp(β; μ∗) =
+Zq(β; μ∗). Consequently, f (·; μ∗) as in (2.1) is zero, so that its second derivative is zero, and condition 1 of Theorem 1 is verified. It follows that, qμ∗(U )/pμ∗(U ) is the global GRO e-variable with respect to Qμ∗.
+4.2Constant Curvature: Multivariate Gaussian Location
+Suppose that P is the multivariate Gaussian location family with some given nondegenerate covariance matrix Σp and let Q be any Gaussian distribution with nondegenerate covariance matrix Σq. Note that in this case we have that X = U , i.e. the sufficient statistic is simply given by the original data. The family Q, generated from Q and P as in (1.3), is the full Gaussian location family with fixed covariance matrix Σq. For both P and Q, the mean-value space is equal to Rd, so that Theorem 1 applies to the pair P and Q. Furthermore, the covariance functions are constant, since Σp(μ) = Σp and Σq(μ) = Σq for all μ ∈ Rd. It follows that, if Σp − Σq is positive semidefinite, then Σp(μ) − Σq(μ) is positive semidefinite for all μ ∈ Rd. In that case, Theorem 1 shows that the simple likelihood ratio qμ/pμ is the GRO e-value w.r.t. Qμ for every μ ∈ Rd. The growth rate is given by
+EQ log qμ(U )
+pμ(U ) = Dgauss(ΣqΣ−1
+p ),
+where Dgauss(B) := 1
+2 (− log det(B) − (d − tr(B))), i.e. the standard formula for the KL divergence between two multivariate Gaussians with the same mean. In the case that Σp − Σq is negative semidefinite, the simple likelihood ratio does not give an e-value; the GRO e-value for this case can also be derived however and will be reported on in future work.
+4.3Nonconstant Curvature
+We now discuss two examples with nonconstant curvature where Theorem 1 can be used to show the existence of simple e-variables. The first example concerncs the Gaussian scale family, while the second discusses various classes of natural exponential families. Both are univariate in nature; in appendix A we discuss a multivariate example — Poisson regression — where Theorem 1 still applies, but the equivalent conditions are not true, so that it is not clear whether a global simple e-variable exists.
+4.3.1More k-Sample Tests
+Consider again the k-sample test setting of Section 4.1. Besides the Gaussian and Poisson case, Hao et al. [2024] identify one more model that gives rise to a k-sample test with a simple e-value: the case that Pstart is the Bernoulli model. The difference with the Gaussian location- and Poisson family is that the involved e-value does not have constant expectation 1 here. Nevertheless, this result for the Bernoulli model can also be cast in terms of Theorem 1 using a different argument. Again, P is an exponential family on U that states that the k samples are i.i.d. Bernoulli, which has sufficient statistic X = Pk
+i=1 Yi. Its mean-value space is given by Mp = (0, k), since the sum of k i.i.d. bernoulli random variables with parameter μ has a binomial distribution with parameters (k, μ). Under the alternative Q, the k samples are independently Bernoulli distributed with means given by μ ∈ (0, 1)k, in which case the sum has mean μ∗ = Pk
+i=1 μi. When constructing the family
+10
+
+
+0.00
+0.25
+0.50
+0.75
+1.00
+0.00 0.25 0.50 0.75 1.00
+μ1
+μ2
+μ∗
+(0.2,0.4)
+(0.5,0.9)
+(0.8,0.2)
+Figure 2: The family Q for various μ∗. The coordinate grid represents the parameters of the full 2-sample Bernoulli family, the straight line shows the parameter space of P, the curved lines show the parameters of the distributions in Q, and the dashed lines show the projection of μ∗ onto the parameter space of P.
+Q as in (1.3), it can be verified that Qβ,μ∗ is the product of Bernoulli distributions with means
+eβ μ1
+1 − μ1 + eβμ1
+, . . . , eβμk
+1 − μk + eβμk
+. (4.3)
+This family of distributions is illustrated in Figure 2 for different choices of μ∗. Seen as a function of β, all entries in (4.3) behave as sigmoid functions, so that the sum takes values in (0, k). It follows that the mean-value space of Q is given by Mq = (0, k), which equals Mp. Furthermore, the normalizing constant Zq(β; μ∗) of Q must be given by
+Zq(β; μ∗) =
+k
+Y
+i=1
+(1 − μi + μieβ).
+We will now verify that item 4 of Theorem 1 is satisfied by doing a similar construction for arbitrary μ ∈ (0, k). The element in P with mean μ corresponds to Bernoulli parameter μ/k, so that we have
+Zp(β; μ) = EPμ∗
+"
+exp β
+k
+X
+i=1
+Yi
+!#
+= 1− μ
+k+μ
+k eβ k
+.
+Furthermore, there is a corresponding μ′ ∈ (0, 1)k such that Pk
+i=1 μ′
+i = μ and μ′ can be written as (4.3) for a specific β. Repeating the reasoning above gives
+Zq(β; μ) =
+k
+Y
+i=1
+(1 − μ′
+i + μ′
+i eβ ).
+By concavity of the logarithm, it holds that
+log Zp(β; μ) = k log 1 − μ
+k+μ
+k eβ ≥
+k
+X
+i=1
+log(1 − μ′
+i + μ′
+ieβ) = log Zq(β; μ).
+11
+
+
+We can therefore conclude that q(U )/pμ∗(U ) is the GRO e-variable with respect to Q. Hao et al. [2024] investigate several other exponential families for k-sample testing, such as exponential distributions, Gaussian scale, and beta, but none of these give rise to a simple e-value. Parts 1-4 of Theorem 1 provide some insight into what separates these families from the Gaussian location, Poisson, and Bernoulli.
+4.3.2Gaussian Scale Family
+Another setting in which Theorem 1 applies is where P equals the Gaussian scale family with fixed mean, which we take to be 0 without loss of generality. That is, P = {Pσ2 : σ2 ∈ Mp} where Pσ2 is the normal with mean 0 and variance σ2, i.e.
+pσ2 (U ) = 1
+√
+2πσ · e− 1
+2σ2 U2 . (4.4)
+This is an exponential family with sufficient statistic X = U 2, mean-value parameter σ2 and mean-value space given by Mp = R+. The canonical parameterization of the null relative to any mean-value σ2 ∈ Mp is given by
+pβ;σ2 (U ) = 1
+Zp(β; σ2) · eβU2 · 1
+√
+2πσ2 e−U2/(2σ2) (4.5)
+with canonical parameter space Bp;σ2 = (−∞, 1/(2σ2)). As alternative, we take Q to be a Gaussian distribution with some fixed mean m ̸= 0 and variance s2. We abstain from using the Greek alphabet for the alternative to avoid confusion with the mean-value parameters of P. The expected value of X under Q is given by σ∗2 := EQ[X] = s2 + m2. The family Q = {Qβ : β ∈ Bq;σ∗2} as defined by (1.3) therefore becomes:
+qβ;σ∗2 (U ) = 1
+Zq(β; σ∗2) · eβU2 · 1
+√
+2πs · e−c(U−m)2 , (4.6)
+where c = 1/(2s2), with Bq;σ∗2 = (−∞, c). Comparing (4.5) and the above confirms that Q is an exponential family that has the same sufficient statistic, namely U 2, as P, but different carrier. The normalizing constant Zq can be computed using (for example) the moment generating function of the noncentral chi-squared.
+Zq(β; σ∗2) = EQ
+h
+eβU2 i
+= EQ
+h
+eβs2( U
+s )2 i
+= (1 − 2βs2)−1/2 exp m2β
+1 − 2βs2 ,
+where we use that (U/s)2 has noncentral chi-squared distribution with one degree of freedom and noncentrality parameter m2/s2. Plugging this back in (4.6) shows that qβ,σ∗2 is a normal density with mean cm/(c − β) and variance 1/(2(c − β)) = s2/(1 − 2βs2). This gives
+EQβ;σ∗2 [U 2] = 2c2m2 − (β − c)
+2(β − c)2 (4.7)
+The mean-value parameter space of Q is thus given by Mq = {EQβ;σ∗2 [U 2], β < c} = R+ which is equal to Mp.
+12
+
+
+Thus, this constructed family does not equal the natural choice of composite alternative that Q was also chosen from, i.e. the (two-dimensional) set of all Gaussians with arbitrary variance mean unequal to zero. However, it does correspond to a specific one-dimensional subset thereof, as was illustrated in Figure 1 in the introduction. Now that the assumptions of Theorem 1 are verified, we will work towards using part 1 to conclude that a simple e-variable w.r.t. Q exists. For each σ2 > 0 we have
+varPσ2 [U 2] = 2σ4 = 2(EPσ2 [U 2])2 = 2(EQσ2 [U 2])2.
+It is therefore sufficient to check whether, for all σ2 > 0, it holds that varQσ2 [U 2] ≤ 2(EQσ2 [U 2])2. Since there is no more mention of the null hypothesis, it is equivalent to check whether for each β ∈ Bq;σ∗2 we have
+varQβ;σ∗2 [U 2] ≤ 2 EQβ,σ∗2 [U 2]
+2
+.
+To this end, the variance function in terms of β can be computed as
+varQβ;σ∗2 [U 2] = d2
+dβ2 log Zq(β; σ∗2) = − 4c2m2 − (β − c)
+2(β − c)3 . (4.8)
+Comparing this to (4.7) shows that the condition above indeed holds, from which we can conclude that q(U )/pσ∗2(U ) is an e-value. For this specific case, this was in fact shown directly, without using the construction of an associated family Q (but involving a lot of calculus instead) by De Jong [2021]. Finally, note that even though the mean-value parameter spaces of P and Q are equal, the canonical spaces are not: Bp;σ∗2 is a proper subset of Bq;σ∗2. More generally, for any σ′2 > 0 different from the σ∗2 we started with, the canonical spaces Bp;σ′2 and Bq;σ′2 both change but remain unequal. Still, Proposition 3 ensures that we will have Bp;σ′2 ⊂ Bq;σ′2.
+4.3.3NEFS and their Variance Functions
+In this section, we consider the setting where P is a one-dimensional natural exponential family (NEF) and Q is also an element of an NEF. This setting is particularly suited for the analysis above, because the constructed family Q can be seen to equal the NEF that Q was chosen from. We therefore do not differentiate between the simple or composite alternative in this section. Furthermore, NEFs are fully characterized by the pair (σ2(μ), M), where M is the mean-value parameter space and σ2(μ) is the variance function as defined before. A wide variety of NEFS and their corresponding variance functions have been studied in the literature [see e.g. Morris, 1982, Letac and Mora, 1990] and this can be used in conjunction with Theorem 1 to quickly check on a case-by-case basis whether any given pair of NEFs provides a simple e-variable. For example, let P = {Pλ,r : λ ∈ R+} be the set of Gamma distributions for U with varying scale parameter λ and fixed shape parameter r > 0. The sufficient statistic is given by X = U and its mean under Pλ,r equals rλ, so the mean-value parameter space is Mp = R+. The variance function is given by σ2
+p(μ) = μ2/r. If we set Q to Pλ∗,r′ for specific λ∗, r′ ∈ R+, then Q is the set
+of Gamma distributions with fixed shape parameter r′. Similarly, let P be the set of negative binomial distributions with fixed number of successes n ∈ N and let Q be any Poisson distribution, so that Q equals the Poisson family. The variance functions are given by σ2
+p(μ) = μ2/n + μ and σ2
+q (μ) = μ respectively. It is trivially true that
+σ2
+p(μ) ≥ σ2
+q (μ) for all μ, so Theorem 1 reveals that a simple e-variables exists with respect to any element of the Poisson family. More generally, we may look at the Awad-Bar-Lev-Makov (ABM)
+13
+
+
+class of NEFs [Awad et al., 2022] that are characterized by mean-value space M = R+ and variance function
+σ2
+s (μ) = μ 1 + μ
+s
+r
+, s > 0, r = 1, 2, ...
+This class was proposed as part of a general framework for zero-inflated, over-dispersed alternatives to the Poisson model (which would arise for r = 0). The case r = 1 recovers the negative binomial distribution and r = 2 is called the generalized Poisson or Abel distribution. As was the case for the negative binomial distribution, it follows from Theorem 1 that simple e-variables exist for testing any of the ABM NEfs against the Poisson model. Much more generally, consider the Tweedie-Bar-Lev-Enis class [Bar-Lev, 2020] of NEFs that have mean-value space M = R+ and power variance functions
+σ2(μ) = aμγ, a > 0, μ > 0, γ ≥ 1.
+We require γ ≥ 1 because there are no families of this form with γ ∈ (0, 1) and while there are families in this class with γ < 0, they are not regular and therefore beyond the scope of this paper. The cases γ = 1 (Poisson) and γ = 2 (Gamma families, with a depending on the shape parameter) were already encountered above. If we test between two of such families, say P with σ2
+p(μ) = apμγp
+and Q with σ2
+q (μ) = aqμγq that share the same underlying sample space, there do not exist simple
+e-variables in general. Indeed, we have that σ2
+p(μ) ≥ σ2
+q (μ) if and only if μγp−γq ≥ aq/ap, which, for certain combinations of parameters, does not hold for all μ ∈ M. Since this condition might hold for some μ but not for others, this suggests that there may be cases where we find local e-variables that are not global. Let us investigate this for (ap, γp) = (1, 2) and (aq, γq) = (1/2, 3), which corresponds to the family of exponential distributions and the family of inverse Gaussian distributions with shape parameter λ := a−1
+q = 2 respectively. In this case, it holds that σ2
+p(μ) ≥ σ2
+q (μ) ⇔ μ ≤ a−1
+q . It
+follows from the analysis in Section 2 that qμ(U )/pμ(U ) is a local e-variable for μ ≤ a−1
+q . However, since the condition does not hold for all μ we cannot use Proposition 3 (or, equivalently, because, as we will see, the preconditions for Theorem 1 do not hold), this need not necessarily also be a global e-variable. In fact, the expected value under μ′ ∈ M is given by
+EU ∼Pμ′
+qμ(U )
+pμ(U ) =
+Z∞
+0
+1 μ′
+r
+λ
+2πx3 exp − λ(x − μ)2
+2μ2x + x
+μ− x
+μ′ dx, (4.9)
+which diverges for μ′ ≥ (1/μ − λ/(2μ2))−1. The latter is vacuous for μ ≤ λ/2, which means that for such μ we might still get a global e-variable. For μ ∈ (λ/2, λ), this shows that we will get a local e-variable that is not a global e-variable. These different regimes are illustrated in Figure 3. For μ > 1, the lines stop when the integral in (4.9) starts diverging. To see how the potential divergence (for large enough μ′, in the regime 1 < μ < 2) plays out in terms of the function f in (2.1), consider for example μ = 3/2. Then, as is immediate from the definition of exponential distributions and the inverse Gaussian density with λ = 2 we have qβ;μ(x) ∝ exp((β − 4/9)x)h(x) with h the probability
+density on R+ given by h(x) =
+p
+1/(πx3) exp(−1/x), whereas pβ;μ ∝ exp((β − 2/3)x). We see that Bp;μ = (−∞, 6/9) whereas Bq;μ = (−∞, 4/9). Thus, as β ↑ 4/9, we get that log Zp(β) converges to a finite constant whereas log Zq(β) ↑ ∞, so that f (β, μ) → ∞, with f the function in (2.1), as it should.
+5Proof of Theorem 1
+The main idea behind the proof of Theorem 1 is the recognition that the distributions Pβ and Qβ indexed by the β in the definition of f (β; μ∗), i.e. (2.1), are difficult to compare in the sense
+14
+
+
+0.00
+0.25
+0.50
+0.75
+1.00
+1.25
+0246 μ′
+EU~Pμ′ [qμ(U) pμ(U)]
+μ
+0.5 1 1.3 4
+Figure 3: The expected value of qμ(U )/pμ(U ) under the null Pμ′ for varying μ′.
+that they do not necessarily have any properties in common. In particular, Pβ generally does not achieve minP ∈P D(Qβ∥P ), so that Pβ and Qβ do not have the same mean. This suggests to replace f (β; μ∗) by a function g(μ; μ∗) on the mean-value parameter space and also to re-express f (β; μ∗) ≤ 0, the condition for being an e-variable, by a condition on g. In the proof below we establish, using well-known convex duality properties of exponential families, that this can be done with function and condition, respectively, given by:
+g(μ; μ∗) = D(Pμ∥Pμ∗) − D(Qμ∥Qμ∗), (5.1)
+g(μ; μ∗) ≤ 0. (5.2)
+This condition on g corresponds to item 3 in Theorem 1. The key insight for showing the suitability of g is the following well-known convex-duality fact about exponential families: for all μ, μ′ ∈ Mp, all β ∈ Bp;μ∗, we have:
+− log Zp(β; μ′) = D(Pμp(β;μ′)∥Pμ′ ) − βT μp(β; μ′) ≤ D(Pμ∥Pμ′ ) − βT μ. (5.3)
+This can be derived as follows:
+D(Pμp(β;μ′)∥Pμ′ ) − D(Pμ∥Pμ′ ) = log Zp(βp(μ; μ′))
+Zp(β; μ′) + βT μp(β; μ′) − βp(μ; μ′)μ
+= log Zp(βp(μ; μ′))
+Zp(β; μ′) + βT (μp(β; μ′) − μ) − (βp(μ; μ′) − β)T μ
+= βT (μp(β; μ′) − μ) − D(Pμ∥Pμp(β;μ′))
+≤ βT (μp(β; μ′) − μ).
+We now prove the chain of implications in the theorem.
+(1) ⇒ (2)Let μ, μ′ ∈ Mq and denote μ(α) := (1 − α)μ′ + αμ. By assumption of convexity, we have that μ(α) ∈ Mq for all α ∈ [0, 1]. Furthermore, define h(α) = (βp(μ(α); μ′) − βq(μ(α); μ′))T (μ(α) −
+15
+
+
+μ′), so that h(0) = 0 and h(1) = (βp(μ; μ′) − βq(μ; μ′))T (μ − μ′). The derivative of h is given by
+d
+dα h(α) = d
+dα βp(μ(α); μ′) − βq(μ(α); μ′)
+T
+(μ(α) − μ′)
++ (βp(μ(α); μ′) − βq(μ(α); μ′))T d
+dα μ(α).
+The chain rule gives
+d
+dα βp(μ(α); μ′) = Σ−1
+p (μ(α))T (μ − μ′),
+where we use (3.1) and (3.2) together with the fact that the Jacobian of the gradient of a function equals the transpose of its Hessian. The derivative of βq(μ(α); μ′) can be found with the same argument, so we see
+d
+dα h(α) = (Σ−1
+p (μ(α)) − Σ−1
+q (μ(α)))T (μ − μ′) T (μ(α) − μ′)
++ (βp(μ(α); μ′) − βq(μ(α); μ′))T (μ − μ′)
+=1
+α (μ(α) − μ′)T (Σ−1
+p (μ(α)) − Σ−1
+q (μ(α)))(μ(α) − μ′)
++ (βp(μ(α); μ′) − βq(μ(α); μ′))T (μ − μ′)
+=1
+α (μ(α) − μ′)T (Σ−1
+p (μ(α)) − Σ−1
+q (μ(α)))(μ(α) − μ′) + 1
+α h(α). (5.4)
+If Σp(μ) − Σq(μ) is positive semidefinite for all μ, then Σ−1
+p (μ) − Σ−1
+q (μ) is negative semidefinite (as discussed below the statement of Theorem 1). In this case, the first term in (5.4) is negative and, since h(0) = 0, the second term is also negative on [0, 1]. It follows that h is decreasing when Σp(μ) − Σq(μ) is positive semidefinite, so that (βp(μ; μ′) − βq(μ; μ′))T (μ − μ′)) ≤ 0, as was to be shown.
+(2) ⇒ (3)We use a similar argument as was used to prove the previous implication, so let μ, μ′ ∈ Mq and denote μ(α) = (1 − α)μ′ + αμ as before. Define h(α) := g(μ(α); μ′). Using the chain rule of differentiation together with (3.1), we see that the derivative of h is given by
+d
+dα h(α) = (βp(μ(α); μ′) − βq(μ(α); μ′))T (μ − μ′)
+=1
+α (βp(μ(α); μ′) − βq(μ(α); μ′))T (μ(α) − μ′).
+If item (2) holds, then we have that d
+dα h(α) ≤ 0. Since h(0) = 0 and h(1) = D(Pμ∥Pμ′) − D(Qμ∥Qμ′), we see that item (2) implies that
+D(Pμ∥Pμ′ ) − D(Qμ∥Qμ′ ) ≤ 0,
+as was to be shown.
+(3) ⇒ (4)Assume that D(Pμ∥Pμ′) − D(Qμ∥Qμ′) ≤ 0 for all μ, μ′ ∈ Mq. Together with (5.3) this gives, for all μ, μ′ ∈ Mq, all β ∈ Bp;μ′:
+D(Pμp(β;μ′)∥Pμ′ ) − βT μp(β; μ′) ≤ D(Pμ∥Pμ′ ) − βT μ ≤ D(Qμ∥Qμ′ ) − βT μ. (5.5)
+16
+
+
+Applying this with μ = μq(β; μ′) and re-arranging gives
+−D(Pμp(β;μ′)∥Pμ′ ) + βT μp(β; μ′) ≥ −D(Qμq(β;μ′)∥Qμ′ ) + βT μq(β; μ′), (5.6)
+which, by the equality in key fact (5.3) is equivalent to log Zp(β; μ′) ≥ log Zq(β; μ′), which is what we had to prove.
+Remaining Implications (4) ⇒ (5) now follows by the equality in (2.1) and the definition of an e-variable. (5) ⇒ (6) follows from proposition 1, (6) ⇒ (7) follows because a global e-variable is automatically also a local one, and (7) ⇒ (8) again follows from proposition 1. Finally, (8) ⇒ (1) has already been established as Proposition 2.
+6Conclusion and Future Work
+We have provided a theorem that, under regularity pre-conditions, provides a general sufficient condition under which there exists a simple e-variable for testing a simple alternative versus a composite regular exponential family null. The characterization was given in terms of several equivalent conditions, the most direct being perhaps the condition ‘Σp(μ) − Σq(μ) is positive semidefinite for all μ ∈ Mq’. A direct follow-up question is: can we construct GRO or close-to-GRO e-variables, in case either the regularity pre-conditions or the positive definiteness condition do not hold? Our final example, Section 4.3.3, and in particular Figure 3, indicated that in that case, many things can happen: under some μ ∈ Mq (green curve), qμ/pμ still gives a global simple e-variable; for other μ (blue), it gives a local but not global e-variable; for yet other μ (pink), it does not give an e-variable at all. Nevertheless, it turns out that if the pre-regularity conditions hold and the ‘opposite’ of the positive semidefinite condition holds, i.e. if Σp(μ) − Σq(μ) is negative semidefinite for all μ ∈ Mq, then there is again sufficient structure to analyze the problem. The GRO e-variable will now be based on a mixture of elements of the null, but the specific mixture will depend on the sample size: we now need to look at i.i.d. repetitions of U rather than a single outcome U . We will provide such an analysis in future work. Another interesting avenue for future work is to extend the analysis to curved exponential families [Efron, 2022]. While we do not have any general results in this direction yet, the analysis by Liang [2023] suggests that this may be possible. Liang considers a variation of the Cochran-Mantel-Haenszel test, in which the null hypothesis expresses that the population-weighted average effect size over a given set of strata is equal to, or bounded by, some δ. This can be rephrased in terms of a curved exponential family null, for which Liang [2023] shows that a local e-variable exists by considering the second derivative of the function f (β; μ∗) as in (2.1), just like in the present paper but with β representing a particular suitable parameterization rather than the canonical parameterization of an exponential family. The local e-variable is then shown to be a global e-variable by a technique different from the construction of Q we use here. Still, the overall derivation is sufficiently similar to suggest that it can be unified with the reasoning underlying Theorem 1.
+References
+Akshay Agrawal. Lecture notes on Loewner order, 2018. https://www.akshayagrawal.com/lecture-notes/html/loewner-order.html.
+17
+
+
+Theodore W Anderson and Donald A Darling. A test of goodness of fit. Journal of the American statistical association, 49(268):765–769, 1954.
+Yaser Awad, Shaul K Bar-Lev, and Udi Makov. A new class of counting distributions embedded in the Lee–Carter model for mortality projections: A Bayesian approach. Risks, 10(6):111, 2022.
+Shaul K Bar-Lev. Independent, though identical results: the class of Tweedie on power variance functions and the class of Bar-Lev and Enis on reproducible natural exponential families. Int. J. Stat. Probab, 9(1):30–35, 2020.
+O.E. Barndorff-Nielsen. Information and Exponential Families in Statistical Theory. Wiley, Chichester, UK, 1978.
+Lawrence D. Brown. Fundamentals of statistical exponential families with applications in statistical decision theory. Lecture Notes-Monograph Series, 9:i–279, 1986. ISSN 07492170. URL http: //www.jstor.org/stable/4355554.
+Bradley Efron. Exponential Families in Theory and Practice. Institute of Mathematical Statistics Textbooks. Cambridge University Press, 2022. doi: 10.1017/9781108773157.
+P. Gru ̈nwald, Rianne de Heide, and Wouter Koolen. Safe testing. Journal of the Royal Statistical Society, Series B, 2024. with discussion.
+Peter Gr ̈unwald. The minimum description length principle. MIT press, 2007.
+Yunda Hao, Peter Gru ̈nwald, Tyron Lardy, Long Long, and Reuben Adams. E-values for k-sample tests with exponential families. Sankhya A, 2024.
+W. Koolen and P. Gru ̈nwald. Log-optimal anytime-valid e-values. International Journal of Approximate Reasoning, 2021. Festschrift for G. Shafer’s 75th Birthday.
+Solomon Kullback and Richard A Leibler. On information and sufficiency. The annals of mathematical statistics, 22(1):79–86, 1951.
+Tyron Lardy. E-values for hypothesis testing with covariates, 2021. Master’s Thesis, Leiden University.
+Tyron Lardy, Peter Gr ̈unwald, and Peter Harremo ̈es. Universal reverse information projections and optimal e-statistics. arXiv preprint arXiv:2306.16646, 2023.
+G ́erard Letac and Marianne Mora. Natural real exponential families with cubic variance functions. The Annals of Statistics, 18(1):1–37, 1990.
+Qiang Jonathan Li. Estimation of mixture models. Yale University, 1999.
+Haoyi Liang. Stratified safe sequential testing for mean effect, 2023. Master’s Thesis, University of Amsterdam.
+Hubert W Lilliefors. On the Kolmogorov-Smirnov test for normality with mean and variance unknown. Journal of the American statistical Association, 62(318):399–402, 1967.
+Carl N Morris. Natural exponential families with quadratic variance functions. The Annals of Statistics, pages 65–80, 1982.
+18
+
+
+Aaditya Ramdas, Peter Gru ̈nwald, Vladimir Vovk, and Glenn Shafer. Game-theoretic statistics and safe anytime-valid inference. Statistical Science, 2023.
+Michael A Stephens. EDF statistics for goodness of fit and some comparisons. Journal of the American statistical Association, 69(347):730–737, 1974.
+Rosanne Turner, Alexander Ly, and Peter Gru ̈nwald. Generic e-variables for exact sequential k-sample tests that allow for optional stopping. Statistical Planning and Inference, 230, 2024.
+Martijn de Jong. Tests of significance for linear regression using E-values, 2021. Master’s Thesis, Leiden University.
+Qiuqi Wang, Ruodu Wang, and Johanna Ziegel. E-backtesting, 2023. arXiv preprint arXiv:200209.00991.
+Zhenyuan Zhang, Aaditya Ramdas, and Ruodu Wang. On the existence of powerful p-values and e-values for composite hypotheses, 2023. arXiv preprint arXiv:2304.16539.
+ANonconstant Curvature: Generalized Linear Models
+Consider the setting where data arrives as a block of outcomes together with covariates, i.e. U = ((Y1, X1), . . . , (Yn, Xn) where Yi ∈ Y for some measurable space Y and Xi ∈ Rd+1 for all i = 1, . . . , n. Similar to the k-sample setting, we start with a one-dimensional NEF Pstart on Y with sufficient statistic t(start) and densities
+p(start)
+η (Y ) = 1
+Z(start)(η) exp(η · t(start)(Y ))r(Y ). (A.1)
+Here, we use the notational convention that, if densities or distributions are given a superscript, then the subscript indicates their canonical parameterization with respect to the fixed carrier r. This is necessary, because the null hypothesis will be defined in terms of the canonical parameters. We then construct a (d + 1)-dimensional exponential family of conditional densities for U given Xn = (X1, . . . , Xn) that can be written as a product of elements of Pstart, where the corresponding parameters depend on the covariates. That is, we consider densities of the form
+p(1)
+γ (Y n) := 1
+Z(1)(γ) exp(γT · t(1)(Y n)) · r(Y n), (A.2)
+where t(1)(Y n) = Pn
+i=1 t(start)(Yi)Xi, Z(1)(γ) = Qn
+i=1 Z(start)(γT Xi) and γ ∈ Γ(1) = {γ′ ∈
+Rd+1 : Z(1)(γ′) < ∞}. We will denote H1 = {P (1)
+γ : γ ∈ Γ(1)}. Note that we should really write
+p(1)
+γ (Y n | Xn), but since Xn will be fixed from now on, we omit it from the notation. Conditional on any X1, . . . , Xn, this family is again an exponential family with sufficient statistic t(1)(Y n) ∈ Rd+1. We henceforth concentrate on the case that the d + 1st component of the covariate is discrete and can take on, say, k different values K = {0, 1, . . . , k − 1}. Thus, for each 1 ≤ i ≤ n, we have Xi,d+1 ∈ K. Each j ∈ K stands for a different treatment. In standard cases, K = {0, 1} with 1 standing for ‘treatment’ (e.g. give a new medication) and 0 for ‘control’ (e.g. give a placebo). The idea is that we want to test whether the conditional distribution of Yi (e.g. patient outcome) given Xi is affected by the value of the treatment covariate Xi,d+1 or not. To this end, the null hypothesis
+P is defined as the restriction of the family in (A.2) to the set {P (1)
+γ : γ ∈ Γ(1); γd+1 = 0}. Note
+19
+
+
+that we can reparameterize the null in terms of a vector γ ∈ Rd by identifying P (0)
+γ := P (1)
+(γ1,...,γd,0),
+so that we have P = {P (0)
+γ : γ ∈ Γ(0)}. This gives an exponential family with sufficient statistic
+t(0)(Y n) = Pn
+i=1 X′
+it(start)(Yi), where X′
+i = (Xi1, . . . , Xid, 0). On the other hand, the alternative
+is defined as a fixed element of H1, that is, P (1)
+γ∗ for some γ∗ ∈ Rd+1. We denote its associated
+mean-value by μ∗ := EP (1)
+γ∗
+[t(Y n) | Xn]. Then the distribution in P that is closest in KL divergence
+to P (1)
+γ∗ has parameter vector γ◦ ∈ Rd so that EP (0)
+γ◦
+[t(Y n)] = μ∗.
+To use the results in the main body of the text, we denote pμ∗ = p(0)
+γ◦ and write pβ;μ∗ as in (1.1).
+Since P (0)
+β+β◦ = Pβ;μ∗, the set of distributions {Pβ;μ∗(U n) : β ∈ Bp;μ∗} coincides with P as defined before; we only changed the parameterization. Furthermore, we define Q as in (1.3) with sufficient statistic t(0) (i.e. the last component of the Xi’s is not used). It is worth to note that Q will not be equal to H1, since the latter is (d + 1)-dimensional and Q is, by definition, d-dimensional. Instead, Q can be shown to be a proper subset of H1. We now show an example of a specific instance where we can falsify the equivalent statements in Theorem 1, so that this setup does not necessarily lead to simple e-variables.
+Example 1 (Poisson regression). Consider the case above with K = {0, 1}, n = 2, and d = 1, so that P is one-dimensional. Furthermore, we assume that X1,2 = 0 and X2,2 = 1, that is, that the data has one point in each group. For convenience, we rename group 0 to A and group 1 to B, and denote XA := X1,1, XB := X2,1, YA := Y1, and YB := Y2. In the case of Poisson regression, we have Y = {0, 1, 2, . . .}, t(start)(Y ) = Y , η = log μ, where μ = EPη [t(start)(Y )], log Z(start)(η) = exp(η), and r(Y ) = 1/(Y !). We therefore get:
+t(1)(YA, YB) = XAYA
+0 + XBYB
+YB
+= XAYA + XBYB
+YB
+, t(0)(YA, YB) = XAYA + XBYB.
+Since we condition on (XA, XB), s(1) defined as
+s(1)(YA, YB) = XAYA
+XB YB
+is a linear function of t(1), so that it is a sufficient statistic of H1 as well. We can reparameterize with respect to s(1), in which case we get one parameter for the A group and one parameter for the B group. Writing γ∗ = (γ∗
+A, γ∗
+B), we get
+r(YA, YB) = 1
+YA! · 1
+YB !
+log Z(1)(γ∗) = log Z(start)(γ∗
+AXA) + log Z(start)(γ∗
+B XB )
+= exp(γ∗
+AXA) + exp(γ∗
+B XB ),
+log Zq(β; μ∗) = log Z(1)(γ∗ + β)
+Z (1) (γ ∗ )
+= exp((β + γ∗
+A)XA) + exp((β + γ∗
+B)XB) − exp(γ∗
+AXA) − exp(γ∗
+B XB ).
+20
+
+
+Similarly, for P, we get
+log Z(0)(γ) = log Z(start)(γXA) + log Z(start)(γXB)
+= exp(γXA) + exp(γXB),
+log Zp(β; μ∗) = log Z(0)(β + γ◦)
+Z (0) (γ ◦ )
+= exp((β + γ◦)XA) + exp((β + γ◦)XB) − exp(γ◦XA) − exp(γ◦XB).
+To find an expression for γ◦, note that Pβ;μ∗ and Qβ;μ∗ must have the same mean at β = 0, hence
+d
+dβ log Zp(β; μ∗)
+β=0
+=d
+dβ log Zq(β; μ∗)
+β=0
+,
+which gives that γ◦ is the solution to
+XA exp(γ◦XA) + XB exp(γ◦XB) = XA exp(γ∗
+AXA) + XB exp(γ∗
+BXB). (A.3)
+Suppose now that γ∗
+A > γ∗
+B > 0 and XA > XB > 0. Then it can be seen that γ∗
+A > γ◦ > γ∗
+B, so that
+σ2
+p(μ∗) − σ2
+q (μ∗) = d2
+dβ2 log Zp(β; ν∗)
+β=0
+− d2
+dβ2 log Zq(β; ν∗)
+β=0
+= X2
+A exp(γ◦XA) + X2
+B exp(γ◦XB) − X2
+A exp(γ∗
+AXA) − X2
+B exp(γ∗
+B XB )
+= X2
+A (exp(γ◦XA) − exp(γ∗
+AXA)) + X2
+B (exp(γ◦XB) − exp(γ∗
+B XB ))
+= XAXB (exp(γ∗
+BXB) − exp(γ◦XB)) + X2
+B (exp(γ◦XB) − exp(γ∗
+B XB ))
+< X2
+B (exp(γ◦XB) − exp(γ∗
+BXB)) + X2
+B (exp(γ∗
+BXB) − exp(γ◦XB))
+= 0,
+where in the third equality we substitute (A.3) and for the inequality we use that exp(γ∗
+BXB) −
+exp(γ◦XB) < 0. We have thus found that σ2
+p(μ∗) < σ2
+q (μ∗), which gives a counter example to statement 1 in Theorem 1. It follows that this line of reasoning cannot generally be used to prove that simple e-variables exist for generalized linear models.
+21
