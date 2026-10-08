@@ -111,6 +111,20 @@ Only the human adds to the bib or raw/. Tick a row by staging it.
 | 67 | Non-partitioned e-detectors for nonparametric sequential change detection | Saha, Ramdas 2026 | missing | web; arXiv 2607.28322, preprint |
 | 68 | A complete characterization of sequential testability and change detectability in i.i.d. models | 2026 | missing | web; arXiv 2609.05752, preprint |
 
+## Tier 8 — Nick Koning: post-hoc, permutation and continuous testing
+
+Titles from memory, not yet verified online; check in Zotero before filing.
+
+| # | Title | Authors, year | Status | Evidence |
+|---|---|---|---|---|
+| 69 | Post-hoc α hypothesis testing and the post-hoc p-value | Koning 2023 | missing | book:2; also rows 30, 62 |
+| 70 | Post-hoc and anytime valid permutation and group invariance testing | Koning 2023 | missing | book:3 |
+| 71 | Continuous testing: unifying tests and e-values | Koning 2024 | missing | unverified |
+| 72 | More power by using fewer permutations | Koning, Hemerik 2024 | missing | unverified; Biometrika |
+| 73 | Online permutation tests and e-values for testing group invariance | Koning, Ramdas (and others) 2024 | missing | unverified |
+| 74 | Measuring evidence with a continuous test | Koning 2024 | missing | unverified; may be the same work as row 71 |
+| 75 | On admissibility in post-hoc hypothesis testing | Koning (and others) 2025 | missing | web; also row 60 |
+
 ## Sources for this list
 
 - Bibliography of *Hypothesis testing with e-values* (163 entries parsed from the staged text; citation counts approximate).
