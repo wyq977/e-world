@@ -1,0 +1,1871 @@
+arXiv:2009.03167v3 [math.ST] 5 Nov 2022
+Admissible anytime-valid sequential inference
+must rely on nonnegative martingales
+Aaditya Ramdas1, Johannes Ruf2, Martin Larsson3, Wouter M. Koolen4
+1 Departments of Statistics and Machine Learning, Carnegie Mellon University 2 Department of Mathematics, London School of Economics 3 Department of Mathematics, Carnegie Mellon University 4 Machine Learning Group, CWI Amsterdam
+aramdas@cmu.edu, j.ruf@lse.ac.uk martinl@andrew.cmu.edu, wmkoolen@cwi.nl
+November 8, 2022
+Abstract
+Confidence sequences, anytime p-values (called p-processes in this paper), and e-processes all enable sequential inference for composite and nonparametric classes of distributions at arbitrary stopping times. Examining the literature, one finds that at the heart of all these (quite different) approaches has been the identification of nonnegative (super)martingales. Thus, informally, nonnegative (super)martingales are known to be sufficient for anytime-valid sequential inference, even in composite and nonparametric settings. Our central contribution is to show that nonnegative martingales are also universal—after appropriately defining admissibility, we show that all admissible constructions of confidence sequences, p-processes, or e-processes must necessarily utilize nonnegative martingales. Our proofs utilize several modern mathematical tools for composite testing and estimation problems: max-martingales, Snell envelopes, transfinite induction, and new Doob-Lévy martingales make appearances in previously unencountered ways. Informally, if one wishes to perform anytime-valid sequential inference, then any existing approach can be recovered or dominated using nonnegative martingales. We provide several nontrivial examples, with special focus on testing symmetry, where our new constructions render past methods inadmissible. We also prove the subGaussian supermartingale to be admissible.
+Keywords: Admissibility; composite nonnegative supermartingale; p-process; confidence sequence; Doob-Lévy martingale; e-process; max-martingale; optional stopping; Snell envelope; Ville’s inequality.
+Contents
+1 Introduction 3
+2 Preliminaries 5 2.1 A time-uniform equivalence lemma . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 5 2.2 Notation and conventions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6 2.3 A composite time-uniform equivalence lemma . . . . . . . . . . . . . . . . . . . . . . . . . 6
+1
+
+
+3 Martingales, max-martingales, and Ville’s inequality 7 3.1 Martingales (based on conditional expectation) . . . . . . . . . . . . . . . . . . . . . . . . 7 3.2 The relationship between likelihood ratios and nonnegative martingales . . . . . . . . . . 8 3.3 Max-martingales (based on conditional supremum) . . . . . . . . . . . . . . . . . . . . . . 9
+4 Tools for anytime sequential inference and their admissibility 10 4.1 Q-p-processes, Q-e-processes, and (Q, α)-sequential tests . . . . . . . . . . . . . . . . . . . 10 4.2 Defining inadmissibility and admissibility . . . . . . . . . . . . . . . . . . . . . . . . . . . 12 4.3 (φ, P, α)-confidence sequences . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13 4.4 Reductions between the four instruments . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+5 Three instructive examples of exponential (super)martingales 15 5.1 A Gaussian nonnegative martingale . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15 5.2 A subGaussian supermartingale and e-process . . . . . . . . . . . . . . . . . . . . . . . . . 16 5.3 A nonnegative supermartingale under symmetry . . . . . . . . . . . . . . . . . . . . . . . 17
+6 Admissible inference for point nulls via martingales 18 6.1 Necessary and sufficient conditions for p-processes (proof) . . . . . . . . . . . . . . . . . . 19 6.2 Necessary and sufficient conditions for e-processes (proof) . . . . . . . . . . . . . . . . . . 19 6.3 Necessary and sufficient conditions for sequential tests (proof) . . . . . . . . . . . . . . . . 19
+7 Reducing admissible composite inference to the pointwise case 20 7.1 Necessary and sufficient conditions for valid (composite) inference . . . . . . . . . . . . . . 20 7.2 Necessary conditions for admissible composite inference . . . . . . . . . . . . . . . . . . . 21 7.3 Sufficient conditions for admissible (composite) inference . . . . . . . . . . . . . . . . . . . 22 7.4 Necessary and sufficient conditions for confidence sequences . . . . . . . . . . . . . . . . . 23
+8 A deeper investigation of admissibility 23 8.1 The gap between necessary and sufficient conditions (composite) . . . . . . . . . . . . . . 23 8.2 Composite Ville-like anti-concentration bounds . . . . . . . . . . . . . . . . . . . . . . . . 24 8.3 The role of initial randomization in determining admissibility . . . . . . . . . . . . . . . . 25
+9 SubGaussian admissibility 26
+10 Admissible inference for symmetric distributions 30
+11 Summary 32
+12 References 33
+A Additional technical concepts and definitions 35 A.1 Reference measures and local absolute continuity . . . . . . . . . . . . . . . . . . . . . . . 35 A.2 Essential supremum and infimum . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 35 A.3 On the choice of filtration . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 36
+B Omitted proofs 37
+C Auxiliary examples 40
+2
+
+
+1 Introduction
+Consider a laboratory that wishes to understand if a particular intervention (‘treatment’) has any positive effect on a prespecified outcome of interest. Without getting bogged down by details, suppose the ‘average treatment effect’ of the intervention over the relevant population is denoted by θ. Suppose the lab wants to test H0 : θ ≤ 0 against H1 : θ > 0, or to estimate θ using a confidence interval. The lab believes that there is an effect, but has no idea how many subjects to collect data from: a larger sample size means more power, but also more time and money. So they conduct their experiment sequentially: subjects enter the study one at a time and are assigned to treatment or control completely at random; denote the data from subject t as Xt. After observing Xt, they analyze the data X1, . . . , Xt they have so far, and then decide if they wish to collect more data, or whether what they already have suffices to demonstrate an effect (to themselves, or to a journal, or to the world). The lab stops their experiment at some data-dependent stopping time τ —maybe time ran out, or they used the money up faster than expected; maybe the effect was sufficiently large, or perhaps they lowered their aims by being satisfied with a smaller effect, or became more optimistic and kept the experiment running longer in the hope for a narrower confidence interval around a (hopefully) large effect. In other words, the stopping criterion used may itself have changed over time with funding coming in or drying up, with initial results being more/less promising than anticipated. In any case, the experiment was stopped at time τ and not earlier or later, and there could be multiple data-dependent reasons for stopping at τ that were hard to anticipate in advance. As a measure of evidence, they may hope to construct a “p-process”, which is a sequence of p-values (pt)t∈N that satisfies
+for any arbitrary stopping time τ , HP0r
+(pτ ≤ a) ≤ a, for all a ∈ [0, 1]. (1)
+Johari et al. [12] are the major modern proponents of this idea, and call this an “anytime-valid p-value”, but for consistency with e-processes introduced later, we call it a p-process. Unfortunately, naively using a t-test, a chi-squared test, or permutations, does not yield the above property. Indeed, ‘standard’ non-sequential p-values only satisfy the weaker property
+for any data-independent time t, HP0r
+(pt ≤ a) ≤ a, for all a ∈ [0, 1].
+Instead of testing, if the lab wished to estimate θ with an error tolerance α ∈ [0, 1], they may hope to construct a “confidence sequence”, which is sequence of confidence sets (Ct(α))t∈N that satisfies
+for any arbitrary stopping time τ , Pr(θ ∈ Cτ (α)) > 1 − α. (2)
+One could have used ≥ instead of > above; the two definitions are often equivalent/interchangeable modulo minor adjustments like swapping open for closed sets. Confidence sequences were proposed by Robbins and collaborators like Darling, Siegmund, and Lai [4, 20, 14], and have been regaining interest in recent years [17, 11]. They were originally defined slightly differently, but as we point out later, the above is an equivalent definition that gels better with definitions of other objects in this paper. Once more, unfortunately, a naive confidence interval based on the central limit theorem or the bootstrap does not satisfy the desired property. ‘Standard’ confidence sets instead satisfy the above property only at fixed data-independent times t. We provide an example of (2) for the reader to have a concrete instance in mind. Suppose (Xs)s≥1 are i.i.d. N (θ, 1), then it can be shown [11] that
+for any stopping time τ , Pr
+(
+θ∈
+[∑
+s≤τ Xs
+τ±
+√
+(1 + 1/τ ) log((τ + 1)/α2) τ
+])
+> 1 − α. (3)
+At a fixed time t, with zq denoting the q-quantile of a standard Gaussian, we could have used a confidence interval width of z1−α/2/
+√
+t≤
+√
+log(2/(πα2))/t by the Gaussian tail inequality, which is reasonably tight
+for small α. Thus the above confidence sequence is looser by a factor of ≈ √log τ . The above inequality
+3
+
+
+is proved by applying Ville’s inequality (see (7a)) to an exponential Gaussian-mixture martingale. These are fundamental tools we encounter later in this paper so we do not elaborate on them further here. Recently, the notion of an “e-process” has gained particular prominence as a central object in a socalled game-theoretic approach to statistical testing. An e-process for H0 is a nonnegative sequence (et)t∈N that satisfies for any arbitrary stopping time τ , EH0 [eτ ] ≤ 1. (4)
+Special cases, that we will encounter in this paper, include test martingales [22, 24] and test supermartingales [21, 9, 10], but it has recently been established that e-processes are more general than these two objects [18]. For example, universal inference [28, Section 8] yields an e-process that is not a test (super)martingale. As before, a standard e-value [25] is not anytime-valid and exhibits the above property only at fixed times t, which does not suffice for sequential settings. Of course, p-processes, e-processes and confidence sequences are more general than their nonsequential counterparts (p-values, e-values, confidence intervals): whenever you have the former, you in particular also have the latter, since fixed times are also stopping times but not vice versa. All three tools can be used to make decisions of accepting or rejecting a null hypothesis H0. A level-α sequential test is a decision rule that maps the data (and α) onto {0, 1}, stopping when it first outputs one (rejection of the null). Concretely, a level-α sequential test is a binary sequence (ψt)t∈N that satisfies
+for any arbitrary stopping time τ , HP0r
+(ψτ = 1) ≤ α. (5)
+In contrast to Wald’s sequential tests (which specified a single stopping rule for both type-I and type-II error control), the above notion of a sequential test is more closely related to Robbins’ “level-α tests of power one”. Once more, ‘standard’ hypothesis tests only satisfy such a type-I error guarantee at fixed times t. As we shall see later in more detail, p-processes, e-processes, or confidence sequences can each be used to derive a level-α sequential test.
+Our main interest in this work is to develop a general admissibility theory for estimating nonparametric functionals and testing composite nonparametric null hypotheses. We formally define all four of the above concepts in full generality in Section 4, but the above semi-formal description suffices for the moment to describe our main findings below. One common theme amongst all the aforementioned works over the decades is the repeated appearance of various, often sophisticated, nonnegative supermartingales as the central object that enables the construction of all four aforementioned tools of anytime-valid inference. In the rest of this paper, we further examine this central role of nonnegative martingales in constructing p-processes, confidence sequences, e-processes and sequential tests with the desired robustness to continuous monitoring, and arbitrary optional stopping (and continuation) of experiments. Specifically, we show that all admissible constructions of these objects must employ nonnegative martingales (explicitly or implicitly).
+Admissibility. Naturally, the desire for methods satisfying properties like (1), (2), (4), or (5) comes with an implicit wish for efficiency. In other words, setting pτ = 1, eτ = 1, ψτ = 0, or Cτ = R (or Cτ = Θ for a more general parameter space) trivially satisfies the above requirements, but is clearly uninformative. We want pτ to be as small as possible, eτ and ψτ to be as large as possible, and Cτ to be as narrow as possible, while still being statistically valid measures of uncertainty. We use the term ‘dominates’ to compare pairs of these objects (in order to avoid using case-by-case adjectives like small/large/narrow)so, if p′ ≤ p then p′ dominates p. Similarly, if e′ ≥ e then e′ dominates e, if ψ′ ≥ ψ then ψ′ dominates ψ, and if C′ ⊆ C then C′ dominates C. In this paper, we use the notion of admissibility to capture this idea: informally, a p-process (or e-process, test, confidence set) is inadmissible if it is strictly dominated by another valid p-process (or e-process, test, confidence set). We define admissibility formally in Section 4.
+Paper outline. Sections 2 and 3 lay out the formal definitions of several of the basic toolsnonnegative (super)martingales, max-martingales, Doob’s optional stopping theorem, and Ville’s inequality. Section 4 introduces the four central tools of anytime-valid sequential inference: p-processes, eprocesses, sequential tests, and Robbins’ confidence sequences. Section 5 provides two simple examples:
+4
+
+
+Gaussian and symmetric (super)martingales. Then Section 6 and Section 7 summarize this paper’s central message about the centrality of nonnegative martingales in constructing the aforementioned tools. Section 6 formalizes the necessary and sufficient conditions for admissibility in the point null setting; it uses a Doob-Lévy max-martingale construction to show the necessary conditions for p-processes, a DoobLe ́vy martingale for sequential tests, and uses the Doob decomposition of an appropriate Snell envelope to prove that admissible e-processes must also (explicitly or implicitly) employ nonnegative martingales. Section 7 develops several novel reductions of admissibility in the composite null setting to the point null case, and presents extensions to estimation (confidence sequences). Section 8 presents deeper investigations on admissibility, including anti-concentration bounds and the role of randomization. Section 9 utilizes the learnt lessons to show that Robbins’ subGaussian supermartingale is admissible. Section 10 shows that past constructions for testing symmetry were inadmissible, and to produce improved admissible tests. Appendix A recaps certain technical concepts like local domination and essential suprema. Appendix B details all proofs that are not in the main paper. Finally, Appendix C contains examples and counterexamples to support several claims made in the paper.
+2 Preliminaries
+2.1 A time-uniform equivalence lemma
+The following lemma is quite central to the construction and interpretation of p-values, confidence sets, and tests that are valid at arbitrary stopping times.
+Lemma 1 (Equivalence lemma). Let (At)t∈N be an adapted sequence of events in some filtered probability
+space and let A∞ := lim supt→∞ At := ⋂
+t∈N
+⋃
+s≥t As. The following statements are equivalent:
+(i) Pr(⋃
+t∈N At) ≤ α.
+(ii) supT Pr(AT ) ≤ α, where T ranges over random times that are possibly infinite, and are not neces
+sarily stopping times.
+(iii) supτ Pr(Aτ ) ≤ α, where τ ranges over stopping times, possibly infinite.
+The proof can be found in Appendix B. If the event At is associated with making an erroneous claim at time t, we interpret the aforementioned three statements as follows:
+(i) The probability of ever making an erroneous claim, over infinite time, is at most α.
+(ii) The probability of making an erroneous claim at an arbitrary data-dependent time T , perhaps chosen post-hoc as a past time after an experiment is stopped, is at most α.
+(iii) When we stop an experiment at an arbitrary stopping time τ , the probability of making an erroneous claim at that time is at most α.
+Intuitively, it is clear that (i) implies (ii), which in turn implies (iii), but the aforementioned lemma establishes that all three properties are actually equivalent: if you want one of them, you get all of them for free. This lemma gives the first hint of the centrality of martingales—the third statement is very directly about optional stopping, even though this fact is somewhat masked in the first two ways of framing the desired error control. While (iii) enables inferences at stopping times as initially motivated, property (ii) allows further introspection at previous times, enabling statistically valid answers to questions like ‘what was the estimate of the treatment effect at time τ /2?’ (where τ was the stopping time). The above lemma first appeared in Howard et al. [11]. While Lemma 1 did not motivate its original definition in 1967, Darling and Robbins [4] first defined a ‘confidence sequence’ for a parameter θ as an infinite sequence of confidence sets (Ct)t∈N such that
+Pr(∃t ∈ N : θ ∈/ Ct) ≤ α.
+In other words the aforementioned confidence sets satisfy property (i) for At := 1θ∈/Ct.
+5
+
+
+There has been much recent effort to constructing p-processes for testing and confidence sequences for estimation. Underlying the construction of these objects in a variety of works, one often finds the repeated use of Ville’s inequality for nonnegative supermartingales; see Howard et al. [10] for a thorough survey. We will show that this is not a coincidence: we prove that nonnegative martingales underlie all admissible constructions for performing anytime-valid sequential inference. To make these claims more formal, and especially to handle composite hypothesis testing, we need to clarify what the probability Pr means in the above definitions, and we do so next.
+2.2 Notation and conventions
+Let N represent the natural numbers and N0 = N ∪ {0}. We use (Bt) to denote a sequence (Bt)t∈N or (Bt)t∈N0 where the indexing of t is either implicitly understood from the context or unimportant, but we use Bt without the brackets to denote a particular element from the sequence. Thus, for example, Ft will denote a sigma-field at time t but (Ft) denotes a filtration, which is an increasing sequence of sigma-fields. Unless otherwise mentioned, F0 = σ(U ), where U is a [0, 1]-uniform random variable that is independent of everything else, signifying an external source of randomness, and Ft := σ(U, X1, . . . , Xt) will denote the canonical filtration, where Xt is the data observed at time t. We allow Xt to take values in some
+general space, which we do not need to specify here, e.g., in Rd, equipped with the Borel sigma algebra. Earlier, we used Pr to represent the probability taken over all sources of randomness, but in what follows we will use a more explicit notation: we denote the distribution of an infinite sequence of ob
+servations by P; this means that P is a probability measure on F∞ := σ(U, (Xt)t∈N) = σ(⋃
+t∈N0 Ft).
+Expectations with respect to P are denoted EP. A set consisting of distributions over sequences will be denoted P; so P = {P} is the singleton case, but more generally there may be uncountably many P ∈ P. In the case of testing, we denote the null set of distributions by Q ⊂ P. Next, τ will always denote a stopping time, while t denotes a fixed time. A subscript t for pt, et, ψt, and Ct means that these objects were constructed using only the data available up to time t. In other words, pt, et, ψt, and Ct are Ft-measurable, or the sequences (pt), (et), (ψt), and (Ct) are adapted to (Ft). It is also understood that pt has range [0, 1], et has range [0, ∞] and a sequential test ψt has range {0, 1}; the range of the confidence set Ct will be formally specified later. If P is a probability measure on F∞ and τ is a stopping time, we write Pτ for the restriction of P to Fτ . This is simply the probability measure on Fτ defined by Pτ (A) = P(A), for A ∈ Fτ . (This is the ‘coarsening’ of P that only operates on events observable up to time τ .) We sometimes, but not always, assume that P is ‘locally dominated’ by (i.e., locally absolutely continuous with respect to) a fixed reference measure R; we review the meaning of this in Appendix A.1. For example, if each observation Xs has a Lebesgue density under all P ∈ P, one can choose the reference measure to be the distribution of an i.i.d. sequence of standard Gaussians. Existence of a reference measure is needed to unambiguously interpret conditional expectations like EP[Y | Ft] under measures different from P, since a priori, such conditional expectations are only defined up to P-nullsets. For completeness, we elaborate on this in Appendix A.1, but this issue will not actually be visible in the proofs of our results. We sometimes adopt the following shorthand:
+Q ̄(A) = sup
+Q∈Q
+Q(A), Q(A) = Qi∈nfQ Q(A),
+which are supposed to remind the reader of ‘upper’ and ‘lower’ probabilities. A set A is called Q-polar if
+Q(A) = 0, meaning it is a measure zero set under Q, and it is called Q-polar if Q ̄(A) = 0, meaning it is measure zero under every Q ∈ Q.
+2.3 A composite time-uniform equivalence lemma
+One of this paper’s central contributions is to characterize admissibility in composite settings. With that motivation, we present the following extension of Lemma 1 using the notation introduced above.
+6
+
+
+Lemma 2 (Composite equivalence lemma). Let Q be a family of probability measures. Let (At)t∈N be an adapted sequence of events in some filtered probability space and let A∞ := lim supt→∞ At :=
+⋂
+t∈N
+⋃
+s≥t As. The following statements are equivalent:
+(i) supQ∈Q Q(⋃
+t∈N At) ≤ α.
+(ii) supT supQ∈Q Q(AT ) ≤ α, where T ranges over all random times, possibly infinite.
+(iii) supτ supQ∈Q Q(Aτ ) ≤ α, where τ ranges over all stopping times, possibly infinite.
+Further, if equality holds for any one, then it holds for the other two.
+The proof is exactly the same as in Lemma 1 and is thus omitted. For contrast, we now state a version with expectations instead of probabilities in which the corresponding statements are not equivalent. Such a non-equivalence points to forthcoming differences between p-processes and e-processes. The following result resembles Lemma 1 but a composite version resembling Lemma 2 can also be easily stated.
+Lemma 3 (Non-equivalence lemma). Let (Nt)t∈N0 be an adapted sequence of nonnegative integrable ran
+dom variables in a filtered probability space; let N∞ := lim supt→∞ Nt. Consider the following statements:
+(i) E[supt∈N0 Nt] ≤ 1.
+(ii) E[NT ] ≤ 1 for all random times T , possibly infinite and not necessarily stopping times.
+(iii) E[Nτ ] ≤ 1 for all stopping times τ , possibly infinite.
+(iv) E[g(1) ∨ supt∈N0 g(Nt)] ≤ 1 for any nondecreasing function g such that
+∫∞
+1 g(y)/y2dy = 1; in par
+ticular, E[1 ∨ supt∈N0
+√Nt] ≤ 2.
+Then (i) and (ii) are equivalent. Both (i) and (ii) imply (iii), which in turn implies (iv).
+The proof can be found in Appendix B. Contrasting the above lemma with Lemma 1 brings out some of the differences between p-processes and e-processes. To dig deeper at the difference, note that one could have equivalently written Lemma 1 in terms of Bernoulli random variables Bt := 1At, in which case the formulae above involving Q(. . . ) would be replaced by (i) EQ[supt∈N0 Bt], (ii) EQ[BT ], and (iii) EQ[Bτ ],
+respectively. Thus, for these specific nonnegative binary random variables (Bt), the relevant statements are all equivalent, but more generally they are not. This difference later manifests itself in the inability to take running suprema for e-processes, and overall a rather different underlying structure.
+3 Martingales, max-martingales, and Ville’s inequality
+A martingale is a stochastic process adapted to an underlying filtration, whose value at any time is the conditional expectation of its value at any later time. This is however not the only possible notion of martingale; another interesting notion is obtained by replacing conditional expectations by so-called conditional suprema, leading to max-martingales. Both notions play an important role in this paper. In particular, max-martingales turn out to be particularly suitable for dealing with p-processes. We briefly review their definitions and basic properties next.
+3.1 Martingales (based on conditional expectation)
+Given a filtration (Ft) and a measure P on F∞, a process (Mt)t∈N0 is called a martingale (with respect to (Ft)) if Mt is Ft-measurable, P-integrable, and
+EP[Mt|Fs] = Ms for any t and s ≤ t.
+(Sub- and supermartingales are defined by relaxing the martingale property and allowing for inequality, ≥ respectively, ≤.) Since we had earlier mentioned that F0 includes an initial source of independent
+7
+
+
+randomness, M0 is itself allowed to be random. Naturally, we have EP[Mt] = EP[M0]. Often, in this paper, (Mt) will be nonnegative and the latter quantity equals one and so when we say ‘a nonnegative martingale with initial value one’, we implicitly mean with initial expected value one. Given an F∞-measurable integrable random variable Y , the process Mt := EP[Y |Ft] is known as the Doob (or Doob–Lévy) martingale associated with Y . The fact that this is a martingale follows from the tower rule of the conditional expectation: EP[Mt|Fs] = EP[EP[Y |Ft] |Fs] = Ms if s ≤ t. We now generalize these definitions to hold for an entire set of measures. Given a set P of measures on F∞, a process (Mt)t∈N0 is called a nonnegative P-supermartingale (P-NSM) (with respect to (Ft)) if Mt is nonnegative, Ft-measurable, and
+EP[Mt|Fs] ≤ Ms for all t ∈ N, s ≤ t and every P ∈ P. (6)
+If (6) holds with equality, (Mt) is called a nonnegative P-martingale (P-NM). If P = {P} is a singleton, we write ‘P-NSM’ instead of ‘{P}-NSM’. This notational choice is also applied to other objects. We refer to a P-NM (or NSM) as a ‘composite’ NM (or NSM), while a P-NM is called a ‘pointwise’ NM (or NSM). Doob’s optional stopping theorem [6] extends the (sub-/super-) martingale property from deterministic times to stopping times. In general, only bounded stopping times are allowed in the optional stopping theorem; however, the nonnegativity of an NSM relieves us of this restriction. In particular, if (Nt) is (upper bounded by) a P-NSM starting in N0, the optional stopping theorem implies that
+EP[Nτ ] ≤ EP[N0] for all stopping times τ , potentially infinite, and every P ∈ P.
+In fact, if (Mt) is a P-NSM, then we additionally have EP[Mτ |Fρ] ≤ Mρ for all stopping times ρ and τ such that ρ ≤ τ , P-almost surely, for each P ∈ P. Further, Doob’s supermartingale convergence theorem implies that if (Mt) is a P-NSM with initial expected value one, then its limit M∞ := limt→∞ Mt exists P-almost surely and EP[M∞] ∈ [0, 1], for each P ∈ P. Stemming from his 1939 PhD thesis [23], Ville’s inequality is a time-uniform generalization of Markov’s inequality; for our purposes, the relevant version states that if (Mt) is (upper-bounded by) a P-NSM with initial expected value one, then the following three equivalent statements hold:
+P
+(
+∃t ∈ N : Mt ≥ 1
+α
+)
+≤ α for every P ∈ P and α ∈ [0, 1]; (7a)
+⇐⇒ sup
+P∈P
+P
+(
+sup
+t∈N
+Mt ≥ 1
+α
+)
+≤ α for every α ∈ [0, 1]; (7b)
+⇐⇒ sup
+P∈P,τ ≥0
+P
+(
+Mτ ≥ 1
+α
+)
+≤ α for every α ∈ [0, 1]. (7c)
+Note that (7b) and (7c) usually only hold with inequality (for example, for the singleton P = {P}) but it can hold with equality for larger nontrivial nonparametric classes P, as we shall encounter later in Section 8.2. We also remark that a conditional version of Ville’s inequality is also true, though we do not utilize it much in this paper. Specifically, if (Mt) is a P-NSM, then
+sup
+P∈P
+P
+(
+∃t ≥ s : Mt ≥ Ms
+α
+∣∣∣∣ Fs
+)
+≤ α for every α ∈ [0, 1]. (8)
+3.2 The relationship between likelihood ratios and nonnegative martingales
+A simple NM that arises naturally is the likelihood ratio; this is at the heart of Wald’s sequential likelihood ratio test [26, 27]. To be specific, when testing H0 : Xs ∼ Q versus H0 : Xs ∼ P , define the likelihood
+ratio Mt := ∏
+s≤t
+dP
+dQ (Xs), assuming that the Radon-Nikodym derivative dP/dQ exists. If P, Q have densities p, q with respect to a common measure then each term in the product is just p(Xs)/q(Xs). Let
+Q∞ now denote the distribution under which the sequence is i.i.d., each element distributed according to Q. Wald effectively proved that (Mt) is a Q∞-NM and a test that rejects if Mt ≥ 1/α controls the Type-I error at level α due to Ville’s inequality (Wald proved the result from scratch, but he was not unaware
+8
+
+
+of the evolving language of martingales and Ville’s thesis [2]). It is also apparent that every nonnegative martingale is a product of nonnegative random variables with conditional mean one, meaning that if (Mt)
+is a Q-NM, then Mt = ∏
+s≤t Ys, where (Yt) is adapted to (Ft) and EQ[Yt|Ft−1] = 1 for every Q ∈ Q; to see
+this, simply define the multiplicative increment as Yt := Mt/Mt−1 with 0/0 := 1. At first sight, despite having a product form, it may appear like nonnegative martingales are strict generalizations of likelihood ratio processes. However, in fact, a converse statement is also true: not only is every likelihood ratio a martingale (under the null), but every martingale is also implicitly a likelihood ratio; this was discussed by Shafer et al. [22] for point nulls, and we generalize it below to the composite case, borrowing the terminology of ‘implied alternative’ from Shafer [21]. To make the following result precise we assume that the sequence of observations (U, (Xt)t∈N) is a process on the space Ω = RN of real-valued sequences, and we let (Ft) be the canonical filtration.
+Proposition 4. Consider any composite null set Q of probability measures on F∞, and let P consist of all probability measures P that are locally absolutely continuous with respect to some Q ∈ Q. (Thus in particular, Q ⊂ P.) If (Mt) is a Q-NM starting at one, then for every Q ∈ Q there exists some ‘implied alternative’ distribution P ∈ P (depending on Q) that is locally dominated by Q, such that Mt = dPt/dQt. In other words, a composite nonnegative martingale is a ‘composite’ likelihood ratio (meaning, it takes the form of a likelihood ratio under every element of the null).
+We recognize that the above statement may be known to different researchers in some form, but it does provide useful intuition and we have not seen it stated in the generality above in the statistics literature. The proof is in Section B. The informal takeaway message is that nonnegative martingales are implicitly likelihood ratios, but the former are typically easier to identify (or construct) in composite null settings.
+3.3 Max-martingales (based on conditional supremum)
+Max-martingales are defined by replacing the conditional expectation by the conditional supremum, so we start by reviewing this notion; more information can be found in Barron et al. [1] and Larsson [15]; see also Appendix A.2. For a given probability measure P, random variable Y , and sub-σ-algebra G, the G-conditional supremum is defined as the smallest G-measurable almost sure upper bound on Y : ∨
+P[Y | G] := ess inf{Z : Z is G-measurable and Z ≥ Y , P-almost surely}.
+Note that ∨
+P[Y | G] ≥ Y by construction, and is the smallest G-measurable random variable with that property. (Here and in the rest of this subsection, equalities are understood in the P-almost sure sense.) The conditional supremum can be viewed as a nonlinear analog of the conditional expectation, and has similar properties. In particular, one has a ‘tower property’ which states that for nested sub-σ-algebras G ⊂ H, one has ∨
+P
+[∨
+P[Y | H]
+∣∣∣G
+]
+=∨
+P[Y | G].
+Given a filtration (Ft), a process (Yt) is called a P-max-martingale, or P-MM for short, if
+Ys = ∨
+P[Yt | Fs], s ≤ t.
+Any max-martingale (Yt) is almost surely decreasing, which ensures that the limit limt→∞ Yt exists in
+[−∞, ∞]. We call a max-martingale closed if Yt = ∨
+P[lims→∞ Ys | Ft] for all t ∈ N0. As earlier, given a set P of measures on F∞, a process (Yt) is called a (closed) P-max-martingale (P-MM) if (Yt) is a (closed) P-MM for each P ∈ P. One can also introduce notions of sub- and supermartingales using the conditional supremum, although we will not use these here. Moreover, one can analogously define conditional infimum martingales using
+∧ instead of ∨, and all properties stated above and below also hold analogously. In further analogy with (standard) martingales, max-martingales satisfy an optional stopping theorem
+[15, Lemma 2.10]. Specifically, consider the process Yt := ∨
+P[Y | Ft] for an F∞-measurable Y . Thanks
+9
+
+
+to the tower property, (Yt) is then a max-martingale; we call such a construction a Doob-Lévy MM. We then have
+Yτ = ∨
+P[Y | Fτ ] and Yρ = ∨
+P[Yτ | Fρ]
+for all finite stopping times ρ and τ such that ρ ≤ τ . The connection between P-MMs and P-NMs goes beyond mere analogies. If (Mt) is a P-NM with M0 > 0, the following statement easily follows from [15, Proposition 4.1]:
+isn≤ft
+1
+Ms
+=∨
+P
+[
+inf
+s∈N0
+1
+Ms
+∣∣∣Ft
+]
+, t ∈ N0. (9)
+A word of warning: although the conditional supremum and conditional expectation are in some ways similar, they sometimes behave very differently. In particular, the conditional supremum only depends on the underlying measure P through its zero measure sets. Computing the conditional supremum under a different measure P′ thus gives the same result whenever the two measures are mutually absolutely continuous. This is in stark contrast to the behavior of the conditional expectation. (On the other hand, if P and P′ are mutually singular, as is often the case in our infinite-horizon situations, then one can make no general statements about the relation between the corresponding conditional suprema.) Although any nonnegative max-martingale (Yt) is almost surely decreasing, which ensures that the
+limit limt→∞ Yt exists, it is possible that Yt and ∨
+P[lims→∞ Ys | Ft] are not necessarily the same, i.e., that (Yt) is not closed. Indeed, we have the following non-uniqueness property. If (Yt) is a max-martingale
+then we usually can find another max-martingale (Y ′
+t ) with Y ′
+t > Yt for each t ∈ N, but (Y ′
+t ) and (Yt) have the same limit, almost surely. For example, assume (Zt) is i.i.d. Bernoulli(1/2), independent of
+(Yt), and adapted to (Ft). Define Y ′
+t = Yt + ∏
+s≤t(Zs ∨ 1/2). Then (Y ′
+t ) is also a max-martingale, with
+Y′
+t ≥ Yt + 2−t > Yt for all t ∈ N, but converging almost surely to the same limit as Y ′
+t as t → ∞.
+A similar phenomenon also holds true for martingales: if (Mt) is an NM then M ′
+t = Mt+∏
+s≤t(Zs+1/2)
+is another NM with M ′
+t ≥ Mt + (1/2)t > Mt for all t ∈ N, but limt→∞ M ′
+t = limt→∞ Mt. Hence also for nonnegative martingales, we often do not have that Mt and E[lims→∞ Ms|Ft] are the same. We conclude this subsection with an interesting example.
+Example 5. Let V denote a uniformly distributed random variable and assume that (Xt) is, conditionally on V , i.i.d. Bernoulli(V ). Then V = limt→∞
+∑
+s≤t Xs/t (the limit frequency of ones), hence V is F∞
+measurable. Moreover, Yt := ∨
+P[V | Ft] yields a max-martingale. It is now relatively easy to check that
+Yt = 1 for each t ∈ N0. This yields an instance where limt→∞ Yt 6= V , but (Yt) is nonetheless a closed
+max-martingale since Yt = 1 = ∨
+P[1 | Ft].
+4 Tools for anytime sequential inference and their admissibility
+We formally introduce the four instruments for anytime-valid sequential inference that play central roles in our paper. We present a rather natural definition of admissibility for each of the instruments below, but recognize that other alternatives may be suitable depending on the context.
+4.1 Q-p-processes, Q-e-processes, and (Q, α)-sequential tests
+Let the (unknown) distribution of the observed data sequence be denoted P. Suppose we wish to test the null H0 : P ∈ Q for some Q ⊂ P, against H1 : P ∈ P (or against H1 : P ∈ P\Q). A sequence (pt) is called a p-process for Q if it satisfies
+Q(pτ ≤ α) ≤ α for arbitrary stopping times τ , every Q ∈ Q, and α ∈ [0, 1].
+Above, we have implicitly defined and used
+p∞ := lim inf
+t→∞ pt.
+10
+
+
+For succinctness, we say (pt) is a Q-p-process, or simply a p-process if Q is clear from context. By Lemma 2, the above condition is equivalent to requiring that
+Q(∃t ∈ N : pt ≤ α) ≤ α for every Q ∈ Q and α ∈ [0, 1].
+Note that (pt) is a p-process if and only if the running infimum (infs≤t ps) is a p-process, so it helps to think of (pt) as a nonincreasing sequence; in this case, we have p∞ = limt→∞ pt (the limit exists and equals the lim inf used earlier). When we refer only to the validity of the single random variable pt and not the sequence (pt), we say that pt is a p-value for Q, meaning that its distribution is stochastically larger than uniform under any Q ∈ Q. The connection to Ville’s inequality (7a), and thus to martingales, should be apparent. A sequence (et) is called an e-process for Q, or a Q-e-process, if
+EQ[eτ ] ≤ 1 for arbitrary stopping times τ , and every Q ∈ Q.
+Analogous to the p-process case above, we have implicitly defined and used
+e∞ := lim sup
+t→∞
+et.
+In fact, e-processes themselves can be defined in many equivalent ways, and we record this below.
+Lemma 6. For any set of distributions Q on any filtered measurable space (Ω, (Gt)), and any adapted nonnegative process (et), the following statements are equivalent:
+(i) EQ[eτ ] ≤ 1 for arbitrary stopping times τ , and every Q ∈ Q, where e∞ := lim supt→∞ et.
+(ii) EQ[eτ ] ≤ 1 for arbitrary stopping times τ , and every Q ∈ Q, where e∞ := lim inft→∞ et.
+(iii) EQ[eτ ] ≤ 1 for arbitrary finite stopping times τ , and every Q ∈ Q.
+(iv) EQ[eτ ] ≤ 1 for arbitrary bounded stopping times τ , and every Q ∈ Q.
+(v) (et) is almost surely upper bounded by some Q-NM for each Q ∈ Q.
+(vi) (et) is almost surely upper bounded by some Q-NSM for each Q ∈ Q.
+Above, the stopping times and (super)martingales are also defined relative to the filtration (Gt).
+Property (i) is used as the defining property in Grünwald et al. [9], while (vi) is the defining property used in Howard et al. [10], and while these seem to be visually different, they are in fact identical. The proof below establishes that property (iv) implies (v), by constructing the Snell envelope (under each Q) for (et), and taking its Doob decomposition. The optional stopping theorem for nonnegative supermartingales establishes that property (vi) implies (i). All other implications are straightforward.
+Proof. The implications (i) ⇒ (ii) ⇒ (iii) ⇒ (iv) and (v) ⇒ (vi) ⇒ (i) are immediate. We thus focus on the non-trivial implication (iv) ⇒ (v). To do so we fix any Q ∈ Q and define the Snell envelope of (et) as the process (Lt) given by
+Lt := ess sup
+τ ≥t
+EQ[eτ | Gt],
+where τ ranges over all bounded stopping times. It is clear that Lt ≥ et since τ = t is one of the stopping time occurring in the essential supremum, for all t ∈ N0. We claim that (Lt) is a Q-supermartingale with EQ[L0] ≤ 1. The supermartingale property of the Snell envelope is well-known, but for the convenience of the reader we include the short proof. This uses properties of the essential supremum reviewed in Appendix A.2, in particular Proposition 45. For each fixed t ∈ N0, Lt is the essential supremum of the family consisting of all EQ[Mτ |Gt] where
+τ ≥ t is a bounded stopping time. This family is closed under maxima. To see this, let τ and τ ′ be two
+11
+
+
+bounded stopping times, define A = {EQ[eτ |Gt] > EQ[eτ′ | Gt]}, and set τ ′′ = τ 1A + τ ′1Ac . Since A lies in
+Gt and τ, τ ′ ≥ t, we have that τ ′′ is a (bounded) stopping time and we obtain
+EQ[eτ ′′ | Gt] = 1AEQ[eτ | Gt] + 1Ac EQ[eτ ′ | Gt] = max {EQ [eτ | Gt] , EQ [eτ ′ | Gt]} .
+This demonstrates closure under maxima. Consequently we can apply Proposition 45 to obtain a sequence of bounded stopping times {τn}n∈N with τn ≥ t such that EQ[eτn |Gt] ↑ Lt almost surely. The conditional version of the monotone convergence theorem, the tower rule, and the definition of Lt−1, then yield
+EQ[Lt | Gt−1] = EQ
+[
+nli→m∞ EQ[eτn | Gt]
+∣∣∣ Gt−1
+]
+= nli→m∞ EQ[EQ[eτn | Gt] | Gt−1]
+= nli→m∞ EQ[eτn | Gt−1] ≤ Lt−1.
+Note that this argument applies even with t = 0, where we use the convention that G−1 is the trivial sigma-field and L−1 = 1. This is where the hypothesis (iv) is used: in the last inequality we have EQ[eτn] ≤ 1. We conclude that EQ[L0] ≤ 1, that each Lt is integrable, and that (Lt) is a supermartingale. Since we have established that the Snell envelope (Lt) is a supermartingale we can write down its Doob decomposition as Lt = Mt − At for a unique Q-martingale (Mt) with M0 = L0, and a unique nondecreasing predictable process (At) with A0 = 0. Thus Mt ≥ Lt ≥ et Q-almost surely for all t ∈ N0, showing that (Mt) is the required Q-NM that upper bounds (et).
+It is worth noting that already in the case of a singleton Q := {Q}, if one additionally desired a conditional safety property to hold for (et), namely that EQ[eτ |Fs] ≤ es∧τ for arbitrary times s and stopping times τ , then (et) must necessarily be a Q-NSM; indeed by taking τ = t for t ≥ s, we recover the definition of a Q-NSM. In fact, if one would like such a property to hold for every Q in a composite Q, such a requirement can only be satisfied by a Q-NSM. Despite the fact that we will not require this conditional property, we will see that (composite) Q-NMs or (pointwise) Q-NMs play a central, universal role in constructing e-processes that may not themselves be martingales. A p-process or e-process does not directly yield a decision rule for when to reject the null hypothesis; they are real-valued measures of evidence, and need to be coupled with a decision rule in order to yield a test. A binary sequence (ψt) is called a (Q, α)-sequential test for H0—or (ψt) is a (Q, α)-ST—if
+EQ[ψτ ] = Q(ψτ = 1) ≤ α for arbitrary stopping times τ , and every Q ∈ Q.
+As with p-processes, we think of (ψt) as nondecreasing, and have implicitly defined ψ∞ := limt→∞ ψt.
+4.2 Defining inadmissibility and admissibility
+We follow the standard convention of using the term ‘admissible’ as a shorthand for ‘not inadmissible’, so we only define inadmissibility below. We say that (pt) is inadmissible if there exists (p′
+t) that is a Q-p-process, and is always at least as
+good but sometimes strictly better; more formally, Q(p′
+t ≤ pt) = 1 for all t ∈ N0 and all Q ∈ Q, and
+that Q(p′
+t < pt) > 0 for some t ∈ N0, and some Q ∈ Q. We say that (et) is inadmissible if there exists a
+Q-e-process (e′
+t), such that Q(e′
+t ≥ et) = 1 for all t ∈ N0 and all Q ∈ Q, and also Q(e′
+t > et) > 0 for some
+t ∈ N0, and some Q ∈ Q. Finally, (ψt) is inadmissible if there exists a (Q, α)-sequential test (ψ′
+t), such
+that Q(ψ′
+t ≥ ψt) = 1 for all t ∈ N0 and all Q ∈ Q, and Q(ψ′
+t > ψt) > 0 for some t ∈ N0, and some Q ∈ Q.
+Remark 7. We could have equivalently formulated admissibility in terms of Q(e′
+τ > eτ ) > 0 for some
+stopping time τ , etc.; this is in fact identical to the current definition, because for any discrete-time random sequences (Wt) and (W ′
+t ), the statement ‘Q(W ′
+t = Wt) = 1 for all t’ is equivalent to ‘Q(W ′
+t=
+Wt for all t) = 1’, meaning that pointwise equality at fixed times yields simultaneous equality (including stopping times). In case it is useful to the reader, another restatement of inadmissibility is the following:
+Qi∈nfQ Q(∀t ∈ N0 : p′
+t ≤ pt) = 1 and sup
+Q∈Q
+Q(∃t ∈ N0 : p′
+t < pt) > 0. (10)
+12
+
+
+The above definition of admissibility does not specify any alternative. What allows us to do so is that the admissibility conditions are stated ‘almost surely’. To elaborate, assume there was an alternative, say P∗ such that there existed some time t and an event A ∈ Ft with P∗(A) > 0 but Q(A) = 0 for all Q ∈ Q. In this case, on the event A we would always set pt = 0, et = ∞, and ψt = 1. We could always do so because no Q ∈ Q ‘is aware of’ the event A, hence modifying a p-process on A would not change any of its Q-distributional properties (like validity). For this reason, and to avoid any notational complication arising, from now on we always assume the following:
+If there exists some t ∈ N, some A ∈ Ft, and some P∗ ∈ P with P∗(A) > 0 then there exists also some Q ∈ Q with Q(A) > 0.
+This is a very mild assumption! It is, for example, satisfied if there exists some Q∗ ∈ Q such that every P ∈ P is locally absolutely continuous with respect to Q∗ (see Appendix A.1 for a review). This previous condition is satisfied, for example, if all measures in P are locally equivalent. In interesting situations a locally dominating measure Q∗ may not actually exist—for example when testing for symmetry, as we encounter later—but our standing assumption above is still true. Specifically, the aforementioned assumption also holds if each P ∈ P is locally absolutely continuous with respect to some specific Q ∈ Q (potentially different for each P)—this is often easier to check, and indeed holds in the symmetric example. Under the above assumption, the inadmissibility condition (10) holds with Q, Q swapped to P, P. Note that validity is subset-proof, meaning that validity for Q implies validity for any subset of Q. In the presence of validity, admissibility is — under a condition involving polar sets — superset-proof. The following proposition will play a key role in Section 9.
+Proposition 8. Suppose Q ⊂ Q′ are such that for all t ∈ N0, each Q-polar set A ∈ Ft is Q′-polar; this
+means that if Q(A) = 0 for all Q ∈ Q, then Q′(A) = 0 for all Q′ ∈ Q′. Let (et) be a Q′-e-process (and thus
+also a Q-e-process). If (et) if Q-admissible then it is Q′-admissible.
+Proof. Let (et) be as described in the proposition, and assume it is Q-admisible. We must show it is
+Q′-admissible. Consider another Q′-e-process (e′
+t) such that Q′(e′
+t ≥ et) = 1 for all t ∈ N0 and all Q′ ∈ Q′,
+hence all Q ∈ Q. By Q-admissibility, Q(e′
+t = et) = 1 for all Q ∈ Q and then also for all Q ∈ Q′ thanks to
+the assumption regarding the polar sets. Thus (et) is Q′-admissible.
+We sometimes call Q-admissibility as just admissibility if Q is clear from context. A family of sequential tests {(ψt(α))}α∈[0,1] is said to be ‘nested in α’, if ψt(α′) ≥ ψt(α) for any t and
+α′ ≥ α. This ensures that it is easier to reject the null with a larger error budget. We conclude this subsection with the following observation.
+Proposition 9. Assume that Q is locally dominated. Then any p-process for Q, e-process for Q, or (Q, α)-sequential test can be dominated by an admissible p-process, e-process, or sequential test, respectively.
+The proof (Appendix B) uses transfinite induction. We now move from testing to estimation.
+4.3 (φ, P, α)-confidence sequences
+Let φ be a measurable map from P to an arbitrary set Z. For every γ ∈ Z, define
+Pγ := {P ∈ P : φ(P) = γ},
+and note that {Pγ}γ∈Z is a partition of P. Of special interest is the i.i.d. case where P = μ∞. As examples, consider φ(P) = φmed(μ) denoting the median of μ, or φ(P) = φmean(μ) denoting the mean of μ. Another case of interest is where each P ∈ P can be represented as Pθ for some unique θ ∈ Θ (the ‘parametric’ setting) and then φ(Pθ) = θ. One may also care about fully nonparametric functionals, for example φcdf , which maps μ to its cumulative distribution function (or φpdf if μ has a Lebesgue density).
+For a set of distributions Q, define φ(Q) = ⋃
+Q∈Q φ(Q) for short.
+13
+
+
+We then define a (1 − α)-confidence sequence for a functional φ as an adapted sequence of confidence sets (Ct) such that
+sup
+P∈P
+P (∃t ∈ N : φ(P) ∈/ Ct) ≤ α.
+This error condition can be phrased equivalently as a coverage criterion: for every P ∈ P, we have P (∀t ∈ N0 : φ(P) ∈ Ct) ≥ 1 − α. Above, we have suppressed the dependence of Ct on α for notational succinctness. Moreover, we emphasize that the probability P on the outside matches with the inner functional φ(P), as it should. Indeed, the coverage probability for φ(P) should hold given that the data used to construct Ct was drawn according to this P. We then say that (Ct) is a (φ, P, α)-CS. If required, we define C∞ := lim inft→∞ Ct.
+Note that even though we defined (Q, α)-sequential tests without explicit reference to any functional φ, one could associate Q to the subset of P in which φ takes on certain values. In other words, we can absorb the role of any such φ into the definition of Q to reduce notation. We say (Ct) is inadmissible if there exists (C′
+t) that is a (φ, P, α)-CS such that P(C′
+t ⊆ Ct) = 1 for all
+t and all P ∈ P, and P(C′
+t ( Ct) > 0 for some t and some P ∈ P.
+Finally, let us mention a minor technical point. A CS (Ct) is by definition an adapted sequence of random sets. In this paper, we take ‘adapted’ to simply mean that all events of the form {z ∈ Ct} belong to Ft. This is sufficient for our needs, and lets us avoid dealing with σ-algebras on spaces of sets.
+Last, as for sequential tests, a family of CSs {(Ct(α))}α∈[0,1] is said to be ‘nested in α’ if Ct(α′) ⊆ Ct(α)
+for any t and α′ ≥ α.
+Remark 10. An analogue of Proposition 9 also holds for (φ, P, α)-confidence sequences, where P is locally dominated. This will later follow from Theorem 30, in conjunction with Proposition 9.
+4.4 Reductions between the four instruments
+We now demonstrate how to transform one tool for sequential inference into another; some of these are well-known or ‘obvious’ but some are new, especially in the composite setting. These transformations are usually not lossless or bidirectional, meaning that something may be lost in going from one to another and back again. All proofs are relegated to Appendix B. We start with the simplest direction: forming (Q, α)-sequential tests from the other three.
+Proposition 11. One can construct (Q, α)-sequential tests in the following ways:
+(1) If (pt) is a Q-p-process, then {(1pt≤α)}α∈[0,1] is a nested family of (Q, α)-STs.
+(2) If (et) is a Q-e-process, then {(1et≥1/α)}α∈[0,1] is a nested family of (Q, α)-STs.
+(3) If (Ct) is a (φ, P, α)-CS, then (1φ(Q)∩Ct=∅) is a (Q, α)-ST.
+Next, we show how to form a composite p-process from the other three.
+Proposition 12. One can construct p-processes for Q in the following ways:
+(1) If (et) is a Q-e-process, then (1 ∧ infs≤t 1/es) is a Q-p-process.
+(2) If {(ψt(α))}α∈[0,1] is a nested family of Q-STs, then (inf{α : ψt(α) = 1}) is a Q-p-process.
+(3) If {(Ct(α))}α∈[0,1] is a nested family of (φ, P)-CSs, then (inf{α : φ(Q)∩Ct(α) = ∅}) is a Q-p-process.
+A confidence sequence can be formed by inverting families of tests, as follows.
+Proposition 13. Recall that Pγ := {P ∈ P : φ(P) = γ}. If (ψγ
+t ) is a (Pγ, α)-sequential test for each
+γ ∈ Z then {γ ∈ Z : ψγ
+t = 0} is a (φ, P, α)-confidence sequence. To convert a family of p-processes or
+e-processes into confidence sequences, we can first convert them to sequential tests using Proposition 11 and then invert those tests as in the previous sentence.
+Finally, we can form e-processes by calibrating p-processes, following Shafer et al. [22].
+14
+
+
+Proposition 14. One can construct e-processes for Q as follows: If (pt) is a Q-p-process, then 1/(2√pt) is a Q-e-process. In fact, (f (pt)) is a Q-e-process for any nonincreasing ‘calibration’ function f : [0, 1] → [0, ∞) such that
+∫1
+0 f (u)du = 1. To convert a nested family of sequential tests or confidence sequences
+into e-processes, we can first convert them to p-processes using Proposition 12 and then apply the aforementioned calibration.
+We end this section with some basic closure properties.
+Proposition 15. Let conv(Q) denote the convex hull of Q. Then the following statements hold.
+(1) An e-process for Q is also automatically an e-process for conv(Q). Such closure under the convex hull also holds for p-processes and sequential tests.
+(2) An admissible e-process for Q is also automatically an admissible e-process for conv(Q). Such closure under the convex hull also holds for p-processes and sequential tests.
+The proof can be found in Appendix B. Example 48 in Appendix C shows that the statement of Proposition 15 does not extend to confidence sequences.
+Remark 16. Note that stability with respect to taking a running extremum does not hold for e-processes, but does hold for the other three. To elaborate, if (pt) is a Q-p-process, then so is (mins≤t ps); if (Ct) is
+a (φ, P, α)-CS, then so is (⋂
+s≤t Cs); if (ψt) is (Q, α)-ST, then so is (maxs≤t ψs). However, a running
+maximum does not usually preserve safety for e-processes! Moreover, if (et) is a P-e-process and (ft) is a Q-e-process, then min(et, ft) is a conv(P ∪ Q)-e-process, while (et + ft)/2 is a conv(P ∩ Q)-e-process. Similarly, if (pt) is a P-p-process and (qt) is a Q-p-process, then max(pt, qt) is a conv(P ∪ Q)-p-process, while 2 min(pt, qt) is a conv(P ∩ Q)-p-process. Last, if (Ct) is a (φ, P, α)-CS and (Dt) is a (φ, Q, α)-CS, then Ct ∪ Dt is a (φ, P ∪ Q, α)-CS, while Ct ∩ Dt is a (φ, P ∩ Q, 2α)-CS.
+5 Three instructive examples of exponential (super)martingales
+We now illustrate the above concepts with three examples: the Gaussian NM, a subGaussian NSM and the symmetric NSM, the former being a simple parametric example, and the latter two being sophisticated nonparametric examples (we use the term sophisticated because it includes atomic and nonatomic distributions, and there is no underlying reference measure).
+5.1 A Gaussian nonnegative martingale
+If (Xt) is a sequence of i.i.d. standard Gaussians, then it is well known that exp(∑
+s≤t Xs − t/2) is a
+nonnegative martingale. This is one of the simplest nontrivial pointwise NMs that one can construct. Below, we elaborate on how to construct a simple composite NM in the Gaussian case. We generalize the Gaussian case to an arbitrary fixed mean m and a variance process, where each σ2
+t is revealed to us on
+demand. Technically, we suppose the process (Xt) consists of two components, Xt = (Yt, σ2
+t+1), and let
+σ2
+1 be a constant. Note that (σ2
+t ) is a predictable sequence. We now let Gm denote the set of distributions
+such that the outcome Yt at time t is conditionally Gaussian with deterministic mean m and variance σ2
+t, that is,
+Gm := {P : Yt | Ft−1 ∼ N (m, σ2
+t ) for all t ∈ N}.
+Since the distribution generating the predictable variances is left unspecified, Gm is a highly composite set of measures. Next, define the process (Gm
+t ) by
+Gm
+t := exp
+
+∑
+s≤t
+(Ys − m) − 1
+2
+∑
+s≤t
+σ2
+s
+
+ . (11)
+15
+
+
+It is easy to check that (Gm
+t ) is a Gm-NM for each m ∈ R, specifically by evaluating the moment generating
+function of Xt. As a direct consequence of Ville’s inequality, a (1 − α)-CS (Cmean
+t ) for an unknown mean is given by
+Cmean
+t :=
+{
+m ∈ R : Gm
+t <1
+α
+} .
+Formally, (Cmean
+t ) is a (φmean, ⋃
+m∈R Gm, α)-CS for the mean, where we define the mean functional
+φmean(P) = m for every P ∈ Gm.
+Remark 17. The confidence sequence (Cmean
+t ) derived above does not yield interval (3) in the introduction.
+That CS is obtained by noting that (Gm
+t (λ)), given by
+Gm
+t (λ) := exp
+
+λ
+∑
+s≤t
+(Ys − m) − λ2
+2
+∑
+s≤t
+σ2
+s
+
+,
+is a Gm-NM for every λ ∈ R. Fubini’s theorem then implies that (
+∫
+Gm
+t (λ)dΦ(λ)) is also a Gm-NM for
+any distribution function Φ. Choosing Φ as a standard Gaussian for example, yields the normal mixture martingale (dating back at least to Darling and Robbins [4]). Applying Ville’s inequality then yields (3).
+5.2 A subGaussian supermartingale and e-process
+For a positive predictable process (σt), we say that Yt is conditionally σt-subGaussian, if after centering by its conditional mean μt := EP[Yt|Ft−1] (assumed to exist), its conditional moment generating function is upper bounded by that of a Gaussian with variance σ2
+t ; let G↓ consist of all such distributions:
+G↓ := {P : EP[exp(λ(Yt − μt)) | Ft−1] ≤ exp(λ2σ2
+t /2) for all t ∈ N, λ ∈ R}.
+Then, one can check that the process
+MP
+t := exp
+( λ
+∑
+i≤t
+(Yi − μi) − λ2 ∑
+i≤t
+σ2
+i /2
+)
+(12)
+is a P-NSM for each P ∈ G↓. Note that the process M P
+t changes with the conditional means of P, and thus
+it depends on P, and so M P
+t is not a G↓-NSM. Now, suppose we want to test the null hypothesis that μt ≤ 0 for all t, assuming that σt ≡ σ, a
+constant, for simplicity. Consider three subsets of G↓:
+G↓
+0 := {P : μt = 0 and EP[exp(λYt) | Ft−1] ≤ exp(λ2σ2/2) for all t ∈ N, λ ∈ R}. (13)
+G↓
+− := {P : μt ≤ 0 and EP[exp(λ(Yt − μt)) | Ft−1] ≤ exp(λ2σ2/2) for all t ∈ N, λ ∈ R}. (14)
+G↓
+∼ := {P :
+∑
+i≤t
+μi ≤ 0 and EP[exp(λ(Yt − μt)) | Ft−1] ≤ exp(λ2σ2/2) for all t ∈ N, λ ∈ R}. (15)
+Now consider the process
+Nt := exp
+
+λ
+∑
+i≤t
+Yi − λ2σ2t/2
+
+ . (16)
+Then, we have the following three properties:
+1. N is a G↓
+0 -NSM for any λ ∈ R.
+2. N is a G↓
+−-NSM for any λ ≥ 0.
+3. N is an G↓
+∼-e-process for any λ ≥ 0.
+16
+
+
+Importantly, note that in the third case, N is not a G↓
+∼-NSM. Indeed, the weak null allows μt sequences like (−1, −1, 1, 0, −1, . . . ), and the NSM property would be violated at the third step. In fact, one can prove (but we omit the proof) that there are G↓
+∼-NSMs (except for constant or decreasing processes). However, the e-process property follows thanks to Lemma 6(vi); this is because for positive λ and for each P ∈ G↓
+∼, we have N ≤ M P
+t.
+In Section 9, we will prove that N is actually an admissible e-process for all three classes above, which turns out to be a rather nontrivial fact for reasons we elaborate on later.
+5.3 A nonnegative supermartingale under symmetry
+We now move to a nonparametric example that first appears in de la Peña [5] but the core idea can be traced back to Efron [7], who was interested in the robustness of the t-test to heavy tailed (but symmetric) distributions; further, it has recently been extended to the matrix setting by Howard et al. [10]. This example is particularly interesting because of three reasons: (a) it deals with a nonparametric class of distributions that does not have a common dominating measure (it includes atomic and non-atomic measures), (b) there exists a rather elegant well-known ‘nonparametric’ NSM, meaning that one single process is a composite NSM, (c) the visual form of the NSM below is reminiscent of the aforementioned Gaussian example, making it intuitively appealing. Unfortunately, we will later demonstrate that this construction is suboptimal, and leads to inadmissible sequential inference. Consider the convex set of distributions indexed by m ∈ R, where each increment is conditionally symmetric around m, i.e.,
+Sm := {P : (Xt − m) ∼ −(Xt − m) | Ft−1}. (17)
+Consider then the following family of processes (Sm
+t ), indexed by m ∈ R:
+Sm
+t := exp
+
+∑
+s≤t
+(Xs − m) − 1
+2
+∑
+s≤t
+(Xs − m)2
+
+ . (18)
+It is known [5] that (Sm
+t ) is an Sm-NSM for each fixed m ∈ R; the proof stems from the observation that
+cosh(z) ≤ exp(z2/2), and thus for a single symmetric random variable Z, we have
+E[eZ−Z2/2] = E[e−Z−Z2/2] = E
+[
+eZ−Z2/2 + e−Z−Z2/2
+2
+]
+= E[e−Z2/2 cosh(Z)] ≤ 1.
+Note that the symmetric distribution could be different at each time point (e.g., Gaussian with mean m at time one, (δm−|X1| + δm+|X1|)/2 at time two, etc., where δz denotes the Dirac measure at some z ∈ R).
+The process (Sm
+t ) is visually quite similar to the Gaussian process (Gm
+t ) from the previous subsection.
+The relaxation from using the true variance in (Gm
+t ) to using an empirical variance in (Sm
+t ), allows the NM property to transform to an NSM property for a much larger class of heavy-tailed distributions (such as t and Cauchy distributions). Even when applied to Gaussians, one no longer needs to know the variance. One can check using Propositions 11 and 13 that the sets
+Ccenter
+t :=
+{
+m ∈ R : Sm
+t <1
+α
+}
+together form a (φcenter, ⋃
+m∈R Sm, α)-CS for the center of symmetry. Said differently, if P ∈ Sm then
+P(∃t ∈ N : m ∈/ Ccenter
+t ) ≤ α.
+Above, we have described only confidence sequences, but one could have defined e-processes and pprocesses. For example, to test the null H0 : P ∈ S0, one can use the fact that (S0
+t ) is an NSM under the
+null, and thus (S0
+t ) is an e-process for S0, and (infs≤t 1/S0
+s ) is a p-process for S0. Of course, all of these
+in turn define (S0, α)-sequential tests. We return to these and other examples later in the paper.
+17
+
+
+6 Admissible inference for point nulls via martingales
+We begin our examination of admissibility via the lens of testing (p-processes, e-processes, and sequential tests) and leave the results on estimation (confidence sequences) for Subsection 7.4.
+Theorem 18 (Necessary and sufficient conditions for pointwise admissibility). Consider a point null Q = {Q}. The following statements describe necessary and sufficient conditions for pointwise admissibility.
+(1) If (pt) is admissible, then it is a closed Q-MM with F (inft∈N0 pt) = inft∈N0 pt, where F is the
+distribution function of inft∈N0 pt. In the other direction, if (pt) is a closed Q-MM and inft∈N0 pt is
+Q-uniformly distributed, then it is admissible.
+(2) (et) is admissible if and only if it is a Q-NM with EQ[e0] = 1.
+(3) (ψt) is an admissible (Q, α)-sequential test if and only if ψt := 1sups≤t Ms≥1/α, where (Mt) is a
+Q-NM with no overshoot at 1/α and M∞ ∈ {0, 1/α}.
+The theorem is proven later in this section, with one subsection per statement.
+Remark 19. Similar to max-martingales (Subsection 3.3), we could have introduced min-martingales by replacing conditional suprema by infima. With such a notion in place it would be easy to see that (ψt) is an admissible (Q, α)-sequential test if and only if (ψt) is a closed min-martingale such that supt∈N0 ψt is
+{0, 1}-valued and Q(supt∈N0 ψt = 1) = α.
+Unfortunately, a version of the first statement in Theorem 18 that is phrased as follows—‘if (pt) is admissible then pt = infs≤t 1/Ms for all t ∈ N0, where (Mt) is a Q-NM’—is incorrect. Below is a simple counterexample.
+Example 20. Let p0 = U , and p0 = p1 = p2 = p3 = . . . . Then (pt) is admissible since it cannot be improved without violating uniformity. However, since the inverse of a uniform random variable is not integrable, we cannot find a NM (Mt) that yields (pt); indeed, no nonnegative integrable random variable N0 can yield p0 = 1/N0.
+The above example demonstrates that max-martingales, not the ‘usual’ martingales, are the right mathematical construct to deal with p-processes. We remark that if we are allowed to construct continuoustime processes, then one can work with usual martingales, see Shafer et al. [22, Theorem 2]. However, we do obtain the following corollary of Theorem 18(1).
+Corollary 21. Let (Mt) be a Q–martingale with M0 > 0 and let F denote the distribution of inft∈N0 1/Mt.
+If F is atomless, then pt := F (infs≤t 1/Ms) is an admissible p-process.
+Proof. We will make use of the fact that the conditional supremum commutes with continuous nonde
+creasing functions: ∨[f (Y ) | G] = f (∨[Y | G]) for every continuous nondecreasing function f ; we will use this with f = F . Combining this with the max-martingale property of the reciprocal of the running supremum of an NM (see (9)) we get,
+pt = F
+(
+isn≤ft
+1
+Ms
+)
+=F
+(∨
+Q
+[
+inf
+s∈N0
+1
+Ms
+∣∣∣Ft
+])
+=∨
+Q
+[ F
+(
+inf
+s∈N0
+1
+Ms
+)∣∣∣Ft
+]
+=∨
+Q
+[
+inf
+s∈N0
+ps
+∣∣∣Ft
+] .
+The last equality follows because infs∈N0 ps = F (infs∈N0 1/Ms), which is uniformly distributed since F is atomless. We are now in a position to apply Theorem 18(1) to conclude that (pt) is admissible.
+Let us now provide an example of a closed Q-MM that satisfies F (inft∈N0 pt) = inft∈N0 pt in the notation of Theorem 18(1), but is not admissible.
+Example 22 (The gap between sufficient and admissible conditions in Theorem 18(1)). This example shows that simply using F (infs≤t 1/Ms) for a Q-NM (Mt) and F as in Corollary 21 does not typically yield an admissible p-process. It also provides an example for the gap between the sufficient and admissible
+18
+
+
+conditions in Theorem 18(1). Define the martingale (Mt) by Mt := 1 + 1U≤1/2 for all t ∈ N0. Then
+F (infs≤t 1/Ms) = infs≤t 1/Ms is an inadmissible p-process. (It is, however, a p-process despite EQ[M0] > 1.) To see this, define a p-process (pt) by pt = U for all t ∈ N0. Then (pt) strictly dominates infs≤t 1/Ms because
+U≤1
+2 1U≤1/2 + 1U>1/2 = isn≤ft
+1
+Ms
+.
+6.1 Necessary and sufficient conditions for p-processes (proof)
+Proof of Theorem 18(1). We start with the necessary conditions for pointwise admissibility of a p-process. To this end, let (pt) be a Q-admissible p-process, which must necessarily be nonincreasing by Remark 16. First define
+ ̄p := inf
+t∈N0
+pt = tli→m∞ pt,
+and let F be the distribution function of  ̄p. Since (pt) is valid,  ̄p is stochastically larger than uniform and so F (x) ≤ x for all x ∈ [0, 1]. For later use, let us observe that F is right-continuous, hence
+tli→m∞ F (pt) = F ( ̄p). (19)
+We now define
+p′
+t := ∨
+Q [ F ( ̄p)| Ft] .
+Since F is a nondecreasing function, we have F ( ̄p) ≤ F (pt) for all t ∈ N0. By definition of conditional
+supremum, p′
+t is the smallest Ft-measurable random variable with this property; therefore, p′
+t ≤ F (pt)
+for all t ∈ N0. Since we also have F (x) ≤ x for all x ∈ [0, 1] we get p′
+t ≤ pt for all t ∈ N0. But (pt) is
+admissible by assumption, so we must in fact have the equality p′
+t = pt for all t ∈ N0.
+We have now argued F ( ̄p) ≤ p′
+t = pt ≤ F (pt). Taking now limits in t and recalling (19), we get
+F ( ̄p) ≤  ̄p ≤ limt→∞ F (pt) = F ( ̄p), thus allowing us to conclude that F ( ̄p) =  ̄p and that (pt) is closed. This yields the necessary conditions of the theorem. Let us now discuss the sufficient conditions for pointwise admissibility of a p-process. To this end, let (pt) be a closed MM such that inft∈N0 pt is uniformly distributed. It is then clear that (pt) is valid.
+Consider now an arbitrary p-process (p′
+t) with p′
+t ≤ pt for all t ∈ N0. We must argue that we have equality.
+We clearly have inft∈N0 p′
+t ≤ inft∈N0 pt. The validity of (p′
+t) implies moreover that inft∈N0 p′
+t stochastically
+dominates a uniform. This now directly yields that we have indeed inft∈N0 p′
+t = inft∈N0 pt =:  ̄p, which is
+uniform. By definition of max-martingales, pt is the smallest Ft-measurable upper bound on  ̄p; since p′
+t
+is another such bound, we must have p′
+t ≥ pt for all t ∈ N0. This proves that (pt) is admissible.
+6.2 Necessary and sufficient conditions for e-processes (proof)
+Proof of Theorem 18(2). Again, let us start with the necessary conditions for pointwise admissibility of an e-process. To this end, let us fix an admissible (et). Thanks to the implication (vi) ⇒ (vi) of Lemma 6, there is a Q-NM (Mt) that dominates (et). Since (et) was assumed admissible we get et = Mt for all t ∈ N0. Moreover, we can assume that EQ[M0] = 1, else we can replace (Mt) by (Mt + 1 − EQ[M0]), which is again an e-process (because it remains a nonnegative martingale, now with initial value one, and the optional stopping theorem applies). Let us now discuss the sufficient conditions for pointwise admissibility of a NM (et) with EQ[e0] = 1. First of all, the optional stopping theorem yields that (et) is an e-process. Consider now some e-process
+(e′
+t) for Q with e′
+t ≥ et. Since 1 = EQ[et] ≤ EQ[e′
+t] ≤ 1, we then have et = e′
+t for each t ∈ N0, yielding the admissibility of (et), hence the assertion.
+6.3 Necessary and sufficient conditions for sequential tests (proof)
+Proof of Theorem 18(3). Let us start with the necessary conditions for pointwise admissibility of a sequential test. Recall that by assumption, (ψt) satisfies
+α ̄ := Q(∃t ∈ N0 : ψt = 1) ≤ α.
+19
+
+
+Define now
+ψ′
+t := 1U≤α−α ̄ + ψt1U>α−α ̄ , t ∈ N0.
+Note that ψ′
+t ≥ ψt for all t ∈ N0 and (ψ′
+t) is again a sequential test. If α ̄ < α then indeed (ψ′
+t) strictly dominates (ψt), in contradiction to the admissibilty of (ψt). Hence we may assume that α ̄ = α. Define now the Doob-Lévy martingale (Mt) by
+Mt := Q(∃s ∈ N0 : ψs = 1 | Ft)
+Q(∃s ∈ N0 : ψs = 1) = Q(∃s ∈ N0 : ψs = 1 | Ft)
+α.
+Note that EQ[M0] = 1 and if there exists a time τ at which ψτ = 1, then Mt = 1/α for any t ≥ τ . So, M∞ ∈ {0, 1/α}. Define next ψ ̃t := 1Mt≥1/α. By Ville’s inequality, (ψ ̃t) is a sequential test that dominates
+(ψt). Since the latter was assumed admissible, we have established ψt = ψ ̃t for all t ∈ N0. Consider now a NM (Mt) with no overshoot at 1/α and M∞ ∈ {0, 1/α} and define ψt := 1sups≤t Ms≥1/α.
+By Ville’s inequality, (ψt) is a sequential test. Consider next some sequential test (ψ′
+t) with ψ′
+t ≥ ψt and
+fix some t∗ ∈ N0. Since EQ[ψ∞] = α we know that ψ′
+t∗ = 1 only on the event {ψ∞ = 1} = {τ < ∞},
+where τ := inf{t ∈ N0 : Mt ≥ 1/α}. Hence, ψ′
+t∗ = 1 implies that Mt ≥ 1/α; otherwise the martingale property of (Mt) would be contradicted. Thus (ψt) is indeed Q-admissible, concluding the proof of the statement.
+7 Reducing admissible composite inference to the pointwise case
+To build intuition towards composite admissibility, we begin with a question on validity: is there a systematic way to construct tools for valid (potentially inadmissible) inference in composite settings?
+7.1 Necessary and sufficient conditions for valid (composite) inference
+The following observations are straightforward and arguably well-known in some form or another, but are nevertheless useful to spell out formally in order to lay the path for the admissibility results.
+Proposition 23 (Pointwise-to-composite validity). The following statements lay out necessary and sufficient conditions that connect validity in pointwise and composite settings.
+(1) (pt) is a Q-p-process if and only if pt ≥ pQ
+t , Q-a.s., for all t and Q ∈ Q, where (pQ
+t ) is some p-process
+for Q.
+(2) (et) is a Q-e-process if and only if et ≤ eQ
+t , Q-a.s., for all t and Q ∈ Q, where (eQ
+t ) is some e-process
+for Q.
+(3) (ψt) is a (Q, α)-ST if and only if ψt ≤ ψQ
+t , Q-a.s., for all t and Q ∈ Q, where (ψQ
+t ) is some (Q, α)-ST.
+Proof. We only prove (1), the other two assertions are argued analogously. Suppose we are given that (pt) is a Q-p-process. Then, by definition, pt is a Q-p-process for every Q ∈ Q; so choosing (pQ
+t ) := (pt) itself, we have proved the ‘only if’ direction. For the other direction, suppose for every Q ∈ Q we are given a p-process (pQ
+t ) for Q, and that (pt) satisfies pt ≥ pQ
+t , Q-almost surely, for all t. Let Q∗ ∈ Q be some
+true (arbitrary) data-generating distribution. We must argue that (pt) is a Q∗-p-process. Indeed, for any α ∈ [0, 1], we have
+Q∗(∃t ∈ N : pt ≤ α) ≤ Q∗ (
+∃t ∈ N : pQ∗
+t ≤α
+)
+≤ α,
+where the first inequality follows because pt ≥ pQ∗
+t , and the second inequality follows because (pQ∗
+t ) is a
+Q∗-p-process by assumption. This concludes the proof.
+20
+
+
+The proposition provides a generic reduction from the composite setting to the pointwise setting for performing valid inference, but we can deduce a similar result for admissible inference, presented later. While Proposition 23 forms a useful building block, it makes no mention of martingales. The notions of essential supremum and essential infimum used below are reviewed in Appendix A.2. Note that we will need the additional restriction that Q is locally dominated in order for these essential extrema to be well defined.
+Corollary 24 (Pointwise supermartingales are sufficient for composite validity). Let Q be locally dominated. Then the following statements demonstrate how supermartingales suffice for valid sequential inference.
+(1) If pt = ess supQ∈Q 1 ∧ infs≤t 1/N Q
+s , where (N Q
+t ) is upper bounded by a Q-NSM, then (pt) is a Q-p
+process.
+(2) If et = ess infQ∈Q N Q
+t , where (N Q
+t ) is upper bounded by a Q-NSM, then (et) is Q-e-process.
+(3) If ψt = ess infQ∈Q sups≤t 1NQ
+s≥1/α, where (N Q
+t ) is upper bounded by a Q-NSM, then (ψt) is a (Q, α)
+ST.
+Above, all Q-NSMs have initial expected value at most one, and (N Q
+t ) is assumed nonnegative.
+This corollary follows from Proposition 23 and so its proof is omitted; see also Remark 16.
+7.2 Necessary conditions for admissible composite inference
+Not all constructions using martingales are admissible: we provide an analog to Proposition 23 for admissibility.
+Proposition 25 (Admissible composite tests must aggregate admissible pointwise tests). Let Q be locally dominated. The following statements show how composite admissible instruments must aggregate (some) pointwise admissible instruments.
+(1) If (pt) is Q-admissible, then pt = ess supQ∈Q pQ
+t for all t, where (pQ
+t ) is Q-admissible.
+(2) If (et) is Q-admissible, then et = ess infQ∈Q eQ
+t for all t, where (eQ
+t ) is Q-admissible.
+(3) If (ψt) is Q-admissible, then ψt = ess infQ∈Q ψQ
+t for all t, where (ψQ
+t ) is Q-admissible.
+Proof. Let (pt) denote a Q-admissible p-process. For each Q ∈ Q, let (pQ
+t ) be a Q-admissible p-process
+that dominates (pt). Such (pQ
+t ) exists thanks to Proposition 9. Let us now define p′
+t := ess supQ∈Q p ̃Q
+t,
+which is a Q-p-process thanks to Proposition 23(1). Clearly, we have p′
+t ≥ pt for all t ∈ N0. Since (pt) is
+Q-admissible, we indeed have p′
+t = pt for all t ∈ N0, yielding the assertion for p-processes. The assertions for e-processes and sequential tests are shown in the same manner.
+The following corollary describes the restrictions that every admissible construction necessarily satisfies.
+Corollary 26 (Pointwise martingales are necessary for composite admissibility). Let Q be locally dominated. Then the following statements demonstrate how martingales underpin all admissible constructions.
+(1) If (pt) is Q-admissible, then (pt) is nonincreasing and pt = ess supQ∈Q pQ
+t for all t, where (pQ
+t ) is a
+closed Q-MM.
+(2) If (et) is Q-admissible, then et = ess infQ∈Q M Q
+t for all t, where (M Q
+t ) is a Q-NM with EQ[M Q
+0 ] = 1.
+(3) If (ψt) is Q-admissible, then ψt = ess infQ∈Q sups≤t 1MQ
+s≥1/α, where (M Q
+t ) is a Q-NM with EQ[M Q
+0] =
+1, M Q
+∞ ∈ {0, 1/α} and (M Q
+t ) has no overshoot at level 1/α.
+The above statements are a direct consequence of Proposition 25 and Theorem 18.
+21
+
+
+7.3 Sufficient conditions for admissible (composite) inference
+The next proposition argues that it suffices to consider only a subset of Q when constructing Q-admissible p-processes, e-processes, or sequential tests. Note that we do not require Q to be locally dominated below.
+Proposition 27 (Pointwise-to-composite admissibility). Assume there exists a ‘reference family’ (Qi)i∈I ⊂ Q such that for each t and A ∈ Ft,
+if there exists Q ∈ Q with Q(A) > 0, then there exists i ∈ I with Qi(A) > 0.
+Then we have the following.
+(1) If (pt) is a Q-p-process and (pt) is Qi-admissible for each i ∈ I, then (pt) is Q-admissible.
+(2) If (et) is a Q-e-process and (et) is Qi-admissible for each i ∈ I, then (et) is Q-admissible.
+(3) If (ψt) is a (Q, α)-ST and (ψt) is Qi-admissible for each i ∈ I, then (ψt) is Q-admissible.
+Proof. Let us only argue here the case of e-processes. The other cases follow in exactly the same manner. Assume that there exists an e-process (e′
+t) for Q such that Q(e′
+t ≥ et) = 1 for all t ∈ N0 and all Q ∈ Q,
+and that Q∗(e′
+t > et) > 0 for some t ∈ N0, and some Q∗ ∈ Q. By assumption, there exists some i ∈ I such
+that Qi(e′
+t > et) > 0. Since (et) is assumed to be Qi-admissible, we get a contradiction.
+Of course, two special cases are found at the extremes: when the reference family is a singleton, it means there is a common reference measure R, and when the reference family is Q itself, the proposition is vacuous. The proposition is particularly useful in the first case; then to get an admissible e-process, for example, it suffices to construct a Q-NSM (Mt) that is also a Q∗-NM, thanks to Proposition 27(2) and Theorem 18(2). The following example demonstrates one such setting.
+Example 28. Recalling notation from Section 5.1, let μm ∈ Gm denote the measure under which (Xt)
+is i.i.d. Gaussian with unit variance and mean m, and consider Q := {μm : m ≤ 0}. Then Gt :=
+exp(∑
+s≤t Xs − t/2) is not a Q-NM—it is a μ0-NM when Xt is standard Gaussian, but is a μm-NSM for m < 0. Nevertheless, (Gt) is a Q-admissible e-process. The reason is that (Gt), being a μ0-NM, is immediately μ0-admissible, and the singleton reference family {μ0} satisfies the local absolute continuity condition required to invoke Proposition 27(2).
+Corollary 29 (Composite martingales are sufficient for composite admissibility). Consider a general composite family Q.
+(1) (pt) is Q-admissible if it is a closed Q-MM and inft∈N pt is Q-uniformly distributed for every Q ∈ Q.
+(2) (et) is Q-admissible if it is a Q-NM with EQ[e0] = 1 for all Q ∈ Q.
+(3) (ψt) is Q-admissible if ψt = sups≤t 1Ms≥1/α, where (Mt) is a Q-NM with M0 = 1, M∞ ∈ {0, 1/α},
+Q-almost-surely, for every Q ∈ Q, and no overshoot at 1/α.
+This corollary is again a direct consequence of Proposition 27 and Theorem 18. Recall that as in Corollary 21, a sufficient condition for (pt) to be a closed Q-MM and inft∈N0 pt be Q-uniformly distributed, for some fixed Q ∈ Q, is that the p-process has the representation pt = F Q(infs≤t 1/M Q
+s ), where (M Q
+t ) is
+a Q-NM and infs∈N0 1/Ms has an atomless distribution function F Q under Q. As an immediate consequence of Corollary 29(2), recall the Gaussian example in Section 5.1, and consider testing if the underlying mean is zero. Since (G0
+t ) is a G0-NM, it is also a G0-e-process, and
+hence a G0-admissible e-process when testing against, for example, P = ⋃
+m∈R Gm.
+22
+
+
+7.4 Necessary and sufficient conditions for confidence sequences
+Proposition 13 shows that we can construct a confidence sequence by inverting a family of sequential tests. We now show that their admissibility is also tightly linked to those of the underlying tests.
+Theorem 30. Recall that Pγ := {P ∈ P : φ(P) = γ}. If (ψγ
+t ) is an admissible (Pγ, α)-sequential test
+for each γ ∈ Z then {γ ∈ Z : ψγ
+t = 0} is an admissible (φ, P, α)-confidence sequence. Similarly, if (Ct)
+is an admissible (φ, P, α)-confidence sequence, then ψγ
+t := 1γ∈/Ct yields an admissible (Pγ, α)-sequential
+test for each γ ∈ Z, so that Ct = ⋃
+γ∈Z{γ ∈ Z : ψγ
+t = 0}. As a result, we can infer the following.
+(1) (Validity) If the process (N P
+t ) is upper bounded by a P-NSM with initial expected value one, then
+Ct := ⋃
+P∈P {φ(P) : sups≤t N P
+s < 1/α}, is a (φ, P, α)-CS.
+(2) (Admissibility) If (M γ
+t ) is a Pγ-NM with M γ
+0 = 1, M γ
+∞ ∈ {0, 1/α}, P-almost surely, for every
+P ∈ Pγ, and has no overshoot at 1/α, then Ct := {γ ∈ Z : sups≤t M γ
+s < 1/α = 0} is P-admissible.
+Assume now that Pγ is locally dominated for each γ, and that (Ct) is P-admissible. Then, for all t ∈ N0,
+we must be able to represent Ct = ⋃
+P∈P {φ(P) : ψP
+t = 0} where (ψP
+t ) is P-admissible. Moreover, we can
+write
+Ct =
+⋃
+P∈P
+{
+φ(P) : sup
+s≤t
+MP
+s<1
+α
+} ,
+where (M P
+t ) is a P-NM that has no overshoot at level 1/α, with M P
+0 = 1 and M P
+∞ ∈ {0, 1/α}.
+Proof. For the first statement of the theorem, note that Ct = {γ ∈ Z : ψγ
+t = 0} yields a (φ, P, α)
+confidence sequence by Proposition 13. Suppose for contradiction that (C′
+t) is another (φ, P, α)-confidence sequence that witnesses the inadmissibility of (Ct). Proposition 11(3) then yields a corresponding family
+{(ηγ
+t )}γ∈Z of sequential tests. The inadmissibility of (Ct) then yields some γ ∈ Z such that (ηγ
+t ) strictly
+dominates (ψγ
+t ), a contradiction to the assumption that (ψγ
+t ) is admissible. The second statement follows in exactly the same way, again by an application of Propositions 13 and 11(3). Statements (1) and (2) are direct corollaries of combining the first part of the theorem with Corollary 24(3) and Corollary 29(3). Assume now that Pγ is locally dominated, for each γ, and that (Ct) is P-admissible. The statement then follows from Proposition 25(3) and Corollary 26(3).
+This and the previous section argued in detail that restricting our attention to constructions based on NMs (not NSMs!) does not hurt us: these are universal constructions. Indeed, if one is presented with a p-process, e-process, sequential test, or confidence sequence constructed in some arbitrary fashion, we show that one can always uncover a ‘hidden’ underlying NM, such that applying Ville’s inequality or the optional stopping theorem yields an instrument that is at least as good as the original one.
+8 A deeper investigation of admissibility
+8.1 The gap between necessary and sufficient conditions (composite)
+Recall that we were able to crisply summarize the necessary conditions for admissibility using martingales in Corollary 26 and sufficient conditions in Corollary 29. The following discussion probes at the gap between necessary and sufficient conditions for composite admissibility, in order to demonstrate that the gap is real. We begin with two instructive examples that demonstrate that the necessary conditions of Corollary 26 are not actually sufficient for admissibility.
+Example 31 (Necessary conditions for Corollary 26(1) are not sufficient). Assume that Q is the set of probability measures under which X1 is Bernoulli and X2 = X3 = . . . = 0. Consider now
+p1 := 1X1=0U + 1X1=1
+√
+U
+23
+
+
+and p2 = p3 = . . . = p1. Note that p1 ≥ U by construction and hence is valid. Then (pt) is a p-process and satisfies Corollary 26(1) and Proposition 25(1). Here
+pQ
+1 = pQ
+2 = pQ
+3 = . . . = FQ(p1) = (1 − q)p1 + qp2
+1,
+where q := Q(X1 = 1) ∈ [0, 1], for each Q ∈ Q and FQ is the Q-distribution function of p1. Now observe that by definition pQ
+1 is Q-uniform and considering small q’s it is easy to see that p1 = ess supQ∈Q pQ
+1.
+However, (pt) is indeed inadmissible as it is dominated by (p′
+t) where p′
+t = U for all t ∈ N0.
+Example 32 (Necessary conditions for Corollary 26(2) are not sufficient). For example, assume that Q consists of two measures Q1 and Q2. Under both Q1 and Q2, assume the distribution of X1 is standard Gaussian. Furthermore, under Q1 the sequence (X2, X3, . . .) is uniform, while under Q2 the sequence is
+standard Gaussian. Define now two Q-martingales (M Q1
+t ) and (M Q2
+t ) by
+M Q1
+0 = 1 = M Q2
+0 ; M Q1
+t = exp
+(
+X1 − 1
+2
+)
+and M Q2
+t = exp
+(
+−X1 − 1
+2
+)
+, t ≥ 1. (20)
+Then the e-process (Et) given by the minimum of (M Q1
+t ) and (M Q2
+t ) is clearly not admissible as it is
+strictly bounded from above by the constant process equal to one.
+8.2 Composite Ville-like anti-concentration bounds
+Next, we discuss anti-concentration results, which are somewhat surprisingly insufficient for admissibility. Since Ville’s inequality has been often used in this paper to demonstrate validity, one would hope that if Ville’s inequality is ‘essentially’ tight (it holds with ‘almost’ equality) then the corresponding inferential instruments may be close to admissible. We examine this angle next. Below, we derive an anti-concentration (lower) bound to complement the upper bound of Ville’s inequality.
+Lemma 33 (Anti-concentration for pointwise NMs). Let (Mt) be a Q–NM with EQ[M0] = 1, so that the ‘multiplicative increment’ Yt := Mt/Mt−1 (with 0/0 := 1) has unit mean. Assume that the aggregate empirical variance of (Yt) is Q-almost surely infinite, i.e.,
+Q
+(∑
+t∈N
+(Yt − 1)2 = ∞
+)
+= 1. (21)
+Then M∞ = 0, Q-almost surely. Fix now some ε > 0. Assume that for each t ∈ N0 the multiplicative increment Yt with Y0 := M0 satisfies a tail condition, namely for each Ft−1-measurable random variable β > 1 we have
+EQ [Yt |Ft−1, Yt ≥ β ] ≤ β(1 + ε). (22)
+Here F−1 is the trivial sigma-field by convention. Then, for any α ∈ (0, 1] we have
+α≥Q
+(
+sup
+t∈N0
+Mt ≥ 1
+α
+)
+≥α
+1 + ε.
+The proof is in Appendix B. We observe that (22) is satisfied, for example, when Q(Yt ≤ 1 + ε) = 1 for all t ∈ N0. We note that (21) is easily satisfied when P is a product measure and thus (Yt) is a sequence of i.i.d. random variables, as long as Q(Yt 6= 1) > 0. We can now extend the above pointwise result to the composite setting, and once more this result is of independent interest.
+Corollary 34 (Anti-concentration for bounded composite NMs). Consider a family Q of probability measures and a Q-NM (Mt) with M0 = 1. Define Yt := Mt/Mt−1 (with 0/0 := 1) and assume that for each ε > 0 there exists some Q ∈ Q such that conditions (21) and (22) hold for each t ∈ N and Ft−1-measurable random variable β > 1. Then
+sup
+Q∈Q
+Q
+(
+sup
+t∈N0
+Mt ≥ 1
+α
+)
+= α, for any α ∈ (0, 1].
+24
+
+
+In words, the above result establishes rather simple and interpretable sufficient conditions under which pt := infs≤t 1/Ms uses up all its type-I error budget, meaning that at least in a worst-case sense, Ville’s inequality did not lead to a conservative test. Unfortunately, Example 50 shows, in the context of conditionally symmetric distributions (see Section 10), that even under the assumptions of the previous corollary, such (pt) does not need to be admissible. This further demonstrates the subtleties of establishing sufficient conditions for admissibility. Nevertheless, Corollary 34 is of independent interest; but the fairly intuitive condition it yields does usually not suffice for admissibility.
+8.3 The role of initial randomization in determining admissibility
+Throughout this subsection, let us consider Q = {Q}. The admissibility of p-processes is subtle and randomization appears to play a key role in enabling admissible constructions. The key difficulty is in dealing with atomic limiting distributions, and we delve more into this topic here with several examples. In Corollary 21, infs∈N0 1/Ms is assumed to have an atomless distribution function F . Initial randomization turns out to be necessary for this to hold. To formalize this claim, consider a martingale (Mt). We now argue the following fact:
+If M0 = 1, Q-almost surely, then sup
+t∈N0
+Mt has an atom at one under Q.
+The proof is simple, so we present it immediately. Define Yt := Mt/Mt−1 with 0/0 := 1 Without loss of generality, we may assume that Q(Y1 6= 1) > 0. Since EQ[Y1] = 1, there exists some η > 0 such that Q(Y1 ≤ 1 − η) > η. On the event {Y1 ≤ 1 − η}, the conditional version of Ville’s inequality (8) yields that Q(supt∈N Mt ≥ 1|F1) ≤ M1 ≤ 1 − η. Hence on this event we have Q(supt∈N Mt < 1|F1) ≥ η, yielding the
+unconditional bound Q(supt∈N Mt < 1) ≥ η2. This then gives Q(supt∈N0 Mt = 1) ≥ η2. Hence supt∈N0 Mt
+has an atom at one, and so does the induced p-process, completing the proof of the aforementioned fact. In contrast, if we consider the martingale (M ′
+t) with randomized initial value M ′
+t := Mt + εU , where ε > 0, and recall that U is the (independent) F0-measurable [0, 1]-uniformly distributed random variable,
+then supt∈N0 M ′
+t = supt∈N0 Mt + εU has a density since it is the convolution of supt∈N0 Mt with a random
+variable that has a density. Let us consider for the moment a p-process constructed as pt := F (infs≤t 1/Ms), where (Mt) is a Q-martingale with M0 = 1 and F is the distribution function of infs∈N0 1/Ms. (Note that such a p
+process always dominates (infs≤t 1/Ms).) Then (pt) is always inadmissible. To see this, define p∞ := inft∈N0 pt and δ := Q(p∞ = 1) > 0, where the inequality follows from the fact argued above. Moreover, define the conditional distribution function G by [0, 1] ∋ u 7→ Q(U ≤ u|p∞ = 1). Let us then define
+p′
+t := pt ∧ (1 − δ + δG(U )). Then clearly (p′
+t) strictly dominates (pt). Moreover, (p′
+t) is a p-process since
+p′
+∞ := inft∈N0 p′
+t = p∞ ∧ (1 − δ + δG(U )) stochastically dominates a uniform. Indeed, for α ∈ (0, 1 − δ)
+we have Q(p′
+∞ ≤ α) = Q(p∞ ≤ α) ≤ α and for α ∈ [1 − δ, 1] we get
+Q(p′
+∞ ≤ α) = Q(p∞ ≤ 1 − δ) + Q(p∞ = 1, 1 − δ + δG(U ) ≤ α) = 1 − δ + δQ(δG(U ) ≤ α − (1 − δ) | p∞ = 1)
+= 1 − δ + δ α − (1 − δ)
+δ = α,
+where we used that G(U ) is uniformly distributed under the conditional measure Q(·|p∞ = 1). We note above that atoms at one are ‘obviously’ undesirable for p-processes. Quite surprisingly, there do exist admissible anytime p-processes with atomic limiting distributions (where the atoms are not at one); see Example 49. In that example, we have Q(inft∈N0 p∞ < 1/2) = 0, and (pt) is independent of the
+randomization device U ; nevertheless it is impossible to ‘randomize’ the atom. To end the discussion about atoms in the context of p-processes, we remark that atomic limiting distributions occur more often in discrete time than in continuous time. For example, if (Bt)t∈[0,∞) is a standard Brownian motion, then (exp(Bt − t/2))t∈[0,∞) is a martingale, and inft≥0 1/ exp(Bt − t/2) is
+25
+
+
+exactly [0, 1]-uniformly distributed. However, the corresponding standard Gaussian NM from (11) has that inft∈N0 1/G0
+t is atomic when (Xt) under Q follow the law of i.i.d. standard Gaussians. In sharp contrast, initial randomization causes sequential tests based on e-processes to become inadmissible. Indeed, if the jumps of (et) are continuous with positive probability then the corresponding sequential test is not admissible for any α ∈ (0, 1) due to overshoot. Only e-processes that have atomic jumps can possibly lead to admissible tests; however, any such e-value cannot lead to an admissible test for every α (it will overshoot for some and not for others). Example 43 in the next section derives an admissible sequential test for (composite) symmetric distributions.
+9 SubGaussian admissibility
+For a nontrivial example of an admissible e-process, consider the family Q ≡ G↓
+0 of centered conditionally
+1-subGaussian laws (the proofs for subGaussian constant σ 6= 1 follow analogously). Recalling Section 5.2, Q consists of those laws Q such that the conditional moment generating function of Xt satisfies
+EQ[eλXt |Ft−1] ≤ eλ2/2 for all t ∈ N and all λ ∈ R. This is an important null hypothesis, studied by Darling and Robbins [4], Robbins [19], Howard et al. [11]. Consider now the process (et) given by
+et = e
+∑t
+i=1 Xi−t/2, t ∈ N0. (23)
+Then (et) is a Q-NSM as discussed in Section 5.2, and thus a Q-e-process. (The arguments in this section can be easily adapted to hold for the process N in (16), so we just consider λ = 1 and subGaussian constant σ = 1 for simplicity of exposition.)
+Theorem 35. The e-process (23) is admissible for Q.
+The main difficulty in proving the above theorem is handling both continuous and discrete distributions. Indeed, consider first the following (simpler) proposition about Q∼ ⊂ Q, the set of all distributions within the 1-subGaussian null hypothesis that have Lebesgue densities up to any finite time, and Q× ⊂ Q∼, the subclass of i.i.d. 1-subGaussian distributions with Lebesgue densities.
+Proposition 36. The e-process (23) is admissible for Q∼ and Q×.
+The proof of the above proposition is simple and works as follows. Note that (23) is a Q0-NM, where (as in the following proof) Q0 is the product measure of i.i.d. standard Gaussians. Thus it is immediately Q0-admissible, and the singleton reference family {Q0} satisfies the local absolute continuity condition
+required to invoke Proposition 27(2) for both Q× and Q∼. However, Proposition 36 (or an amendment of its short proof) does not imply Theorem 35 because Q contains many laws that are singular with respect to Q0 on each Ft, and so we cannot use Proposition 27(2) to deduce Q-admissibility. In fact, Q contains uncountably many mutually singular laws. Despite the fact that (23) is admissible for Q and Q×, the example below demonstrates that it is not admissible for a nested set in between them. This further demonstrates the subtlety in proving subGaussian admissibility, created by the uncountably many mutually singular laws.
+Example 37. Let M contain all 1-subGaussian distributions with a Lebesgue density, along with one discrete 1-subGaussian distribution: a symmetric Rademacher distribution (that places equal mass at ±1), and let P = {μ∞ : μ ∈ M} so that Q ⊃ P ⊃ Q×. Clearly, (et) from (23) is still a P-NSM, and
+Theorem 35 and Proposition 36 claimed it was admissible for Q× and Q. However, (et) is inadmissible for P! Indeed, define e ̃t := e
+∑t
+i=1 Xi−t log cosh 1, and e′
+t = et + 1{|X1|=1}(e ̃t − et), or more explicitly
+e′
+t=
+{
+ ̃et if |X1| = 1
+et otherwise .
+Note that eX−ln cosh 1 has mean equal to 1 under the Rademacher distribution, so (e ̃t) is a nonnegative martingale under the i.i.d. Rademacher distribution (but not under any other distribution in P), and
+26
+
+
+since ln cosh 1 < 1/2, we have  ̃et > et for all t. Since the event {|X1| = 1} has Lebesgue measure zero,
+(e′
+t) is a P-NSM. Further, e′
+t ≥ et by definition, and e′
+t > et for all t with positive probability under the
+Rademacher distribution. This makes et from (23) inadmissible for P. It is worth noting that this example does not contradict Proposition 8. Indeed, this proposition is not applicable here because P has fewer polar sets than Q×. In particular, in the above example we have
+e′
+t = et up to Q×-polar sets, but not up to P-polar sets. Regarding the relation to the larger set Q, (e′
+t)
+cannot be used to witness inadmissibility of (et) with respect Q, because (e′
+t) is not even a Q-e-process.
+Before giving the proof of Theorem 35, we present the following construction of ‘almost Gaussian’ 1-subGaussian random variables with an atom. We write it as a lemma, since it may be of independent interest outside this paper.
+Lemma 38 (Perturbing a Gaussian into a subGaussian with one atom). Given a standard Gaussian X, any point x ̄ ∈ R and tolerance ε > 0, one can always construct a random variable X∗ such that:
+• There is an ε-sized interval (a, b) containing x ̄, such that E[X | X ∈ (a, b)] = x ̄.
+• Outside of (a, b) we have X∗ = X, and inside of (a, b), X∗ has an atom at x ̄ but no other mass.
+• X∗ has zero mean and is 1-subGaussian.
+Proof. Let X be a standard normal random variable. For any x ̄ ∈ R and ε > 0, we may choose a < x ̄ < b with b − a = ε such that
+E[X | X ∈ (a, b)] = x ̄.
+To see this we examine the function h(a) = E[X | X ∈ (a, a + ε)]. This function is continuous and satisfies h(x ̄ − ε) < x ̄ < h(x ̄). Thus by the intermediate value theorem we can choose a ∈ (x ̄ − ε, x ̄) such that h(a) = x ̄, and then set b = a + ε. Now, the random variable
+X ∗ = E[X | X 1{X∈/(a,b)}] =
+{
+X if X ∈/ (a, b) x ̄ otherwise
+is 1-subGaussian. Indeed, Jensen’s inequality, the tower rule, and the fact that X is standard normal give
+E[eλX∗ ] = E[eE[λX|X1{X∈/(a,b)}]] ≤ E[eλX ] = eλ2/2, λ ∈ R.
+This concludes the proof.
+The above construction plays a crucial role in the following proof of the main theorem.
+Proof of Theorem 35. Let (e′
+t) be an e-process with
+Q(e′
+t ≥ et) = 1 for all Q ∈ Q and t ∈ N0. (24)
+In order to show that (et) is admissible, we must show that the inequality in (24) is, in fact, an equality.
+Fix t ∈ N0 and assume that e′
+t does not involve any randomization. Thus e′
+t = g(X1, . . . , Xt) for some
+measurable function g. We also have et = f (X1) · · · f (Xt) where f (x) = ex−1/2. Assume for contradiction that there exist x ̄1, . . . , x ̄t ∈ R such that
+δ = g(x ̄1, . . . , x ̄t) − f (x ̄1) · · · f (x ̄t) > 0. (25)
+We will use this to construct Q∗ ∈ Q such that EQ∗ [e′
+t] > 1, which is a contradiction. To this end, let Q0 be the law under which the data (Xt) is i.i.d. standard normal. Fix ε > 0 and define
+εi = ε2t−i , i = 0, . . . , t.
+For each i = 1, . . . , t we apply the construction before the proof with X = Xi, x ̄ = x ̄i, ε = εi to obtain
+a 1-subGaussian random variable X∗
+i and an εi-sized interval (ai, bi) containing x ̄i (the atom). We also
+define the event Ai = {Xi ∈ (ai, bi)} and observe that we have Ai = {X∗
+i = x ̄i}.
+27
+
+
+We now define a law Q∗ under which the observations X1, X2, . . . behave as follows. The first observa
+tion is distributed like X∗
+1 . If the atom x ̄1 is not realized, the remaining observations are i.i.d. standard
+normal. If the atom is realized, the second observation is distributed like X∗
+2 . If the atom x ̄2 is not realized, the remaining observations are i.i.d. standard normal. Otherwise, the third observation is distributed like X∗
+3 , and so on. We continue like this until time t. After that the data is i.i.d. standard normal. At each stage the conditional distribution of the subsequent observation is 1-subGaussian, and hence Q∗ belongs to Q. Our goal is now to prove by (backward) induction that for k = 0, . . . , t we have
+EQ∗
+[
+e′
+t|
+⋂
+i≤k
+Ai
+]
+≥δΩ
+( εk ε
+) +
+∏
+i≤k
+f (x ̄i) − O(εk). (26)
+Above, we use the Knuth and Landau asymptotic notation Ω(h(ε)) ≥ ch(ε) and O(h(ε)) ≤ ch(ε) for
+some positive constant c > 0 that does not depend on ε. For k = 0 the empty product ∏
+i≤0 f (x ̄i) is
+understood to equal one. The empty intersection ⋂
+i≤0 Ai equals the full sample space, which reduces
+the conditional expectation to an unconditional expectation. For k = t it is clear that (26) holds thanks to (25) because εt/ε = 1 and
+EQ∗
+[
+e′
+t|
+⋂
+i≤t
+Ai
+]
+= EQ∗
+[
+g(X1, . . . Xt) |
+⋂
+i≤t
+Ai
+]
+= g(x ̄1, . . . , x ̄t).
+This establishes the base case. Suppose now that (26) has been proved for some k ∈ {1, . . . , t}. We will show that it holds for k − 1 as well. Using the definition of conditional expectation and the fact that e′
+t ≥ et, Q∗-almost surely, we compute
+EQ∗
+[
+e′
+t|
+⋂
+i≤k−1
+Ai
+]
+= EQ∗
+[
+e′
+t1Ak |
+⋂
+i≤k−1
+Ai
+]
++ EQ∗
+[
+e′
+t1Ac
+k|
+⋂
+i≤k−1
+Ai
+]
+≥ EQ∗
+[
+e′
+t|
+⋂
+i≤k
+Ai
+]
+Q∗(
+Ak |
+⋂
+i≤k−1
+Ai
+)
++ EQ∗
+[
+et1Ac
+k|
+⋂
+i≤k−1
+Ai
+] .
+(27)
+We develop the terms on the right-hand side. First,
+Q∗(
+Ak |
+⋂
+i≤k−1
+Ai
+)
+= Q0(Ak).
+Moreover, using that et = ∏
+i≤t f (Xi), the definition of Q∗, and that EQ0[f (Xi)] = 1 for all i, we get
+EQ∗
+[
+et 1Ac
+k|
+⋂
+i≤k−1
+Ai
+] =
+∏
+i≤k−1
+f (x ̄i) EQ∗
+[
+f (Xk)1Ac
+k
+∏
+i>k
+f (Xi) |
+⋂
+i≤k−1
+Ai
+]
+=
+∏
+i≤k−1
+f (x ̄i) EQ0
+[
+f (Xk)1Ac
+k
+∏
+i>k
+f (Xi)
+]
+=
+∏
+i≤k−1
+f (x ̄i) EQ0 [f (Xk)1Ac
+k]
+∏
+i>k
+EQ0 [f (Xi)]
+=
+∏
+i≤k−1
+f (x ̄i) (1 − EQ0 [f (Xk)1Ak ])
+=
+∏
+i≤k−1
+f (x ̄i) (1 − EQ0 [f (Xk) | Ak]Q0(Ak)) .
+Substituting these expressions into (27), using the induction assumption (26), and rearranging the result
+28
+
+
+ing terms, we get
+EQ∗
+[
+e′
+t|
+⋂
+i≤k−1
+Ai
+] ≥
+
+δ Ω
+( εk ε
+) +
+∏
+i≤k
+f (x ̄i) − O(εk)
+
+ Q0(Ak)
++
+∏
+i≤k−1
+f (x ̄i) (1 − EQ0 [f (Xk) | Ak]Q0(Ak)) (28)
+=δΩ
+( εk ε
+)
+Q0(Ak) − O(εk)Q0(Ak)
++
+∏
+i≤k−1
+f (x ̄i) −
+∏
+i≤k−1
+f (x ̄i) EQ0 [f (Xk) − f (x ̄k) | Ak]Q0(Ak). (29)
+Note that these computations are valid even when k = 1, once the meaning of empty intersections and products have been properly accounted for. Since Q0(Ak) = Q0(Xk ∈ (ak, bk)) with Xk standard normal under Q0, we have that Q0(Ak) is both O(εk) and Ω(εk). Moreover, since the derivative of f is bounded on (ak, bk), we have that EQ0[f (Xk) − f (x ̄k) | Ak] is O(εk). As a result, the right-hand side above can be written
+δΩ
+( ε2
+k
+ε
+)
+− O(ε2
+k) +
+∏
+i≤k−1
+f (x ̄i) − O(ε2
+k ).
+Thus, noting that
+ε2
+k=
+(
+ε2t−k )2
+= ε2t−k+1 = εk−1,
+we conclude that
+EQ∗
+[
+e′
+t|
+⋂
+i≤k−1
+Ai
+]
+≥δΩ
+( εk−1
+ε
+) +
+∏
+i≤k−1
+f (x ̄i) − O(εk−1).
+This shows that (26) holds with k − 1 in place of k, and it follows by induction that (26) holds for all k ∈ {0, . . . , t}.
+We now apply (26) with k = 0 to get
+EQ∗ [e′
+t] ≥ δ Ω(ε2t−1) + 1 − O(ε2t ). (30)
+Thus, thanks to (25), by choosing ε > 0 sufficiently small we can ensure that EQ∗[e′
+t] > 1. This contradicts
+validity of (e′
+t) and shows that (25) is impossible. We conclude that (et) is admissible.
+We have proved the proposition in the case where no randomization is present. If there is randomization, so that e′
+t = g(X1, . . . , Xt, U ) involves the uniformly distributed independent randomization device
+U , the contradiction assumption (25) is replaced by the following: there exist x ̄1, . . . , x ̄t ∈ R, δ′ > 0, and a subset I ⊂ [0, 1] of positive Lebesgue measure such that
+g(x ̄1, . . . , x ̄t, u) ≥ δ′ + f (x ̄1) · · · f (x ̄t) for all u ∈ I.
+Constructing Q∗ as above (with the additional property that U is uniformly distributed and independent of the data) we obtain by the same arguments that
+EQ∗ [e′
+t] = EQ∗ [e′
+t1I (U )] + EQ∗ [e′
+t1Ic (U )] ≥
+(
+δ′ Ω(ε2t−1) + 1 − O(ε2t )
+)
+|I| + EQ∗ [et](1 − |I|),
+where |I| = Q∗(U ∈ I) > 0 denotes the Lebesgue measure of I. We reach the desired contradiction if the right-hand side is strictly greater than one. This will be the case for ε small enough, provided that
+EQ∗ [et] = 1 − O(ε2t ).
+But this again follows from the same argument without randomization presented earlier, applied with e′
+t replaced by et; indeed, this yields (30) with the left-hand side replaced by EQ∗[et] and δ = 0 on the right-hand side. This completes the proof in the presence of randomization.
+29
+
+
+Invoking Proposition 8, we note that admissibility for G↓
+0 implies admissibility for G↓
+− and G↓
+∼ as well. Despite the substantial progress made above, it remains unclear to us whether (23) is admissible for the class of all nonatomic 1-subGaussian distributions, that is continuous distributions which may or may not have densities with respect to the Lebesgue measure. This class is a superset of 1-subGaussian distributions with Lebesgue densities, but a subset of all 1-subGaussian distributions — despite (23) being admissible for the subset and superset, we cannot immediately infer admissibility for the sandwiched set. To clarify, there do exist nonatomic 1-subGaussian distributions that do not have Lebesgue densities: for example, consider the symmetric distribution on [−1, 1] obtained by symmetrizing the Cantor distribution. We do conjecture that admissibility continues to hold, but a formal proof evades us at the present moment.
+10 Admissible inference for symmetric distributions
+Considering the results of this paper presented thus far, we demonstrate how they may inform practice. At a high level, this section constructs (using different NMs) admissible version of all four instruments studied in this paper for the class of conditionally symmetric distributions. We return to the example from Section 5.3 where we had presented a rather elegant, and intuitive, exponential NSM for distributions that yield conditionally symmetric observations. However, the results following the example showed that the tests or confidence sequences stemming from it are inadmissible, since all admissible constructions must use NMs. We will construct such NMs, which appear to be new to the best of our knowledge (but we would not be surprised if they have been discovered before). Recalling the notation from Section 5.3, let S := S0 be the set of laws such that Xt conditional on Ft−1 is symmetric around zero. We will demonstrate here that inference based on (S0
+t ) defined in (18) is inadmissible by explicitly constructing procedures that dominate it. We note that S is not locally dominated. Indeed, just consider P ∈ S of the form P = U × μ∞ (where U denotes the uniform measure), and note that there are uncountably many mutually singular choices for μ; take for instance μ = (δx + δ−x)/2 for x ∈ R. Here δx denotes the Dirac measure at x. Nevertheless, despite the lack of a reference measure, it is still possible to construct a family of S-NMs, and thus admissible e-values for S. Indeed, we have the following proposition.
+Proposition 39. An adapted process (Mt) with M0 bounded and nonnegative is an S-NM if and only if Yt := Mt/Mt−1 (with 0/0 := 1) is of the form Yt = ft(Xt), where (ft) is a nonnegative predictable function such that ft − 1 is odd, or equivalently, ft(x) + ft(−x) = 2 for all x ∈ R. Moreover, if M0 = 1 then (Mt) is an S-admissible e-value by Corollary 29(2).
+The proof is in Section B. A similar characterization as above also holds for any S-NSM; in the notation of Proposition 39, (Mt) is an S-NSM if and only if Yt = ft(Xt) where (ft) is a nonnegative predictable function such that
+ft(x) + ft(−x) ≤ 2, t ∈ N. (31)
+Moreover, an S-NSM (Mt) can be converted to an S-NM (M ̃t) with M ̃t = ∏
+s≤t f ̃s(Xs) by the following
+mirroring operation:
+f ̃t(x) =
+{
+ft(x), ft(x) ≥ ft(−x); 2 − ft(−x), ft(x) < ft(−x).
+Indeed, we get that f ̃t ≥ ft and that equality holds in (31) with ft replaced by f ̃t. Proposition 39 demonstrates how to construct admissible e-values for symmetry, and we give two instantiations that we have found (subjectively) elegant. Let h be an odd function and consider
+f (x) = 1 + 2
+π arctan h(x) or f (x) = 1 + sin h(x) or f (x) = 1 + tanh h(x).
+Then, (∏
+s≤t f (Xs)) is an S–NM and thus an e-process for S which is admissible by Proposition 39.
+Finally, we return to the exponential S-NSM from [5] from Section 5.3, showing that it is leads to an inadmissible e-process for S, and improving it to an admissible one by converting the NSM to an NM.
+30
+
+
+Example 40. Let P ⊃ S and recall from Section 5.3 that the process (St) := (S0
+t ) given by
+St =
+∏
+s≤t
+g(Xs), where g(x) := exp
+(
+x − x2
+2
+) ,
+is an S-NSM. Further, (St) is not a martingale unless Xt = 0 for all t ∈ N, and the corresponding S-e-process is inadmissible due to the following argument. Define
+f (x) =
+{
+g(x), x ≥ 0; 2 − g(−x), x < 0.
+Then f ≥ g with equality only if x = 0. Further, f (−x) − 1 = 1 − f (x) and finally f is nonnegative
+since g ≤ e1/2 ≈ 1.65; hence (∏
+s≤t f (Xs)) is an S-NM by Proposition 39. This also yields that the
+corresponding e-value is admissible. Even though the original S-NSM is inadmissible, we recognize the aesthetic and analytical advantage in having a simple exponential formula.
+Let us now illustrate that the p-processes corresponding to the S-NMs fully utilize the available Type-I error budget in the sense of the next proposition.
+Proposition 41. Consider a nonnegative function f , continuous and strictly monotone at zero and such
+that f − 1 is odd. Then Mt := ∏
+s≤t f (Xs) is an S-NM by Proposition 39 and we have
+sup
+Q∈S
+Q
+(
+sup
+t∈N0
+Mt ≥ 1
+α
+)
+= α, for any α ∈ (0, 1]. (32)
+Thus, defining pt := infs≤t 1/Ms, we have that (pt) is a p-process for S that satisfies
+sup
+Q∈S,τ ≥0
+Q (pτ ≤ α) = α, for any α ∈ (0, 1]. (33)
+The proof is in Section B. An analogous result to the above proposition is known for the class of subGaussian distributions [11, Proposition 4], but had only been conjectured for other nonparametric classes like S. Unfortunately, not every p-process for S constructed as (33) above is admissible; see Example 50 in Appendix C. Finally, let us construct an S-admissible p-process in the next example.
+Example 42. Define the following subset of symmetric distributions:
+S ̃ := {P ∈ S : P (Xt 6= 0 i.o.) = 1} . (34)
+Next, we define the process (pt) as p0 := 1 and
+pt := 1 −
+∑
+s≤t
+1
+2Ns 1Xs>0 = pt−1 − 1
+2Nt 1Xt>0, where Ns :=
+∑
+i≤s
+1Xi 6=0 .
+Then it can be checked that (pt) is a closed S-MM. Moreover, inft∈N0 pt is Q-uniform for each Q ∈ S ̃.
+Assume for the moment that Q ∈ S \ S ̃ can be locally dominated by some Q′ ∈ S ̃. Proposition 27(1) and Corollary 29(1) then yield that (pt) is S-admissible. Let us now fix some Q ∈ S \ S ̃ and argue that indeed it can be locally dominated by some Q′ ∈ S ̃. To do so, define the measure μ := 1/2(δ1 + δ−1) with δx denoting again the Dirac measure at x ∈ R. Moreover, let H denote the law of a Poisson random variable with expectation one. On the appropriate canonical space, consider the measure Q × μ∞ × H, and write U, (Xt), (Yt), H for the canonical random variables. To summarize, U is uniform, (Xt) is our original conditionally symmetric sequence, (Yt) is an
+independent sequence of Rademacher random variables, and H is Poisson. Define a new sequence (X′
+t)
+by X′
+t := Xt1H>t + Yt1H≤t for all t ∈ N and let Q′ denote the measure induced by U and (X′
+t). Then
+Q′ ∈ S ̃ and it can be checked that Q′ locally dominates Q. This completes the proof of our initial claim. As a final observation, observe that if we replace S by the superset of probability measures for which the conditional laws of Xt have median zero, all statements still hold.
+31
+
+
+This section has now developed admissible e-values and p-processes for testing for symmetry, and we move next to admissible sequential tests (and thus confidence sequences).
+Example 43. Consider the null H0 : P ∈ S from definition (17), and let α = 0.05 so that 1/α = 20. Consider the process (Mt) defined as follows. Let M0 = 1, and zero is an absorbing state, meaning that if Mt = 0, then the process stays at zero from then on. If Mt is nonzero, then define Mt+1 := Mt + sign(Xt)1Xt6=0. It is easy to check that (Mt) is an S-NM. Define τ as the first time Mt reaches
+20. Then, Mτ = 20 on {τ < ∞}, and also M∞ = 0, Q-almost surely, for each Q ∈ S ̃, as in (34). Invoking Proposition 27(3) and Corollary 29(3) as in the previous example yields that (1Mt≥20) is (S, 0.05)
+admissible. More generally, (1Mt≥1/α) is (S, α)-admissible whenever 1/α ∈ N.
+Of course, there is nothing special about 0.05 and 20; for any other α, the process (Mt) can be altered accordingly to yield an admissible test for that α. The above process (Mt) also delivers admissible tests for several subsets of S, for example for if we restricted to only Gaussian distributions with any variance. This is interesting because admissibility is generally not subset-proof or superset-proof, but above we have a single process (Mt) that yields admissible e-values and sequential tests for a variety of subsets of S.
+Continuing from Example 43 and using Theorem 30, we can construct an admissible level α test for any (Sm)m∈R, so the above construction yields an admissible confidence sequence for the center of symmetry. Thus, we have accomplished our goal of constructing admissible versions of all four instruments for sequential inference, for a composite nonparametric class of distributions.
+11 Summary
+The central contribution of this work is to identify the central role of nonnegative martingales in anytimevalid sequential inference. As a by-product, we have added several modern mathematical techniques to the toolkit of the methodologist who wishes to design statistically efficient methods for inference at arbitrary stopping times. We end with a few comments. It is apparent to us that some of our analysis may have been simpler in continuous time. Indeed, some of the difficulty in constructing admissible sequential tests using e-values arises from the ‘overshoot’, while the difficulty in designing admissible p-processes arises because we do not observe the process ‘in between’ the fixed times and thus the running infimum is not exactly uniformly distributed in the limit. Several of these problems go away with continuous time/path martingales. However, continuous path martingales only represent large-scale approximations of most actual experimental setups, which typically involve discrete events. The accuracy of these approximations would have to be assessed, especially outside very high-frequency settings like finance, and it may not be clear how to do so. We believe that the additional effort to understand admissibility in the discrete time setup was fruitful. Following the literature, our sequential inference tools were only required to have marginal guarantees, and not conditional ones. To pick one example, we required that for each Q ∈ Q, an e-value must satisfy EQ[eτ ] ≤ 1 at arbitrary stopping times τ , but it need not satisfy EQ[et|Fs] ≤ es. This gap between conditional and marginal guarantees is paramount: it allows for the construction of e-values that are not simply Q-NMs, because in several settings of interest, one can show that the only nontrivial Q-NM is the constant process that equals one at all times, but nontrivial e-values with power to detect deviations from Q can still be constructed. We explore these connections further by using a structural notion called ‘fork-convexity’ in a separate work. Finally, the paper provides a rather general treatment of the inferential tools and problem settings. However, perhaps additional insights could be gained when P or Q have special structure, or when we pay attention to particular classes of stopping times, or restrict ourselves to a bounded horizon; these may all be promising directions to explore. Finally, while we take a step forward in relating the various concepts used for sequential inference, and present a thorough analysis of their validity and admissibility, the question of optimality is unaddressed by our work. Of course, this usually needs to be studied by
+32
+
+
+specifying appropriate alternatives, and introducing metrics by which to judge optimality (such as the GROW criterion of Grünwald et al. [9]), and so we leave such considerations for future work.
+Acknowledgments
+The authors are thankful to the organizers of the International Seminar on Selective Inference, which stimulated conversations that led to this paper. AR acknowledges NSF DMS grant 1916320.
+12 References
+[1] E. N. Barron, P. Cardaliaguet, and R. Jensen. Conditional essential suprema with applications. Appl. Math. Optim., 48:229–253, 2003. 9
+[2] Laurent Bienvenu, Glenn Shafer, and Alexander Shen. On the history of martingales in the study of randomness. Electronic Journal for History of Probability and Statistics, 5, 2009. 9
+[3] AE Brockwell. Universal residuals: A multivariate transformation. Statistics & probability letters, 77(14):1473–1478, 2007. 36
+[4] D. A. Darling and Herbert Robbins. Confidence sequences for mean, variance, and median. Proceedings of the National Academy of Sciences, 58(1):66–68, July 1967. ISSN 0027-8424, 1091-6490. 3, 5, 16, 26
+[5] Victor H. de la Peña. A General Class of Exponential Inequalities for Martingales and Ratios. The Annals of Probability, 27(1):537–564, January 1999. ISSN 0091-1798, 2168-894X. 17, 30
+[6] Rick Durrett. Probability: Theory and Examples. Cambridge University Press, 5a edition, 2017. 8
+[7] Bradley Efron. Student’s t-Test Under Symmetry Conditions. Journal of the American Statistical Association, 64(328):1278–1302, 1969. ISSN 0162-1459. 17
+[8] Hans Föllmer and Alexander Schied. Stochastic Finance, volume 27 of De Gruyter Studies in Mathematics. Walter de Gruyter & Co., Berlin, extended edition, 2004. 35
+[9] Peter Grünwald, Rianne de Heide, and Wouter M. Koolen. Safe testing. arXiv:1906.07801, 2019. 4, 11, 33
+[10] Steven R. Howard, Aaditya Ramdas, Jon McAuliffe, and Jasjeet Sekhon. Time-uniform Chernoff bounds via nonnegative supermartingales. Probability Surveys, 17:257–317, 2020. 4, 6, 11, 17
+[11] Steven R. Howard, Aaditya Ramdas, Jon McAuliffe, and Jasjeet Sekhon. Time-uniform, nonparametric, nonasymptotic confidence sequences. The Annals of Statistics, 2021. 3, 5, 26, 31
+[12] Ramesh Johari, Leo Pekelis, and David J. Walsh. Always valid inference: Bringing sequential analysis to A/B testing. arXiv preprint arXiv:1512.04922, 2015. 3
+[13] Alisa Kirichenko and Peter Grünwald. Minimax rates without the fixed sample size assumption. arXiv preprint arXiv:2006.11170, 2020. 37
+[14] Tze Leung Lai. On Confidence Sequences. The Annals of Statistics, 4(2):265–280, March 1976. ISSN 0090-5364, 2168-8966. 3
+[15] Martin Larsson. Conditional infimum and recovery of monotone processes. arXiv preprint arXiv:1802.08628, 2018. 9, 10
+[16] Martin Larsson and Johannes Ruf. Convergence of local supermartingales. Annales de l’Institut Henri Poincaré (B) Probabilités et Statistiques, 2020. 39
+33
+
+
+[17] Luigi Pace and Alessandra Salvan. Likelihood, replicability and Robbins’ confidence sequences. International Statistical Review, 2019. 3
+[18] Aaditya Ramdas, Johannes Ruf, Martin Larsson, and Wouter M. Koolen. Testing exchangeability: Fork-convexity, supermartingales and e-processes. International Journal of Approximate Reasoning, 2021. 4
+[19] Herbert Robbins. Statistical methods related to the law of the iterated logarithm. The Annals of Mathematical Statistics, 41(5):1397–1409, October 1970. ISSN 0003-4851, 2168-8990. 26
+[20] Herbert Robbins and David Siegmund. The expected sample size of some tests of power one. The Annals of Statistics, 2(3):415–436, May 1974. ISSN 0090-5364, 2168-8966. 3
+[21] Glenn Shafer. Testing by betting: a strategy for statistical and scientific communication (with discussion). Journal of the Royal Statistical Society, Series A, 2021. 4, 9
+[22] Glenn Shafer, Alexander Shen, Nikolai Vereshchagin, and Vladimir Vovk. Test martingales, Bayes factors and p-values. Statistical Science, 26(1):84–101, February 2011. ISSN 0883-4237, 2168-8745. 4, 9, 14, 18, 37
+[23] J Ville. Étude Critique de la Notion de Collectif. Gauthier-Villars, Paris, 1939. 8
+[24] Vladimir Vovk. Testing randomness online. Statistical Science, 2021. 4, 36
+[25] Vladimir Vovk and Ruodu Wang. E-values: Calibration, combination, and applications. The Annals of Statistics, 2021. 4
+[26] Abraham Wald. Sequential tests of statistical hypotheses. Annals of Mathematical Statistics, 16(2): 117–186, 1945. 8
+[27] Abraham Wald. Sequential Analysis. John Wiley & Sons, New York, 1947. 8
+[28] Larry Wasserman, Aaditya Ramdas, and Sivaraman Balakrishnan. Universal inference. Proceedings of the National Academy of Sciences, 2020. ISSN 0027-8424. 4
+34
+
+
+A Additional technical concepts and definitions
+A.1 Reference measures and local absolute continuity
+Consider a probability space with a filtration (Ft)t∈N0 . Let R be a particular probability measure on F∞;
+we think of R as a reference measure. We now explain the concept of local domination and how it allows us to unambiguously define conditional expectations.
+• P is called locally absolutely continuous with respect to R (or locally dominated by R), if Pt ≪ Rt for all t ∈ N. We write this P ≪loc R. More explicitly, this means that
+R(A) = 0 ⇒ P(A) = 0, for any A ∈ Ft and t ∈ N.
+Local absolute continuity does not imply that P ≪ R. However, it does imply that Pτ ≪ Rτ for any finite (but possibly unbounded) stopping time τ . Indeed, if A ∈ Fτ and R(A) = 0, then A ∩ {τ ≤ t} ∈ Ft for all t, and hence P(A) = limt→∞ P(A ∩ {τ ≤ t}) = 0.
+• A set P of probability measures on F∞ is called locally dominated by R if every element of P is locally dominated by R.
+• Any P ≪loc R has an associated density process, namely the R-martingale (Zt) given by Zt := dPt/dRt. Being a nonnegative martingale, once Zt reaches zero it stays there. Thus with the convention 0/0 := 1, ratios Zτ /Zt are well-defined for any t ∈ N and any finite stopping time τ ≥ t. Note that each Zt is defined up to R-nullsets, and therefore also up to P-nullsets.
+• If P ≪loc R has density process (Zt), the following ‘Bayes formula’ holds: for any t ∈ N, any finite stopping times τ , and any nonnegative Fτ -measurable random variable Y , one has
+EP[Y | Ft] = ER
+[ Zτ
+Zt
+Y
+∣∣∣∣ Ft
+]
+, P-almost surely.
+The right-hand side is uniquely defined R-almost surely (not just P-almost surely), and therefore provides a ‘canonical’ version of EP[Y | Ft]. We always use this version. This allows us to view such conditional expectations under P as being well-defined up to R-nullsets.
+One might ask why we work with local domination, rather a ‘global’ condition like P ≪ R for all P of interest. The answer is that such a condition would be far too restrictive, as we now illustrate. Let (Xt)t∈N be a sequence of random variables. For each η ∈ R, let Pη be the distribution such that the Xt
+become i.i.d. Gaussian with mean η and unit variance. By the strong law of large numbers, Pη assigns
+probability one to the event Aη := {limt→∞ t−1 ∑t
+s=1 Xs = η}. Moreover, the events Aη are mutually
+disjoint: Aη ∩ Aν = ∅ whenever η 6= ν. Therefore, by definition, the measures {Pη}η∈R are all mutually
+singular. Since there is an uncountable number of them, there cannot exist a measure R such that Pη ≪ R
+for all η ∈ R. On the other hand, if Pη
+t denotes the law of the partial sequence X1, . . . , Xt, then the
+measures {Pη}η∈R, are all mutually absolutely continuous. In particular, we could (for instance) use
+R = P0 as reference measure and obtain Pη
+t ≪loc Rt for all η ∈ R.
+A.2 Essential supremum and infimum
+We briefly review the notions of essential supremum and infimum. For more information, as well as proofs of the results below, we refer to Section A.5 in [8]. On some probability space, consider a collection {Yα}α∈A of random variables, where A is an arbitrary index set. If A is uncountable, the pointwise supremum supα∈A Yα might not be measurable (not a random variable). Alternatively, it might happen that Yα = 0 almost surely for every α ∈ A, but supα∈A Yα = 1.
+For this reason, the pointwise supremum is often not useful. Instead, one can use the essential supremum.
+Proposition 44. There exists a [−∞, ∞]-valued random variable Y , called the essential supremum and denoted by ess supα∈A Yα, such that
+35
+
+
+1. Y ≥ Yα, almost surely, for every α ∈ A,
+2. if Y ′ is a random variable that satisfies Y ′ ≥ Yα, almost surely, for every α ∈ A, then Y ′ ≥ Y , almost surely.
+The essential supremum is almost surely unique.
+In words, the essential supremum is the smallest almost sure upper bound on {Yα}α∈A. The proposition guarantees that it always exists. In some cases, more can be said: the essential supremum can be obtained as the limit of an increasing sequence.
+Proposition 45. Suppose {Yα} is closed under maxima, meaning that for any α, β ∈ A there is some γ ∈ A such that Yγ = Yα ∨ Yβ. Then there is a sequence {αn}n∈N such that {Yαn}n∈N is an increasing
+sequence and ess supα∈A Yα = limn→∞ Yαn almost surely.
+One can also define the essential infimum by setting
+ess inf
+α∈A Yα := − ess sup
+α∈A
+(−Yα).
+This is the largest almost sure lower bound on {Yα}α∈A. It satisfies properties analogous to those in the propositions above.
+A.3 On the choice of filtration
+In the paper, we assume that the filtration (Ft) in use is by default the canonical filtration Ft := σ(U, X1, . . . , Xt). However, there are examples of hypothesis tests for H0 : Q ∈ Q where the only Q-NMs with respect to (Ft) are almost surely constants. For the purpose of designing more powerful tests, it may make sense to coarsen the filtration. As a first example, consider the problem of testing if a sequence is exchangeable:
+H0 : X1, X2, . . . form an exchangeable sequence.
+Vovk [24] demonstrates that all martingales with respect to (Ft) (under the null) are constants, and are hence all derived tests are powerless to reject the null. Nevertheless, Vovk demonstrates that one can derive interesting and nontrivial ‘conformal’ martingales (Mt) with respect to the restricted filtration Gt := σ(M1, . . . , Mt) ⊂ Ft, that do indeed have power to reject the null (for appropriate deviations from the null). In short, coarsening the filtration is a design tool that could aid in the construction of more powerful sequential tests, and p-process and e-processes. In the following example, we show how the choice of including external randomization U into F0 also helps design better p-processes. (However, it is not always possible to randomize atoms as Example 49 illustrates.)
+Example 46. Assume that Q = {Q}, where under Q we have that X1 is Bernoulli(1/2) and X2, X3, . . . = 0. Consider the canonical filtration (Gt), so that G∞ = σ(X1). Then (Mt) with M0 = 1, Mt = 2X1 for all t ∈ N is a Q-NM and the corresponding p-process (infs≤t 1/Ms) is admissible. (Indeed, any pprocess (pt) has to satisfy Q(p1 ≤ α) ∈ {0, 1/2, 1} for each α ∈ [0, 1]). However, by expanding the
+filtration using external randomization, one can easily derive a strictly smaller p-process (p′
+t) such that p′
+1
+is uniform. In other words, the original p-process is only admissible under the filtration generated solely by the observations, but is inadmissible under an expanded filtration that includes a randomization device (which is the filtration (Ft) in this paper).
+The following randomization device can be found in [3, Lemma 2], but we provide a simpler proof. We remark briefly that we imagine this device being used when Y is a valid p-value with a known discrete distribution, so that it recovers a smaller, but still valid, p-value.
+36
+
+
+Lemma 47 (Randomization device). If Y is a random variable with distribution function F and U is an independent uniformly distributed random variable, then
+Y ′ := U F (Y ) + (1 − U )F (Y −)
+is uniformly distributed and satisfies Y ′ ≤ F (Y ).
+Proof. Fix a ∈ [0, 1] and define y := inf{x ∈ R : F (x) ≥ a}. Note that
+Pr(Y ′ ≤ a|Y ) = Pr
+(
+U ≤ a − F (y−)
+F (y) − F (y−)
+∣∣∣∣ Y
+)
+1Y =y
++ Pr(U F (Y ) + (1 − U )F (Y −) ≤ a | Y )1Y 6=y.
+(If Pr(Y = y) = 0, the first term should be understood as zero.) On {Y > y} we have a < F (Y −), so that the second term equals zero. On {Y < y} we have F (Y ) ≤ a, so that the second term instead equals one. Since also U is uniform and independent of Y , we get
+Pr(Y ′ ≤ a|Y ) = a − F (y−)
+F (y) − F (y−) 1Y =y + 1Y <y.
+Taking expectations and simplifying gives Pr(Y ′ ≤ a) = a, showing that Y ′ is uniformly distributed. Finally, it is clear from the definition of Y ′ that Y ′ ≤ F (Y ).
+B Omitted proofs
+Proof of Lemma 1. It is clear that (ii) =⇒ (iii). The implication (i) =⇒ (ii) follows from
+AT =
+(⋃
+t∈N
+(At ∩ {T = t})
+)
+∪ (A∞ ∩ {T = ∞}) ⊆
+⋃
+t∈N
+At.
+For (iii) =⇒ (i), take τ := inf{t ∈ N : At occurs}, so that Aτ = ⋃
+t∈N At.
+Proof of Lemma 3. First, (i) implies (ii) since NT ≤ supt∈N0 Nt, hence E[NT ] ≤ E[supt∈N0 Nt], for all
+random times T . Conversely, for any ε > 0 there exists some random time T such that NT ≥ supt∈N0 Nt−ε.
+Thus if (ii) holds, then E[supt∈N0 Nt] ≤ E[NT ] + ε ≤ 1 + ε. Since ε > 0 was arbitrary, we find that (ii)
+implies (i). It is clear that (ii) implies (iii). The fact that (iii) implies (iv) is however not obvious, and is essentially a consequence of a result by Shafer et al. [22, Theorem 3], as also noted recently by Kirichenko and Grünwald [13, Lemma 5.1]. First, we note that if (Nt) satisfies (iii), then pt := 1 ∧ infs≤t 1/Ns is a p-process (see also Proposition 12(1)). In particular, p∞ := inft∈N0 pt stochastically dominates a uniform. Therefore, for any nonnegative, nonincreasing function f (u) such that
+∫1
+0 f (u)du = 1, we have E[f (p∞)] ≤
+∫1
+0 f (u)du = 1 (see also the
+proof of Proposition 14). The function f (u) := g(1/u), with g as in the lemma, satisfies this condition. Consequently, E[g(1 ∨ sups∈N0 Ns)] = E[f (p∞)] ≤ 1, as required.
+Proof of Proposition 4. For each t ∈ N0, define a probability measure P′
+t on the Borel sets of Rt by
+P′
+t(A) := EQ[Mt1A]. Because (Mt) is a martingale under Q, the sequence (P′
+t)t∈N forms a consistent system of finite-dimensional distributions. Therefore, by Kolmogorov’s extension theorem, there exists a single probability measure P on the Borel sets of Ω = RN whose projection onto Rt is exactly P′
+t for each
+t ∈ N. Put differently, P satisfies Pt = P′
+t for all t ∈ N, as desired.
+37
+
+
+Proof of Proposition 9. We prove the statement for p-processes; the same argument holds for e-processes and sequential tests. The proof is based on transfinite induction. Fix some p-process (pt). For all
+countable ordinals β, we now recursively define p-processes (pβ
+t ) as follows. For β = 1, we set (pβ
+t ) := (pt).
+For any successor ordinal γ := β + 1, if (pβ
+t ) is Q-admissible we set pγ
+t := pβ
+t , and otherwise we let
+(pγ
+t ) be any p-process that strictly dominates (pβ
+t ). For any limit ordinal γ := limn→∞ βn, we define
+(pγ
+t ) := (limn→∞ pβn
+t ). Let us now use the induction assumption that (pβ
+t ) is a Q-p-process for all β < γ,
+for this limit ordinal γ. Since (limn→∞ pβn
+t ) is a decreasing limit, we have for every ε > 0, α ∈ [0, 1], and Q ∈ Q that
+Q
+(
+inf
+t∈N0
+pγ
+t ≤α
+)
+≤Q
+(
+nli→m∞ inf
+t∈N0
+pβn
+t <α+ε
+)
+= nli→m∞ Q
+(
+inf
+t∈N0
+pβn
+t <α+ε
+)
+≤ α + ε.
+It follows that (pγ
+t ) is a Q-p-process. By transfinite induction, this holds for all countable ordinals β.
+Writing R for the reference probability measure, {ER[∑
+t∈N0 2−tpβ
+t ]}β defines a decreasing [0, 2]-valued transfinite sequence. This sequence must eventually become stationary, that is, it becomes constant for
+all β beyond some countable ordinal β0. Thus pβ
+t = pβ0
+t for all β ≥ β0 and all t ∈ N0. By construction,
+(pβ0
+t ) must then be admissible and dominate (pt). This shows that any p-process for Q can be dominated by a Q-admissible p-process. Let us also remark that in the case of Q being a singleton the statement for e-processes and sequential tests could be proved in a more constructive manner as in Subsections 6.2 and 6.3.
+Proof of Proposition 11. We prove the three statements in order. Let (ψt) denote the constructed binary sequence, which we will now show is a (Q, α)-sequential tets. Let τ denote an arbitrary stopping time, potentially infinite, and fix Q ∈ Q.
+(1) Q(ψτ = 1) = Q(pτ ≤ α) ≤ α since (pt) is a Q-p-process.
+(2) Q(ψτ = 1) = Q(eτ ≥ 1/α) ≤ αEQ[eτ ] ≤ α, where we used Markov’s inequality and the fact that (et) is a Q-e-process. In short, e-processes satisfy Ville’s inequality.
+(3) Q(ψτ = 1) = Q(φ(Q) ∩ Cτ = ∅) ≤ Q(φ(Q) ∈/ Cτ ) ≤ α, where the first inequality follows because the event {φ(Q) ∩ Cτ = ∅} implies that Cτ does not contain φ(Q), which is improbable under Q.
+The fact that the (Q, α)-sequential tests in (1) and (2) are nested is obvious. This completes the proof.
+Proof of Proposition 12. We prove the three statements in order. Let (pt) denote the constructed sequence of random variables, which we will now show in each case is a p-process. Let τ denote an arbitrary stopping time, potentially infinite, and fix Q ∈ Q.
+(1) Q(1/eτ ≤ α) = Q(eτ ≥ 1/α) ≤ EQ[eτ ] · α ≤ α, where we used Markov’s inequality and the fact that (et) is a Q-e-process. Since a p-process remains valid after taking the running infimum, we obtain (pt) is valid.
+(2) Q(pτ > α) = Q(ψτ (α) = 0) ≥ 1 − α, where the equality follows since the sequential tests are nested and the inequality because (ψt(α)) is a (Q, α)-sequential test.
+(3) Q(pτ > α) = Q(φ(Q) ∩ Cτ (α) 6= ∅) ≥ Q(φ(Q) ∈ Cτ (α)) > 1 − α as in (2).
+This completes the proof.
+38
+
+
+Proof of Proposition 13. Let (Ct) denote the constructed sequence of sets, which we will now show is a (φ, P, α)-confidence sequence. To this end, let τ denote an arbitrary stopping time, potentially infinite, and fix P ∈ P; note that P ∈ Pγ for some γ ∈ Z. Then, we have P(φ(P) ∈/ Cτ ) = P(γ ∈/ Cτ ) = P(ψγ
+τ=
+1) ≤ α since (ψγ
+t ) is a (Pγ, α)-sequential test. This completes the proof.
+Proof of Proposition 14. Define et := f (pt); we must show that (et) is a Q-e-process. If (pt) is a Q-pprocess then for any stopping time τ and Q ∈ Q, the distribution of pτ is stochastically larger than a
+uniform random variable (denoted V ). Thus for any calibrator f , we have EQ[eτ ] = EQ[f (pτ )] ≤ E[f (V )] =
+∫1
+0 f (v)dv = 1. Since this result holds for any τ and Q ∈ Q, the result follows.
+Proof of Proposition 15. To see (1), fix a probability measure Q ∈ conv(Q). Then there exist Q1, Q2 ∈ Q and λ ∈ [0, 1] such that Q = λQ1 + (1 − λ)Q2. Let now (et) denote an e-process for Q. Consider some stopping time τ and note that
+EQ[eτ ] = λEQ1 [eτ ] + (1 − λ)EQ2 [eτ ] ≤ λ + 1 − λ = 1,
+since (et) is a Q-e-process. This yields that (et) is also a conv(Q)-e-process. The same argument also applies for valid p-processes and sequential tests. Next, (2) follows in a similar way. Assume that (et) is Q-admissible and consider some conv(Q)-e
+process (e′
+t) that satisfies Q(e′
+t ≥ et) = 1 for all t ∈ N and Q ∈ conv(Q) and there exists some Q∗ ∈ conv(Q)
+and some t ∈ N such that Q∗(e′
+t > et) > 0. Since we always have Q∗ = λQ1 + (1 − λ)Q2 for some Q1, Q2 ∈ Q
+and λ ∈ [0, 1] we also have Q1(e′
+t > et) > 0 or Q2(e′
+t > et) > 0, leading to a contradiction. Again, the same argument also applies for admissibile p-processes and sequential tests.
+Proof of Lemma 33. Fix some α ∈ (0, 1], let τ denote the first time t that Mt ≥ 1/α, and let
+q := Q(τ < ∞) = Q
+(
+sup
+t∈N0
+Mt ≥ 1
+α
+) .
+Next, (21) yields Q(M∞ = 0) = 1, for example, by [16, Theorem 4.2]. Note that the stopped process M τ
+is a uniformly integrable martingale, yielding EQ[M τ
+∞] = 1. On the event {τ = ∞}, we have M τ
+∞ = 0. With M−1 := 1, Y0 := 0, and F−1 := {∅, Ω}, these observations then yield
+1 = EQ [M τ
+∞] =
+∑
+t∈N0
+EQ [Mt1τ =t] =
+∑
+t∈N0
+EQ [Mt−1Yt1τ =t] =
+∑
+t∈N0
+EQ
+[
+EQ
+[
+Yt
+∣∣∣∣Ft−1, Yt ≥ 1
+αMt−1
+]
+Mt−11τ =t
+]
+≤1
+α (1 + ε)
+∑
+t∈N0
+EQ [1τ=t] = q 1 + ε
+α.
+This then gives q ≥ α/(1 + ε), yielding the claim.
+Proof of Proposition 39. First, assume (Mt) is an S-NM and fix a time t. Since (Yt) is adapted, Yt is a function of U, X1, . . . , Xt. Hence we may write Yt = ft(Xt) for some nonnegative predictable function ft(·). More explicitly, Yt = ft(U, X1, . . . , Xt−1; Xt). Now pick any real numbers x1, . . . , xt. Consider the
+two-point measures μs := (δ−xs + δxs )/2 for all s ≤ t and let P := U × ∏
+s∈N μs∧t be the distribution that
+makes the data independent with Xs ∼ μs∧t. Then P ∈ S. Moreover,
+1 = EPx [Yt|Ft−1] = 1
+2 (ft(U, X1, . . . , Xt−1; xt) + ft(U, X1, . . . , Xt−1; −xt)) .
+39
+
+
+Since the event {Xi = xi, i = 1, . . . , t − 1} has positive probability, we get
+1
+2 (ft(U, x1, . . . , xt−1; xt) + ft(U, x1, . . . , xt−1; −xt)) = 1.
+But the numbers x1, . . . , xt were arbitrary, so it follows that the function x 7→ ft(U, x1, . . . , xt−1; x) − 1 is odd for all x1, . . . , xt−1. For the reverse direction fix some P ∈ S and some t ∈ N. Then
+EP[Yt|Ft−1] = EP[ft(Xt)|Ft−1]
+(=i) 1
+2 (EP[ft(Xt)|Ft−1] + EP[ft(−Xt)|Ft−1])
+=1+ 1
+2 (EP[ft(Xt) − 1|Ft−1] + EP[ft(−Xt) − 1|Ft−1])
+(i=i) 1,
+yielding the statement. Above, equality (i) follows by symmetry of P, and equality (ii) follows because ft − 1 is odd.
+Proof of Proposition 41. This follows from an application of Corollary 34. Fix some ε > 0. Since f is continuous at zero and f (0) = 1 there exists some η > 0 such that f (x) ≤ 1 + ε for all x ∈ (−2η, 2η). This implies (22). Moreover, since f is strictly monotone at zero we may assume that f (η) 6= 1. Consider now the measure μη := (δ−η + δη)/2 and note that Qη := U × μ∞
+η ∈ S. Hence Qη(f (Xt) ≤ 1 + ε) = 1 for all t ∈ N. Moreover,
+Qη
+(∑
+t∈N
+(f (Xt) − 1)2 = ∞
+)
+= Qη
+(∑
+t∈N
+(f (η) − 1)2 = ∞
+)
+= 1,
+since f − 1 is odd and f (η) 6= 1. This shows that (21) holds. Hence Corollary 34 can indeed be applied and the statement follows.
+C Auxiliary examples
+The following example shows that Proposition 15 cannot be extended to confidence sequences.
+Example 48 (Confidence sequences do not mesh with convex closures). Let μ+ (μ−) denote the law
+of a Gaussian random variable with unit variance and mean 1 (−1). Moreover, let P = {μ∞
++ , μ∞
+− } be
+the family of i.i.d. laws of such distributions. Consider φmean, which satisfies φmean(μ∞
+− ) = −1 and
+φmean(μ∞
++ ) = 1. Then (Ct) given by Ct = {−1, +1} is a (trivial) (φmean, P, α)-CS for α ∈ [0, 1]. Now
+consider the measure P = (μ∞
++ + μ∞
+− )/2 ∈ conv(P), which satisfies φmean(P) = 0 ∈/ Ct. It is clear that (Ct)
+is not a (φmean, conv(P), α)-CS for any α ∈ [0, 1].
+The next example also elaborates further on the discussion in Subsection 8.3 by providing an admissible p-process that has an atomic limiting distribution.
+Example 49 (Atomic admissible p-processes exist even in the presence of an independent F0-measurable random device). Consider Q under which (Xt) are i.i.d. uniformly distributed. Then an adapted process (pt) with the following properties can be constructed.
+• pt is supported on {1/2 + k/2t+1}k=1,...2t ;
+• Q(pt = 1/2 + 1/2t+1) = 1/2 + 1/2t+1 and Q(pt = 1/2 + k/2t+1) = 1/2t+1 for all k = 2, . . . 2t;
+40
+
+
+• (pt) is a Q-MM with
+Q
+(
+pt+1 − 1
+2∈
+{ 2k − 1
+2t+2 , k
+2t+1
+}∣∣∣∣ pt − 1
+2= k
+2t+1
+)
+=1
+for all k = 1, . . . 2t and t ∈ N;
+• (pt) is independent of U .
+Note that p∞ := inft∈N pt satisfies Q(p∞ ≤ α) = α1α≥1/2 ≤ α for all α ∈ [0, 1]; in particular (pt) is a
+p-process and its limit p∞ has an atom at 1/2.
+We claim that (pt) is Q-admissible. Indeed, assume there exists a p-process (p′
+t) that dominates (pt)
+(we explicitly allow (p′
+t) to depend on the randomization device U ). Then there exists some t ∈ N such
+that Q(p′
+t < pt) > 0. Let us first assume that Q(p′
+t < 1/2 + 1/2t+1) > 0. In combination with the fact that
+(pt) is a Q-MM there exists some n > t + 2 such that
+Q
+({ p′
+t≤ 1
+2+ 1
+2t+1
+} ∩
+{
+p∞ ≥ 1
+2+ 1
+2t+2
+})
+> 0.
+Since p′
+∞ ≤ p∞ and since Q(p∞ ≥ 1/2 + 1/2t+2) = 1/2 − 1/2t+2, we hence obtain Q(p′
+∞ ≥ 1/2 + 1/2t+2) <
+1/2 − 1/2t+2, a contradiction to the fact that (p′
+t) is a p-process. We obtain similar contradictions if we
+assume Q({p′
+t < pt} ∩ {pt = 1/2 + k/2t+1}) > 0 for some k = 2, . . . , 2t. This shows that (pt) is indeed
+Q-admissible, despite having an atom and being independent of the randomization device.
+The next example illustrates how anti-concentration bounds can be satisfied by NMs that lead to inadmissible p-processes.
+Example 50 (A p-process for S that satisfies Proposition 41 need not be admissible). Fix the function f : x 7→ ((1 + x) ∧ 2)+. This function satisfies the criteria of Proposition 41. Hence the process
+Mt := ∏
+s≤t f (Xs) is an S-martingale and we also have (32). Consider the p-process (pt) given by
+pt := infs≤t 1/Ms. This is a p-process by (32).
+Define next p′
+t := pt for t = 0, 1 and p′
+t := pt −1/4 1X1∨X2≤−1 for t ≥ 2. Clearly we have Q(p′
+t ≤ pt) = 1
+for all t ∈ N0 and Q ∈ S and there exists Q∗ ∈ S such that Q∗(p′
+2 < p2) > 0. We now claim that (p′
+t) is
+also an S-p-process. We will prove this claim below. This assertion then yields that (32) is not sufficient for the admissibility of the corresponding p-process in general. We now prove the claim that (p′
+t) is an S-p-process. To do so we consider a subset S ̃ ⊂ S, namely
+those measures Q ∈ S that satisfy Q(X1 ≤ −1) ∈ {0, 1/2}. Note that S = conv(S ̃), the convex hull of S ̃. Thanks to Proposition 15(1) it suffices to argue that (p′
+t) is an S ̃-p-process. To this end, note that on the
+event {X1 > −1} we have pt = p′
+t for all t ∈ N0. On the other hand, on the event {X1 ≤ −1} we have
+pt = 1 for all t ∈ N0.
+Fix now some α ∈ (0, 1) and Q ∈ S ̃. Without loss of generality we can assume that Q(X1 ≤ −1) = 1/2, otherwise there is nothing to be argued. We now need to show that
+Q(p′
+∞ ≤ α) ≤ α. (35)
+To make headway, note that
+{p′
+∞ ≤ α} = ({p′
+∞ ≤ α} ∩ {X1 > −1}) ∪ ({p′
+∞ ≤ α} ∩ {X1 ≤ −1})
+⊂ {p∞ ≤ α} ∪
+{
+p∞ − 1
+4 1X1∨X2≤−1 ≤ α
+}
+= {p∞ ≤ α} ∪
+{1
+4 1X1∨X2≤−1 ≥ 1 − α
+} .
+Thus, if α < 3/4 then {p′
+∞ ≤ α} ⊂ {p∞ ≤ α} and we have (35). Let us now assume that α ≥ 3/4. Note
+that since Q(p∞ = 1) ≥ Q(X1 ≤ −1) = 1/2 and hence Q(p∞ ≤ α) < 1/2. This then yields
+Q(p′
+∞ ≤ α) ≤ Q(p∞ ≤ α) + Q(X1 ∨ X2 ≤ −1) < 1/2 + 1/22 = 3/4 ≤ α,
+yielding that (p′
+t) is an S ̃-p-process, hence also an S-p-process.
+41

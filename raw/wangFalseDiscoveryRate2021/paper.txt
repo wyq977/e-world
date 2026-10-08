@@ -1,0 +1,1160 @@
+arXiv:2009.02824v5 [math.ST] 15 Dec 2021
+False discovery rate control with e-values
+Ruodu Wang∗ Aaditya Ramdas†
+December 16, 2021
+Abstract
+E-values have gained attention as potential alternatives to p-values as measures of uncertainty, significance and evidence. In brief, e-values are realized by random variables with expectation at most one under the null; examples include betting scores, (point null) Bayes factors, likelihood ratios and stopped supermartingales. We design a natural analog of the Benjamini-Hochberg (BH) procedure for false discovery rate (FDR) control that utilizes e-values, called the e-BH procedure, and compare it with the standard procedure for p-values. One of our central results is that, unlike the usual BH procedure, the e-BH procedure controls the FDR at the desired level—with no correction—for any dependence structure between the e-values. We illustrate that the new procedure is convenient in various settings of complicated dependence, structured and post-selection hypotheses, and multi-armed bandit problems. Moreover, the BH procedure is a special case of the e-BH procedure through calibration between p-values and e-values. Overall, the e-BH procedure is a novel, powerful and general tool for multiple testing under dependence, that is complementary to the BH procedure, each being an appropriate choice in different applications.
+Keywords: multiple testing, FDR, p-values, betting scores, supermartingales
+1 Introduction
+We study procedures for controlling the false discovery rate (FDR) as in Benjamini and Hochberg (1995). We will encounter p-values in this paper, but focus more on e-values and e-tests as in Vovk and Wang (2021). We use “e-value” as an abstract umbrella term which encompasses betting scores, likelihood ratios, and stopped supermartingales, which appear in the recent literature, e.g., Shafer (2021); Gr ̈unwald et al. (2020); Wasserman et al. (2020) and Howard et al. (2020, 2021). (Since Bayes factors (Kass and Raftery, 1995) for point nulls are also e-values, one may hope that e-values appeal to adherents of frequentist, Bayesian and game-theoretic foundations of probability, but this paper abstains from further philosophical discussion, treating e-values as a useful technical tool that arises naturally in many situations.) Throughout, let H1, . . . , HK be K hypotheses, and write K = {1, . . . , K}. Let the true (unknown) data-generating probability measure be denoted by P. For each k ∈ K, it is useful to think of hypothesis Hk as implicitly defining a set of joint probability measures, and Hk is called a true null hypothesis if P ∈ Hk. Following Vovk and Wang (2021), a p-variable P is a random variable that satisfies P(P ≤ α) ≤ α (often with equality) for all α ∈ (0, 1). In other words, a p-variable is stochastically larger than U[0, 1] (values of P larger than 1 can be treated as 1). An e-variable E is a [0, ∞]-valued random variable satisfying E[E] ≤ 1. E-variables are often obtained from stopping an e-process (Et)t≥0, which is a nonnegative stochastic process adapted to a pre-specified filtration such that E[Eτ ] ≤ 1 for any stopping time τ (an example would be a supermartingale with initial value 1).
+∗Department of Statistics and Actuarial Science, University of Waterloo. E-mail: wang@uwaterloo.ca. †Departments of Statistics and Machine Learning, Carnegie Mellon University. E-mail: aramdas@cmu.edu.
+1
+
+
+Let N ⊆ K be the set of indices of true null hypotheses, which is unknown to the decision maker, and K0 be the number of true null hypotheses, thus the cardinality of N . The ratio K0/K may be close to 1, meaning that the signals are sparse. For reasons to use e-values over p-values, see Shafer (2021), Vovk and Wang (2021) and Gr ̈unwald et al. (2020); however, we summarize our own perspectives later in Section 2. We consider two settings of testing multiple hypotheses, and sometimes convert between them:
+1. For each k ∈ K, Hk is associated with p-value pk, which is a realization of a random variable Pk. If k ∈ N , then Pk is a p-variable.
+2. For each k ∈ K, Hk is associated with e-value ek, which is a realization of a random variable Ek. If k ∈ N , then Ek is an e-variable.
+A p-testing procedure D : [0, 1]K → 2K (resp. an e-testing procedure D : [0, ∞]K → 2K) gives the indices of rejected hypotheses based on observed p-values (resp. e-values). We tacitly require that all testing procedures are Borel functions. The terms “p-values/e-values” refer to both the random variables and their realized values; these should be clear from the context. Let D be a p-testing procedure or an e-testing procedure. The rejected hypotheses by D are called discoveries. We write FD := |D ∩ N | as the number of true null hypotheses that are rejected (i.e., false discoveries), and RD := |D| as the total number of discoveries. The value of interest is FD/RD, called the false discovery proportion (FDP), which is the ratio of the number of false discoveries to that of all claimed discoveries, with the convention 0/0 = 0 (i.e., FDP is 0 if there is no discovery). Since both quantities FD and RD are random, Benjamini and Hochberg (1995) proposed to control FDR, which is the expected value of FDP, that is, FDRD := E[FD/RD], where the expected value is taken under the true probability. Other ways of controlling the false discovery rather than the FDR are studied by, for instance, Genovese and Wasserman (2004, 2006) and Goeman and Solari (2011) with p-values, and Vovk and Wang (2019) with e-values. We focus on controlling FDR in this paper for its popularity in modern sciences. For those unfamiliar with e-values, we offer a couple of quick remarks. First, an e-variable E can be converted to a p-variable P = 1/E; the validity of P can be checked using Markov’s inequality. However, since Markov’s inequality is not tight, such a translation is not airtight. A p-variable P can also be converted to an e-variable, but this is more complex; one simple example is to set E = P −1/2−1 (and more generally f (P ) is an e-variable if
+∫1
+0 f (u) du ≤ 1). Importantly, small p-values correspond
+to large e-values, so we will reject e-values above some threshold.
+A brief summary of our contributions
+For k ∈ K, let e[k] be the k-th order statistic of e1, . . . , eK, from the largest to the smallest. We design a simple e-value analog of the standard BH procedure, which will be called the base e-BH procedure. For α > 0, define the e-testing procedure G(α) : [0, ∞]K → 2K which rejects hypotheses with the largest k∗
+e e-values, where
+k∗
+e = max
+{
+k ∈ K : ke[k]
+K ≥1
+α
+}
+, (1)
+with the convention max(∅) = 0, and accepts the rest. The astute reader may note that since 1/ek is a valid p-value, the base e-BH procedure is simply the BH procedure applied to the corresponding p-values. Hence, at first glance, apparently nothing is gained with the e-value viewpoint. However, one of our central results is the surprising property that
+the base e-BH procedure controls FDR at level α even under unknown arbitrary dependence between the e-values.
+It is well known that such a statement is not true for general arbitrarily dependent p-values. Moreover, the full e-BH procedure, to be specified in Section 4, involves a pre-screening of e-values, allowing us to “boost” them up by a factor before feeding them to the base e-BH procedure.
+2
+
+
+We also derive several important, but secondary, results. These include an analysis of self-consistent e-testing procedures, the fact that known results on FDR control for BH and BY (Benjamini and Yekutieli, 2001) procedures can be derived as special cases of the e-BH procedure, and the optimality of e-BH procedure amongst all FDR controlling procedures acting on arbitrarily dependent e-values. Finally, the paper contains several other tertiary contributions, including a mathematical study of how conservative the e-BH procedure is under arbitrary dependence, independence and PRDS (positive regression dependence on a subset). We provide a few interesting motivating examples along the way: identifying skillful traders (finance) and identifying promising slot machines by adaptive sampling (multi-armed bandits). Simulation results on the e-BH procedure are produced in Section 7 and Appendix A. A real-data analysis on returns of cryptocurrencies is produced in Section 8. Proofs of most results are put in Appendix B. Before delving into the above, it seems critical to first answer a motivating question: why use e-values in the first place?
+2 When might one prefer e-values over p-values?
+Given that the Benjamini-Hochberg procedure using p-values is so widely established and accepted in the sciences, one must first answer the question of why one should care about FDR control (or multiple testing) with e-values. This is a philosophical, subjective, question and the opinions of the authors (and readers) are complementary to the contributions of this paper. For example, in his upcoming discussion paper, Shafer (2021) eloquently provides various arguments for the use of “betting scores”, which are e-values with a game-theoretic interpretation, as measures of evidence and uncertainty in the scientific enterprise while Gr ̈unwald et al. (2020) find them to be a middle ground between Bayesian and frequentist (and financial, when combined with the earlier view) interpretations of evidence. Other authors have also already weighed in on the subject, but rather than deferring to them, we wish to offer our own perspectives in light of recent research. Below, we list some situations when one may potentially prefer to use e-values over p-values for non-philosophical, purely statistical, reasons. To avoid confusion, we note that the following discussion relates to the construction of a single e-value or a single p-value—in other words, it applies equally to single and multiple hypothesis testing.
+1. High-dimensional asymptotics. One of the most classical ways to compute p-values is to use the asymptotic distribution of the likelihood ratio test statistic, as given by Wilks’ theorem (Wilks (1938)). However, the correctness of Wilks’ theorem is typically justified when the dimensionality d of the data remains fixed, and the sample size n tends to infinity. There are several results on the high-dimensional asymptotics of likelihood ratios, but the resulting p-value relies on the practitioner making assumptions on the relative scalings of n and d; see Jiang and Yang (2013) for example. In contrast, the likelihood ratio for a point null hypothesis is a valid e-value in finite samples, meaning that its expectation equals one under the null regardless of d or n. The same holds for mixtures (over the alternative) of likelihood ratios as well.
+2. Irregular (composite) models. There are many composite null hypothesis testing problems for which we may know of no direct way to construct a valid p-value even under low-dimensional asymptotics—this could happen because the model is singular or irregular and Wilks’ theorem fails to hold (Drton, 2009) and in such cases the validity of the bootstrap is also typically unknown. Recently, the split likelihood ratio statistic (Wasserman et al., 2020) was developed, along with several other variants, and shown to yield an e-value under no assumptions on the composite null, or on d and n. Examples of new settings in which one can now construct e-values under no regularity assumptions include mixtures (e.g., testing if data comes from a mixture of ≤ k versus > k components), shape-constraints (e.g., log-concavity), dependence structures (e.g., multivariate total positivity), and several latent variable models.
+3
+
+
+3. Sequential inference. The correctness of Wald’s sequential likelihood ratio test is based on noting that the likelihood ratio process (Lt) is a nonnegative martingale with initial value one. Thus, at any stopping time τ , the optional stopping theorem implies that Lτ is an e-value since its expectation is at most one; in other words, (Lt) is an e-process. Moving beyond parametric settings, sequential inference is often enabled by designing nonparametric supermartingales (Howard et al., 2020) that immediately yield e-values at the stopping time. These have been called test martingales in prior work (Shafer et al., 2011). In summary, e-values arise very naturally in sequential inference as stopped e-processes. For point nulls, e-processes can always be dominated by nonnegative martingales (meaning they can be increased to a martingale without threat to validity). But for composite nulls, there is a big and important difference between e-processes, supermartingales and martingales. See Ramdas et al. (2020, 2021) for details.
+4. Accumulation of information and evidence. Suppose the ultimate goal of a scientist is to either reject (with level α) or not reject a given hypothesis in a single run. Then, the most powerful method is to reject a p-value p no larger than α. This testing procedure can also be achieved by a simple e-value e := 1{p≤α}/α, using a threshold 1/α (called an all-or-nothing bet by Shafer (2021)); in fact, no other e-values would be more powerful in general. The situation becomes quite different when the hypothesis (if seen as promising by the first experiment) will be tested with future evidence and possibly by other scientists: the all-or-nothing e-value carries little information for the next studies, whereas a generic e-value can provide a continuum of evidence strength. Even if the first e-value is moderate (e.g., e1 = 3), it is useful and can be easily merged into the next experiment (Vovk and Wang, 2021), for example by simply multiplying the two e-values (this is valid if E[E2|E1 = e1] ≤ 1 under the null) or averaging them (always valid). On the other hand, a p-value of 0.1 is difficult to use for future studies that may depend on data from the current one, and may be discarded (or worse, “p-hacked”) due to the all-or-nothing nature of the p-test or the difficulty of merging p-values under such sequential dependence as above. Hence, for a dynamic flow of experiments, common in modern sciences, it is beneficial to track and report e-values — see Shafer (2021) and Gr ̈unwald et al. (2020), as well as their counterpart in estimation, confidence sequences (Howard et al., 2021).
+5. Robustness to misspecfication. In genetics, it is not uncommon to encounter p-values with astronomically small values (like 10−20), or sometimes point masses near the value one, even though the sample sizes may not intuitively support such extreme evidence. This is often (but not always) reflective of utilizing a model that is not perfectly specified. The validity of p-values is quite sensitive to model misspecification, because they utilize the entire (hypothesized) distribution of the test statistic. In contrast, e-values can be constructed without over-reliance on fine-grained tail information, and so they are typically more robust than p-values to misspecification (but less powerful under perfect specification). For example, instead of assuming that the data X is Gaussian to build a p-value, we may instead assume that it is symmetric about the origin (under no further moment constraints), in which case exp(λX − λ2X2/2) is a valid e-value for any λ ∈ R. The proof, by Bahadur and Eaton, was communicated by Efron (1969). (However, it is inadmissible; admissible improvements can be found in Ramdas et al. (2020).)
+6. Robustness to dependence. To construct a single valid p-value, it is often assumed (for convenience of deriving limiting distributions) that the underlying observations are independent, and indeed their validity is often hurt if this assumption is violated. However, we can often construct an e-value quite easily in settings where the observations are dependent, and this is because we are requiring less of an e-value (just bounded in expectation) than of a pvalue (knowledge of its whole distribution). As one example, suppose we observe non-negative data X1, . . . , Xn, and we wish to test H0 : E[Xi] ≤ μ for all i. Then, (X1 + · · · + Xn)/(nμ) is an e-value for any dependence structure of X1, . . . , Xn, and does not require making any distributional assumption. In addition, combination of multiple p-values relies heavily on dependence assumptions (Vovk and Wang, 2020), unlike that of e-values (Vovk and Wang, 2021).
+4
+
+
+In the field of risk management, analysis of risks with unknown or complicated dependence has recently been an active topic; see e.g., (Embrechts et al., 2015).
+Thus, there exist many settings when one can, and should, use e-values to quantify evidence against a null. (However, there of course remain innumerable situations in which p-values are perfectly reasonable choices.) To reflect some of the above points, in a concrete example below, we will see that a complicated dependence structure appears both within experiment and across experiments, and one can easily construct useful e-values in such situations, with almost no model assumptions on the test statistics.
+Example 1. Suppose there are K traders (or machines), and a researcher is interested in knowing which ones are skillful (or useful). This is a classic problem in finance; see e.g., Barras et al. (2010) in the context of detecting mutual fund skills. For k = 1, . . . , K, the null hypothesis Hk is that trader k is not skillful, meaning that they make no profit on average (without loss of generality we can assume the market risk-free return rate is 0). The nonnegative random variables Xk,1, . . . , Xk,n are the monthly realized performance (i.e., the ratio of payoff to investment; Xk,j > 1 presents a profit and Xk,j < 1 means a loss) of agent k from month 1 to month n. The no-skill null hypothesis is E[Xk,j | Fj−1] ≤ 1 for j = 1, . . . , n, where the σ-field Ft represents the available market information up to time t ∈ {0, . . . , n}, and we naturally assume that (Xk,t)t is adapted to (Ft)t. Since the agents are changing investment strategies over time and all strategies depend on the financial market evolution, there is complicated serial dependence within (Xk,1, . . . , Xk,n) for single k, as well as cross dependence among agents k = 1, . . . , K. Because of the complicated serial dependence and the lack of distributional assumptions of the performance data, it is difficult to obtain useful p-values for these agents. Nevertheless, we can easily obtain useful e-values: for instance, Ek =
+∏n
+j=1 Xk,j is a valid e-value, as well as any mixture of U-statistics of Xk,1, . . . , Xk,n, including the
+mean and the product (Xk,1, . . . , Xk,n are called sequential e-values by (Vovk and Wang, 2021), who also propose methods to merge them into one e-value). Moreover, the obtained e-values E1, . . . , EK are dependent in a complicated way. Even if these e-values are not very large, they can be useful for other studies on these traders. We return to a similar example in the simulations (Section 7). As a side note, other sophisticated e-values can also be constructed for this problem using exponential self-normalized processes (Howard et al., 2020). For example, define ψ(λ) := −λ−log(1−λ). Then,
+Ek = ∏n
+j=1 exp
+(
+λ(Xk,j − 1) − ψ(λ)(Xk,j − 1)2)
+for for any λ ∈ [0, 1). Note that limλ→0
+ψ(λ)
+λ2/2 = 1, so
+this e-value captures subGaussian-like right tails of ∑n
+j=1 Xk,j − 1 relative to its empirical variance
+∑n
+j=1(Xk,j − 1)2. To avoid picking a fixed λ, one can instead simply use a mixture over λ, for example
+using a Gamma distribution peaking near 0 (Howard et al., 2021). One can also pick λj predictably at each step. These observations form the basis of all time-uniform Empirical-Bernstein inequalities (Howard et al., 2021; Waudby-Smith and Ramdas, 2020a,b).
+To summarize, there are several reasons to work with e-values: they arise naturally in sequential settings, we know how to construct e-values in settings where we do not know how to construct p-values, and e-values can be more robust to misspecification or uncertain asymptotics in high-dimensional settings. Of course, there are also many reasons not to work with e-values: in particular, p-values will often yield more “powerful” (single/multiple) tests when the underlying modeling assumptions are true. Thus, e-values and p-values can also be viewed as picking different points on the validity-power curve: if one takes more risks with validity (p-values), one can gain more power, but if one questions one or more modeling assumptions, e-values may provide a safer choice.
+Remark 1. Recall that we can always convert an e-value e into a p-value p = 1/e. One can also transform a p-value p into an e-value e = f (p) using “calibrators”; recalling the definition by Shafer et al. (2011), a calibrator is a decreasing function f : [0, 1] → [0, ∞) such that
+∫1
+0
+f (u) du = 1. (2)
+5
+
+
+If the only known way to construct an e-value is by calibrating a bonafide p-value, then e-BH will typically not be more powerful than BH. Nevertheless, in some of our examples, we will assume that we can construct p-values, and calibrate them to e-values and study the resulting e-BH procedure, in order to understand the difference between the two approaches. In contrast, if the only known way to construct a p-value is by inverting an e-value, then working with e-values directly is beneficial because the e-BH procedure is robust to arbitrary dependence without corrections, unlike the BH procedure.
+3 Recap: the BH procedure
+We briefly review the BH and BY procedures (Benjamini and Hochberg (1995); Benjamini and Yekutieli (2001)) for FDR control, as the benchmark for our discussions. To discuss the dependence structure among p-values and e-values, we rely on the notion of positive regression dependence on a subset (PRDS) of Benjamini and Yekutieli (2001), flipped when imposed on e-values. A set A ⊆ RK is said to be decreasing (resp. increasing) if x ∈ A implies y ∈ A for all y ≤ x (resp. all y ≥ x). In this paper, all terms “increasing” and “decreasing” are in the non-strict sense, and inequalities should be interpreted component-wise when applied to vectors.
+1. A random vector P of p-values is PRDS on N (or, simply, satisfies PRDS) if for any null index k ∈ N and increasing set A ⊆ RK , the function x 7→ P(P ∈ A | Pk ≤ x) is increasing on [0, 1].
+2. A random vector E of e-values satisfies PRDS if for any null index k ∈ N and decreasing set A ⊆ RK, the function x 7→ P(E ∈ A | Ek ≥ x) is decreasing on [0, ∞).
+We chose to use the version of PRDS in Finner et al. (2009, Section 4) (also see Barber and Ramdas (2017)) which is weaker than the original one used in Benjamini and Yekutieli (2001), but the difference is relatively minor: “Pk ≤ x” in the former is replaced by “Pk = x” in the latter. If the null p-values (e-values) are mutually independent and independent of the non-null p-values (e-values), then PRDS holds; as such, PRDS is a generalization of independence. Moreover, increasing individual transforms do not affect the PRDS property. Further, the PRDS property is preserved when moving from p-values to e-values using calibrators, or vice versa by inversion. We record this fact below.
+Fact 1. The PRDS property of p-values and that of e-values are equivalent in the following sense: If P is a vector of PRDS p-values, and Ek = fk(Pk) for any calibrator fk from (2), then E is a vector of PRDS e-values. Similarly, if E is a vector of PRDS e-values, then P is a vector of PRDS p-values, where Pk = 1/Ek. As an important example, PRDS holds if p-values/e-values are built on positively correlated (jointly) Gaussian test statistics X1, . . . , XK (themselves PRDS). For instance, this includes p-values obtained from Neyman-Pearson tests, i.e., Pk = 1 − Φ(Xk) where Φ is the standard Gaussian cdf, and e-values obtained from mixture likelihood ratios, Ek =
+∫
+exp(δXk − δ2/2) dνk(δ), where νk is an arbitrary mixing distribution; see Example 3 for instance. The PRDS property of these p-values and e-values directly follows from the invariance of PRDS under monotone transforms.
+Following the literature, we will study FDR in both the case of PRDS and that of arbitrary dependence. The input of the Benjamini-Hochberg (BH) procedure includes three ingredients:
+(a) K realized p-values p1, . . . , pK associated to H1, . . . , HK , respectively;
+(b) an FDR level α ∈ (0, 1);
+(c) (optional) dependence information or assumption on p-values, such as independence, PRDS or no information.
+For k ∈ K, let p(k) be the k-th order statistics of p1, . . . , pK, from the smallest to the largest. The
+(base) BH procedure D(α) rejects all hypotheses with the smallest k∗ p-values, where
+k∗ = max
+{
+k ∈ K : Kp(k)
+k ≤α
+}
+, (3)
+6
+
+
+with the convention max(∅) = 0, and accepts the rest. We summarize some known results of Benjamini and Hochberg (1995) and Benjamini and Yekutieli (2001) on the procedure D(α) below. Throughout, we write
+lK :=
+K ∑
+k=1
+1
+k ≈ log K.
+Theorem 1. For arbitrary p-values and α ∈ (0, 1), the base BH procedure D(α) satisfies
+E
+[ FD(α)
+RD(α)
+]
+≤ lKK0
+K α ≤ lK α.
+Moreover, if the p-values satisfy PRDS, then
+E
+[ FD(α)
+RD(α)
+]
+≤ K0
+K α ≤ α,
+and the first inequality is an equality if the null p-values are iid uniform on [0, 1].
+By Theorem 1, if the p-values are PRDS, then the base BH procedure has an FDR of at most α. If the p-values are arbitrarily dependent, then we need to replace α in the base BH procedure by α/lK,
+resulting in the Benjamini-Yekutieli (BY) procedure D′(α) := D(α/lK ), which rejects all hypotheses
+with the smallest k∗ p-values, where
+k∗ = max
+{
+k ∈ K : lKKp(k)
+k ≤α
+}
+. (4)
+The extra factor lK in the BY procedure reflects the fact that it is harder to justify discoveries without the PRDS assumption, which includes independence as a special case. It is well known that this factor cannot be improved in general.
+4 The e-BH procedure
+In this section, we design an analog of the BH procedure for e-values, which we call the e-BH procedure. Similar to the BH procedure, the input of the e-BH procedure includes three ingredients:
+(a) K realized e-values e1, . . . , eK associated to H1, . . . , HK , respectively;
+(b) an FDR level α ∈ (0, 1);
+(c) (optional) distributional information or assumption on e-values.
+While (a) and (b) are the same as those of the BH procedure, (c) is somewhat different: in addition to dependence information, e-BH can also accommodate information of marginal distributions, since evalues have more freedom than p-values in terms of their distributions (the former are only constrained by their expectations under the null). The e-BH procedure can be described in two simple steps.
+1. (Optional) Boost the raw e-values in (a) using information in (c).
+2. Apply the base e-BH procedure to the boosted e-values and level α.
+We will first describe the base e-BH procedure in step 2 and then explain how to boost e-values in step 1. If there is no available information in (c), we can simply skip step 1 above, and directly apply the base e-BH procedure to the raw e-values, which always has a valid FDR control at level α.
+7
+
+
+4.1 The base e-BH procedure
+Let e′
+1, . . . , e′
+K be the boosted e-values obtained from step 1 of the procedure. Keep in mind that they can be chosen as identical to the raw e-values e1, . . . , eK if there is no information in (c) or one opts to skip the boosting in step 1. The base e-BH procedure is applying the BH procedure to 1/e′
+1, . . . , 1/e′
+K. To be precise, for
+k ∈ K, let e′
+[k] be the k-th order statistic of e′
+1, . . . , e′
+K , sorted from the largest to the smallest so that e′
+[1] is the largest boosted e-value. The base e-BH procedure G(α) : [0, ∞]K → 2K then rejects
+hypotheses with the largest k∗
+e (boosted) e-values, where
+k∗
+e = max
+{
+k∈K:
+ke′
+[k]
+K ≥1
+α
+}
+. (5)
+We note that, analogous to the BH procedure, there are many equivalent ways of describing the e-BH procedure, including using an estimate of the false discovery proportion as pioneered by Storey (2002), or the self-consistency viewpoint of Blanchard and Roquain (2008). The alternative formulation in the next proposition will be helpful when showing several results on FDR of the e-BH procedure.
+Proposition 1. Let e′
+1, . . . , e′
+k be the raw or boosted e-values. Define
+R(t) := |{k ∈ K : e′
+k ≥ t}| ∨ 1 and tα := inf{t ∈ [0, ∞) : tR(t) ≥ K/α}. (6)
+For each k, the base e-BH procedure applied to e′
+1, . . . , e′
+K and level α rejects Hk if and only if e′
+k ≥ tα.
+Moreover, tαR(tα) = K/α.
+A self-contained simple proof of Proposition 1 is put in Appendix B.
+4.2 Boosting e-values
+To boost e-values in step 1, there are two types of information we can use: marginal distributional information and joint dependence information. Below we first describe our standard choice of boosting, and then the more general choices which can be freely chosen by the user (Remark 3). Although we generally recommend the standard choice, the flexibility of choosing boosting functions allows us to include the p-based methods (like BH and BY) as special cases. Let K/K := {K/k : k ∈ K}, and define a truncation function T : [0, ∞] → [0, K] by letting T (x) be the largest number in K/K ∪ {0} that is no larger than x. In other words,
+T (x) = K
+⌈K/x⌉ 1{x≥1} with T (∞) = K. (7)
+Note that T truncates x to take only values in K/K (or zero). The truncation function T will be frequently used in this paper. The standard boosting method is now described below. For each k ∈ K, take a boosting factor bk ≥ 1 (the larger, the better) such that, depending on dependence information,
+max
+x∈K/K xP(αbkEk ≥ x) ≤ α if e-values are PRDS; (8)
+E[T (αbkEk)] ≤ α otherwise, (9)
+where the expectation and the probability are computed under the null distribution of Ek, which is sometimes known. In case of a composite null, (8) and (9) need to hold for all probability measures in Hk, so an additional supremum over Hk must be appended to the left hand side. By Markov’s inequality, bk in (8) is larger or equal to that in (9), leading to a stronger boosting under PRDS. Since E[Ek] ≤ 1 for a null e-value Ek, (8) and (9) always hold for bk = 1, making bk = 1 always a safe choice
+8
+
+
+even if there is no additional (marginal or joint) distributional information. Moreover, the boosting factor bk is equal to 1 if no marginal information on the distributions of the e-values is available. In either case, define the boosted e-values
+e′
+k = bkek
+for k ∈ K. On first reading, the reader may skip the next two remarks.
+Remark 2. Note that the left-hand sides of (8) and (9) are increasing in bk, and hence a practical value of bk can be obtained by simply trying a few choices of bk ≥ 1. It would be ideal to find the largest bk such that (8) or (9) becomes an equality. This is possible in some cases but it may not be possible if the null distribution of Ek is not continuous or not completely specified; see Examples 2, 3, 5 and 6, where we either get a precise value or an analytical approximation of the best bk. Under an extra assumption, we have a simple formula (Proposition 3) for the best bk in case e-values are PRDS.
+Remark 3. Instead of using the standard method in (8) and (9) described above, the user can instead choose increasing functions φ1, . . . , φK : [0, ∞] → [0, ∞] such that
+max
+x∈K/K xP(αφk(Ek) ≥ x) ≤ α if e-values are PRDS; (10)
+E[T (αφk(Ek))] ≤ α otherwise, (11)
+and define the boosted e-values e′
+k = φk(ek) for k ∈ K. The choice φk : x 7→ bkx corresponds to the
+standard method explained earlier. Note that if e-values are PRDS, then so are the boosted e-values by any choice of boosting, since PRDS is invariant under monotone transforms.
+5 The FDR guarantee of the e-BH procedure
+We are now ready to state our main result.
+Theorem 2. The e-BH procedure at level α has FDR at most K0α/K. In particular, the base e-BH procedure applied to arbitrarily dependent raw e-values has FDR at most K0α/K.
+The full proof of Theorem 2 follows from Theorems 3 and 4 in the next few sections, which requires delicate technical treatment. Here, we provide a simple proof for the second statement of Theorem 2 that the base e-BH procedure has the desired FDR guarantee. This simple argument illustrates the advantages of working with e-values, and it applies to any “complaint” e-testing procedures including the base e-BH procedure. Following Blanchard and Roquain (2008), who defined self-consistent ptesting procedures, an e-testing procedure G is said to be self-consistent at level α ∈ (0, 1) if, denoting by RG the number of rejections, every rejected e-value ek satisfies
+ek ≥ K
+αRG
+.
+Using 1/pk in place of ek above, we recover the definition from Blanchard and Roquain (2008) with a linear shape function. Clearly, the base e-BH procedure is self-consistent because of (5); moreover, the base e-BH procedure dominates all other self-consistent e-testing procedures by definition.
+Proposition 2. Any self-consistent e-testing procedure at level α has FDR at most αK0/K for arbitrary configurations of e-values.
+Proof. Let G be a self-consistent e-testing procedure. Let E = (E1, . . . , EK ) be an arbitrary vector of e-variables fed to the testing procedure G. The FDP of G satisfies
+FG RG
+= |G(E) ∩ N |
+RG ∨ 1 =
+∑
+k∈N
+1{k∈G(E)}
+RG ∨ 1 ≤
+∑
+k∈N
+1{k∈G (E)} αEk
+K≤
+∑
+k∈N
+αEk
+K , (12)
+9
+
+
+where the first inequality is due to self-consistency. As E[Ek] ≤ 1 for k ∈ N , we have
+E
+[ FG
+RG
+] ≤
+∑
+k∈N
+E
+[ αEk K
+]
+≤ αK0
+K,
+thus the desired FDR guarantee.
+The above proof can be alternately viewed as verifying the “dependence condition” in Blanchard and Roquain (2008), which holds even for arbitrarily dependent e-values unlike for p-values.1 In contrast, general self-consistent p-testing procedures do not have the nice property in Proposition 2 even if the p-values are independent. Indeed, under a condition slightly weaker than PRDS, Su (2018) proves that a self-consistent p-testing procedure2 has a weaker FDR guarantee α(1+log(1/α)) > α. Hence, for an FDR guarantee of α, the p-testing procedure needs to be run at level α′ < α satisfying
+α′
+(
+1 + log 1
+α′
+)
+= α. (13)
+The FDR control inflation to α(1 + log(1/α)) for arbitrary self-consistent p-testing procedures is quite a contrast to the control at level α for arbitrary self-consistent e-testing procedures, and this fact plays an important role in bandit multiple testing (Jamieson and Jain, 2018; Xu et al., 2021).
+5.1 Self-consistent structured, post-selection and grouped e-BH
+Without further structure, self-consistent p- or e-testing procedures are dominated by the base BH or e-BH procedure, and hence we do not directly apply them for a stand-alone data set of p-values or e-values. Nevertheless, they become useful in multi-armed bandit problems; see Jamieson and Jain (2018) and our Section 7. Self-consistent procedures are also useful in structured settings. Suppose we would like to insist that the rejected set cannot be an arbitrary subset of K, but must be one amongst a given class of sets S ⊆ 2K. For example, if the hypotheses are structured as a graph, then we may choose S to be all connected subgraphs. The appropriate modification of the e-BH procedure (“structured e-BH procedure”) would try to
+find any set S ∈ S such that every e-value in S is larger than K
+α|S| .
+Importantly, solving for the largest S may not be computationally feasible, so one may wish to use an approximation algorithm (like a greedy heuristic that grows S by starting with the largest e-value and adding a few elements at a time to this set) to find some large S ∈ S such that every e-value in S is larger than K
+α|S| . Such a procedure would immediately satisfy an FDR guarantee, for any S and dependence structure, by virtue of being self-consistent. In contrast, the “structured BH procedure” in Ramdas et al. (2019a, Section 8) requires the BY reshaping correction in order to maintain validity. Another application of self-consistency is in post-processing e-values that have been screened or filtered based on the data. Formally, suppose the original set of hypotheses K has been shrunk to a data-dependent subset S ⊂ K in some arbitrary way based on the e-values. This could be based on any subjective choices of the user (based on side-information, prior scientific knowledge, whatever). The question is: how do we now find a subset of S that guarantees FDR control? The “post-selection e-BH procedure” is simple:
+run the e-BH procedure on S at the amended level α ̃ := α|S|/K.
+1We thank a reviewer for this insightful observation. 2Su (2018) used the term compliance for self-consistency. We thank a reviewer for pointing out the terminology of self-consistency. Blanchard and Roquain (2008) showed that a self-consistent p-testing procedure that is decreasing in each p-value controls FDR at level α for independent or PRDS p-values.
+10
+
+
+Then every rejected e-value will be larger than |S|
+α ̃RG , which equals K
+αRG . Thus, this procedure controls
+FDR under arbitrary dependence for any initial selection procedure. This is once more in contrast to the “post-selection BH procedure” in Ramdas et al. (2019a, Section 8), where conditions on both the dependence and the selection are needed for FDR control, devoid of which one must use the BY reshaping correction. Combining the above two ideas (imposition of structural constraints and screening/filtering) in any order immediately lends a great deal of flexibility to the user to design new procedures. For example, it immediately yields a “focused e-BH” procedure, an extension of the recent focused BH algorithm by Katsevich et al. (2021), whose details are omitted for brevity. In contrast to (Katsevich et al., 2021, Theorem 1), our procedure controls FDR under no assumptions whatsoever on the dependence, structure and filtering. As a final extension, imagine that we are given a partition of the hypotheses into G prespecified groups. It is easy to define group-level e-values by merging the individual level e-values (e.g., averaging under arbitrary dependence, or multiplying under independence). This immediately yields a grouplevel e-BH procedure that can be used as an initial filtering step before running the post-selection e-BH procedure. For consistently aggregating discoveries across multiple partitions, an e-filter extension of the p-filter algorithm (Ramdas et al., 2019a) may be derived.
+5.2 A few remarks on the e-BH procedure
+At this point, we have seen that the base e-BH procedure has the desirable FDR control. Let us make a few remarks on the (full) e-BH procedure to further explain its features and subtleties. Some features have been mentioned briefly before and here they are discussed in comparison with alternatives.
+1. Although one can always opt to skip the boosting step and directly apply the base e-BH method to raw e-values, boosting can be quite helpful to enhance detection power. The boosting factor bk may be substantial (see Examples 2, 3, 5 and 6); a boosting factor between 1.3 and 10 is common in stylized settings.
+2. If the e-values are independent (or PRDS), then by Theorem 1, the FDR of the base e-BH procedure is at most α. This result is not of primary interest, but is worthy of note. The main advantage of e-BH is that, unlike the BH procedure, the above FDR guarantee holds under arbitrary dependence, where a conversion to p-values would be suboptimal due to the extra ≈ log K correction factor. This point is relevant in case p-values are derived from e-values, for example via universal inference (Wasserman et al., 2020).
+3. The boosting in step 1 of the BH procedure can easily incorporate partial information on the null distributions of the e-values. If we know a set of null possible distributions of Ek, then it suffices to calculate a boosting factor under each distribution, and take their infimum. Moreover, if only the null distributions of some e-values are known, we can simply choose bk = 1 for the ones whose distributions we do not know. Note that the post-selection and structured e-BH procedures also enjoy FDR control after boosting under arbitrary dependence.
+4. Since bk may be different for each k, the boosted e-values may not have the same order as the raw e-values. Hence, the full e-BH procedure may reject a hypothesis with a smaller e-value while accepting one with a larger e-value. This feature is intentional. For instance, an observation of ek = 1.999 carries stronger evidence against the null hypothesis of a uniform distribution on [0, 2], compared to an observation of ek = 2 against a null hypothesis of an exponential distribution with mean 1 or an unknown distribution.
+5. E-values typically contain less information than p-values (the flip side of needing less assumptions/structure/knowledge/modeling in order to be constructed), and hence a simplistic comparison with the BH procedure applied to p-values is not particularly insightful. Nevertheless,
+11
+
+
+if the distributions of null e-values are fully known, then the e-BH procedure performs comparably to the BH and the BY procedures; see Section 6.5 for their connection and Section 7 and Appendix A for simulation results.
+6. We note a contrasting feature on the FDR of the BH and e-BH procedures. The BH procedure has a desirable FDR control under dependence assumptions (such as independence and PRDS) and a penalty if such assumption is not available (e.g., (Benjamini and Yekutieli, 2001; Fithian and Lei, 2020)). In contrast, the e-BH procedure has a desirable FDR control with no dependence assumption and a boosting of power is possible if dependence assumptions are imposed. Similarly, a penalty in (13) needs to be applied for self-consistent p-testing procedures, which are dominated by BH, but not for self-consistent e-testing procedures.
+7. Suppose we may avail ourselves of only approximate e-values that (under the null) satisfy E[Ei] ≤ 1+ǫi, or “asymptotic” e-values, which satisfy E[Ei] ≤ 1+o(1), in the sense that as the amount of data used to calculate the e-value increases in size, then the approximate e-value becomes a valid e-value in the limit. Then the corresponding FDR control in the first case is simply bounded by
+α
+K (K0 + ∑
+i∈N ǫi), which is further bounded by the simpler expression α(1 + maxi ǫi). In the
+second case, the FDR bound becomes α(1 + o(1))K0/K. In other words, errors in the e-values (which may be due to slightly violated assumptions, or nuisance parameters, etc.) directly and linearly propagate to errors in the FDR control level. This claim can be verified by simply observing the linearity of expectation used in the last line of the proof of Proposition 2. We know of no existing simple, analogous claim for the BH procedure or other p-testing procedures.
+In practice, it may be desirable to assign weights based on prior knowledge of each hypothesis. Here, we describe an analog of the weighted BH procedure (Benjamini and Hochberg, 1997). For arbitrary constant weights w1, . . . , wK summing up to K, a similar boosting scheme is obtained by each replacing α with wkα in (8) and (9). We can alternatively skip the boosting in step 1 and directly use w1E1, . . . , wK EK as the input e-values fed to the base e-BH procedure. In either case, the full e-BH procedure still has the valid FDR control at level α, under arbitrary dependence of the e-values as before. This claim is also justified by Theorems 3 and 4 (see the explanation after Theorem 3). At this point, most (but not all) messages for the practitioner have been delivered and the casual reader may be warned that the paper intentionally takes a rather theoretical turn, and analyzes the eBH procedure more carefully, comparing repeatedly to the BH procedure or to the case when e-values are simply calibrated p-values. Proofs of all results beyond this section are put in Appendix B.
+6 Theoretical analysis
+6.1 A technical lemma
+While we have provided a direct and simple proof for FDR control of the base e-BH that does not require any correction under arbitrary dependence, the reader may be curious to understand better why exactly BH has to pay an extra ≈ log K factor, but e-BH, on the contrary, allows for boosting. We provide one technical answer here in the form of a lemma, similar to Ramdas et al. (2019a, Lemma 1) in the setting of p-values. Lemma 1 leads to FDR control of the full e-BH procedure applied to boosted e-values. Recall that for k ∈ K, a random vector X = (X1, . . . , XK ) is PRDS on Xk if for any decreasing
+set A ⊆ RK , the function x 7→ P(X ∈ A | Xk ≥ x) is decreasing on [0, ∞). In order to prepare for the lemma that follows, note that for any positive constant c, we have that
+E[c1{Xk≥c}] ≤ E[Xk], (14)
+which is simply a restatement of Markov’s inequality. The following lemma addresses the situation where c is a random data-dependent quantity f (X), as in the computation of FDR of the e-BH procedure.
+12
+
+
+Lemma 1. Take an arbitrary random vector X = (X1, . . . , XK ) : Ω → [0, ∞]K and fix k ∈ K. Let
+f : [0, ∞]K → [0, ∞) be a measurable function with range If , and X′
+k := sup{x ∈ If ∪ {0} : x ≤ Xk}
+so that X′
+k ≤ Xk by construction.
+(i) If Xk is independent of X−k := (Xj)j6=k, then
+E
+[
+f (X)1{Xk≥f(X)} | X−k]
+≤ E[X′
+k] ≤ E[Xk].
+(ii) If f is decreasing and X satisfies PRDS on Xk, then
+E
+[
+f (X)1{Xk≥f (X)}
+]
+≤ sup
+x≥0
+xP(X ′
+k ≥ x) ≤ E[Xk].
+(iii) For any dependence structure, it always holds that
+E
+[
+f (X)1{Xk≥f (X)}
+]
+≤ E[X′
+k] ≤ E[Xk].
+In particular, if Xk is a null e-value, all expectations above are bounded by 1.
+Later we will apply Lemma 1 to X = E′ and a specific choice of f to show Theorems 3 and 4. Comparing Lemma 1 to Ramdas et al. (2019a, Lemma 1) for the p-value setting, we observe that the first two statements have a very direct parallel. However the third statements are where the difference appears; the p-value statement requires a correction while the above e-value statement does not. To briefly elaborate, recall (14) and correspondingly note that a null p-variable Pk satisfies for any constant c ∈ (0, 1],
+E
+[ 1{Pk≤c}
+c
+]
+≤ 1. (15)
+While Lemma 1 showed that (14) easily generalized from a constant c to a data-dependent f (X), Ramdas et al. (2019a, Lemma 1) showed that a corresponding statement for (15) is true for p-variables only under a PRDS assumption, but otherwise an extra lK factor is paid under arbitrary dependence. We anticipate this lemma to aid with the design and proof of FDR procedures with e-values in other contexts—just as the corresponding p-value lemma already has (Ramdas et al., 2019b)—and we shall see how it is applied to e-BH next.
+6.2 FDR of e-BH for arbitrary e-values
+We analyze some properties of the base e-BH procedure. Below, the e-values we feed into the base e-BH procedure are the boosted e-values from step 1 of the BH procedure. We will omit the term “boosted” while keeping in mind that the base e-BH can also be directly applied to the raw e-values. Let (E′
+1, . . . , E′
+K ) be the random vector of (boosted) e-values and (e′
+1, . . . , e′
+K ) be its realized value.
+The only property we will use on E′
+1, . . . , E′
+K is that they are nonnegative. The next result is a more
+precise analysis of the FDR of the base e-BH procedure under arbitrary dependence.
+Theorem 3. Applied to arbitrary non-negative random variables E′
+1, . . . , E′
+K and α ∈ (0, 1), the base
+e-BH procedure G(α) satisfies
+E
+[ FG(α)
+RG(α)
+]
+=α
+K
+∑
+k∈N
+E
+[
+tα1{E′
+k ≥tα }
+]
+≤ K0
+K yα,
+where tα is given by (6), and
+yα = 1
+K0
+∑
+k∈N
+E [T (αE′
+k)] . (16)
+In particular, if E′
+1, . . . , E′
+K are the raw e-values or the boosted e-values via (9) or (11), then yα ≤ α.
+13
+
+
+Let (E1, . . . , EK ) be the vector of raw e-values. Theorem 3 shows that for any choice of b1E1, . . . , bK EK satisfying (9) or φ1(E1), . . . , φK (EK ) satisfying (11), the FDR of the e-BH procedure is at most α under arbitrary dependence. Moreover, the FDR control of the weighted e-BH follows from
+K0
+K yα = 1
+K
+∑
+k∈N
+E [T (αE′
+k)] ≤ 1
+K
+∑
+k∈N
+wkα ≤ 1
+K
+∑
+k∈K
+wkα = α.
+The value of yα depends on the distribution of the boosted e-values as well as the number K of hypotheses. In case the null distributions of the e-values are known, we would ideally set yα to α (or close to α) by properly choosing bk in (9) or φk in (11). In case E[T (αbkEk)] is not easy to compute, it might be convenient to use a weaker bound
+y ̄α,k(bk) := E[αbkEk1{αbkEk≥1}] ≥ E[T (αbkEk)], (17)
+and set y ̄α,k(bk) ≤ α (ideally an equality) by choosing bk ≥ 1. Such a choice of bk always guarantees the FDR of the e-BH procedure to be at most α by Theorem 3, since
+1
+K0
+∑
+k∈N
+E[T (αbkEk)] ≤ 1
+K0
+∑
+k∈N
+y ̄α,k(bk) ≤ α.
+In addition to being easier to compute, an advantage of y ̄α,k(bk) is that it depends purely on the distribution of Ek and not on K, and hence the boosted e-value bkEk is ready to use for other experiments involving Hk.
+Example 2. We illustrate yα and y ̄α,k(bk) with a popular class of calibrators in Shafer (2021) and Vovk and Wang (2021). Take λ ∈ (0, 1) and assume the raw e-values are given by, for k ∈ K,
+Ek = λP λ−1
+k , (18)
+where Pk is a uniform random variable on [0, 1] if k ∈ N . We will consider the boosted e-values bE1, . . . , bEK where b is a common boosting factor since the null e-values are identically distributed. In this case,
+yα = E[T (αbE1)] =
+∫1
+0
+T
+(
+αbλuλ−1)
+du.
+A formula for y ̄α,k(b) is simple:
+y ̄α,k(b) = αb
+∫ (αbλ)1/(1−λ)
+0
+λuλ−1 du = (λλαb)1/(1−λ).
+For instance, if λ = 1/2, then y ̄α,k(b) = (αb)2/2. Setting y ̄α,k(b) = α yields b = (2/α)1/2. In this
+example, all e-values are boosted by a multiplier of (2/α)1/2, which is substantial; e.g., b ≈ 6.32 if α = 0.05. Finally, note that the same boosting factor b above is also valid whenever the p-values are not exactly uniform but instead stochastically larger than uniform.
+Example 3. We consider e-values obtained from the likelihood ratio between two normal distributions with different mean and variance 1 as used in the numerical experiment of Vovk and Wang (2021). Take δ > 0 which represents the difference in the alternative and the null means, and assume the raw e-values are given by, for k ∈ K,
+Ek = eδXk−δ2/2 (19)
+where Xk is a standard normal random variable if k ∈ N . Note that each null e-value is a log-normal
+random variable with parameter (−δ2/2, δ). For the boosted e-values bE1, . . . , bEK , We have
+y ̄α,k(b) = αbE[Ek1{Ek≥1/(αb)}] = αbΦ
+(δ
+2 + log(αb)
+δ
+) ,
+14
+
+
+where Φ is the standard Gaussian cdf. Setting y ̄α,k(b) = α yields the equation
+bΦ
+(δ
+2 + log(αb)
+δ
+)
+= 1,
+which can be easily solved numerically. For instance, if δ = 3 and α = 0.05, then b ≈ 1.37 by solving y ̄α,k(b) = α, and if δ = 4 and α = 0.05, then b ≈ 1.11. These choices of b are all conservative since y ̄α,k(b) is a conservative bound for yα (but b is only slightly conservative if K is large).
+For raw e-values (E1, . . . , EK ) with unspecified distributions, Theorem 3 gives an upper bound αK0/K on the FDR of the base e-BH procedure. This upper bound is usually quite loose since yα in (16) is typically much smaller than α; see e.g., Example 2. This upper bound cannot be improved in general without any additional information.
+Example 4 (Sharpness of the upper FDR bound in Theorem 3). Consider the following setup. Let the K0 null raw e-values be given by Ek = K/(K0α)1A, k ∈ N , where A is an event with P(A) = αK0/K. Moreover, we set all other e-values to 0, which means that they cannot be rejected. Hence, the false discovery proportion is 1 as soon as there is any rejection. It follows that
+FDRG(α) = P(RG(α) > 0) = P(A) = αK0/K,
+which is the upper bound provided by Theorem 3.
+6.3 FDR of e-BH for PRDS e-values
+In case p-values are independent or positively dependent, the BH procedure has a lower FDR guarantee than the one obtained with arbitrary dependence. We investigate a similar matter for e-values, aiming for a bound better than that of Theorem 3. This is possible via the result of Lemma 1. To summarize, if e-values are PRDS, the base e-BH procedure has a smaller FDR guarantee, and, consequently, the e-BH procedure allows a more powerful boosting in its step 1.
+Theorem 4. Suppose that the raw e-values are PRDS. Applied to arbitrary non-negative random variables E′
+1, . . . , E′
+K and α ∈ (0, 1), the base e-BH procedure G(α) satisfies
+E
+[ FG(α)
+RG(α)
+]
+≤ K0
+K zα. (20)
+where
+zα = 1
+K0
+∑
+k∈N
+max
+x∈K/K xP(αE′
+k ≥ x). (21)
+In particular, if E′
+1, . . . , E′
+K are the raw e-values or the boosted e-values via (8) or (10), then zα ≤ α.
+Theorem 4 shows that, under the assumption of PRDS, using the boosted e-values b1E1, . . . , bK EK satisfying (8) or φ1(E1), . . . , φK (EK ) satisfying (10), the FDR of the e-BH procedure is at most α. For bk ≥ 1, let zα,k(bk) = max
+x∈K/K xP(αbkEk ≥ x). (22)
+In step 1 of the e-BH procedure, we need to choose a boosting factor bk ≥ 1 such that zα,k(bk) ≤ α (ideally, an equality). Under an extra condition, a suitable choice of bk admits a simple formula.
+Proposition 3. Suppose that Ek is a continuously distributed null e-value. Let q1−α(Ek) be the left (1 − α)-quantile of Ek. If
+t 7→ tP(Ek ≥ t) is decreasing on [q1−α(Ek), ∞), (23)
+then bk := (αq1−α(Ek))−1 is the largest boosting factor which satisfies (8).
+15
+
+
+Condition (23) is not uncommon as α is typically small and the value tP(Ek ≥ t) goes to 0 as t → ∞ since Ek has a finite mean. Condition (23) is satisfied by, for instance, the e-values in Example 2 as well as their distributional mixtures. For a continuously distributed Ek, condition (23) can be equivalently expressed as
+β 7→ βq1−β(Ek) is decreasing on [1 − α, 1).
+Similar to y ̄α,k in (17), there is a conservative version of zα,k which does not depend on K, given by z ̄α,k(bk) = sup
+x≥1
+xP(αbkEk ≥ x). (24)
+In particular, if (23) holds, then z ̄α,k(bk) = zα,k(bk) for the choice bk in Proposition 3.
+Example 5. We look at the e-values in Example 2. For k ∈ N , we have
+tP(Ek ≥ t) = t(λ/t)1/(1−λ) = (λt−λ)1/(1−λ),
+which is a decreasing function in t, and thus (23) holds. In this case, for b ≥ 1,
+zα,k(b) = P(αbEk ≥ 1) = (λαb)1/(1−λ),
+and by Proposition 3, the best choice of bk is
+b = (αq1−α(Ek))−1 = (λαλ)−1.
+Since y ̄α,k(b) = (λλαb)1/(1−λ) in Example 2, we get zα,k(b)/y ̄α,k(b) = λ. Hence, the FDR is improved by a factor of roughly λ from Theorem 3 (arbitrary dependence) to Theorem 4 (PRDS), which could be substantial if λ is small. For instance, if λ = 1/2, then b = 2α−1/2. For α = 0.05, we have b ≈ 8.94, which should be compared with b ≈ 6.32 in Example 2 under arbitrary dependence.
+Example 6. For the setup of e-values in Example 3, (23) does not always hold. . Nevertheless, for b ≥ 1, zα,k(b) and z ̄α,k(b) in (22) and (24) have simple formulas
+zα,k(b) = max
+x∈K/K x Φ
+( log(αb)
+δ − log x
+δ −δ
+2
+) ,
+and
+z ̄α,k(b) = max
+x≥1 x Φ
+( log(αb)
+δ − log x
+δ −δ
+2
+) .
+Without specifying K, we use z ̄α,k(b), and the value b for z ̄α,k(b) = α can be easily computed numerically. For instance, if δ = 3 and α = 0.05, then b ≈ 7.88 (compared with b ≈ 1.37 in Example 3), and if δ = 4 and α = 0.05, then b ≈ 10.31 (compared with b ≈ 1.11 in Example 3).
+6.4 An optimality result
+There is a simple way of generating other e-testing procedures similar to the base e-BH procedure by transforming the e-values. In this section, working under the assumption that no distributional information on e-values is available, we focus on a procedure resulting from applying a common transform to all raw e-values. We obtain an optimality of the base e-BH procedure among all such transforms. Take a strictly increasing and continuous function φ : [0, ∞] → [0, ∞] with φ(∞) = ∞ and φ(0) < 1. We shall call φ an increasing transform. We design an e-testing procedure G(φ) by rejecting the k∗
+e,φ hypotheses with the largest e-values, where
+k∗
+e,φ = max
+{
+k ∈ K : kφ(e[k])
+K ≥1
+}
+. (25)
+16
+
+
+It is clear that the choice of φ : t 7→ αt corresponds to τφ = tα in Section 4, which yields the base e-BH procedure G(α). Using Theorem 3 by choosing the boosted e-values as φ(Ek)/α, k ∈ K, the FDR of G(φ) satisfies
+E
+[ FG(φ)
+RG(φ)
+]
+≤ K0
+K yφ, (26)
+where
+yφ := 1
+K0
+∑
+k∈N
+E[T (φ(Ek))].
+The special choice φ : t 7→ αt, corresponding to the e-BH procedure, always guarantees yφ = yα ≤ α, where yα is defined in (16). For a general choice of φ, the FDR of G(φ) requires the knowledge of yφ, or at least an upper bound. In the next result, we show that, if we require an FDR guarantee for arbitrary e-values, then the base e-BH procedure is optimal among the class G(φ). This is reassuring for us to use the base e-BH procedure as a canonical candidate for handling arbitrarily dependent e-values without further information.
+Theorem 5. Fix α ∈ (0, 1) and K. For any increasing transform φ, if G(φ) satisfies
+E
+[ FG(φ)
+RG(φ)
+]
+≤α
+for arbitrary configurations of e-values, then G(φ) ⊆ G(α).
+6.5 Applying the e-BH procedure to p-values
+In this section, we compare the BY procedure
+D′(α) := D(α/lK )
+and the e-BH procedure G(α), as they both require no assumptions on the dependence structure. Although the two procedures are comparable on the dependence assumption, we remark that e-values generally use less information than p-values, as p-values require full specification of the distributions of the test statistics, whereas e-values only require the information of a known mean. Note that information on the boosting factors bk, k ∈ K is contained in the null distribution of the test statistics. To properly compare the p- and e-based procedures, we need to calibrate between p-values and e-values using calibrators. With such a calibration, the e-BH procedure gives rise to a general class of p-testing procedures with FDR guarantee for arbitrary p-values, similar to G(φ) in Section 6.4, and this class includes the base BH and the BY procedures as special cases. On a related note, calibration to e-values serves as a crucial intermediate step in combining p-values under arbitrary dependence for testing a global null (Vovk et al., 2020, Section 5). Let ψ : [0, 1] → [0, ∞] be a strictly decreasing and continuous function with ψ(0) = ∞. We shall call ψ a decreasing transform. We design a p-testing procedure D(ψ) by rejecting the k∗
+ψ hypotheses
+with the smallest p-values, where
+k∗
+ψ = max
+{
+k ∈ K : ψ(p(k)) ≥ K
+k
+} ,
+with the convention max(∅) = 0. A smaller transform function leads to less power of the testing procedure. A similar procedure using different transforms on individual p-values is analyzed in Appendix C. An important example of D(ψ) is to choose ψ : p → α/p for some α ∈ (0, 1). Note that
+ψ(p(k)) ≥ K
+k ⇐⇒ Kp(k)
+k ≤ α.
+17
+
+
+In this case, D(ψ) is precisely the BH procedure D(α). The p-testing procedure D(ψ) is equal to the step-up procedure of Benjamini and Yekutieli (2001) which rejects k∗ := max{k ∈ K : p(k) ≤ αk} hypotheses with the smallest p-values, where αk =
+ψ−1(K/k), k ∈ K. Such a procedure also appears in Blanchard and Roquain (2008) where αk = αβ(k)/K and β is called a shape or reshaping function. Our main purpose here is to compare the pand e-testing procedures, not to propose new step-up p-testing procedures. The objects φ(p1), . . . , φ(pK ) can be treated as boosted e-values. Hence, using Theorems 3 and 4, we can easily calculate the FDR of D(ψ).
+Proposition 4. For arbitrary p-values and a decreasing transform ψ, the testing procedure D(ψ) satisfies
+E
+[ FD(ψ)
+RD(ψ)
+]
+≤ K0
+K yψ,
+where
+yψ := ψ−1(1) +
+K −1
+∑
+j=1
+K
+j(j + 1) ψ−1(K/j). (27)
+If the p-values are PRDS, then
+E
+[ FD(ψ)
+RD(ψ)
+]
+≤ K0
+K zψ,
+where
+zψ := max
+t∈K/K tψ−1(t). (28)
+If the decreasing transform ψ satisfies
+t 7→ tψ−1(t) is decreasing on [1, ∞), (29)
+similarly to condition (23), we have zψ = ψ−1(1). We can replace [1, ∞) by [1, K] or K/K in (29); the current condition (29) is slightly stronger but it does not depend on K. For the specific choice ψ : p → α/p which gives the BH procedure, we have ψ−1 = ψ,
+yψ = α +
+K −1
+∑
+j=1
+α
+j + 1 = αlK , and zψ = max
+t∈K/K tψ−1(t) = α.
+By Proposition 4, D(ψ) = D(α) has FDR guarantee K0lK α/K for arbitrarily dependent p-values, and FDR guarantee K0α/K for PRDS p-values. This gives an analytical proof of the FDR guarantee of the BH and BY procedures in Theorem 1. Let f be a calibrator and ψ = αf . We can see that yψ ≤ α by Theorem 3 since f (p1), . . . , f (pK ) are e-values. Conversely, for any decreasing transform ψ satisfying yψ ≤ α and taking values in K/K (recall that only values of ψ in K/K matter), the function f = ψ/α is a calibrator since
+yψ = ∫ 1
+0 ψ(p) dp = α ∫ 1
+0 f (p) dp. Therefore, all D(ψ) with yψ ≤ α can be obtained via calibration to
+e-values.
+Remark 4. As we mentioned above, via the relationship
+ψ−1(K/k) = αβ(k)/K, (30)
+one obtains the step-up procedure based on the shape function β. Hence, such procedures can also be equivalently expressed via calibration to e-values. In Blanchard and Roquain (2008), an important condition on β is
+β(k) =
+∫k
+0
+x dν(x), k ∈ K, for some probability measure ν on (0, ∞). (31)
+18
+
+
+Indeed, if (30) and (31) hold, then by (27),
+yψ = α
+K ∑
+j=1
+β(j) − β(j − 1)
+j =α
+K ∑
+j=1
+∫j
+j−1
+x
+j dν(x) ≤ αν((0, ∞)) = α.
+Therefore, Proposition 4 gives that D(ψ) has FDR level at most α, recovering the result in Blanchard and Roquain (2008). Moreover, we can check that (31) is also sufficient for (29), and thus D(ψ) has FDR level at most αβ(K)/K under PRDS by Proposition 4.
+The inequality αE [tαf (tα)] ≤ K0zα in the proof of Theorem 4 is generally not an equality. Hence, the FDR bound provided by Proposition 4 may not be sharp in the case of PRDS p-values. Nevertheless, in the next proposition we shall see that this bound is almost sharp under some extra conditions. From there, we obtain a weak optimality result on the base BH procedure.
+Proposition 5. Fix α ∈ (0, 1) and K. For any decreasing transform ψ, if D(ψ) satisfies
+E
+[ FD(ψ)
+RD(ψ)
+]
+≤α
+for arbitrary configurations of PRDS p-values, then ψ−1(1) ≤ α. Moreover, if ψ satisfies (29), then D(ψ) ⊆ D(α).
+Comparing the optimality of the e-BH procedure in Theorem 5 with the optimality of the BH procedure in Proposition 5, we note two differences: Theorem 5 is stated for arbitrary e-values whereas Proposition 5 is stated for PRDS p-values; Theorem 5 imposes no assumption on φ whereas Proposition 5 requires ψ to satisfy (29). Different from the case of PRDS p-values, D′(α) and D(ψ) may not be strictly comparable for arbitrarily dependent p-values. We discuss this issue in Example 7 below. The general message is that, in contrast to the case of PRDS p-values as shown in Proposition 5, the BY procedure is not necessarily always the best for arbitrarily dependent p-values.
+Example 7. We consider the calibrators in (18) by choosing ψ : p 7→ θλpλ−1 for some θ > 0. For simplicity, we take λ = 1/2 (a similar procedure was proposed by Sarkar (2008)). As we see from Example 2, D(ψ) has an FDR guarantee of yψ ≤ θ2/2. To compare with D′(α), we choose θ = (2α)1/2,
+so that both procedures have FDR guarantee of α. Let k∗ be the number of hypotheses rejected by D′(α). Note that a sufficient condition for k∗
+ψ ≥ k∗ is ψ(pk∗ ) ≥ K/k∗. If we set
+γ := k∗α
+K lK
+≈ pk∗ ,
+then, approximately, the above condition is
+ψ(γ) ≥ K
+k∗ ⇐⇒ k∗
+K≥ 2
+lK
+.
+Note that lK ∼ log K, and k∗/K is the proportion of rejection among all hypotheses. Hence, D(ψ) is
+more powerful than D′(α) roughly when the proportion of rejections exceeds 2/ log K. This conclusion is independent of α.
+7 Simulations: multiple testing for ordered hypotheses using
+multi-armed bandits
+Here, we conduct simulation studies for a setting that merges multiple testing with an ordered variant of the multi-armed bandit problem. Appendix A contains additional simulation results for a more
+19
+
+
+classical non-sequential multiple testing setup involving z-tests. While it is more traditional to present the latter application in a paper, we find the former a more conceptually interesting case study. Consider a multi-armed bandit with K arms, where pulling arm k produces an iid sample (Xk
+1 ,Xk
+2,...)
+from a non-negative random reward Xk. The K null hypotheses are E[Xk] ≤ 1, k = 1, . . . , K, which are nonparametric and similar to Example 1. For interpretation’s sake, think of Xk
+j as follows: each arm is an investment and Xk
+j is the return of the k-th investment on its j-th trial. Specifically, imagine that each investment k starts with unit wealth and the wealth can be multiplied by Xk
+j when the arm is pulled the j-th time. Our high-level aim is thus to find profitable investments as quickly as possible; although we do not write down a formal objective, this is not necessary to convey our main points. (One may equally think of testing if the k-th drug has an effect or not.) Consider a simple setting in which we have used side information or prior knowledge to arrange the arms in a prespecified order and we must collect data on arm k before visiting arm k + 1; thus previous arms cannot be revisited to obtain more samples. Each arm can be pulled at most n times (the budget) before moving on to the next one. We describe a natural algorithm to tackle this problem (an algorithm consists of two parts: deciding when to stop pulling an arm and move to the next one, and deciding which nulls to reject at the end). Our algorithm will use a multiple testing procedure D such as BH or e-BH for both steps: we move onto the next arm if we have exhausted the budget for the current arm, or our multiple testing procedure can reject the null with the available information. To formalize this, we take an e-testing procedure as an example. (For a p-testing procedure, e-values are replaced by p-values.) For k = 1, . . . , K:
+1. At the end of dealing with arm k − 1, we can summarize the available information as a vector of e-values ek−1 := (e1, . . . , ek−1, 1, . . . , 1).
+2. Denote by ek,j the e-value obtained after pulling the k-th arm j times. We pull arm k and stop pulling after Tk trials if either
+(a) |D(e1, . . . , ek−1, ek,Tk , 1, . . . , 1)| > |D(ek−1)|, i.e., there is at least one new discovery, or
+(b) arm k has been pulled Tk = n times, i.e., the budget is exhausted.
+3. Set ek := ek,Tk and move on to arm k + 1.
+After all K arms are finished, we apply the procedure D to eK := (e1, . . . , eK ) to determine the rejected hypotheses. Since we are in a nonparametric setting, the natural choices of e-values and p-values are based on e-processes. More precisely, the e-value ek,j and the p-value pk,j are realized by, respectively,
+Ek,j :=
+j ∏
+i=1
+Xk
+i and Pk,j :=
+(
+max
+i=1,...,j Ek,i
+)−1
+,
+for each k = 1, . . . , K and j = 1, . . . , n. Also, define Ek,0 = Pk,0 = 1 for simplicity. It is not hard to
+see that if Hk is true then (Ek,j )n
+j=0 is an e-process. The final e-variables Ek and p-variables Pk are obtained by
+Ek = Ek,Tk and Pk = Pk,Tk , k = 1, . . . , K.
+The fact that the above stopped e-processes yield valid p-values is obtained by invoking Ville’s inequality (Shafer et al., 2011; Howard et al., 2020). The above algorithm is a natural baseline in the sense that, for D being BH, e-BH or BY, one cannot obtain more rejections than this algorithm, even if all arms are pulled n times. The algorithm may be seen as an ordered version of that of Jamieson and Jain (2018), but a detailed discussion is not necessary here. It is important to note that, even assuming data across arms are mutually independent, the produced e-values (or p-values) are dependent in a complicated way; a larger previous realization
+20
+
+
+leads to a smaller threshold for the next stopping rule. Indeed, we have Tk < n only if Step 2(a)
+was invoked, meaning that ek,Tk ≥ K
+|D(ek)|α . Hence, some negative dependence exists and the BH
+procedure does not control FDR theoretically. There are, however, two p-testing procedures that have valid FDR: the BY procedure D(α/lK) which is designed for arbitrary dependence, and the
+self-consistent or compliant BH (cBH) procedure D(α′), where α′ is given in (13); i.e., it satisfies α′(1 − log(α′)) = α (e.g., α′ = 0.0087 for α = 0.05). Both the BY and the cBH procedure give a FDR guarantee of α in our experiments, although cBH relies on the independence of data across arms (BY and e-BH do not).3 Therefore, we will compare the four procedures e-BH, BH, BY and cBH in our numerical experiments, while keeping in mind that BH does not have a valid FDR in theory, although by design it has more rejections than the other three procedures. We summarize the allowed conditions for a valid FDR guarantee for these four methods in Table 1.
+Table 1: Conditions for the validity of the testing algorithm. To allow for dependence among data across arms, we only require for k ∈ N , E[Xk
+j |G] ≤ 1 where G is the available information before we observe Xk
+j (weaker than independence used in our experiments); see Example 1.
+arbitrarily dependent arbitrarily dependent FDR guarantee in data across arms stopping rules Tk our experiments
+e-BH YES YES valid at level αK0/K BH NO NO not valid BY YES YES valid at level αK0/K cBH NO YES valid at level αK0/K
+Below we describe the data generating process used in our experiments (note that the design and the validity of the above procedures do not depend on any knowledge of the data generating process). As mentioned above, arms are naturally ordered such that more promising arms come first. More specifically, arm k is non-null with probability θ(K − k + 1)/(K + 1) where θ ∈ [0, 1] is a parameter. The expected number of non-nulls in this setting is θ/2. Further, let sk be the strength of signal in each non-null hypothesis, which follows an iid exponential distribution with mean μ. With this setting, some non-nulls may have a very weak signal and they are almost impossible to distinguish from a null, whereas some other non-nulls with a strong signal may be rejected quickly with a few pulls. Conditional on sk, the data Xk
+1 , . . . , Xk
+n for arm k are iid following a log-normal distribution
+Xk = exp
+(
+Zk + sk1{k∈K\N } − 1/2
+)
+where Z1, . . . , ZK are iid standard normal. Note that the data are independent across arms, and hence the cBH procedure is valid (see Table 1). In the experiments, we set α = 0.05 and θ = 1/2 (on average, 1/4 of all hypotheses are non-null). Results for some values of other parameters are summarized in Table 2. In all settings of Table 2, we see that the e-BH procedure outperforms both BY and cBH by providing more discoveries and using a smaller number of pulls. The BY and cBH procedures are both quite conservative and they perform similarly, with cBH being better for large K as expected. The numbers of true discoveries of e-BH are slightly lower than those of BH, but, as we explained above, BH does not have a theoretical guarantee of FDR (its realized FDP is not larger than α in our experiments, but this may be due to the fact that the null p-values are not uniform).
+3We briefly explain the validity of cBH in our setting, which is inspired by observations of Jamieson and Jain (2018). First, define the unobserved latent p-values P ′
+1, . . . , P ′
+K by P ′
+k = Pk,n, k ∈ K. Note that P ′
+1, . . . , P′
+K are independent 
+since every arm is sampled n times, there is no adaptivity, and thus no dependence. Further, Pk ≥ P ′
+k by definition, and
+so the output (rejection set) of applying BH to P1, . . . , PK is a subset of that of applying BH to P ′
+1, . . . , P′
+K . Therefore,
+applying BH to P1, . . . , PK can been as a (randomized) self-consistent procedure applied to the independent latent
+p-values P ′
+1, . . . , P ′
+K , and its FDR control under the correction (13) follows by noting that the proof technique in Su
+(2018) directly applies to randomly selected self-consistent rejection sets.
+21
+
+
+Table 2: Simulation results in the multi-armed bandit setting, where R is the number of rejected hypothesis, B is the proportion of unused budget (number of unused pulls divided by nK), and TD is the number of true discoveries (rejected non-null hypotheses). Each number is computed over an average of 500 trials. The default values of parameters are K = 500, n = 50 and μ = 1, and each panel may have one parameter value different from the default.
+(a) Default
+R B% TD FDP% e-BH 74.4 11.42 73.2 1.58 BH 77.0 11.44 75.3 2.13 BY 70.6 10.06 70.4 0.31 cBH 71.1 10.16 70.8 0.36
+(b) K = 2000
+R B% TD FDP% e-BH 297.6 11.39 293.2 1.48 BH 307.8 11.41 301.4 2.07 BY 281.2 9.95 280.4 0.26 cBH 284.5 10.15 283.5 0.36
+(c) n = 10
+R B% TD FDP% e-BH 47.7 3.99 47.3 0.83 BH 49.3 4.01 48.7 1.06 BY 38.4 2.77 38.4 0.08 cBH 39.2 2.85 39.2 0.11
+(d) n = 100
+R B% TD FDP% e-BH 79.1 13.48 77.9 1.50 BH 81.3 13.50 79.5 2.13 BY 76.4 12.36 76.1 0.35 cBH 76.7 12.44 76.4 0.41
+(e) μ = 0.5
+R B% TD FDP% e-BH 43.5 5.77 42.9 1.54 BH 46.3 5.80 45.3 2.13 BY 39.6 4.66 39.5 0.27 cBH 40.1 4.74 40.0 0.35
+(f) μ = 2
+R B% TD FDP% e-BH 97.4 16.46 95.9 1.54 BH 99.3 16.47 97.2 2.07 BY 94.3 15.23 94.1 0.29 cBH 94.6 15.32 94.3 0.35
+For many other settings of parameters and distributions of sk that we tried, the relative performance of the four methods is always qualitatively similar.
+8 A real-data example: detecting cryptocurrencies with positive expected return
+In this section we provide a real-data example in the spirit of Example 1 to detect cryptocurrencies (which we call coins, like Bitcoin, for brevity) with positive expected return. This analysis can be easily conducted for other financial assets or trading strategies. We collect daily price data of coins from Jan 4, 2015 to Jun 30, 2021 (price data are obtained from CoinGecko). We choose to start from 2015 so that we have a few hundreds of coins to work with. There were 496 coins that had trading prices on Jan 4, 2015 (the list is from CoinMarketCap), among which 126 were active (“alive”) on Jun 30, 2021. We order the coins by their market capitalization in Jan 2015 from the largest to the smallest (e.g., the first being Bitcoin). Let Yk,j be the price of coin k at the end of the j-th month, j = 1, . . . , T and k = 1, . . . , K. In our data set, T = 78 and K = 496 (or 100, 200; see later). Let Xk,j = Yk,j /Yk,j−1 be the j-th month growth of the coin k, j ≥ 1, where Yk,0 is the initial price of coin k. The k-th null hypothesis is E[Xk,j | Fj−1] ≤ 1 for j = 1, . . . , T ; that is, during the considered period of time, coin k has a monthly expected growth no larger than 1 given previous market information Fj−1; see Example 1. We are interested in which coins generate positive expected return during the period. (However, our goal is not to predict future price movements, on which we do not have much to say.)
+22
+
+
+For each coin k, we start with an initial wealth of $1, invest λ ∈ [0, 1] proportion of our money into the coin and rebalance every month. We ignore transaction costs. The portfolio wealth process
+(Wk,t)t=0,1,...,T is given by
+Wk,0 = 1 and Wk,t =
+t ∏
+j=1
+(1 − λ + λXk,j ), t = 1, . . . , T.
+Under the k-th null hypothesis, (Wk,t)t=0,1,...,T is an e-process. Similarly to Section 7, we construct e-values and p-values by
+Ek := Wk,T and Pk :=
+(
+max
+t=0,1,...,T Wk,t
+)−1
+.
+In general, λ is allowed to depend on time and past data, and that would correspond to an adaptive trading strategy; we choose λ to be a constant here for simplicity. Note that Ek above does not require a disclosure of the intermediate wealth values, which may not be available in more complicated applications where privacy or propriety is concerned. We consider two simple strategies, λ = 1 which corresponds to buying and holding the coin, and λ = 1/2 which corresponds to monthly rebalancing to maintain half wealth invested in the coin. Note that for Ek with λ = 1, we do not need intermediate price data other than the initial and the terminal prices. The vanished coins (dead during the considered period, price data not included in CoinGecko) are treated as having insignificant p-values and e-values; recall that for the procedures in this paper, p-values larger than α and e-values less than 1/α can be safely treated as 1. Among the 496 coins listed in Jan 2015, many had tiny market capitalization and did not have meaningful trading activities. For this reason, investing in the full set of 496 coins may not be the most appropriate due to liquidity. Instead, it may be sensible to invest only in 200 or 100 coins with the largest market capitalization in Jan 2015. We thus consider the three cases of K = 496 (126 alive in Jun 2021), K = 200 (92 alive) and K = 100 (54 alive). The coin returns and the portfolio values are highly dependent in a complicated way. We will apply the e-BH procedure and the BY procedure to the e-values and p-values to select coins, as both methods are valid under arbitrary dependence. The results are reported in Table 3.
+Table 3: Number of coins selected by e-BH and BY procedures
+buy and hold 50%-rebalancing 30%-rebalancing #total coins 496 200 100 496 200 100 496 200 100
+e-BH 5% 3 4 0 42 28 13 21 12 6 BY 5% 11 0 0 15 11 6 15 4 5 e-BH 10% 13 7 2 60 48 24 32 22 8 BY 10% 18 7 0 25 15 7 13 7 7
+We observe that the e-BH procedure produces more discoveries than the BY procedure in almost all considered settings, except for (K, λ) = (496, 1). In addition, we impose essentially no model assumptions in this application, and the e-BH procedure can be applied even if only initial and final prices are observed. On a side note, for most coins, the 50%-rebalancing strategy produces higher terminal wealth Wk,T than the buy-and-hold and 30%-rebalancing strategies, and this could partially be explained by a combination of the very high volatility and the high return of coin prices during the considered period.
+23
+
+
+9 Conclusion
+We have introduced the e-BH procedure to achieve FDR control with e-values. Some highlights of the e-BH procedure are summarized below:
+1. It works for arbitrarily dependent e-values (Theorem 2);
+2. it requires no information on the configuration of the input e-values, and also works for weighted e-values (Section 5.2);
+3. it allows for boosting e-values if partial distributional information is available on some e-values (Section 4.2);
+4. it gives rise to a class of p-testing procedures which include both the BH procedure and the BY procedure as special cases along with proofs of FDR control (Proposition 4);
+5. it is optimal among the class of e-testing procedures G(φ) in the setting of arbitrary e-values (Theorem 5).
+Although the e-BH procedure is primarily designed for cases where e-values are directly available (not calibrated from bonafide p-values), even the p-value calibrated e-BH procedure may outperform the BY procedure in some settings (see the simulation results in Appendix A). There are two more complicated situations where the e-BH procedure can be applied:
+1. Natural e-values are available for some hypotheses, whereas natural p-values are available for the others. Depending on proportion, one may calibrate them all to p-values or all to e-values.
+2. A hypothesis has both an e-value and a p-value (or even multiple p-values and e-values), which may be dependent and obtained from different experiments. In such a situation, the power comparison of e- and p-based procedures depends on the quality of those e-values and p-values. One may choose to combine them into a single e-value or p-value for each hypothesis, e.g., using the methods in Vovk and Wang (2021).
+Thorough theoretical and empirical studies of the last two “hybrid” situations are needed to better understand the comparative advantages of p-values and e-values. Finally, an important issue on the FDR literature is to incorporate certain assumptions on the dependence structure among p-values. A popular choice is to impose a multivariate Gaussian structure; see e.g., Guo et al. (2014), Barber and Cand`es (2015), Delattre and Roquain (2015) and Fithian and Lei (2020). One may naturally wonder whether there is additional boosting for e-values in a multivariate Gaussian setting, and this leads to interesting questions for future studies.
+Acknowledgements
+We thank an Editor, an Associate Editor, and two referees for helpful comments on an earlier version of the paper. We also thank Peng Ding, Lihua Lei, Song Mei, and Vladimir Vovk for many useful discussions, and Ziyu Chi for excellent research assistance. AR acknowledges NSF DMS CAREER grant 1945266. RW acknowledges financial support from NSERC grants (RGPIN-2018-03823, RGPAS2018-522590).
+References
+Barber, R. F. and Cand`es, E. J. (2015). Controlling the false discovery rate via knockoffs. The Annals of Statistics, 43(5):2055–2085.
+Barber, R. F. and Ramdas, A. (2017). The p-filter: multilayer false discovery rate control for grouped hypotheses. Journal of the Royal Statistical Society Series B, 79(4):1247–1268.
+24
+
+
+Barras, L., Scaillet, O., and Wermers, R. (2010). False discoveries in mutual fund performance: Measuring luck in estimated alphas. Journal of Finance, 65(1):179–216.
+Benjamini, Y. and Hochberg, Y. (1995). Controlling the false discovery rate: a practical and powerful approach to multiple testing. Journal of the Royal Statistical Society B, 57:289–300.
+Benjamini, Y. and Hochberg, Y. (1997). Multiple hypotheses testing with weights. Scandinavian Journal of Statistics, 24(3):407–418.
+Benjamini, Y. and Yekutieli, D. (2001). The control of the false discovery rate in multiple testing under dependency. The Annals of Statistics, 29:1165–1188.
+Blanchard, G. and Roquain, E. (2008). Two simple sufficient conditions for FDR control. Electronic Journal of Statistics, 2:963–992.
+Delattre, S. and Roquain, E. (2015). New procedures controlling the false discovery proportion via Romano–Wolf’s heuristic. The Annals of Statistics, 43(3):1141–1177.
+Drton, M. (2009). Likelihood ratio tests and singularities. The Annals of Statistics, 37(2):979–1012.
+Efron, B. (1969). Student’s t-test under symmetry conditions. Journal of the American Statistical Association, 64(328):1278–1302.
+Embrechts, P., Wang, B., and Wang, R. (2015). Aggregation-robustness and model uncertainty of regulatory risk measures. Finance and Stochastics, 19(4):763–790.
+Finner, H., Dickhaus, T., and Roters, M. (2009). On the false discovery rate and an asymptotically optimal rejection curve. The Annals of Statistics, 37(2):596–618.
+Fithian, W. and Lei, L. (2020). Conditional calibration for false discovery rate control under dependence. Technical Report arXiv:2007.10438. To appear in the Annals of Statistics.
+Genovese, C. R. and Wasserman, L. (2004). A stochastic process approach to false discovery control. The Annals of Statistics, 32:1035–1061.
+Genovese, C. R. and Wasserman, L. (2006). Exceedance control of the false discovery proportion. Journal of the American Statistical Association, 101:1408–1417.
+Goeman, J. J. and Solari, A. (2011). Multiple testing for exploratory research. Statistical Science, 26:584–597. Correction: 28:464.
+Gr ̈unwald, P., de Heide, R., and Koolen, W. M. (2020). Safe testing. Technical Report arXiv:1906.07801.
+Guo, W., He, L., and Sarkar, S. K. (2014). Further results on controlling the false discovery proportion. The Annals of Statistics, 42(3):1070–1101.
+Howard, S. R., Ramdas, A., McAuliffe, J., and Sekhon, J. (2020). Time-uniform Chernoff bounds via nonnegative supermartingales. Probability Surveys, 17:257–317.
+Howard, S. R., Ramdas, A., McAuliffe, J., and Sekhon, J. (2021). Time-uniform, nonparametric, nonasymptotic confidence sequences. The Annals of Statistics, 49(2):1055–1080.
+Jamieson, K. G. and Jain, L. (2018). A bandit approach to sequential experimental design with false discovery control. In Proceedings of the 32nd International Conference on Neural Information Processing Systems, pages 3660–3670.
+Jiang, T. and Yang, F. (2013). Central limit theorems for classical likelihood ratio tests for highdimensional normal distributions. The Annals of Statistics, 41(4):2029–2074.
+25
+
+
+Kass, R. E. and Raftery, A. E. (1995). Bayes factors. Journal of the American Statistical Association, 90(430):773–795.
+Katsevich, E., Sabatti, C., and Bogomolov, M. (2021). Filtering the rejection set while preserving false discovery rate control. Journal of the American Statistical Association.
+Ramdas, A., Barber, R. F., Wainwright, M. J., and Jordan, M. I. (2019a). A unified treatment of multiple testing with prior knowledge using the p-filter. The Annals of Statistics, 47:2790–2821.
+Ramdas, A., Chen, J., Wainwright, M. J., and Jordan, M. I. (2019b). A sequential algorithm for false discovery rate control on directed acyclic graphs. Biometrika, 106(1):69–86.
+Ramdas, A., Ruf, J., Larsson, M., and Koolen, W. (2020). Admissible anytime-valid sequential inference must rely on nonnegative martingales. arXiv preprint arXiv:2009.03167.
+Ramdas, A., Ruf, J., Larsson, M., and Koolen, W. M. (2021). Testing exchangeability: fork-convex hulls, supermartingales and e-processes. International Journal of Approximate Reasoning.
+Sarkar, S. K. (2008). Two-stage stepup procedures controlling FDR. Journal of Statistical Planning and Inference, 138(4):1072–1084.
+Shafer, G. (2021). Testing by betting: A strategy for statistical and scientific communication. Journal of the Royal Statistical Society: Series A (Statistics in Society), 184(2):407–431.
+Shafer, G., Shen, A., Vereshchagin, N., and Vovk, V. (2011). Test martingales, Bayes factors and p-values. Statistical Science, 26(1):84–101.
+Storey, J. (2002). A direct approach to false discovery rates. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 64(3):479–498.
+Su, W. (2018). The FDR-linking theorem. Technical Report arXiv:1812.08965.
+Vovk, V., Wang, B., and Wang, R. (2020). Admissible ways of merging p-values under arbitrary dependence. Technical Report arXiv:2007.14208. To appear in the Annals of Statistics.
+Vovk, V. and Wang, R. (2019). Confidence and discoveries with e-values. arXiv preprint arXiv:1912.13292.
+Vovk, V. and Wang, R. (2020). Combining p-values via averaging. Biometrika, 107(4):791–808.
+Vovk, V. and Wang, R. (2021). E-values: Calibration, combination and applications. The Annals of Statistics, 49(3):1736–1754.
+Wasserman, L., Ramdas, A., and Balakrishnan, S. (2020). Universal inference. Proceedings of the National Academy of Sciences, 117(29):16880–16890.
+Waudby-Smith, I. and Ramdas, A. (2020a). Confidence sequences for sampling without replacement. Neural Information Processing Systems.
+Waudby-Smith, I. and Ramdas, A. (2020b). Estimating means of bounded random variables by betting. arXiv preprint arXiv:2010.09686.
+Wilks, S. S. (1938). The large-sample distribution of the likelihood ratio for testing composite hypotheses. The Annals of Mathematical Statistics, 9(1):60–62.
+Xu, Z., Wang, R., and Ramdas, A. (2021). A unified framework for bandit multiple testing. Neural Information Processing Systems.
+26
+
+
+A Simulations for correlated z-tests
+We provide further simulation results in a classic setting, where test statistics Xk, k ∈ K are generated from correlated z-tests. The null hypotheses are N(0, 1) and the alternatives are N(δ, 1), where we take δ := −3 throughout the section. We generate K − K0 observations from the alternative distribution N(δ, 1) and then K0 observations from the null distribution N(0, 1). We take the p-values as P (x) := Φ(x), (32)
+where x ∈ {Xk : k ∈ K}; these are the p-values found using the most powerful test given by the Neyman–Pearson lemma. The raw e-values are, following Vovk and Wang (2021), the likelihood
+ratios
+E(x) := exp(−(x − δ)2/2)
+exp(−x2/2) = exp(δx − δ2/2) (33)
+of the alternative to the null density. We report the numbers of discoveries for the (base) BH, BY, e-BH (boosted), and base e-BH procedures, in several different settings in Table 4. In particular, we consider two settings of negative correlation (thus, PRDS fails to hold). We set the target FDR level α ∈ {10%, 5%, 2%}. All numbers in Table 4 are produced an the average from 1,000 trials. From the simulation results in Table 4, we can see that the BH procedure has slightly more discoveries than the e-BH procedure for PRDS e-values via (8); recall that we do not expect e-BH to outperform BH when PRDS and precise (standard uniform) p-values are available (cf. Proposition 5). The e-BH procedure for arbitrarily dependent (AD) e-values performs slightly better than the BY procedure in most settings, and this advantage is more pronounced in the case of a large experiment (Table 4b, left), as the BY correction lK is penalized by a large K. Only in the case of sparse signal and small α (Table 4b, last two columns), BY performs better than e-BH. This is consistent with Example 7 (with different e-values from our experiments), where we see that BY outperforms e-BH if the proportion of rejections is very small. These simulation results suggest that, even in case p-values are available, the e-BH procedure (with boosted e-values) has competitive performance in most situations, especially when PRDS fails to hold (thus the base BH does not have a correct FDR in theory).
+B Omitted proofs from the paper
+Proof of Proposition 1. For t ∈ [0, ∞), let f (t) be the number of true null hypotheses with an e-value e′
+k larger than or equal to t. Define the quantity
+Q(t) = tR(t)/K,
+and it is clear that tα = inf{t ∈ [0, ∞) : Q(t) ≥ 1/α}.
+Clearly tα ∈ [1/α, K/α] since Q(t) ≤ t and R(t) ≥ 1. Since Q only has downside jumps and Q(0) = 0, we know Q(tα) = 1/α, and thus
+tαR(tα) = K
+α . (34)
+If e′
+k ≥ tα, then Hk is rejected by the definition of e-BH. If e′
+[k] < tα, then by definition of Q, we
+have
+ke′
+[k]
+K≤
+R(e′
+[k] )e′
+[k]
+K = Q(e′
+[k]) < 1/α.
+Thus, each Hk is rejected by G(α) if and only if e′
+k ≥ tα.
+27
+
+
+Table 4: Simulation results for correlated z-tests, where ρi,j is the correlation between two test statistics Xi and Xj for i 6= j. Each cell gives the number of rejections and, in parentheses, the realized FDP (in %). Each number is computed over an average of 1,000 trials.
+(a) Independent and positively correlated tests, K = 1000, K0 = 800
+ρij = 0 ρij = 0.5
+α = 10% α = 5% α = 2% α = 10% α = 5% α = 2% BH 177.3 (8.01) 148.7 (4.07) 115.0 (1.63) 180.0 (7.00) 144.8 (3.64) 109.8 (1.50) e-BH PRDS 171.8 (7.07) 147.6 (3.95) 114.6 (1.62) 170.2 (5.71) 142.5 (3.35) 108.0 (1.50) BY 101.1 (1.10) 78.8 (0.57) 53.2 (0.22) 96.6 (1.03) 76.7 (0.50) 55.0 (0.20) e-BH AD 109.4 (1.41) 85.4 (0.68) 54.6 (0.24) 103.1 (1.32) 81.4 (0.70) 56.6 (0.28) base e-BH 97.5 (1.00) 70.6 (0.43) 36.9 (0.11) 91.9 (0.97) 69.1 (0.45) 43.6 (0.16)
+(b) Independent tests with large number of hypotheses
+K = 20, 000, K0 = 10, 000 K = 20, 000, K0 = 19, 000
+α = 10% α = 5% α = 2% α = 10% α = 5% α = 2% BH 9567 (5.00) 8564 (2.49) 7164 (1.00) 681.3 (9.58) 520.2 (4.79) 357.7 (1.93) e-BH PRDS 9092 (3.60) 8330 (2.13) 7124 (0.98) 681.3 (9.58) 509.3 (4.54) 312.1 (1.40) BY 5956 (0.48) 4818 (0.24) 3417 (0.10) 254.1 (0.89) 177.6 (0.46) 103.1 (0.19) e-BH AD 6811 (0.80) 5809 (0.44) 4384 (0.18) 271.0 (1.02) 159.5 (0.39) 51.4 (0.07) base e-BH 6426 (0.64) 5234 (0.31) 3509 (0.10) 224.8 (0.69) 109.2 (0.21) 16.4 (0.01)
+(c) Negatively correlated tests, K = 1000, K0 = 800.
+ρij = −1/(K − 1) ρij = −0.51{|i−j|=1}
+α = 10% α = 5% α = 2% α = 10% α = 5% α = 2% BH 177.7 (8.14) 149.0 (4.09) 115.2 (1.61) 177.2 (8.10) 148.8 (4.00) 115.3 (1.62) e-BH PRDS 172.0 (7.13) 147.9 (3.98) 114.9 (1.59) 171.5 (7.13) 147.7 (3.89) 114.9 (1.61) BY 101.2 (1.08) 78.8 (0.52) 53.3 (0.20) 101.3 (1.11) 78.8 (0.56) 53.2 (0.22) e-BH AD 109.7 (1.38) 85.5 (0.65) 54.6 (0.22) 109.8 (1.40) 85.6 (0.69) 54.6 (0.24) base e-BH 97.8 (0.98) 70.7 (0.40) 37.2 (0.11) 97.6 (0.99) 70.7 (0.41) 36.7 (0.12)
+Proof of Lemma 1. Note that f (X) ≤ X′
+k on the event {Xk ≥ f (X)}.
+(i) If Xk is independent of X−k, then
+E
+[
+f (X)1{Xk≥f(X)} | X−k]
+≤E
+[
+X′
+k1{Xk≥f (X)} | X−k]
+≤ E [X′
+k] ≤ E[Xk].
+(ii) Let g : x 7→ P(X′
+k ≥ x) and Pk := g(X′
+k). Clearly Pk is a null p-value. For each y ≥ 0, since
+X is PRDS on Xk and g ◦ f is an increasing function, the function x 7→ P(g ◦ f (X) ≤ y | Xk ≥ x) is decreasing on [0, ∞). Noting that Pk is a decreasing function of Xk, the function t 7→ P(g ◦ f (X) ≤ y | Pk ≤ t) is increasing on [0, 1]. Using Lemma 1 of Ramdas et al. (2019a), we have
+E
+[ 1{Pk≤g◦f (X)}
+g ◦ f (X)
+]
+≤ 1.
+28
+
+
+It follows that
+E[f (X)1{Ek≥f(X)}] = E[f (X)1{E′
+k≥f (X)}]
+≤ E[f (X)1{Pk≤g◦f(X)}]
+=E
+[
+f (X)P(E′
+k ≥ f (X)) 1{Pk≤g◦f(X)}
+g ◦ f (X)
+]
+≤ sup
+x≥0
+xP(X ′
+k ≥ x)E
+[ 1{Pk≤g◦f (X)}
+g ◦ f (X)
+]
+≤ sup
+x≥0
+xP(X ′
+k ≥ x).
+(iii) It follows directly that
+E
+[
+f (X)1{Xk≥f (X)}
+]
+≤E
+[
+X′
+k1{Xk≥f (X)}
+]
+≤ E[X′
+k] ≤ E[Xk].
+If Xk is a null e-value, then E[Xk] ≤ 1 by definition.
+Proof of Theorem 3. By Proposition 1 and (34), we obtain that the FDR of e-BH equals
+E
+[ FG(α)
+RG(α)
+]
+=E
+[ f (tα) R(tα)
+]
+=α
+K E [tαf (tα)] . (35)
+We will apply Lemma 1 to X = E′ and the function f given by f (X) = tα, where tα is treated as a
+function of E′. Note that If = α−1K/K by (34). In this case, X′
+k = T (αXk)/α. By Lemma 1 (iii)
+and (35), we have
+E
+[ FG(α)
+RG(α)
+]
+=α
+KE
+[∑
+k∈N
+tα1{E′
+k ≥tα }
+]
+≤1
+KE
+[∑
+k∈N
+X′
+k
+]
+= K0
+K yα,
+thus showing the first inequality. If E′
+1, . . . , E′
+K are the raw e-values or the boosted e-values obtained
+by (9) or (11), then yα ≤ α by construction.
+Proof of Theoroem 4. Write E′ = (E′
+1, . . . , E′
+K ). For each k ∈ N , denote by
+zα,k := max
+x∈K/K xP(αE′
+k ≥ x) = max
+x≥1 xP(T (αE′
+k) ≥ x) ≤ E[T (αE′
+k )].
+Note that tα = f (E′) for a decreasing function f with range If = α−1K/K. Using the notation in
+Lemma 1 with X = E′, we have
+X′
+k = sup{x ∈ If ∪ {0} : x ≤ E′
+k} = T (αE′
+k)
+α.
+Lemma 1 (ii) gives
+E[tα 1{E ′
+k≥tα}] ≤ sup
+x≥0
+xP(X ′
+k ≥ x) = max
+x≥1
+x
+α P(T (αE′
+k) ≥ x) = zα,k
+α.
+Hence, by (35),
+E
+[ FG(α)
+RG(α)
+]
+=α
+K E [tαf (tα)] = α
+K
+∑
+k∈N
+E[tα 1{E ′
+k≥tα}] ≤ 1
+K
+∑
+k∈N
+zα,k.
+Note that zα ≤ yα by Markov’s inequality. Hence, if E′
+1, . . . , E′
+K are raw e-values, then zα ≤ yα ≤ α.
+If E′
+1, . . . , E′
+K are boosted e-values, then zα ≤ α by construction.
+29
+
+
+Proof of Proposition 3. Since bk = (αq1−α(Ek))−1, (23) implies
+t 7→ tP(bkEk ≥ t) is decreasing on [1/α, ∞).
+Therefore, zα,k(bk) in (22) satisfies zα,k(bk) = P(αbkEk ≥ 1). Direct calculation gives
+zα,k(bk) = P(αEk ≥ 1/bk) = P(αEk ≥ αq1−α(Ek)) = α.
+Since Ek is continuously distributed, bk cannot be enlarged without violating (8).
+Proof of Theorem 5. Define
+τφ = inf{τ ≥ 0 : φ(τ )R(τ ) ≥ K}.
+Similarly to Proposition 1, G(φ) rejects Hk if and only if ek ≥ τφ. By Theorem 3, the FDR of G(φ) satisfies
+E
+[ FG(φ)
+RG(φ)
+]
+=1
+K
+∑
+k∈N
+E[φ(τφ)1{Ek≥τφ}]. (36)
+First, from (25), only the values of φ−1(K/k) for k ∈ K affects the testing procedure G(φ). Note that G(α) uses the linear transform t 7→ αt. Therefore, if φ−1(x) ≥ x/α for all x ∈ K/K, then G(φ) is dominated by the e-BH procedure G(α), i.e., G(φ) ⊆ G(α). Next, suppose for the purpose of contradiction that φ−1(K/k0) < K/(k0α) for some k0 ∈ K. Write
+m = φ−1(K/k0) and m′ = max{m, K/k0}.
+Note that m ≤ m′ < K/(k0α). Consider the following setting of e-values: Let N = K, i.e., all e-values
+are null. For k ∈ K, set Ek = m′1Ak for some set Ak with P(Ak) = 1/m′. We design the sets Ak, k ∈ K, in the following way: for each ω ∈ Ω,
+|{k ∈ K : ω ∈ Ak}| = k0,
+i.e., exactly k0 events out of A1, . . . , AK occur together (the existence of such an arrangement is easy
+to verify). Let A = ⋃
+k∈K Ak, and we have P(A) = K/(k0m′) ∈ (α, 1].
+If event A happens, then exactly k0 of E1, . . . , EK take the value m′, and the rest take the value
+0. Hence, for τ > 0, we have R(τ ) = max(k01{τ≤m′}1A, 1). If event A happens, then τφ ≤ m′ since
+φ(m′)R(m′) ≥ φ(m)k0 = K, and τφ ≥ m since φ(τφ) ≥ K/k0. Therefore, τφ ∈ [m, m′] if A happens. It follows that, for each k,
+E[φ(τφ)1{Ek≥τφ}] ≥ E[φ(m)1{Ek≥m′}1Ak ] = E[φ(m)1Ak ] = K
+k0m′ > α.
+Using the FDR guarantee α of G(φ) and (36), this leads to
+α≥E
+[ FG(φ)
+RG(φ)
+]
+=1
+K
+∑
+k∈K
+E[φ(τφ)1{Ek≥τφ}] > α,
+a contradiction. Hence, G(φ) is dominated by G(α).
+Proof of Proposition 4. For k ∈ N , let α = E[T (ψ(P ))] where P is uniform on [0, 1]. If ψ−1(1) = 0, then P(ψ(Pk) ≥ 1) = 0 for k ∈ N , and thus D(ψ) will never reject any hypotheses with a non-zero p-value, leading to a zero FDR for both PRDS and arbitrarily dependent p-values. Next, assume ψ−1(1) > 0, which implies α > 0.
+Define
+Ek = T (ψ(Pk))
+α , k ∈ K, (37)
+30
+
+
+which is a null e-value for k ∈ N . Note that
+ψ(p(k)) ≥ K
+k ⇐⇒ e[k] ≥ K
+kα .
+Hence, G(α) applied to (e1, . . . , eK ) is equivalent to D(ψ) applied to (p1, . . . , pK ). Note that, using the notation in Sections 6.2 and 6.3,
+yα = 1
+K0
+∑
+k∈N
+E [T (ψ(Pk))] ≤
+K ∑
+j=1
+K j
+(
+ψ−1
+(K
+j
+)
+− ψ−1
+(K
+j−1
+))
+= yψ,
+and zα = max
+x∈K/K xP(ψ(Pk) ≥ x) ≤ max
+x∈K/K xψ−1(x) = zψ.
+By Theorems 3 and 4, the testing procedure D(ψ) satisfies
+E
+[ FD(ψ)
+RD(ψ)
+]
+=E
+[ FG(α)
+RG(α)
+]
+≤ K0
+K yα ≤ K0
+K yψ,
+and yψ can be replaced by zψ if the p-values are PRDS.
+Proof of Proposition 5. Consider the setup where all all p-values are null, and they are identical following a uniform distribution on [0, 1]. Note that identical p-values satisfy PRDS. In this case, FD(ψ)/RD(ψ) = 1 as soon as there is any discovery. If ψ−1(1) > α, then
+P(ψ(p(K)) ≥ 1) = P(p(K) ≤ ψ−1(1)) = min{ψ−1(1), 1} > α.
+Hence, the probability of having a false discovery is more than α, violating the assumption that E[FD(ψ)/RD(ψ)] ≤ α. Therefore, ψ−1(1) ≤ α.
+If ψ satisfies (29) and ψ−1(1) ≤ α, then we have tψ−1(t) ≤ α for all t ≥ 1. Hence, ψ(p) ≤ α/p for p ∈ (0, α]. As a consequence, D(ψ) ⊆ D(α).
+C Using e-BH with multiple decreasing transforms
+We can generalize the p-testing procedure D(ψ) in Section 6.5 to the case of multiple decreasing transforms, which we briefly describe here. Let ψ1, . . . , ψK be decreasing transforms, and write rk := ψk(pk), k ∈ K. Design a p-testing
+procedure D(ψ1, . . . , ψK ) by rejecting the k∗ hypotheses with the largest rk, where
+k∗ = max
+{
+k ∈ K : r[k] ≥ K
+k
+} ,
+with the convention max(∅) = 0. Here, we are not rejecting hypotheses with the smallest p-values (a hypothesis with a smaller p-value may not be rejected before one with a larger p-value), but rather those with the largest values of rk; thus the procedure is no longer a step-up procedure in Section 6.5. Recall that for a decreasing transform ψ, yψ is defined by (27), and zψ is defined by (28). The following result is a stronger version of Proposition 4.
+Proposition 6. For arbitrary p-values and decreasing transforms ψ1, . . . , ψK , the testing procedure D(ψ1, . . . , ψK ) satisfies
+E
+[ FD(ψ1,...,ψK )
+RD(ψ1,...,ψK )
+]
+≤1
+K
+∑
+k∈N
+yψk .
+If the p-values are PRDS, then
+E
+[ FD(ψ1,...,ψK )
+RD(ψ1,...,ψK )
+]
+≤1
+K
+∑
+k∈N
+zψk .
+31
+
+
+Proof. The proof is similar to that of Proposition 4. Define
+Ek = T (ψk(Pk))
+β , k ∈ K,
+where β = maxk∈N E[T (ψk(Pk))]. Clearly, Ek is an e-value for k ∈ N . Note that
+r[k] ≥ K
+k ⇐⇒ e[k] ≥ K
+kβ .
+Therefore, G(β) applied to (e1, . . . , eK ) is equal to D(ψ1, . . . , ψK ) applied to (p1, . . . , pK ). Using Theorems 3 and 4, D(ψ1, . . . , ψK ) satisfies
+E
+[ FD(ψ1,...,ψK )
+RD(ψ1,...,ψK )
+]
+=E
+[ FG(β)
+RG(β)
+]
+≤ K0
+K yβ = 1
+K
+∑
+k∈N
+yψk ,
+and yψk can be replaced by zψk if the p-values are PRDS.
+32

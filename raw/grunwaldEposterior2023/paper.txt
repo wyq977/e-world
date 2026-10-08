@@ -1,0 +1,857 @@
+The E-Posterior
+Peter D. Gru ̈nwald∗
+September 20, 2023
+Abstract
+We develop a representation of a decision maker’s uncertainty based on e-variables. Like the Bayesian posterior, this e-posterior allows for making predictions against arbitrary loss functions that may not be specified ex ante. Unlike the Bayesian posterior, it provides risk bounds that have frequentist validity irrespective of prior adequacy: if the e-collection (which plays a role analogous to the Bayesian prior) is chosen badly, the bounds get loose rather than wrong, making e-posterior minimax decision rules safer than Bayesian ones. The resulting quasi-conditional paradigm is illustrated by re-interpreting a previous influential partial Bayes-frequentist unification, Kiefer-Berger-Brown-Wolpert conditional frequentist tests, in terms of e-posteriors.
+This version is essentially identical to the one published in the
+Philosophical Transactions of the Royal Society A, Volume 381, Issue 2247, 2023. The only difference is the addition of a few references in Section 1, underneath (4), and in Section 5.
+1 Introduction and Overview
+It is one of the main attractions of Bayesian inference: one may assess the posterior-expected performance of arbitrary decision rules in arbitrary decision tasks, and, as a consequence, perform posterior-optimal decisions for any such task. An important special case arises if we are given a statistical model P = {Pθ ∶ θ ∈ Θ} equipped with a prior distribution W on Θ, a space of actions A and a loss function L ∶ Θ × A → R, and we observe data Y = y, with Y ∼ Pθ for some θ ∈ Θ, taking values in some set Y. We call such a combination of P and L a decision problem. A decision rule δ is then any function mapping data y ∈ Y to action a ∈ A; we write δ(y) = a. We then assess the expected performance of δ given data Y = y as
+Eθ∼W ∣y[L(θ, δ(y))], (1)
+with W ∣ y denoting the Bayes posterior distribution based on prior W and data Y = y. In their classic Bayesian theory (1994), Jos ́e Bernardo and Adrian Smith adopt, as they make clear already on page 2, a wholehearted subjectivist position on the interpretation of probability. Such a subjective Bayesian stance implies that if the prior distribution truly describes one’s initial degrees of belief, then the assessment (1) is not just correct for any decision rule δ, it also implies optimality of the Bayes decision rule, defined to be any rule δBayes such that, for all y ∈ Y,
+R ̄bayes(W ∣ y) ∶= Eθ∼W ∣y[L(θ, δBayes(y))] = min
+a∈A
+Eθ∼W ∣y[L(θ, a)]. (2)
+∗CWI, Amsterdam, and Mathematical Institute, Leiden University. CWI is the National Resarch Institute for Mathematics and Computer Science in the Netherlands.
+1
+arXiv:2301.01335v2 [math.ST] 18 Sep 2023
+
+
+Unfortunately, in practice, for lack of time, computational power or imagination, one often in fact, nearly always — uses pragmatic priors in combination with potentially ‘misspecified’ (wrong) models. Then the priors do not truly represent one’s beliefs, and as a consequence (1) may give a highly misleading impression of δ’s quality in the real world, and using δBayes may lead to disastrous results. Much of my own research in the past has concerned misspecified models (Gru ̈nwald, 1999, Gru ̈nwald and van Ommen, 2017). In the present paper, I assume the model is correct and concentrate on the case in which ”good” priors (i.e. sufficiently sophisticated to justify using (2) in practice) are hard to come by. The pragmatic priors that are then used often lead to overconfident posteriors, examples of which abound in the literature: decisions based on W ∣ y are then substantially worse in practice than predicted by W ∣ y itself via (1) (Oelrich et al., 2020), especially in nonparametrics (Szab ́o et al., 2015); naturally such assessments can lead to (very) bad decisions (Balch et al., 2019). In this paper, we provide the e-posterior as an alternative for such cases: while remaining close to the Bayesian ideal, it has a frequentist justification that avoids overconfidence and other misleading assessments. As an additional advantage, in contrast to Bayesian methods, eposteriors are readily used in highly nonparametric situations in which a likelihood is not easy to define — we defer discussion of this bonus until the discussion Section 5.
+The E-Posterior The e-posterior is an analogue to the Bayes posterior for which frequentist analogues ((5) and (6) below) of Bayesian assessments ((1) and (2) above) hold simultaneously under all θ ∈ Θ. It is based on e-values, a far-reaching generalization of likelihood ratios. Crucially, just as with the Bayesian posterior, the same e-posterior can be combined with arbitrary decision problems and loss functions. That is, if a given prior W truly represents beliefs, the Bayesian (1) and (2) are appropriate simultaneously for arbitrary sets of loss functions {Lb ∶ b ∈ B}, substantiating the common Bayesian claim that the Bayesian posterior summarizes all one’s uncertainty about the parameter given the data since all conceivable decisions can be based on it. The same holds for the e-posterior analogues below: they are simultaneously valid for all loss functions, so that, analogously to the Bayesian case, the e-posterior can also be thought of as a single function summarizing one’s uncertainty. As discussed in Section 2, this is what sets out the e-posterior from previous attempts to provide frequentist guarantees for Bayesian posteriors or frequentist analogues thereof such as confidence distributions. There we also explain why we regard validity under post-hoc choice of loss function as crucial in statistical testing and estimation in the applied sciences. Both the Bayesian and the e-representation of uncertainty are relative: whereas the Bayesian posterior is defined relative to a prior defined upon a statistical model P, the e-posterior is defined relative to a collection S of e-variables, which is itself defined relative to P. This ‘e-collection’ S in turn may itself be implicitly based on a prior (Example 2) or a set of priors (Section 3.1). Because it gives rise to stochastic upper bounds on risks rather than precise risks, we are able to obtain the result that the e-posterior is valid in a frequentist sense irrespective of the collection S taken; but the bounds may get better or worse depending on S. This makes it considerably more robust than the Bayesian risk assessment (1), which, at least under a subjective Bayes interpretation, one can only trust if one truly fully believes one’s prior W and one’s model P. It puts the e-posterior approach in the luckinessframework (Gru ̈nwald, 2007, Shawe-Taylor and Williamson, 1997, Herbrich and Williamson, 2002, Gru ̈nwald and Mehta, 2019) in which Bayesian belief (one has to believe one’s prior to
+2
+
+
+trust one’s assessment) is replaced by guarantees and hope that the guarantees are good: if the prior is well-aligned with the data, one is lucky and gets tight bounds; if not, the bounds one gets are loose but still valid. It goes substantially further though than standard ‘luckiness’ approaches (such as PAC-Bayesian methods (Gru ̈nwald and Mehta, 2019)), since these invariably incorporate an a-priori given loss function into the likelihood (e.g. via a Gibbs posterior) so that the same (e.g. Gibbs) posterior can only be used for a single loss function. Our e-posterior being combinable with arbitrary loss functions, we chose to call the resulting type of inference quasi-conditional, a name we explain further in Section 2. Before we start with the details, we should point out that, of course, not all can be rosy: the specific type of stochastic upper bound that provides our sense of quasi-conditional frequentist validity, as given in Proposition 1 and interpreted underneath in terms of a De Finetti-type of game between a decision-maker and a bookie, while holding universally, may in some instances provide a weaker inference than one would really like to see — we consider it as the main open problem of this work to further investigate this novel type of validity.
+Formal Definitions Formally, we associate P = {Pθ ∶ θ ∈ Θ} with some corresponding collection S of e-variables S = {Sθ ∶ θ ∈ Θ}. We focus on what we call the simple setting, in
+which all parameters in parameter vector θ ∈ Θ ⊆ Rk are of interest. An e-variable Sθ relative to any θ ∈ Θ is then simply any nonnegative statistic (i.e. a random variable that can be written as a function of the data, Sθ = Sθ(Y )) that satisfies the inequality:
+EY ∼Pθ [Sθ] ≤ 1. (3)
+We defer the case of nonparametrics and nuisance parameters, requiring a slightly extended definition, to Section 5. Over the last three years, interest in e-variables has exploded (Gru ̈nwald et al., 2019, Wasserman et al., 2020, Shafer, 2021, Vovk and Wang, 2021, Henzi and Ziegel, 2021, Ramdas et al., 2022), as tools to extend traditional Neyman-Pearson tests to situations with optional stopping and continuation while keeping Type-I error guarantees — see Section 5 for details. Here we use them in a novel way: we define the e-posterior based on S and Y to be the reciprocal of Sθ:
+P ̄(θ ∣ y) ∶= 1
+Sθ(y) , (4)
+where by convention we set 1/0 to be ∞. We note that the idea to study the reciprocal of Sθ directly is in itself not new — it has been considered earlier under the name of ‘confidence distribution’ by (Waudby-Smith and Ramdas, 2022, Appendix D5), the first version of which came out in 2020 (with θ ∈ [0, 1] the mean of a bounded random variable, and already including figures similar to our Figure 1) and also by Pawel et al. (2022) to derive ‘evidential’ rather than ‘credible’ posterior intervals. The novelty in this paper is to take (4) center- stage and to analyze its decision-theoretic properties. To this end, we continue with an entirely novel definition: we set the e-posterior risk assessment of decision rule δ based on S to be:
+e-posterior risk bound: R ̄(δ) ∶= R ̄(Y, δ(Y )) with R ̄(y, a) ∶= sup
+θ∈Θ
+P ̄(θ ∣ y) ⋅ L(θ, a), (5)
+where we use the convention that ∞ ⋅ a ∶= 0 if a = 0 and ∞ if a > 0. R ̄(δ) is the random variable that maps Y to the corresponding risk bound (5), which is to be interpreted as a specific type of stochastic upper bound on the risk that holds under all θ ∈ Θ simultaneously
+3
+
+
+— Proposition 1 below makes this precise. It holds for all loss functions L ∶ Θ × A → R satisfying the condition that supθ∈Θ L(θ, a) ≥ 0 for each a. We call this the no-sure-gain condition. It is satisfied if L ≥ 0, but in general it also allows negative losses (as will be useful in Example 6). In contrast to the upper bound-nature of (5), the Bayesian (1) does not just bound but precisely gives the conditional risk. Next, in analogy to (2), we suggest, once S
+has been fixed, the S-based e-posterior-minimax decision rule as any rule δmm satisfying, for all y ∈ Y, any loss function L,
+e-posterior minimax rule: sup
+θ∈Θ
+P ̄(θ ∣ y) ⋅ L(θ, δmm(y)) = min
+a∈A
+sup
+θ∈Θ
+P ̄(θ ∣ y) ⋅ L(θ, a). (6)
+Contents of this Paper Section 2 provides Proposition 1 which establishes the frequentist sense in which R ̄(δ) as defined by (5) is valid. We discuss this quasi-conditional validity at length and provide extended examples. The paper continues in Section 3 by listing various types of e-collections, and investigating the risk assessment and the corresponding e-posterior minimax rules that ensue from them when instantiated to simple yet important situations. In particular, Section 3.1 considers the Gaussian location family and a weighted squared error loss, with data-dependent weights. In this situation (extended to 1-dimensional exponential families in the Supplementary Material), Bayesian risk assessment based on standard objective Bayes posteriors can fail spectacularly if the weights strongly vary with the data, whereas our type of risk assessment via (5) is always valid; moreover, if the weights are constant, the assessment for e-posterior minimax rules can match minimax optimal frequentist and Bayesian rates up to a small constant factor, thereby alleviating concerns that the sup in (5) may make assessments overly pessimistic. In Section 3.2, we consider a Bayesian-frequentist unification for hypothesis testing with a simple null that was introduced in an influential paper by Berger, Brown and Wolpert (1994) (BBW from now on), building on earlier work by Kiefer (1976, 1977), Brownie and Kiefer (1977). BBW’s approach was later extended with various collaborators (Berger et al., 1994, Wolpert, 1996, Berger and Guglielmi, 2001, Dass and Berger, 2003), culminating in Berger’s (2003) IMS Lecture paper Could Fisher, Neyman and Jeffreys have agreed on testing? We show how to re-interpret the BBW conditional error probabilities, as well as Kiefer’s earlier conditional confidence estimators (1976, 1977) and Vovk’s (1993) extension of it, in terms of (quite special) e-posteriors. Our re-interpretation suggests that in practice, we will usually want to use other e-variable collections than the BBW one — which is not at all to criticize their pioneering and highly original work, that, together with Vovk’s (1993), has served as the main inspiration for this paper. Then, in Section 4, we describe a variation of the e-posterior risk assessment (5) in which the e-posterior is replaced by its capped version (see Figure 1) and we investigate when this arguably more intuitive form of the e-posterior gives rise to the same assessment. This turns out to be the case under Condition Zero, a fundamental condition on the decision rules employed, which may or may not be enforceable in any given decision problem. Finally, in Section 5, we give more background on the traditional use and interpretation of e-variables and generalize to testing with composite nulls, estimating with nuisance parameters and nonparametrics, and we provide some concluding discussion. But first, we introduce several running examples of e-posteriors, highlighting via (9) the connection with the Bayes posterior.
+4
+
+
+1.1 Examples of E-Collections
+Example 1 [A Simple E-Posterior: Savage-Dickey] A simple way to design e-variables is to start with a prior distribution W on Θ and setting pW (y) ∶= ∫ pθ(y)dW (θ) to be the
+Bayes marginal based on W . Here, as in the rest of the paper, we assume that for all θ ∈ Θ, Pθ has density pθ relative to some common underlying measure μ. One then defines, for each θ ∈ Θ,
+S sd
+θ = pW (y)
+pθ(y) ; P ̄sd(θ ∣ y) = pθ(y)
+pW (y) = w(θ ∣ y)
+w(θ) (7)
+where the latter equality holds if W has density w and we denote prior/posterior densities by w(θ) and w(θ ∣ y), respectively. Ssd
+θ is an e-variable, since it satisfies EY ∼Pθ [Ssd
+θ ]= ∫
+Y pW (y)dy = 1. Pawel et al. (2022) study this e-variable, focusing on an ‘evidential’ interpretation; it also figures prominently in (Gru ̈nwald et al., 2019) and, under the name ‘prior-to-posterior e-variable’, in (Neiswanger and Ramdas, 2021). We chose our alternative name because, in the Bayesian literature, the quantity w(θ ∣ y)/w(θ) is generally known as the Savage-Dickey density ratio after the prominent Bayesians L. Savage and J. Dickey. The Savage-Dickey e-variables are by no means the only reasonable ones to base an e-posterior on, but they are educationally insightful because they give a first interpretation of risk assessment (5). Namely, using Bayes’ theorem we can trivially but unusually rewrite the standard Bayesian uncertainty assessment (1) as follows:
+Eθ∼W ∣y[L(θ, δ(y))] = ∫
+pθ (y )
+pW (y) ⋅ L(θ, δ(y))dW (θ) = Eθ∼W [P ̄sd(θ ∣ y) ⋅ L(θ, δ(y))], (8)
+whereas with Y = y, we have R ̄(δ) = mθax
+P ̄sd(θ ∣ y) ⋅ L(θ, δ(y)). (9)
+Replacing prior expectation (8) by maximum (9), the Savage-Dickey e-posterior is always more pessimistic than the Bayesian posterior based on the same prior, and might thus not look so outlandish to Bayesians any more.
+Example 2 [Savage-Dickey for the Normal Location Family] Let {Pθ ∶ θ ∈ R} represent the normal location family, where Pθ with density pθ has mean θ and variance 1. We take as prior a normal distribution with mean θ0 and variance ρ2 > 0, and define the precision
+λ ∶= ρ−2. Suppose we observe Y = xn = (x1, . . . , xn). By standard calculations, the standard
+Bayesian posterior is given by a normal distribution with mean θ ̆ = (n/(n+λ))θˆ+(λ/(n+λ))θ0,
+with θˆ = θˆ(y) the MLE (∑n
+i=1 xi)/n, and posterior variance 1/(n + λ), i.e. with density
+w(θ ∣ xn) =
+√
+n+λ
+2π ⋅ e− (n+λ)(θ−θ ̆)2
+2 (10)
+so that, by (7),
+P ̄sd(θ ∣ y) =
+√
+n+λ
+λ ⋅ e− n+λ
+2 (θ−θ ̆)2+ λ
+2 ⋅(θ−θ0)2 =
+√
+n+λ
+λ ⋅ e− n
+2 (θ−θˆ)2+ 1
+2 ⋅ nλ
+n+λ ⋅(θˆ−θ0)2 (11)
+where the latter equality follows by simple calculus when θ0 = 0 and reducing the general case to this case by considering translated data x1 − θ0, . . . , xn − θ0; see Figure 1.
+5
+
+
+Example 3 [Two-Point Prior-Based E-Posterior for Normal Location] Fix some C > 0 and set n∗ equal to the sample size n (in Example 8 we generalize to and explain cases with n∗ ≠ n) and, for each θ, define θ− < θ and θ+ > θ such that
+1
+2 (θ − θ+)2 = 1
+2 (θ − θ−)2 = C
+n
+∗ . (12)
+Then Sθ(y) = (1/2)pθ− (y)+(1/2)pθ+ (y)
+pθ(y) is an e-variable (just plug it into the definition to check).
+It is not of Savage-Dickey form, since θ− and θ+ depend on θ. In fact it coincides with the two-sided version of Johnson’s (2013) uniformly most powerful Bayes factor at level α if we were to set C ∶= − log α, which might, according to Johnson, motivate its use for testing H0 = {Pθ} against H1 = {Pθ′ ∶ θ′ ∈ Θ, θ′ ≠ θ}. Here we will use it for estimating and not just testing, i.e. for general θ ∈ Θ; then its Bayesian interpretation is not so clear, but it will tend to give better risk assessments (5) than the Savage-Dickey e-variable above, as we explain in Section 3. Both Example 2 and 3 are extended to general regular (Barndorff-Nielsen, 1978) 1-dimensional exponential families in the Supplementary Material.
+Example 4 [Simple Hypothesis Testing with LR E-Variables] Consider testing a simple H0 = {P0} vs. a simple H1 = {P1} (we remark on the composite case in Section 5). We can embed this in our setting by taking P = H0 ∪ H1 and as our loss function a Wald
+Neyman-Pearson-type loss given by A = A = {0, 1}, L ∶ {0, 1}2 → R+
+0 nonnegative, and L(0, 1) > 0, L(1, 0) > 0. We further say that the loss function satisfies Condition Zero, henceforth abbreviated to C0, if L(0, 0) = L(1, 1) = 0. The interpretation is that action 0 stands for ‘accept the null’ leading to loss 0 if the true state of nature is P0; and 1 stands for ‘reject the null’, leading to loss 0 if the alternative P1 is true. The use of such loss functions is implicit in the Neyman-Pearson testing paradigm, as noted in 1939 by Wald (1939) who stated that one may ‘of course’ set L(0, 0) = L(1, 1) = 0, i.e. impose C0, and because it simplifies treatment we will do so in most testing examples in this paper — but in Example 6 we will deviate from it, and see that this in a sense makes for the most interesting applications of our risk assessments. We associate both P0 and P1 with an e-variable. A natural choice is to take the likelihood ratio, S1 = p0(Y )/p1(Y ) and S0 = p1(Y )/p0(Y ), seen to be e-variables by noting EY ∼Pθ (pθ′(Y )/pθ(Y )) = ∫ pθ′(y)dy = 1. In fact, they are the ‘prototypical’ e-variables
+for simple-vs.-simple testing (Gru ̈nwald et al., 2019). The risk assessment (5) now becomes
+R ̄(δ) = max { p1(Y )
+p0(Y ) L(1, δ(Y )), p0(Y )
+p1(Y ) L(0, δ(Y ))} under C0
+= p1(Y )
+p0(Y ) L(1, δ(Y ))+ p0(Y )
+p1(Y ) L(0, δ(Y )).
+(13)
+Example 5 [Simple Testing with BBW E-Variables] Several other e-variables may be considered for simple hypothesis testing as well, including the Savage-Dickey e-variables; we treat these in Section 3. There we also show that BBW’s conditional error probabilities (Berger et al., 1994, Wolpert, 1996, Berger, 2003) can be interpreted as e-posteriors. Formally, we obtain a parameterized set of e-posteriors {P ̄bbw
+w (θ ∣ y)} for 0 < w < 1. We consider the special case w = 1/2 here, deferring the general case and definitions to Section 3.2. As we will
+see there, this e-posterior is quite special: for the e-posterior minimax decision rule δmm we get, with R ̄ defined relative to the BBW e-posterior, under C0,
+R ̄(δmm) = p1(Y )
+p0(Y ) + p1(Y ) L(1, δmm(Y )) + p0(Y )
+p0(Y ) + p1(Y ) L(0, δmm(Y )). (14)
+6
+
+
+Thus, it can again be rewritten as a sum rather than a supremum and we see that it is formally identical to the Bayes assessment (1) when P0 and P1 are equipped with the uniform prior. We thus have a frequentist risk assessment, not requiring a prior assumption on P, that is as strong as a Bayesian one, which is optimal under a specific prior assumption. This seems almost too good to be true, especially since it is slightly, but uniformly, better than the alternative (13) — and as we will see in Section 3.2, there is indeed no free lunch: (14) only holds for δmm, which for the BBW e-variable can sometimes be a rather bad decision rule, whereas (13) holds for arbitrary rules; there are some other prices to pay as well when using BBW’s e-variable. In fact, a major motivation for the author’s involvement in e-variables was my realization, some fifteen years ago, that when deriving frequentist Type-I error bounds for decisions based on Bayes factors/likelihood ratios in simple testing, one ends up with the expression p1/p0 as in (13) if one follows the reasoning of classic Bayesian texts such as (Edwards et al., 1963, Good, 1991) or Royall’s universal bound (Royall, 1997); whereas using BBW’s ideas, one obtains p1/(p1 + p0) as in (14): the small but essential discrepancy between the two assessments tripped me up for about 15 years until I finally developed the necessary tool to understand it — the much more general e-posterior of which both approaches are simply a special case, each with its own (dis)advantages, as discussed in Section 3.2.
+2 Quasi-Conditional Risk Assessment
+We want risk bounds that are valid, in some precise sense, simultaneously for all loss functions of the form L ∶ Θ × A → R that satisfy the no-sure-gain condition (see underneath (5)). Proposition 1 below shows that, for any choice of e-variable collection S = {Sθ ∶ θ ∈ Θ} and
+any given decision rule δ, we have that R ̄(δ) as in (5) satisfies this purpose.
+Proposition 1 [Validity of E-Risk Assessments] Consider a decision problem as defined in the introduction relative to any model {Pθ ∶ θ ∈ Θ} for random variable Y ∈ Y and loss
+function L as above that satisfies the no-sure-gain condition. Let R ̄(δ) be as in (5) relative to some e-variable collection S = {Sθ ∶ θ ∈ Θ}. For all θ ∈ Θ we have:
+EY ∼Pθ [ L(θ, δ(Y ))
+R ̄(δ) ] ≤ 1, (15)
+where we adopt the convention 0/0 ∶= 0. In particular, this implies, for every function b ∶ Y × U × Θ × A → R+, and for any random variable U taking values in some set U and any distribution P ′
+θ for (Y, U ) whose marginal on Y coincides with Pθ, that
+E
+(Y,U )∼P ′
+θ [b(Y, U, θ, δ(Y )) ⋅ L(θ, δ(Y ))] ≤ sup
+(y,u,θ)∈Y×U ×Θ
+b(y, u, θ, δ(y)) ⋅ R ̄(y, δ(y)). (16)
+Moreover, for any e-collection S, the risk bound (5) with any minimax decision rule δmm as given by (6) dominates (5) when applied with any other decision rule δ: for all y ∈ Y:
+R ̄(y, δmm(y)) ≤ R ̄(y, δ(y)).
+Proof: Fix any θ ∈ Θ. By definition of R ̄(y, a), we have for all y ∈ Y that R ̄(y, δ(y)) ≥ P ̄(θ ∣ y)L(θ, δ(y)) so that
+EY ∼Pθ [ L(θ, δ(Y ))
+R ̄(δ) ] ≤ EY ∼Pθ [ L(θ, δ(Y ))
+S
+−1
+θ (Y )L(θ, δ(Y )) ] = EY ∼Pθ [Sθ] ≤ 1, (17)
+7
+
+
+Figure 1: (left and middle) The brown solid curve is the pure Savage-Dickey e-posterior P ̄(θ ∣ y) for the normal location family based on sample y = (x1, . . . , x100) with θˆ(y) = 1 and prior W with λ = 1 and θ0 = 0 as in (11) (it reaches a maximum of about 17). The green curve represents the 1/2-dampened version (see (35)) of this e-posterior, by design bounded by 2.
+The dashed brown curve is the capped version P ̄cap(θ ∣ y) (Definition 1) of P ̄(θ ∣ y), equal to it whenever the latter is ≤ 1. The blue curve represents the generalized Savage-Dickey two-point prior-based e-posterior optimized for n∗ = n = 100 as in Example 3 and 8. The red curve is twice the tail area of the objective Bayes posterior w○(θ ∣ y) of Example 7, i.e.
+given by f (θ) = 2W ○(θ ̄ ≥ θ ∣ y) = 2 ∫ ∞
+θ w○(θ ∣ y)dθ. Viz. the remark underneath Definition 1,
+the set {θ ∶ P ̄(θ ∣ y) ≥ α} is a conservative 2-sided (1 − α)-confidence interval, whereas, viz. Example 7, the set {θ ∶ f (θ) ≥ α} is an exact nonconservative 2-sided (1 − α)-confidence
+interval, so that plotting f (θ) provides a better comparison to P ̄(θ ∣ y) than directly plotting w
+○(θ ∣ y). The middle display zooms in on the 0.05 right tail.
+(right) The value of (θ − θˆ)2P ̄(θ ∣ y) is depicted for the same four e-posteriors, using the same colors. The two-point prior-based e-posterior is optimized to give good assessments relative to squared error, its maximum is considerably smaller than for the others; for the pure Savage-Dickey prior, the maximum is excessively high.
+8
+
+
+noting that the derivation is valid as long as the denominator R ̄(δ) inside the first expectation cannot evaluate to 0. In case it can, we split up the expectand into two terms, 1R ̄(δ)=0 ⋅
+L(θ, δ(Y ))/R ̄(δ) + 1R ̄(δ)>0 ⋅ L(θ, δ(Y ))/R ̄(δ), and use that the first fraction is 0/0 which by our convention evaluates to 0; we proceed with the second term as above. This proves (15). (16) and domination of δmm is then immediate. 2
+The bounds (15) and (16) (we mostly use the latter) are unusual and for them to be practically interesting, they should satisfy several desiderata. In particular:
+1. They should have a clear interpretation. We show that this is the case directly below.
+2. They should exceed standard risk bounds obtainable for standard estimators (actions) in standard decision problems by only a small factor, at least if we choose a reasonable e-collection S. This is indeed the case in our running examples (see Example 8, for the Gaussian location family with standard squared error loss, Example 10 for an extension to exponential families, and Example 9, underneath (28) for simple-vs.-simple testing).
+3. There should exist settings in which, just like Bayesian risk assessments, they allow one to make more risky decisions conditional on more extreme data. This happens in Example 6 below.
+4. There should exist situations in which they give useful bounds whereas a standard Bayesian assessment, based on a standard convenience prior, is really highly misleading. We give such a case in Example 7.
+Bookie Interpretation The following interpretation of (16) has a De Finettian flavour to it. Suppose a bookie offers decision-maker (DM) to play the following game, really a metadecision problem: DM first specifies a decision-rule δ for the original decision-problem. DM then gets paid some amount l > 0; then θ and Y are revealed to both DM and bookie. Then bookie presents a collection of numbers {Bθ,a ∶ θ ∈ Θ, a ∈ A}, all assumed > 0. Bookie may choose Bθ,a as functions of the data Y and external data, here encoded as U ; hence we have Bθ,a = b(Y, U, θ, a) for some function b. DM then has to pay back Bθ,δ(Y ) ⋅ L(θ, δ(Y )). If the rules are such that (i.e. bookie a priori guarantees that), no matter what Y, U are observed, bookie will provide a B such that Bθ,δ(Y ) ≤ l/R ̄(δ) then DM should accept to play this game, for her expected gain is ≥ 0; if this cannot be guaranteed, then DM has no guarantee that the expected gain is nonnegative. This directly follows from (16); note there is no need for DM to know the details of how B = b(Y, U, θ, δ(Y )) is defined, as long as the promise Bθ,δ(Y ) ≤ R ̄−1(δ) always holds. In all examples to follow, we consider a simple bookie, by which we mean that the B = b(y, u) presented is a single number that can be written as a function of Y and U only, and does not vary with θ or a. The effect of this is that, both for a Bayesian DM and for an e-posterior minimax DM, knowledge of B does not give any incentive to change the action taken: for any given prior W , a decision rule δ is Bayes relative to loss function L iff it is Bayes relative to loss function L′(θ, a) ∶= b(y, u) ⋅ L(θ, a); and the same holds for e-posterior minimaxity. Bookies who provide a Bθ,a depending on θ and a are certainly worth looking at as well, but the analysis is substantially more difficult and will be left for future work.
+Example 6 [Policy Makers vs. the Decision Maker Interpretation] While the bookie interpretation may seem rather abstract, here we show that it can translate into practically
+9
+
+
+relevant settings in which risk bound (16) has actual decision-theoretic consequences, allowing one to reliably make more extreme decisions if the data are more extreme. In standard hypothesis testing problems, this cannot happen, since there are only two actions, ‘reject’ and ‘accept’, and then ‘more extreme actions’ do not exist. But in practical testing problems there is often an additional factor, measuring the importance of the decision in light of the observed data. The following real-world example (in essence taken from Gru ̈nwald (2022)) illustrates: a study about vaccine efficacy (ve) in a pandemic has been set up as a test between null hypothesis ve ≤ 30% and alternative ve ≥ 50%. The original plan was to vaccinate all people above 60 years of age if the null is rejected. But suppose the null actually gets rejected with unexpectedly strong evidence for the alternative — there is substantially more evidence than policy makers had hoped for — and at the same time the virus’ reproduction rate may be much higher than anticipated. Based on the observed data and the changed circumstances, the policy makers might now contemplate an alternative action: vaccinate every adult, instead of everyone above 60. This would change the losses of all decisions. We can model this (in an admittedly highly stylized way) by assuming that the loss incurred is really B ⋅ L(θ, a) where B is some positive number depending on how the decision ‘δ(y) = a’ really gets translated into practical measures. For example, δ(y) = 1 (vaccine effective) may translate into ‘vaccinate everyone over the age of V ’. If L(1, 1) and L(0, 0) are both negative (as we allow), then the lower V , the higher the value of B will be. As indicated above, we simplify things by assuming that the B = b(y, u) ultimately chosen does not depend on θ or the action taken; all losses are multiplied by the same amount. In practice, the employed weight B might arise from a government committee (say the ‘policy makers’) that analyzes the vaccine study results independently from DM, potentially in a very different way (e.g. fully Bayesian, or just informally by eyeballing graphs). The more convincing they determine the evidence to be, the higher the B they may propose; similarly, B may depend on external U — if the question is more pressing then one might want to take more drastic measures so the B’s go up. The role of the DM (who should now perhaps be called the ‘final risk checker’) is simply to formulate an absolute upper bound l for the risk and tell the policy makers: as long as you guarantee policies so that B ⋅ R ̄(Y, δ(Y )) ≤ l, I can guarantee you a risk of no more than l (here l should be determined before the data become available; in contrast, the details of how B arises need not be known and can be arrived at by ‘vague’ means, as long as B is conditionally (given the data) independence of θ and a).
+The Quasi-Conditional Stance By stressing the importance of (16), we adopt a philosophy closely related to Neyman’s (1950) influential inductive behaviour view of statistics we cannot say anything about our performance for an individual study, but we can make claims about our expected performance (or, by the law of large numbers and concentration inequalities, with high probability, about our average performance in several runs). One can say less than under strict Bayesian assumptions, i.e the assumption that one fully believes one’s prior: in that case, the assessments one makes will be conditionally correct, and not just in the average sense of (16). But there is still a ‘conditional’ aspect to (16), in the informal sense that more extreme data (small R ̄(δ)) leads to a decision rule being acceptable at higher
+‘stakes’ (value of B). More formally, upon observing R ̄(δ) = r, a Bayesian who insists on risk bounded by l would condition on this event and hence accept importance weight B iff B ⋅r ≤ l — a simple bookie can present any B he likes and the Bayesian can decide based on r whether to accept or not. Our DM can safely accept B if the subtly stronger property holds
+10
+
+
+that it is known a priori that the bookie must present a B with B ⋅ R ̄(δ) ≤ l, no matter the
+value R ̄(δ) takes, or equivalently, DM can tell, after observing R ̄(δ) = r, bookie that he must present a B ≤ l/r and bookie is guaranteed to obey. Thus, our DM can safely accept higher stakes if better bounds are observed and is thus more flexible than a DM in the unconditional frequentist Neyman-Pearson setting; but only a subset of the games that are acceptable to the conditioning Bayesian is acceptable to the DM — in this sense, she is ‘quasi-conditioning’. Such substantial consequences ensuing from subtle differences in the protocol between bookie and DM are also found, in a different context, in (Gru ̈nwald and Halpern, 2011), and are a subject matter of the Vovk-Shafer theory of game-theoretic probability (Shafer and Vovk, 2019). They motivate the term quasi-conditional, emphasizing that the DM may behave in some but not all senses as if conditioning on the data; and that her final performance is evaluated in expectation over all possible data, and not conditionally on any given data. To our knowledge, this is a new paradigm. It is certainly different from the main existing attempts to unify Bayesian ideas (represent posterior uncertainty by a data-dependent distribution over parameters) and frequentist guarantees — here we think of (a) objective Bayes methods with matching priors chosen to get frequentist coverage (Berger et al., 2022); (b) confidence and the related fiducial distributions (Schweder and Hjort, 2016); and (c) conditionalist frequentist methods such as BBW’s. The example below illustrates this for (a) and (b), focusing on the normal location family, for which matching objective Bayes priors, standard objective Bayes priors, confidence distribution and fiducial distribution all agree. It shows that — despite the matching! — if one were to use them as if they were standard posteriors in decision problems with an incentive to play more extreme actions with more extreme data, they fail to give proper frequentist error bounds. (c) is more subtle: in Section 3.2 we show that BBW and other conditionalist frequentist approaches can be re-interpreted in terms of e-posteriors — so they can be used against arbitrary loss functions even though there were not designed as such. However, these e-posteriors only give meaningful (< ∞) bounds for a small subset of all decision rules (in the BBW case, effectively only for a single one (!)), making them highly restricted in practice — whereas other e-collections such as the Savage-Dickey and LR ones give meaningful bounds for essentially any decision rule.
+Example 7 [Weighted Squared Error] Take the Gaussian location family with variance 1 as in Example 2 and 3, where we allow data-dependent stopping times such as ‘τ is the smallest n at which xn > 5’), defined in the standard manner (Williams, 1991, Hendriksen
+et al., 2021). Hence, data Y takes the form Y = (τ, Xτ ) with τ a stopping time and Xτ a vector of τ outcomes. Suppose we aim to find the estimator with smallest mean square error, where the importance of the problem at hand can depend on the data via some function B = b(Y ) (we will ignore external circumstances U ); it is known to DM that B is some deterministic function of Y . We thus set
+L(θ, a) = (θ − a)2, Ly(θ, a) ∶= b(y)L(θ, a) (18)
+where Ly is the loss function we are interested in in the end, a squared error loss with importance weighted by some function b(y). In general, B = b(Y ) may again be determined by policy makers who may reconsider, using potentially vague ways, the importance of the problem in light of the observed data as in Example 6 above. We can think of any estimator θ ̆ for θ as a decision rule, that, upon observing Y = (n, Xn), outputs θ ̆ ∶= θ ̆(n, Xn). We first consider how one would go about this problem in an ‘objective Bayes’ manner. The standard (uniform, improper) ‘objective Bayes’ prior for this family and data xn
+11
+
+
+corresponds to the limit for λ ↓ 0 in (10). The ensuing posterior W ○ ∣ xn has a normal
+density w○(θ ∣ xn) with mean and median equal to the maximum likelihood estimator (MLE)
+θˆ(xn) = n−1 ∑n
+i=1 xi and variance 1/n, and it is ‘matching’ (Berger et al., 2022) in the sense that 1 − α credible posterior intervals (taken symmetrically around the posterior mean) coincide exactly, for each fixed n, with 1 − α confidence intervals. In this case the objective Bayes posterior also coincides with the fiducial and the confidence distribution (Schweder and Hjort, 2016) based on xn. The name ‘confidence distribution’ already warns that this posterior should perhaps only be used for ‘confidence’ (statements about confidence intervals) but in the fiducial and objective Bayes world, it seems to have been advocated more generally. That this is problematic was already exhibited in different settings by (Gr ̈unwald, 2018, Example 7) and Balch et al. (2019). As is well-known, Bayesian posteriors do not depend on the definition of the stopping time (Berger and Wolpert, 1988, Hendriksen et al., 2021); also, they condition on Y = (n, Xn) so further conditioning on B = b(Y ) also does not affect them, since it is com
+pletely determined by Y . Thus we have w○(θ ∣ Y = (n, Xn), B = b0) = w○(θ ∣ xn) (Hendriksen
+et al., 2021) so that the Bayes optimal action based on (18) and W ○(θ ∣ Y = (n, xn), B = b0)
+is simply the MLE, θˆ(xn) irrespective of the definition of τ , the definition of b and the value
+of b(y). Now, based on this posterior, the loss we think we make upon observing Y = (n, xn) is given, as in (2), by
+R ̄bayes(W ○ ∣ n, xn) = Eθ ̄∼W ○∣xn [Ly(θ ̄, θˆ)] = b(n, xn)
+n , (19)
+where we used that W ○ ∣ Y is a normal with mean θˆ and variance 1/n, independently of the definition of the stopping time random variable τ . Therefore, if data are in fact sampled from θ
+∗, then the average of the losses we expect to make, in several studies, is given by
+E
+(τ,Xτ )∼Pθ∗ [Eθ ̄∼W ○∣Xτ [LY (θ ̄, θˆ(Xτ ))]] = E(τ,Xτ )∼Pθ∗ [ b(τ, Xτ )
+τ ] , (20)
+whereas the loss we actually make on average is
+R ̄∗ ∶= E(τ,Xτ )∼Pθ∗ [LY (θ∗, θˆ(Xτ ))] = E(τ,Xτ )∼Pθ∗ [b(τ, Xτ ) ⋅ (θ∗ − θˆ(Xτ ))2] (21)
+We now show that the difference between believed risk (20) and actual (21) can be unbounded, i.e. we can get it to be at least k∗, for arbitrarily large k∗ > 0. To this end, simply set
+b(τ, Xτ ) ∶= τ and set the stopping time τ to be the smallest n such that (θˆ(xn) − θ∗)2/n ≥ k∗. By the law of the iterated logarithm (Williams, 1991) we know that τ is finite, Pθ∗-almost surely, under any θ∗ ∈ Θ. With this definition of b, the believed risk (20) is 1 yet the actual risk (21) is at least k∗. By Proposition 1 such a discrepancy is impossible if we base our risk assessment on e-posteriors via (5) instead. This will be made concrete in Example 8 and 11 below.
+3 A Small Taxonomy of E-Specifications
+Existing papers on e-variables such as Turner et al. (2021), P ́erez-Ortiz et al. (2022), Wasserman et al. (2020) consider Pθ that define a random process X1, X2, . . ., and then they provide constructions for an e-variable for sample size n, for each n. Thus, they really provide
+e-specifications: a sequence of e-variables S[1]
+θ , S[2]
+θ , . . ., for each θ ∈ Θ, where S[n]
+θ is an e-variable for data Y = (X1, . . . , Xn).
+12
+
+
+Straightforwardly, upon defining q(Xn) = pθ(Xn)S[n]
+θ (Xn), we have ∫ q(xn)dμ(xn) ≤ 1
+where μ is the underlying measure, so q can be thought of as a probability density (if ∫ qdμ < 1,
+we may think of the missing mass being put on an outcome that, under Pθ, has probability
+0). S[n]
+θ can then be written as a likelihood ratio q(Xn)/pθ(Xn). Thus, in the simple (nonuisance) parameter case, we can rewrite every e-variable as a likelihood ratio. Importantly
+though, q is allowed to depend on n and θ; the specification S[1]
+θ , S[2]
+θ , . . . may deliver, for different n and θ, entirely different q’s. To emphasize this possibility, we will from now on make the potential dependence on n and θ explicit, and henceforth write
+S
+[n]
+θ = q[n]
+¢θ (Xn)
+pθ(Xn) . (22)
+For an important subclass of e-variable specifications, the corresponding q[n]
+¢θ = q¢θ does not depend on n after all (it may still depend on θ). In that case q¢θ defines a random process
+for X1, X2, . . . and the specification (S[n]
+θ )n is called an e-process (Ramdas et al., 2022). Eprocesses have a major advantage: for every e-process, for every stopping time τ (e.g. ‘stop at the smallest n at which S[n] ≥ 1/α, and set τ to this n’), we have (Ramdas et al., 2022):
+EXτ ∼Pθ [S[τ ](Xτ )] = EXτ ∼Pθ [ q¢θ(Xτ )
+pθ(Xτ ) ] ≤ 1.
+As a result, with e-processes we can engage in optional stopping — under any stopping time τ — even the aggressive stopping rule mentioned above or some externally imposed rule,
+the details of the definition of which we do not need to know — S[τ]
+θ is still an e-variable, and decision making based on (5) as above can proceed. With e-specifications that do not provide e-processes, one cannot engage in such optional stopping (see the extended discussion by (Gru ̈nwald et al., 2019, Section 5)). Indeed, in Example 7, which involved a non-constant stopping time τ , one only gets valid assessments with e-processes rather than mere e-variables, and we shall use these in Example 8 and 11 to provide risk assessments for that setting. We will now reconsider the e-collections of all our running examples — as we will see, some provide e-processes, others do not.
+3.1 Generalized Savage-Dickey E-Processes
+We have already seen two instances of e-processes: the (specification, for each n, of) SavageDickey e-variables Ssd and the likelihood ratio e-variables Slr. Both are instances of what we may call generalized Savage-Dickey e-processes (S[n])θ, with
+S
+[n]
+θ = pW ¢θ(Xn)
+pθ(Xn) (23)
+where pW (Xn) = ∫ pθ(Xn)dW (θ) is a Bayes marginal distribution on n. Thus, the e-variable
+numerator is a Bayes marginal, but the prior W one uses is allowed to depend on the parameter θ one is comparing to.
+Example 8 [Gaussian Location, Example 3 Continued] Fix some anticipated sample size n∗, representing our best a priori guess of the actual sample size n that we will observe. Our aim is to obtain an e-process that is valid for all n, including n ≠ n∗, but is optimized to
+13
+
+
+give the best possible risk bound if we happen to observe y = xn with n equal or close to n∗. To this end, for each θ ∈ R we define θ− < θ and θ+ > θ to satisfy (12) with C = 1. The construction below gives a valid e-process for every C > 0, but C = 1 gives the best bounds for the squared error, at the cost of potentially somewhat worse yet of course still valid, bounds for other
+loss functions. Now define, for each n, the e-variable S[n]
+θ (y) = (1/2)pθ− (y)+(1/2)pθ+ (y)
+pθ(y) . Clearly
+the S[n]
+θ form a generalized Savage-Dickey e-process, with W ¢ θ the uniform distribution on {θ−, θ+}. In the Supplementary Material (Section B, Proposition 3) we show that for the
+corresponding e-posterior P ̄(θ ∣ y), we have that
+main max
+θ∈R (θ − a)2P ̄(θ ∣ y)
+is achieved by setting a = θˆ (independently of n and n∗), so that δmm(y) = θˆ, and we also show that (Section A) (5) evaluates to
+max
+θ∈R (θ − θˆ)2P ̄(θ ∣ y) = 1
+n ⋅ g(n, n∗) ⋅ 1.45 . . . if n∗=n
+=1
+n ⋅ 1.45 . . . (24)
+where g(n, n∗) = ( n∗
+n ) ⋅ en/n∗−1. Note that g(⋅, n∗) has a minimum at n = n∗ with g(n, n∗) = 1
+and increases very slowly for n/n∗ close to 1. The maximum over θ is, for n = n∗, achieved
+approximately at θ = θˆ ± 1.46/√n at which P ̄(θ ∣ y) ≈ 0.68, independently of the value of
+n = n∗. S[n]
+θ gives an e-process for any n∗ we choose in (12). In the Supplementary Material, Section A, we show that (24) still holds up to lower order factors, for general 1-dimensional families, as long as they are restricted to a compact subinterval of the parameter space. Incidentally, this shows that for standard decision problems (e.g. n fixed in advance, uniform weight function), the e-posterior based risk bounds (5) are not much worse than the Bayesian risk assessment and minimax risk bounds for the same model, as long as sufficiently ‘clever’ e-collections are used: the factor is a modest 1.45 if n can be assumed known in advance, and a log n-factor otherwise.
+Example 9 [Hypothesis Testing with Generalized Savage-Dickey and LR] Consider a simple-vs.-simple test as in Example 4. From (23) we see that the generalized Savage-Dickey e-variable at fixed sample size n, with Y = Xn, and based on priors W ¢ θ with mass function wθ, for θ ∈ Θ = {0, 1}, is given by
+Sθ(y) = wθ(0)p0(y) + wθ(1)p1(y)
+pθ(y) with wθ(1) = 1 − wθ(0). (25)
+For degenerate priors with w0(0) = w1(1) = 0 this reduces to the LR e-process of (13), and for ‘pure’ (i.e. nongeneralized) Savage-Dickey e-posteriors, we have w0 = w1. Consider WaldNeyman-Pearson loss functions under Condition Zero (C0) as in Example 4. Generalizing (13), the e-posterior minimax decision rule δmm upon observing Y = y is then given by
+δmm(y) = a, for a achieving
+min
+a∈{0,1}
+max {L(0, a) ⋅ p0(y)
+w0(0)p0(y) + w0(1)p1(y) , L(1, a) ⋅ p1(y)
+w1(0)p0(y) + w1(1)p1(y) }
+C=0 min
+a∈{0,1} (L(0, a) ⋅ p0(y)
+w0(0)p0(y) + w0(1)p1(y) + L(1, a) ⋅ p1(y)
+w1(0)p0(y) + w1(1)p1(y) ) . (26)
+14
+
+
+It follows that under C0, δmm selects hypothesis 0 (a = 0) iff f ( p0(y)
+p1(y) ) ≥ L(1,0)
+L(0,1) where f (r) =
+r ⋅ (1−w1)r+w1
+(1−w0)r+w0 with wj = wj(1). Straightforward calculus gives that, irrespective of the choice
+for w0 and w1, f (r) is strictly increasing in r, so that there is a unique point r∗ depending
+on w1 and w0, such that for all r ≥ r∗, δmm(y) = 0 and for all r < r∗, δmm(y) = 1. Further, for any pure Savage-Dickey e-collection with w1 = w0, we have f (r) = r, i.e. we select action 1 if
+p1(y) ⋅ (L(1, 0))γ ≥ p0(y) ⋅ (L(0, 1))γ (27)
+for γ = 1. This is equivalent to taking the Bayes decision under a uniform prior. On the other
+hand, for the LR e-collection, δmm(y) selects action 1 if the above holds for γ = 1/2. Finally, if the loss is symmetric, L(0, 1) = L(1, 0), then in fact we select action 1 iff p1(y) > p0(y) even for general w1 ≠ w0. How about our basic risk assessment (5) for general decision rules, including these minimax ones? While (5) does not give rise to easily interpretable formulae that work for all generalized Savage-Dickey e-variables, under C0 we do get intuitive expressions for pure Savage-Dickey e-variables with w0 = w1 = 1/2 the uniform prior, and for LR e-collections. For the former, we can replace the ‘max’ by a ‘+’ using C0 as in (26) and we get:
+L(0, δ(y)) ⋅ p0(y)
+1
+2 p0(y) + 1
+2 p1(y) + L(1, δ(y)) ⋅ p1(y)
+1
+2 p0(y) + 1
+2 p1(y) =
+2 ⋅ L(0, δ(y)) ⋅ wu(0 ∣ y) + 2 ⋅ L(1, δ(y)) ⋅ wu(1 ∣ y) = 2 ⋅ Eθ∼Wu∣y [L(θ, δ(y))] (28)
+where wu(j ∣ y) = pj(y)
+p0(y)+p1(y) is the posterior based on uniform prior wu with wu(0) = wu(1) =
+1/2, showing that our bound is always within a factor 2 of the best Bayes-with-uniform-prior bound and hence within a factor of less than 2 of the standard frequentist minimax bound for this setting, obtainable by a procedure that depends on the specific L of interest. For the LR e-variables, we similarly get, refining (13),
+L(0, δ(y)) ⋅ p0(y)
+p1(y) + L(1, δ(y)) ⋅ p1(y)
+p0(y) =
+L(0, δ(y)) ⋅ wu(0 ∣ y)
+wu(1 ∣ y) + L(1, δ(y)) ⋅ wu(1 ∣ y)
+wu(0 ∣ y) = Eθ∼wu∣y [ 1
+wu(δ(y) ∣ y) ⋅ L(θ, δ(y))] . (29)
+We note that for δ ∶= δmm and the symmetric case L(0, 1) = L(1, 0), we choose action 1 iff
+p1(y) ≥ p0(y) so that wu(δmm(y) ∣ y) ≥ 1/2: the LR bound (29) dominates the uniform-prior
+Savage-Dickey bound (28), and 1/wu(δmm(y) ∣ y) in (29) is a luckiness factor, bounded by 2: if we happen to assign high posterior to the selected hypothesis, we are ‘lucky’ and our loss assessment will get tighter; still, it is valid irrespective of the value of this posterior. If asymmetric losses are observed, 1/wu(δmm(y) ∣ y) can in general be both larger and smaller than 2, and the LR risk assessment bound does not dominate the Savage-Dickey one.
+3.2 Conditionalist-Frequentist E-Specifications — not E-Processes
+We first continue the Berger-Brown-Wolpert (BBW) simple-vs.-simple hypothesis testing setting of Example 5, later extending it to more general conditionalist frequentist inference. Let V ∶= p1(Y )/p0(Y ). We will assume that (a) V is strictly increasing in Y , which (b) has a (Lebesgue) density under P0 and P1. Both assumptions are merely for simplicity; for
+15
+
+
+example (a) can be dropped by directly analyzing V instead of Y , i.e. ‘the likelihood ratio of the likelihood ratio’. Fix some w with 0 < w < 1. Since, for any y∗, the sum of both integrals below is 1, there must be a specific y∗ such that
+∫y<y∗((1 − w)p0(y) + wp1(y))dy = w ; ∫y≥y∗((1 − w)p0(y) + wp1(y))dy = 1 − w, (30)
+so that, upon setting
+S bbw(w)
+0 (y) = 1y≥y∗ (1 − w)p0(y) + wp1(y)
+(1 − w)p0(y) ; Sbbw(w)
+1 (y) = 1y<y∗ (1 − w)p0(y) + wp1(y)
+wp1(y)
+(31)
+we can verify that EY ∼Pθ [Sbbw(w)
+θ ] = 1 for θ ∈ {0, 1} so that {Sbbw(w)
+θ ∶ θ ∈ {0, 1}} is an ecollection. The corresponding e-posteriors only give useful risk assessment bounds (5) in quite restricted situations, however. To be sure, the bound (5) holds (as it must by Proposition 1), but it must be trivial for all decision rules except one as soon as we assume — as will be the case for every Wald-Neyman-Pearson loss, i.e. with L(0, 1) > 0, L(1, 0) > 0. The reason is that
+P ̄bbw(w)(θ = 1 ∣ y) = ∞ if y ≥ y∗ and P ̄bbw(w)(θ = 0 ∣ y) = ∞ if y < y∗: for every loss function
+L and decision rule δ there will be y such that R ̄(y, δ(y)) = ∞, unless L(0, 0) ≤ 0, L(1, 1) ≤ 0
+and δ is the bbw(w)-decision rule, which satisfies δbbw(w)(y) = 1 iff y ≥ y∗. This is, in fact, the only decision rule that BBW themselves study. Note that it must then also be the case that the minimax decision rule δmm based on P ̄bbw(w) must coincide with δbbw(w), and thus does not depend on the loss L of interest. This indicates that, for many loss functions, it will not be a very good rule — it is simply the only rule for which the risk assessment (5) is nontrivial (and then evaluates to (14)). To be sure, BBW provide a result implying that if the loss function L satisfies C0, then we may set w as a function of this loss function so that the rule δbbw(w) = δmm is to some extent reasonable after all in the following sense: it
+coincides with the Bayes decision rule δBayes(y) based on prior W with w(1) = w as long as y ∈/ [y−, y+] for some specific values y− ≤ y+. They call [y−, y+] the no-decision region and notice that in practice it is often quite small. This support for δbbw(w) notwithstanding, we feel that the pure Savage-Dickey (with w = 1/2) and LR e-posteriors should be preferred: at the small price of the slightly larger risk assessments (28) and (29), they (a) allow us to use these assessments for general decision rules rather than the potentially defective (since independent of b) δbbw(w), and (b) they provide e-processes rather than just e-specifications (it is easy to see that the likelihood ratios (22)
+corresponding to BBW e-specifications have q[n]
+θ depending on n — BBW e-variables do not remain e-variables under optional stopping, generalized Savage-Dickey e-variables do).
+BBW’s Original, Conditionalist-Frequentist Interpretation For general p0 and p1 as above, we may partition the sample space Y into regions {Yα ∶ α ∈ [0, 1]} where Yα = {y+
+α, y−
+α} are chosen such that P0(Y ≥ y+
+α) = α and P1(Y ≤ y−
+α) = β(α) for some function β ∶ [0, 1] → [0, 1]. We may think of observing Y = y as first observing α so that y ∈ Yα, and only then observing Y = y itself. We may then, by construction, after observing α, perform a conditional frequentist test with Type-I and Type-II ‘conditional’ error probabilities α and β(α), by rejecting θ = 0 if Y = y+
+α and accepting if Y = y−
+α. The BBW approach was originally conceived as a specific way to construct such a partition, with the special property that for
+16
+
+
+any α we have that y+
+α ≥ y∗, y−
+α ≤ y∗ (so that δmm invariably rejects if y+
+α is observed for some α) and
+α = (1 − w)p0(y+
+α)
+(1 − w)p0(yα+) + wp1(yα+) , β(α) = wp1(y−
+α)
+(1 − w)p0(yα−) + wp1(yα−) .
+These are exactly our BBW e-posteriors P ̄bbw(w)(0 ∣ y+
+α) and P ̄bbw(w)(1 ∣ y−
+α) — BBW in fact call them conditional error probabilities, because that is how they derived them, and note that they are formally identical to Bayesian posteriors; the interpretation in terms of e-posteriors is ours.
+Kiefer and Vovk Confidence Estimators Essentially the same analysis as for BBW conditional error probabilities also applies to general conditionalist frequentist e-variables, based on Kiefer’s and Vovk’s conditional confidence estimators, to which we now turn: every such confidence estimator gives a valid e-specification, hence e-posteriors for each n, but in general these will not be e-processes, and they can evaluate to infinity, hence only giving useful, nontrivial risk assessments for a restricted set of loss functions and decision rules although this set may not be as restricted as in the BBW case, where only a single rule, δbbw(w) gave nontrivial risk assessments. Consider a partition {Yα ∶ α ∈ [0, 1]} of Y together with a function CI(y) that maps each y ∈ Y into a subset of Θ. In case Θ is a continuum, we usually take CI(y) to be an interval, so that CI(y) = [θL, θR] with endpoints θL and θR determined by y. We say that ({Yα ∶ α ∈ [0, 1]}, CI) define a Kiefer-type conditional frequentist confidence set estimator if for all θ ∈ Θ, all α ∈ [0, 1],
+Pθ(θ /∈ CI(Y ) ∣ Y ∈ Yα) ≤ α.
+Such confidence estimators were first considered by Kiefer (1976). If β(α) = α, the BBW approach can be reinterpreted as a Kiefer-type confidence estimator: we set Yα as above and
+CI(y) = {δbbw(w)(y)} so that CI(y+
+α) = {1}, CI(y−
+α) = {0}. (32)
+If β(α) ≠ α then the BBW approach does not give a Kiefer-type confidence estimator. However, Vovk (1993) provided a notion of confidence estimator that generalizes both BBW’s conditional error probabilities and Kiefer-type confidence estimators: for any function CI(y) that maps each y ∈ Y into a subset of Θ combined with any function αˆ(Y ) taking values in [0, 1], we say that CI and αˆ define a Vovk-type confidence set estimator if for all θ,
+EY ∼Pθ [1θ∈/CI(Y ) ⋅ 1
+αˆ(Y ) ] ≤ 1. (33)
+Vovk (1993) defines confidence set estimators in this partition-free manner, motivated by a game-theoretic interpretation. He gives a (straightforward) proof showing that any confidence set estimator in the sense of Kiefer is also a confidence set estimator in the sense of Vovk, with αˆ(y) set to the α such that y ∈ Yα. Similarly, if we set CI as in (32) and, for each α ∈ [0, 1], αˆ(y+
+α) ∶= α, αˆ(y−
+α) = β(α), then it is easily seen that (33) hold with equality for both θ ∈ {0, 1}, i.e. we obtain a Vovk-type confidence estimator. Now, if (CI(Y ), αˆ(Y )) is a confidence set estimator in sense of Vovk, it directly follows
+from (33) that for all θ, Sθ = 1θ∈/CI(Y )1/αˆ(Y ) is an e-variable, so P ̄(θ ∣ y) is an e-posterior. Just as in the specific BBW scenario, such a posterior may become ∞.
+17
+
+
+4 Condition Zero and Capped Posteriors
+Consider Example 2 again, the normal location family with the squared error loss (18) as in Example 7. If we base our risk assessment directly on the Savage-Dickey e-posterior as defined there, we get bounds that, while correct, are not always sharp. This is due to the fact that, as seen from Figure 1, P ̄(θ ∣ Y ) = S−1
+θ (Y ) can become very high for θ close to θˆ a milder form of the issues with the confidence-estimator based e-variables of the previous section, for which it can become even infinite. There, the issues were avoided if the loss function satisfied Condition Zero. It turns out that a weakened version of this condition is sufficient to avoid this problem, for decision problems more general than testing. We now introduce a new concept, and weaken and generalize Condition Zero with this in mind:
+Definition 1 [Capped E-Posterior; Condition Zero] For any given e-posterior P ̄(θ ∣ y),
+its capped version P ̄cap(θ ∣ y) is defined by setting, for all θ ∈ Θ, y ∈ Y: P ̄cap(θ ∣ y) ∶=
+min{1, P ̄(θ ∣ y)}. Let δ be a decision rule. We say that δ satisfies C0, i.e. Condition Zero, if
+sup
+θ∈Θ
+P ̄(θ ∣ y)L(θ, δ(y)) = sup
+θ∈Θ
+P ̄cap(θ ∣ y)L(θ, δ(y)) (34)
+for every y ∈ Y. We say that the loss function L itself satisfies Condition Zero if there exists a decision rule δ such that (34) holds.
+Our original Condition Zero in simple-vs.-simple testing was defined as a condition on a given loss function L; the present condition is strictly weaker as a condition on loss functions and generalizes the idea to decision rules δ. Why would we want to impose such a condition? First note that setting Sθ = 1 for all θ ∈ Θ gives a trivial, yet valid, e-collection; it provides no indication at all about θ based on data y. This suggests that, when using a nontrivial collection, based on data y, we cannot make any inferences about θ for which Sθ(y) < 1 (i.e.
+P ̄(θ ∣ y) > 1): our e-variable provides less evidence against θ than what can be obtained trivially: in a sense, y gives us no information at all for making inferences about θ. It is therefore of interest to restrict to decision rules satisfying the new Condition Zero. For such problems, our risk assessment will never be based on evaluating P ̄(θ ∣ y) at a value of θ for
+which P ̄(θ ∣ y) > 1, i.e. for which it really does not give any information about this θ. Also, it may be argued that the capped e-posterior is a more intuitive tool than the e-posterior: for any α ≥ 0, the set {θ ∈ Θ ∶ P ̄(θ ∣ y) ≥ α} is a 1 − α-confidence interval (Gru ̈nwald,
+2022) (see Figure 1, middle panel), whereas for sets containing θ with P ̄(θ ∣ y) ≥ 1, no clear interpretation seems to exist. Thus, by insisting on C0 one really insists on inferences that can be based on the more intuitive P ̄cap while still satisfying (5).
+Example 10 [Two-Point prior for exponential families: Condition Zero holds] The generalized Savage-Dickey two-point prior-based e-posterior that we employed for the Gaussian location family in Example 8 gives rise to e-collections such that the corresponding minimax δmm(y) = θˆ(y), also satisfy Condition Zero whenever the b-weighted squared error
+(18) is used: independently of n, P ̄(θ ∣ y) ≈ 0.68 for the maximizing θ, as was established below (24). For exponential families, we show in the Supplementary Material (Section A, inside the proof of Theorem 1) that the same holds if the model {Pθ ∶ θ ∈ Θ○} is restricted to an (arbitrary) compact subset of the parameter space and n is large enough. We do not know if the result can be extended beyond exponential families, since its proof makes heavy use of their properties.
+18
+
+
+In practice, the DM may be presented with a loss function for which Condition Zero does not hold, for any reasonable decision rule, and the high-risk problem looms. What to do in such a case? There are two alternative solutions. As to the first (we describe the second underneath Example 11), one can (sometimes vastly) improve risk assessments by slightly modifying any given e-variable Sθ to another e-variable S′
+θ that provides almost as much evidence against θ as Sθ whenever Sθ provides more evidence against y than the trivial 1 (i.e. when Sθ(y) > 1),
+and almost as much as the trivial S = 1 otherwise. The corresponding P ̄′(θ ∣ y) = S′−1
+θ (y) will
+then be similar to P ̄(θ ∣ y) if P ̄(θ ∣ y) ≤ 1 and bounded by a small constant otherwise. Three straightforward ways of doing this are provided by setting S′
+θ equal to any of the following options:
+S
+∗
+θ (y) ∶= max{Sθ(y), 1}
+EY ∼Pθ [max{Sθ(Y ), 1}] , S○
+θ (y) ∶= 1
+2 ⋅ max {1, Sθ(y)}
+S
+[γ]
+θ (y) ∶= (1 − γ) + γSθ(y) for γ = 1/2. (35)
+One immediately verifies that all three options produce e-variables: S[γ] produces one for all γ, because mixtures of e-variables are e-variables. Using that the expectation in S∗
+θ is bounded by 2 (to see this, upper bound max by a sum), we see that S○ is dominated by both
+S
+∗
+θ and S[1/2]
+θ hence must also be an e-variable and we also see that for all three choices, we
+have supθ P ̄′(θ ∣ y) ≤ 2 sup(S○
+θ (y))−1 = 2. S∗
+θ may be the most direct solution, but it can turn
+an e-process into an e-specification that is not an e-process anymore, whereas S[1/2]
+θ preserves
+the e-process property. Since S[1/2]
+θ dominates S○
+θ , we prefer it; it is depicted in Figure 1.
+Example 11 [Improving Pure Savage-Dickey for Exponential Families] We illustrate the idea above for the case that P ̄(θ ∣ y) = 1/Sθ(y) is the Savage-Dickey e-posterior
+based on an arbitrary prior W on the Gaussian location family. Let P ̄[γ](θ ∣ y) ∶= 1/S[γ]
+θ (y) be the corresponding ‘dampened’ e-posterior as defined in (35). In the Supplementary Material, Section C we describe this setting in more detail and extend it to 1-dimensional exponential families, also showing (in Proposition 3) that for any 0 < γ ≤ 1 the MLE θˆ is the P ̄[γ]-eposterior minimax estimator irrespective of the weight b in the loss (18). Now for simplicity let W be a Gaussian prior with some fixed precision λ as in Example 2 and with prior mean θ0 = 0. We also show in the Supplementary Material (Proposition 4), that, for the choice γ = 1/2 that we advocated above, the bound (15) and (16) hold with
+R ̄(δmm) = R ̄(Y, θˆ(Y )) = 2
+n (1
+2 log n + λ
+λ + nλ
+n+λ
+θˆ(Y )2) , (36)
+losing just a log n factor compared to the e-posterior that achieves the standard frequentist minimax bound up to a constant factor, and that we considered in Example 8. Again we extend this result to general 1-dimensional families with smooth and strictly positive prior densities (and again we do not know if it extends to more general 1-dimensional families). In contrast, for the original Savage-Dickey e-posterior P ̄(θ ∣ y) we get a much larger R ̄(δmm) ⪰ n
+−1/2, as can be seen by evaluating ⋅P ̄(θ ∣ y)(θ − θˆ)2 at θ = θˆ + n−1/2. By ‘dampening’ the
+posterior we improved the factor of order n−1/2 to a factor of order (log n)n−1.
+As a second solution to the high-risk problem, we can alternatively modify our risk assessment (5) for decision problems and rules that do not satisfy C0. We then find that if we replace the
+19
+
+
+e-posterior in the risk assessment R ̄(δ) as in (5) by its capped version, the risk assessment itself
+may become invalid (i.e. R ̄(δ) does not satisfy (15)/(16)), but, for arbitrary data-dependent
+decision problems, 2R ̄(δ) does remain valid:
+Proposition 2 Set, for arbitrary multi-loss decision problem and rule δ, not necessarily satisfying C0,
+R ̄cap(Y, A) ∶= sup
+θ∈Θ
+P ̄cap(θ ∣ y) ⋅ L(θ, a) , R ̄cap(δ) ∶= R ̄cap(Y, δ(Y )). (37)
+Then (15) and (16) hold with 2R ̄cap(δ) in the role of R ̄(δ).
+Proof: Calculating R ̄cap(y, a) based on the capped posterior is equivalent to calculating
+R ̄(y, a) based on the modified posterior P ̄′(θ ∣ y) = (S○
+θ (y))−1 as defined in (35) and multi
+plying the answer by 2. Since P ̄′(θ ∣ y) is a standard e-posterior and no requirements on δ
+are made, we can use Proposition 1 based on P ̄′(θ ∣ y) to get the required result. 2
+This solution to the high-risk problem of some e-collections shows that, for some collections, the original e-posterior in its capped version may not be so bad after all. This solution may in fact be preferable, since it does not interfere with the use of e-values in optional continuation: we can keep multiplying e-values as explained in the next section, and get a factor of 2 in the bound for the final product. In contrast, if we use any of the modifications in (35), we must modify the e-variable at each study, making the final (i.e. when we stop adding studies) product of e-values potentially much smaller.
+5 Additional Background and Discussion
+The General Definition of E-Values The definition of e-collection, e-posterior, risk assessment (5) and e-posterior minimax decision rule readily generalize to models with nuisance parameters, composite hypothesis testing and nonparametric settings. All are covered by the following extended definition: let P be a set of distributions for random variable Y and
+consider a parameter (vector) of interest defined by a function δ ∶ P → Θ with Θ ⊂ Rk for some k > 0. We now call {Sθ ∶ θ ∈ Θ} an e-collection for P if for all θ ∈ Θ, Sθ = Sθ(Y ) is a nonnegative function of Y and for all P ∈ P with δ(P ) = θ, we have the corresponding analogue of (3), i.e. for all such P : EP [Sθ] ≤ 1. (38)
+The e-posterior P ̄(θ ∣ y) relative to such a collection is still defined as S−1
+θ (y), and the definition of risk assessment (5) and e-posterior minimax rule (6) remains unchanged. It is easily checked that the results that validate the e-posterior risk assessment and minimax rule, Proposition 1 and Proposition 2, still hold in this more general setting.
+The Original Interpretation of E-Variables E-variables, while being implicit in earlier work going back at least to Darling and Robbins (1967), were largely unknown until 2019, when the concept was given a name and was popularized and extensively developed by papers such as (Gru ̈nwald et al., 2019, Wasserman et al., 2020, Shafer, 2021, Vovk and Wang, 2021) (the first versions of all four papers came out in 2019, and, together with (Howard et al., 2020, 2021), which first came out in 2018 and in which e-values played a central role without an explicit name, may arguably be viewed as the pioneering papers of the field). In the mean
+20
+
+
+time they have been studied in a wide variety of contexts (Henzi and Ziegel, 2021, Ren and Barber, 2022, Bates et al., 2022) and even had an international workshop devoted to them. Originally, they were used as tools to extend traditional Neyman-Pearson tests to situations with optional continuation while keeping Type-I error guarantees: suppose one observes a sequence of studies concerning the same null hypothesis {P ∈ P ∶ δ(P ) = θ0}. One can then multiply the e-values derived from the individual studies. Broadly speaking, the product will be a new e-variable, irrespective of whether the decision to perform a subsequent study depends on previous study outcomes (the ‘continuation rule’), and irrespective of the rule used to decide when to stop performing new studies. Since, for any fixed α, the probability, under the null, that an e-variable gets larger than 1/α, is bounded by α, one can use e-values, combined by multiplication, as an alternative to p-values in a setting in which optional continuation of experiments is allowed (note that this is always possible, whereas optional stopping within a study is only possible if we deal with e-processes rather than e-variables, as in Section 3).
+Composite Testing In light of this original motivation, much initial work on e-values focused on hypothesis testing in Neyman-Pearson (NP) style, but under optional continuation. Just as in the original NP paradigm, Type-I error of decision rules was required to be bounded by a pre-given significance level α, and other desiderata such as small Type-II error only came second. This is different from the treatment of simple-vs.-simple testing in the present paper. Here, as in Bayesian and minimax approaches, we do allow asymmetric losses (L(0, 1) ≠ L(1, 0)), but these potentially different losses appear in the risk assessment (5) in a symmetric fashion after all. Existing papers on e-values within the original paradigm in fact emphasize composite hypotheses: the theoretical papers Gru ̈nwald et al. (2019), Pe ́rez-Ortiz et al. (2022) and the practical (Turner et al., 2021, Turner and Gru ̈nwald, 2022) consider situations in which the null has nuisance parameters (such as, for example, the variance in the t-test or the proportion in 2 × 2 tables). For such cases (the null P = {Pλ ∶ λ ∈ Λ} is characterized by a (potentially) high-dimensional parameter vector λ ; the parameter of interest δ is of (potentially) much smaller dimension, often a scalar), Gru ̈nwald et al. (2019) offer a generic method to construct e-variables as in (38) for such situations via the reverse information projection. This method is employed by all papers mentioned above to construct e-variables, with the explicit goal of providing Type-I error bounds under optional continuation in the Neyman-Pearson style; but we can equally use them to provide e-posterior risk assessments and minimax rules with general loss functions as in this paper — in our examples above, we only used ‘simple’ e-collections for ease of illustration. Of particular interest is the paper (Gru ̈nwald, 2022), which may be viewed as a companion to the present one. It also extends the use of e-variables to deal with post-hoc specified loss functions but it sticks to a variation of the Neyman-Pearson tenet: there is a distinction between Type-I risks (expected losses), on which a hard constraint is imposed (similar to the significance level α as a constraint on Type-I error probability in traditional testing), and Type-II risks, which are minimized subject to this constraint.
+Nonparametrics The same generalization (38) covers nonparametric settings. For example, in Cox’s celebrated proportional hazards model, the P ∈ P specify an underlying continuous time process with dynamics conditional on some covariate vector x⃗. While the full likelihood of this process is intractable, Ter Schure et al. (2021) show that, for any vector
+21
+
+
+θ of covariate coefficients, the ratio between any two partial likelihoods defined relative to the same set of covariates constitute an e-process. This implies that all the results on e-posterior risk assessment of the present paper also pertain to ratios of Cox’s partial likelihoods. In fact, for any P and any θ ∈ Θ, any ratio between conditional, marginal or partial likelihoods that has the same distribution under all distributions in P with δ(P ) = θ is trivially an e-variable, and can be used to define an e-collection. We regard all this as an additional advantage of e-posteriors over Bayesian ones: strictly speaking, a Bayesian needs to specify the full likelihood for each distribution in P in order to get a valid a posterior — as has been argued by e.g. Robins and Wasserman (2012), this may be viewed as ‘overkill’ and poses practical (and unnecessary) difficulties for Bayesian nonparametric inferences especially when the samples are small. In contrast, Waudby-Smith and Ramdas (2022) provides an e-collection which can be used to learn the mean of a sequence of bounded random variables based on a small sample without any assumptions on the underlying random variables except boundedness and existence of a common mean.
+Conclusion and Future Work We have presented the idea of representing uncertainty by e-posteriors based on e-collections. While e-collections already existed, the idea to use them in risk assessments such as (5) and to define e-posterior minimax rules as in (6) is, to our knowledge, completely new. There are of course many open questions regarding this quasi-conditional methodology. The main one is perhaps: what e-collection should be used in practice? If one takes as one’s goal “collecting as much evidence as possible in subsequent studies against a single θ ∈ Θ”, and one is able to formulate a prior on Θ representing a ‘best guess’ (note that Θ does not necessarily index a set of distributions; rather a set of properties) then there is a good case to be made for the GRO (growth-rate optimal) e-variable as defined by Gru ̈nwald et al. (2019), which is always well-defined; we refer to that paper for extensive discussion. For simple nulls, the GRO e-variable is always of pure Savage-Dickey form. However, if we are interested not in testing but in estimation and want an e-posterior over the full range of θ ∈ Θ, then the e-posterior based on the GRO e-variables may not be intuitively optimal, as we saw in this paper: the pure Savage-Dickey e-variable based on a normal prior W in the Gaussian location family (which is GRO relative to W ) gives worse risk assessments than the one based on the two-point prior as in Example 3. We do not have a general recommendation (in the style of ‘reference priors’ for Bayesians) for e-collections, and obviously more research is needed here. This paper is really just a first, exploratory one, comparing various possibilities such as two-point, capped- and dampened e-collections. A second related important question is: in what situations is the bound (16) sufficiently tight to be practically relevant? Essentially, if we are in the setting that (bookie, or policy makers) provide B such that B ⋅ R ̄(δ) is constant or varies only very little over y, then the bound
+(15) looks like a standard expected risk bound. If R ̄(δ) can vary highly depending on the data, then the bounds (15) and (16) are still valid, but the supremum in (16) may make them rather weak. Can we get better bounds in such cases? And what if we let B also vary with θ and a? Then, upon learning {Bθ,a ∶ θ ∈ Θ, a ∈ A}, DM might want to re-consider the originally planned decision rule δ, significantly complicating the analysis. Related to this is the question what loss functions L correspond most tightly to real-world problems at all. In our hypothesis testing examples, we considered asymmetric loss functions which seems reasonable, but in our estimation example, we used the squared error loss — which is mathematically convenient and incentives one to output the posterior mean; but in practical situations one may be more
+22
+
+
+interested in very different, hard-to-formalize, problem-dependent losses. All in all, there is plenty of room for future work here!
+References
+Michael Scott Balch, Ryan Martin, and Scott Ferson. Satellite conjunction analysis and the false confidence theorem. Proceedings of the Royal Society A, 475(2227):20180565, 2019.
+O.E. Barndorff-Nielsen. Information and Exponential Families in Statistical Theory. Wiley, Chichester, UK, 1978.
+S. Bates, M. I. Jordan, M. Sklar, and J. Soloff. Principal-agent hypothesis testing. arXiv:2205.06812, 2022.
+J. Berger. Could Fisher, Jeffreys and Neyman have agreed on testing? Statistical Science, 18(1):1–12, 2003.
+J. Berger, J. Bernardo, and D. Sun. Objective Bayesian inference and its relationship to frequentism. In Handbook of Bayesian, Fiducial, and Frequentist Inference. Blackwell, 2022.
+James O. Berger and Alessandra Guglielmi. Bayesian and conditional frequentist testing of a parametric model versus nonparametric alternatives. Journal of the American Statistical Association, 96(453):174–184, 2001.
+J.O. Berger and R.L. Wolpert. The Likelihood Principle. Institute of Mathematical Statistics, Hayward, CA, 2nd edition, 1988.
+J.O. Berger, L.D. Brown, and R.L. Wolpert. A unified conditional frequentist and Bayesian test for fixed and sequential simple hypothesis testing. Annals of Statistics, 22(4):17871807, 1994.
+J.M. Bernardo and A.F.M Smith. Bayesian Theory. Wiley, Chichester, 1994.
+C Brownie and J Kiefer. The ideas of conditional confidence in the simplest setting. Communications in Statistics-Theory and Methods, 6(8):691–751, 1977.
+D.A. Darling and H. Robbins. Confidence sequences for mean, variance, and median. Proceedings National Academy of Sciences, 58(1):66, 1967.
+Sarrat Dass and James Berger. Unified conditional frequentist and bayesian testing of composite hypotheses. Scandinavian Journal of Statistics, 2003.
+W. Edwards, H. Lindman, and L.J. Savage. Bayesian statistical inference for psychological research. Psychological Review, 70:193–242, 1963.
+I. J. Good. C383. a comment concerning optional stopping. Journal of Statistical Computation and Simulation, 39(3):191––192, 1991.
+P. Gru ̈nwald. The Minimum Description Length Principle. MIT Press, Cambridge, MA, 2007.
+23
+
+
+P. Gru ̈nwald and N. Mehta. A tight excess risk bound via a unified PAC-BayesianRademacher-Shtarkov-MDL complexity. In Proceedings of the Thirtieth Conference on Algorithmic Learning Theory (ALT) 2019, 2019.
+P. Gru ̈nwald and T. van Ommen. Inconsistency of Bayesian inference for misspecified linear models, and a proposal for repairing it. Bayesian Analysis, 12(4):1069–1103, 2017.
+P. Gru ̈nwald, Rianne de Heide, and Wouter Koolen. Safe testing, 2019. arXiv preprint arXiv:1906.07801 . Accepted pending minor modifications to Journal of the Royal Statistical Society, Series B.
+P. D. Gru ̈nwald. Viewing all models as “probabilistic”. In Proceedings of the Twelfth ACM Conference on Computational Learning Theory (COLT’ 99), pages 171–182, 1999.
+P.D. Gru ̈nwald and J.Y. Halpern. Making decisions using sets of probabilities: Updating, time consistency, and calibration. Journal of Artificial Intelligence Research (JAIR), 42: 393–426, 2011.
+Peter Gr ̈unwald. Safe probability. Journal of Statistical Planning and Inference, 2018.
+Peter Gr ̈unwald. Beyond Neyman-Pearson. arXiv:2205.00901, 2022.
+Allard Hendriksen, Rianne de Heide, and Peter Gru ̈nwald. Optional stopping with bayes factors: a categorization and extension of folklore results, with an application to invariant situations. Bayesian Analysis, 16(3):961–989, 2021.
+Alexander Henzi and Johanna F. Ziegel. Valid sequential inference on probability forecast performance. arXiv preprint arXiv:2103.08402, 2021.
+Ralf Herbrich and Robert C. Williamson. Algorithmic luckiness. In Advances in Neural Information Processing Systems, volume 14, 2002.
+Steven R Howard, Aaditya Ramdas, Jon McAuliffe, and Jasjeet Sekhon. Time-uniform Chernoff bounds via nonnegative supermartingales. Probability Surveys, 17:257–317, 2020.
+Steven R Howard, Aaditya Ramdas, Jon McAuliffe, and Jasjeet Sekhon. Time-uniform, nonparametric, nonasymptotic confidence sequences. The Annals of Statistics, 49(2):10551080, 2021.
+Valen E Johnson. Uniformly most powerful Bayesian tests. Annals of statistics, 41(4):1716, 2013.
+J. Kiefer. Conditional confidence statements and confidence estimators. Journal of the American Statistical Association, 72(360):789–808, 1977.
+Jack Kiefer. Admissibility of conditional confidence procedures. The Annals of Statistics, pages 836–865, 1976.
+Willie Neiswanger and Aaditya Ramdas. Uncertainty quantification using martingales for misspecified Gaussian processes. In Algorithmic Learning Theory, pages 963–982. PMLR, 2021.
+24
+
+
+J. Neyman. First Course in Probability and Statstics. Henry Holt and Company, New York, 1950.
+Oscar Oelrich, Shutong Ding, M ̊ans Magnusson, Aki Vehtari, and Mattias Villani. When are Bayesian model probabilities overconfident? arXiv preprint arXiv:2003.04026, 2020.
+Samuel Pawel, Alexander Ly, and Eric-Jan Wagenmakers. Evidential calibration of confidence intervals. arXiv:2206.12290, 2022.
+Muriel Felipe P ́erez-Ortiz, Tyron Lardy, Rianne de Heide, and Peter Gru ̈nwald. E-statistics, group invariance and anytime valid testing. arXiv:2208.07610, 2022.
+Aaditya Ramdas, Johannes Ruf, Martin Larsson, and Wouter M Koolen. Testing exchangeability: Fork-convexity, supermartingales and e-processes. International Journal of Approximate Reasoning, 141:83–109, 2022.
+Zhimei Ren and Rina Foygel Barber. Derandomized knockoffs: Leveraging e-values for false discovery rate control. arXiv:2205.15461, 2022.
+J. Robins and L. Wasserman. Robins and Wasserman respond to a Nobel prize winner, 2012. URL https://normaldeviate.wordpress.com/2012/08/28/ robins-and-wasserman-respond-to-a-nobel-prize-winner/. Blog post on the Normal Deviate blog.
+Richard Royall. Statistical evidence: a likelihood paradigm. Chapman and Hall, 1997.
+T. Schweder and N. Hjort. Confidence, Likelihood, Probability: Statistical Inference with Confidence Distributions. Cambridge University Press, 2016.
+G. Shafer and V. Vovk. Game-Theoretic Probability: Theory and Applications to Prediction, Science and Finance. Wiley, 2019.
+Glenn Shafer. Testing by betting: a strategy for statistical and scientific communication (with discussion and response). Journal of the Royal Statistic Society A, 184(2):407–478, 2021.
+J. Shawe-Taylor and R.C. Williamson. A PAC analysis of a Bayesian classifier. In Proceedings of the Tenth ACM Conference on Computational Learning Theory (COLT’ 98), pages 2–9, Nashville, Tennessee, 1997.
+Botond Szab ́o, Aad W Van Der Vaart, and JH van Zanten. Frequentist coverage of adaptive nonparametric Bayesian credible sets. The Annals of Statistics, 43(4):1391–1428, 2015.
+J. Ter Schure, M.F. Perez-Ortiz, A. Ly, and P. Gru ̈nwald. The safe log rank test: Error control under continuous monitoring with unlimited horizon. arXiv:1906.07801, 2021.
+Rosanne Turner and Peter Gru ̈nwald. Anytime-valid confidence intervals for contingency tables and beyond. arXiv:2203.09785, 2022.
+Rosanne Turner, Alexander Ly, and Peter Gru ̈nwald. Generic e-variables for exact sequential k-sample tests that allow for optional stopping. arXiv:2106.02693, 2021.
+25
+
+
+V.G. Vovk. A logic of probability, with application to the foundations of statistics. Journal of the Royal Statistical Society, series B, 55:317–351, 1993. (with discussion).
+Vladimir Vovk and Ruodu Wang. E-values: Calibration, combination, and applications. Annals of Statistics, 2021.
+Abraham Wald. Contributions to the theory of statistical estimation and testing hypotheses. Annals of Mathematical Statistics, 10:299–326, 1939.
+Larry Wasserman, Aaditya Ramdas, and Sivaraman Balakrishnan. Universal inference. Proceedings of the National Academy of Sciences, 117(29):16880–16890, 2020.
+Ian Waudby-Smith and Aaditya Ramdas. Estimating means of bounded random variables by betting. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 2022. (accepted, to appear with discussion).
+D. Williams. Probability with Martingales. Cambridge Mathematical Textbooks, 1991.
+R.L. Wolpert. Testing simple hypotheses. In H.H. Bock and W. Polasek, editors, Data Analysis and Information Systems: Statistical and Conceptual Approaches, pages 289–297. Springer, Berlin, 1996.
+26
+
+
+Supplementary Material
+In this Supplementary Material, in Section A we provide details and proofs concerning the two-point prior-based generalized Savage-Dickey e-variables for the Gaussian location family and its extension to one-dimensional exponential families. In the final Section C we provide details and proofs concerning the ’pure’ Savage-Dickey e-variables for Gaussian location and one-dimensional exponential families. In between in Section B we show how the MLE is eposterior minimax both for Gaussian location with two-point prior and for general exponential families with pure Savage-Dickey.
+A Two-point prior-based E-Collections
+A.1 A Theorem for One Dimensional Exponential Families
+Here we present Theorem 1, which extends the result (24) for two-point prior-based ecollections of Example 8 to 1-dimensional exponential families. More precisely, we let {Pθ ∶ θ ∈ Θ} be any regular (Barndorff-Nielsen, 1978) 1-dimensional exponential family given in any diffeomorphic parameterization (for concreteness, take the mean-value one) and extended to n outcomes by independence. We write the KL divergence between two members of the family defined on a single outcome as D(θ′∥θ). We denote by θˆ(y) the MLE based on data
+y = xn, which is known to be unique and equal to the empirical average n−1 ∑n
+i=1 φ(Xi), with φ the sufficient statistic, whenever this average lies in Θ, which for regular families is an open set. Suppose we observe Y = xn with θˆ(Y ) ∈ Θ. We now use as our loss function
+L(θ, θ ̆) ∶= 2 ⋅ D(θ ̆∥θ),
+which is parameterization independent; but with the mean-value parameterization, in the Gaussian location family, 2D(θ ̆∥θ) = (θ − θ ̆)2 becomes the squared error loss as in Example 7; of course the factor 2 is merely for mathematical convenience in the proofs. As we show below (42), for every C > 0, every θ ∈ Θ, there exist θ− < θ < θ+ such that, consistent with the Gaussian case,
+D(θ∥θ+) = C
+n
+∗ , D(θ∥θ−) = C
+n
+∗ . (39)
+As in the Gaussian example, we take C = 1, and we construct, for each n, the e-variables
+S
+[n]
+θ (y) = (1/2)pθ− (y)+(1/2)pθ+ (y)
+pθ(y) , obtaining again a generalized Savage-Dickey e-process. Based
+on the standard Taylor expansion
+D(θ∗∥θ) = 1
+2 I(θ○)(θ∗ − θ)2 (40)
+where I(⋅) is the Fisher information, which must hold exactly for some θ○ in between θ∗ and θ, we may expect risk assessments based on this e-variable to behave similarly as in the Gaussian case. Indeed, below we first prove the result (24) of the main text for the Gaussian case, after which we proceed to prove, heavily using (40), the following extension to regular 1-dimensional exponential families:
+Theorem 1 Let Θ○ be an arbitrary compact subinterval of Θ. Consider restricted model {Pθ ∶ θ ∈ Θ○} and the collection of e-processes {Sθ ∶ θ ∈ Θ○}. Then, for every 0 < c ≤ 1,
+27
+
+
+there is a constant C∗ such that whenever θˆ ∈ Θ, and c ≤ n∗/n ≤ 1/c, (24) still holds up to a
+vanishing 1 ± O(n−1/2) factor. That is, there is C∗ such that, for all n, uniformly for all xn
+with θˆ(xn) ∈ Θ○,
+max
+θ∈Θ○
+L(θ, θˆ(xn)) ⋅ P ̄(θ ∣ xn) = 1
+n ⋅ ( n∗
+n ) ⋅ expn/n∗ ⋅fn ⋅ 0.53 . . . if n∗=n
+=1
+n ⋅ fn ⋅ 1.45 . . . (41)
+where 1 −
+√
+C
+∗/n ≤ fn ≤ 1 +
+√
+C
+∗/n.
+Thus, even though now θˆ may not be precisely equal to the e-posterior minimax estimator δmm any more, we may use it as our decision rule anyway, and then still get, for each compact sub-model Θ○, risk bounds that, at least for sufficiently large n, are of the same order as standard minimax frequentist risk bounds.
+A.2 Proofs for Example 8, 10 in main text, and Theorem 1 above
+Below we prove all results that were stated in the main text for the Gaussian location family and 1-dimensional exponential families. We will freely, without further reference, use standard terminology and results concerning exponential families (all to be found in (Barndorff-Nielsen, 1978)), but we first do highlight two slightly nonstandard results that we will use repeatedly. The first (easily proved using steepness of regular exponential families) is that for each fixed θ
+′ ∈ Θ, D(θ′∥θ) is a continuous function of θ ∈ Θ satisfying
+sup
+θ<θ′
+D(θ′∥θ) = sup
+θ>θ′
+D(θ′∥θ) = ∞. (42)
+The second result we need is the KL robustness property (Gru ̈nwald, 2007) that holds for all regular exponential families: for any fixed y = xn such that θˆ(y) is well-defined, any θ ∈ Θ and any prior W on Θ (W does not need to have a density), we have:
+pθ (y )
+pW (y) = exp(−nD(θˆ∥θ) + D(P (n)
+θˆ ∥P (n)
+W )), (43)
+where PW is the Bayes mixture distribution as defined in Example 1, and, for any distribution P underlying random process X1, X2, . . ., we denote the marginal distribution of the first n outcomes as P (n).
+Proof of (24) in Example 8 and Claim in Example 10 Fix C > 0. By (42) above, for general regular 1-dimensional exponential families, there exist θ− < θ < θ+ such that (39) holds. Now define, for i = 1, 2, . . ., xi ∈ Ri, the e-processes Sl
+θ (xi) = pθ− (xi)
+pθ(xi) and Sr
+θ (xi) = pθ+ (xi)
+pθ (xi )
+and Sθ ∶= (1/2)Sl
+θ + (1/2)Sr
+θ . While these e-processes provide valid e-variables at each sample
+size i we have that when evaluated at sample size n (on which their definition depends), Sl
+θ
+coincides with the uniformly most powerful Bayes factor for a 1-sided test at sample size n and level α∗/2, for any n and α∗ such that C− = − log(α∗/2), for H0 = {Pθ} vs. H1 = {Pθ′ ∶ θ > θ};
+similarly for Slr
+θ with C+ and H1 = {Pθ′ ∶ θ′ < θ} respectively (Johnson, 2013).
+We first focus on the Gaussian location family for which D(θ′∥θ) = (1/2)(θ′ −θ)2 . P ̄(θ ∣ y) can be written by (43) with W a prior putting mass 1/2 on θ+ and 1/2 on θ−. For the Gaussian
+28
+
+
+location family, (43) then gives:
+P ̄(θ ∣ y) = pθ(y)
+1
+2 pθ−(y) + 1
+2 pθ+(y)
+= 2e−nD(θˆ∥θ)
+e
+−nD(θˆ∥θ−) + e−nD(θˆ∥θ+)
+= 2e−(n/2)(θˆ−θ)2
+e
+−(n/2)⋅(θˆ−θ+
+√
+2C/n)2 + e−(n/2)(θˆ−θ−
+√
+2C/n)2 =
+= 2eC⋅(n/n∗)
+e
+−
+√n⋅(θˆ−θ)
+√
+2C(n/n∗) + e
+√n⋅(θˆ−θ)
+√
+2C (n/n∗ )
+(44)
+We will assume that, for any observed y, the MLE θˆ = θˆ(y) is chosen as action (we will derive that this is the e-posterior minimax action later on, in Proposition 3). Thus, to calculate the risk assessment bound (5) we need to find the maximum over θ of
+(θˆ − θ)2P ̄(θ ∣ y) (45)
+We find, using (44), and the fact that the maximum (45) must be achieved at the same θ as the maximum of 2Cn(n/n∗)(θˆ − θ)2P ̄(θ ∣ y), that the maximizing θn satisfies
+√
+2Cn ⋅ n
+n
+∗ (θn − θˆ)2 = x∗ where x∗ maximizes x2
+exp(x) + exp(−x) , (46)
+a function with a unique maximum, found numerically to be achieved at x∗ = ±2.065338138969 . . .. (45) then becomes,
+1
+n ⋅ (x∗)2
+2C(n/n∗) ⋅ 2eC(n/n∗)
+e
+−x∗ + ex∗ (47)
+We want to find the C giving the best possible bounds for the choice n = n∗, i.e. when the anticipated sample size turns out correct. This can be found by minimizing (47) for n = n∗: by differentiation we find C = 1, corresponding to the choice in Example 8. We then find
+(still at n = n∗) that θn = θˆ ± x∗/
+√
+2n ≈ θˆ ± 1.46/√n. Similarly, P ̄(θ ∣ y) for the maximizing
+θn at n = n∗ is given by 2e1/(ex∗ + e−x∗) = 0.6783206434 . . .. The desired maximum (45),
+at general n, is then given, using (47) with C = 1, by (1/n)(n∗/n)en/n∗x∗2/(ex∗ + e−x∗) =
+(1/n)(n∗/n)en/n∗ ⋅ 0.53222078, which, if n = n∗, evaluates to (1/n) ⋅ 1.446729604 . . . and (24) follows.
+Proof of Theorem 1 above and generalized Claim in Example 10 For simplicity we only consider the case with n = n∗ here; the extension to c ≤ n/n∗ ≤ 1/c can then be derived analogously to the Gaussian case. We now let Θ represent the mean-value parameterization. As in the main text, we set θ+ and θ− as in (39) above with C = 1, which defines P ̄(θ ∣ y). We
+fix an arbitrary compact subinterval Θ○ of Θ. We need to bound, for arbitrary fixed θˆ ∈ Θ○ the maximum over θ ∈ Θ○ of
+2 ⋅ D(θˆ ∣ θ)P ̄(θ ∣ y). (48)
+We let β(θ) denote the canonical parameter corresponding to θ. Note that, for g(θ∗) = D(θ∗∥θ) − D(θ∗∥θ−), we have g′(θ∗) = β(θ−) − β(θ) < 0 constant in θ∗ (here we used that β
+is monotonically increasing in θ). In particular, if θˆ and θ are both contained in Θ○, then g
+′(θˆ) ≤ −C− where C− = minθ∈Θ○ β(θ) − β(θ−) > 0, and then, for θˆ = θ − a, a > 0:
+P ̄(θ ∣ y) ≤ 2e−n(D(θˆ∥θ)−D(θˆ∥(θ)−)) = 2e−n(D(θ−a∥θ)−D(θ−a∥θ−)
+≤ 2enD(θ∥θ−)−anC∗ = 2eC−anC− .
+29
+
+
+Analogously, if θˆ, θ ∈ Θ○, θˆ = θ + a, a > 0, we can derive P ̄(θ ∣ y) ≤ 2eC−anC+ for C+ = minθ∈Θ○ β(θ+) − β(θ) > 0. It follows that with C± = min{C−, C+}, there exists another
+constant C′ such that, if θ, θˆ ∈ Θ○, then the risk assessment at θ satisfies
+2 ⋅ D(θˆ∥θ)P ̄(θ ∣ y) ≤ bC′a2eC−∣a∣nC±. (49)
+Writing ∣a∣ =
+√
+K/n, we see that for large enough K, the right-hand side is smaller than 1/n.
+We thus find that there is a constant K such that, for all θ, θˆ ∈ Θ○, if ∣θˆ − θ∣ ≥
+√
+K/n, then the risk bound (49), and hence (48), is smaller than 1/n. Without loss of generality we may
+assume K ≥ 1.462 (the need for this condition will become clear later).
+We now fix K′ > 0 and set, for α ∈ [−K′, K′], for θˆ ∈ Θ○,
+θˆα ∶= θˆ + α ⋅
+¿
+Á Á À 2
+nI (θˆ)
+. (50)
+where K′ is chosen such that θˆ−K′ ≤ θˆ−
+√
+K/n and θˆK′ ≥ θˆ+
+√
+K/n for all θˆ ∈ Θ○. Since I(θ) is bounded from below on Θ○ by a positive constant, such a K′ must exist (note we do not require that θα ∈ Θ○ for all α ∈ [−K′, K]). We now define Θ′
+θˆ ∶= Θ○ ∩ {θˆα ∶ α ∈ [−K′, K]}.
+Our proof strategy for the remainder of the proof is showing that Θ′
+θˆ is an interval around θˆ
+that is small enough so that we can re-derive the results for the Gaussian case (up to a factor converging to 1) on this set, and then showing that the global maximum of (48) over Θ○ is achieved on this set, so that only this set matters. We have that ∣I′(θ)/I(θ)∣, where I′ is the derivative if I, is bounded by a constant on Θ○. A first-order Taylor approximation of I(θ) then implies that there exist a constant C○ such
+that for all large enough n larger than some n○, for all θˆ ∈ Θ○, we have
+for all θ, θ○ ∈ Θ′
+θˆ ∶ 1 −
+√
+C
+○
+n ≤ I(θ)
+I(θ○) ≤ 1 +
+√
+C
+○
+n . (51)
+We consider, at sample size n > n○ the risk assessment (5), i.e. the maximum over θ ∈ Θ○ of
+(48) that we get for any fixed θˆ(y) ∈ Θ○. We first consider the maximum over θ ∈ Θ′
+θˆ.
+Within Θ′
+θˆ, we can perform essentially the same derivation as in (44), using the Taylor
+approximation (40) in the second step in both numerator and denominator and aggressively and repeatedly using (51) above to vary θ in I(θ). This (tediously but straightforwardly)
+gives, for α ∈ [−K′, K′] such that θˆα ∈ Θ′,
+P ̄(θˆα ∣ y) = 2e1eO(n−1/2) ⋅ 1
+e
+−2α + e2α = 2e1eO(n−1/2) ⋅ 1
+e
+−
+√
+(2I(θˆ)n(θ−θˆ) + e+
+√
+(2I (θˆ)n(θ−θˆ)
+D(θˆ∥θˆα) = (1 + O(n−1/2))(θˆ − θˆα)2I(θˆ)
+which holds uniformly for all θˆ ∈ Θ○ and all α ∈ [−K′, K′] such that θˆα ∈ Θ′
+θˆ, i.e. we can pick
+the same constant in O(n−1/2) for all such θˆ and α. But this means that for all large enough n, on the set Θ′, we can repeat the same reasoning as in (46) in the Gaussian case up to a factor of order 1 + O(n−1/2): since this factor converges to 0, we must have that, uniformly
+for all θˆ ∈ Θ, for all n larger than some n0, the maximum will be above (1/n) ⋅ 1.44 and will
+be achieved by one or both elements inside a set Θmax = {θˆ + γ+
+n/√n, θˆ − γ−
+n/√n} ∩ Θ′, where both γ+
+n and γ−
+n converge to 1.46 . . ., at which point P ̄(θn ∣ y) ≈ 0.68. Note that by requiring
+30
+
+
+K ≥ 1.462 we made sure K′ is large enough so that both choices for the maximum are in
+{θˆα ∶ α ∈ [−K′, K]}; at least one of these two choices for θn then also lies in Θ′ for n larger
+than some n0, where n0 can be chosen uniformly, independently of θˆ. Thus, the risk (48) maximized over θ ∈ Θ′
+θˆ ⊂ Θ○ is bounded from below by 1.44/n, and the
+maximum over Θ○ must be at least as large. But (49) now gives that the maximum of (48) over θ ∈ Θ○ ∖ Θ′
+θˆ is at most 1/n which is smaller than the maximum risk within Θ′
+θˆ. Therefore
+the global maximum is achieved within Θ′
+θˆ and, just as for the Gaussian location case, is
+given by (1/n) ⋅ 1.45 . . ., which is what we had to prove (the extension to n∗ ≠ n mentioned in (41) is now trivial to add; the various ‘for all large enough n’ qualifications we imposed are absorbed into C∗)). As a by-product, we also find that, since P ̄(θn ∣ y) ≪ 1, Condition Zero holds automatically in this setting.
+B Establishing that the MLE is e-posterior minimax
+The proposition below shows, by setting θ′ ∶= θˆ, that the MLE θˆ is e-posterior minimax both for the Gaussian location family with the two-point prior (Example 8) and for general exponential families with a pure Savage-Dickey e-variable with arbitrary prior (Example 11).
+Proposition 3 Consider a regular exponential family given in its mean-value parameter space as above. Let θ′ ∈ Θ and let f ∶ R+
+0 → R+
+0 be a continuous function such that limx→∞ xf (x) = 0. We have
+main max
+θ∈Θ D(a∥θ) ⋅ f (D(θ′∥θ))
+is achieved by a = θ′. In particular,
+1. Suppose that θˆ = θˆ(y) ∈ Θ and consider the dampened e-posterior P ̄[γ](θ ∣ y) for any
+0 < γ ≤ 1 and relative to any prior W . It can be written as f (D(θˆ∥θ)) for a function f of the required type.
+2. For the normal location family, the e-posterior based on the two-point discrete prior as in (44) can also be written as f (D(θˆ∥θ)) for a function f of the required type.
+Proof: Let g(a) ∶= maxθ∈Θ D(a∥θ) ⋅ f (D(θ′∥θ)). First consider a = θ′. It follows from (42) that the maximum over θ in the definition of g(a) = g(θ′) is achieved by some θ∗
+− < θ′ and also by some θ∗
++ > θ′. Now consider a ≠ θ′. We must show that g(a) > g(θ′). If a > θ′, we have that D(a∥θ∗
+−) > D(θ′∥θ∗
+−) so
+g(a) ≥ D(a∥θ∗
+−) ⋅ f (D(θ′∥θ∗
+−)) > D(θ′∥θ∗
+−) ⋅ f (D(θ′∥θ∗
+−)) = g(θ′).
+The case a < θ′ goes similarly, with θ∗
++ replacing θ∗
+−. This establishes the first result. As to (1), the case with γ = 1 now follows directly from (43). For γ < 1, use the fact that
+1/((1 − γ)x−1 + γ) is increasing in x.
+As to (2): using (44), and once more that D(θˆ∥θ) = (1/2)(θˆ − θ)2, and considering sep
+arately the cases that θˆ > θ and θˆ < θ, we find that P ̄(θ ∣ y) = f (D(θˆ∥θ)), where f is of the required form. 2
+31
+
+
+C Pure Savage-Dickey based E-Collections for Gaussian and
+Exponential Families
+Let P ̄[γ](θ ∣ y) be the ‘dampened e-posterior’ as in the main text, based on arbitrary prior
+W on Θ. In Proposition 3 above we showed that for any 0 < γ ≤ 1 the MLE θˆ is the P ̄[γ]e-posterior minimax estimator irrespective of b. Below we further, via Proposition 4 below, show that, for the choice γ = 1/2, the risk assessment bound (5) holds with
+R ̄(y, θˆ(y)) = 2
+n D(P (n)
+θˆ ∥P (n)
+W ) (52)
+for all n such that the expression on the right is larger than 1 — which will be the case for all
+but the smallest n. Here we used the notation D(P (n)
+θ ∥P (n)
+W ) for the KL divergence between distribution Pθ and Bayes marginal PW , both defined on n outcomes. For the normal location family with prior with mean 0 and precision λ, we have the exact expression
+D(P (n)
+θˆ ∥P (n)
+W )= 1
+2 log n + λ
+λ + nλ
+n+λ
+θˆ2 (53)
+which together with (52) gives (36) in the main text. (53) is found by using the fact that
+D(P (n)
+θˆ ∥P (n)
+W ) = ln P ̄W (θˆ ∣ y), an identity which follows from (43) and holds for general regular
+exponential families. If these have continuous prior w, we get, for θˆ in any compact subset of the parameter space, the expression (Chapter 8 of Gru ̈nwald (2007))
+D(P (n)
+θˆ ∥P (n)
+W )= 1
+2 log n
+2π − log w(θˆ)
+I(θˆ)1/2 + o(1),
+with I(θˆ) the Fisher information at θˆ, allowing us to generalize (36) to general exponential families. We proceed to derive (52). We start with a proposition that is applicable more generally than just for KL loss:
+Proposition 4 Let Θ ⊂ R, b ∈ R+ and let L ∶ Θ × Θ → R+
+0 be a loss function and let θ ̆ ∶ Y → Θ
+be an estimator. Fix some y ∈ Y and let θ ̆ ∶= θ ̆(y). Consider an e-posterior P ̄(θ ∣ y) with
+P ̄sup ∶= supy∈Y,θ∈Θ P ̄(θ ∣ y). and let P ̄′ be an upper bound on P ̄ up to a factor Csup i.e. for all
+θ ∈ Θ, y ∈ Y, P ̄(θ ∣ y) ≤ CsupP ̄′(θ ∣ y). Fix some θL, θR ∈ Θ (depending on θ ̆) with θL < θR so that both:
+1. for all θ ≥ θR, P ̄′(θ ∣ y) ≤ 1 and P ̄′(θ ∣ y)L(θ, θ ̆) is decreasing in θ.
+2. for all θ ≤ θL, P ̄′(θ ∣ y) ≤ 1 and P ̄′(θ ∣ y)L(θ, θ ̆) is increasing in θ.
+Then our main risk assessment bound (5) holds for P ̄(θ ∣ y) with
+R ̄(y, θ ̆(y)) = b(y) ⋅ max{Csup, P ̄sup} ⋅ max
+θ∈[θL,θR]
+L(θ, θ ̆). (54)
+Proof: For θ ≤ θL, P ̄(θ ∣ y)L(θ, θ ̆) ≤ P ̄′(θ ∣ y)CsupL(θ, θ ̆) ≤ CsupP ̄′(θL ∣ y)L(θL, θ ̆) ≤
+CsupL(θL, θ ̆). Analogously for θ ≥ θR, we have P ̄(θ ∣ y)L(θ, θ ̆) ≤ CsupL(θR, θ ̆). Finally
+for θ ∈ [θL, θR], we have P ̄(θ ∣ y)L(θ, θ ̆) ≤ P ̄sup ⋅ maxθ∈[θL,θR] ⋅L(θ, θ ̆). The result follows. 2
+32
+
+
+We now use Proposition 4 to show the bound (52). Assume the setting of that bound. We set θ ̆ to the MLE and L(θ, θ ̆) ∶= D(θ ̆∥θ). We first apply Proposition 4 with P ̄′(θ∣y) ∶= P ̄(θ∣y)
+(and Csup = 1) set to the dampened e-posterior P ̄[1/2] relative to a prior W (independent
+of θ). Because of the dampening with γ = 1/2, we know that P ̄sup ≤ 2. We will apply the
+proposition with θL < θR such that P ̄[1/2](θL ∣ y) = P ̄[1/2](θR ∣ y) = 1. These must exist (use (42)), and by (43) they satisfy
+D(θˆ∥θL) = D(θˆ∥θR) =
+D(P (n)
+θˆ ∥P (n)
+W)
+n.
+To verify the conditions of Proposition 4, we will show, using (43), that
+D(θˆ∥θ) exp(−nD(θˆ∥θ) + D(P (n)
+θˆ ∥P (n)
+W )) (55)
+is increasing for θ < θL and decreasing for θ > θR. For this, setting C = D(P (n)
+θˆ ∥P (n)
+W ), it is
+sufficient to show that g(u) ∶= u exp(−nu + C) is decreasing if u ≥ D(θˆL∥θL), i.e. if u ≥ C/n. Differentiation gives that g(u) is decreasing if u > 1/n, so Proposition 4 can be applied if C ≥ 1 and then (54) gives (52).
+33

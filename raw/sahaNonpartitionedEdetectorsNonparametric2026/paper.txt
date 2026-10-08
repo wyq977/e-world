@@ -1,0 +1,4401 @@
+Non-partitioned e-detectors for nonparametric sequential
+change detection
+Aytijhya Saha1 and Aaditya Ramdas2
+1Massachusetts Institute of Technology.aytijhya@mit.edu
+2Carnegie Mellon University.aramdas@cmu.edu
+July 31, 2026
+Abstract
+We study the problem of sequential change detection over a general class of probability distributions (P), where both the pre-change and post-change distributions are unknown and belong to P. We do not assume a pre-specified partition of P into pre- and post-change families. We propose a general class of sequential change detectors obtained by aggregating point-null e-processes over possible changepoints and taking an infimum over candidate no-change distributions. The weights in the aggregation scheme determine whether they attain average run length (ARL) control and probability-of-false-alarm (PFA) control. Under suitable assumptions, we prove that our methods achieve first-order asymptotically optimal detection delay. Concrete examples include sub-Gaussian and bounded mean changes, Gaussian mean changes with unknown variance, as well as changes in Markov transition matrices.
+1 Introduction
+We consider the following problem of sequential change detection (SCD): for a Polish space X , let (X,B ) be its Borel space. Let P be a composite class of probability laws on X . We are interested in detecting change from one unknown (pre-change) distribution P∈ P to another (post-change) distribution Q∈ P . That is, under the alternative, for some unknown timeT∈NandP, Q∈ P, whereP̸=Q,
+X1, . . . , XT
+ii∼dP, X T+1 , XT+2 , . . . ii∼dQ.
+The no-change null is the composite null
+H0 :X 1, X2, . . . ii∼dRfor some unknownR∈ P.
+The non-partitioned SCD problem stated above does not require any pre-specified partitioning
+1
+arXiv:2607.28322v1 [stat.ME] 30 Jul 2026
+
+
+ofPinto pre- and post-change distribution classes.
+In contrast, the classical partitioned SCD problem assumes that
+P∈ P 0, Q∈ P 1,P 0 ∩ P1 =∅,
+where P0 ⊂ P and P1 ⊂ P are specified in advance. This partition implicitly encodes prior knowledge about the nature or direction of the change and is crucial for the design of many classical procedures (Shiryaev,1963;Roberts,1966;Siegmund and Venkatraman,1995), including the recently emerged nonparametric change detection framework, e-detectors (Shin et al.,2023).
+Despite its practical importance, the non-partitioned SCD problem is relatively underexplored in the literature. To illustrate the distinction, consider the sub-Gaussian mean change problem, but do not know whether the mean increases or decreases. The partitioned approaches are not applicable for these problems. Our goal is to construct sequential composite e-detectors that are applicable to broad classes of distributions P, while achieving theoretically optimal detection delays.
+For simplicity, we focus on i.i.d. observations in the main text. However, the framework itself does not require independence: inSection Ain the appendix, we show the construction for dependent observations and develop explicit ARL- and PFA-valid e-detectors for changes in the transition matrix of a two-state Markov chain.
+The main idea of this paper is simple: we reduce the change-detection problem to a family of point-null e-processes. For every candidate no-change distribution R∈ P , suppose we have an e-process that tests
+H0,R :X 1, X2, . . . ii∼dR,
+against its complement
+H0,Rc :X 1, X2, . . . ii∼dS,for someS∈ P \ {R}.
+SeeSection 1.2for a formal definition of an e-process. We then aggregate these point-null e-processes over all possible starting times and take an infimum over R∈ P , obtaining a Shiryaev–Roberts-type composite e-detector.
+Classical information-theoretic lower bounds for quickest change detection, includingLai (1998), concern Pollak’s or Lorden’s worst-case delay under a positive asymptotic log-likelihood information rate. Composite extensions likewise require the post-change law to be positively separated in KL divergence from the no-change class. These results do not directly apply to our fully non-partitioned setting, because the post-change law Q itself is an admissible nochange law, so that infR∈P DKL(Q∥R) = 0. Moreover, classical worst-case CADD degenerates because an immediate change to Q is indistinguishable from the no-change law Q∞. To our knowledge, information-theoretic lower bounds for fixed-changepoint delay in this fully overlapping setting have not previously been developed.
+2
+
+
+1.1 Performance metrics
+A sequential change detector is a stopping timeτwith respect to the natural filtration
+Ft =σ(X 1, . . . , Xt).
+We start by introducing a few notations. ForR∈ P, write
+P∞
+R =R ∞
+for the no-change law under which X1, X2, . . . are i.i.d. R. For P, Q∈ P and an integer T≥1, write
+PT
+P,Q :=P T ⊗Q ∞
+for the law under which
+X1, . . . , XT ∼P, X T+1 , XT+2 , . . .∼Q,
+independently across time.
+The performance of a detector is characterized by two competing objectives: controlling false alarms under the no-change regime and minimizing the detection delay after a change occurs.
+Average Run Length (ARL).The average run length to false alarm (ARL2FA or ARL in short) is defined as
+ARL(τ) := inf
+R∈P E∞
+R [τ].
+A detector is said to satisfy ARL level A if ARL(τ ) ≥A. Thus, larger values of A correspond to fewer false alarms.
+In contrast, another strand of the literature emphasizes controlling the false alarm rate instead of ARL, often at the cost of a longer detection delay.
+Probability of False Alarm (PFA).This is defined as
+PFA(τ) := sup
+R∈P
+P∞
+R (τ <∞).
+For a target levelα∈(0,1), a detector is said to be PFA-valid at levelαif PFA(τ)≤α.
+We propose methods under both ARL and PFA metrics. To assess performance under the changepoint alternative, it is standard to consider the following measure of detection delay.
+Conditional Average Detection Delay (CADD).Suppose the true data-generating distribution is
+X1, . . . , XT
+ii∼dP, X T+1 , XT+2 , . . . ii∼dQ,
+3
+
+
+for some P, Q∈ P with P̸ = Q and changepoint T∈N . Then, the conditional average detection delay (CADD) is defined as
+CADDT
+P,Q(τ) :=E T
+P,Q [τ−T|τ > T].
+This quantity measures the expected delay after the changepoint, conditioned on not having stopped prematurely. Note that it is different from Pollak’s conditional average delay to detection, which considers the supremum of the above quantity over allT∈N.
+High Probability Detection Delay Bound.For detectors controlling PFA, CADD is not the “right” metric because if supR∈P P∞
+R (τ <∞ ) ≤α < 1, then P∞
+Q (τ = ∞) ≥ 1 −α > 0, since Q∈ P . Let us assume that P and Q are mutually absolutely continuous. Then PT
+P,Q and P∞
+Q are also mutually absolutely continuous. Thus, PT
+P,Q(τ = ∞) > 0, for every fixed finite T . Hence, the CADD, ET
+P,Q [τ−T|τ > T], is infinite. This is unavoidable for any globally PFA-valid procedure. Thus, under PFA control, the natural asymptotic delay statement is a high-probability delay statement, as inTheorem 3.3.
+The goal in SCD is to construct detectors with small detection delay while satisfying prescribed false-alarm constraints.
+1.2 Background and related works
+E-processes.E-processes are a basic tool for safe anytime-valid inference (Ramdas et al., 2023;Ramdas and Wang,2025). A nonnegative adapted process ( Mt)t≥0 is an e-process for a classQif, for every stopping timeτ,
+sup
+R∈Q
+ER[Mτ ]≤1.
+For composite testing problems, growth-rate criteria range from optimizing against a fixed alternative (GRO), through minimax growth (GROW), to pointwise relative growth optimality (REGROW) (Gr ̈unwald et al.,2024).Ram and Ramdas(2026b) prove that every weakly compact null class of i.i.d. laws on a Polish space admits a power-one REGROW e-process against its complement. In particular, singleton nulls supply the point-null primitives used here.
+E-detectors.Shin et al.(2023) introduced e-detectors as the change-detection counterpart of e-processes. A nonnegative adapted process (Et) is an e-detector under a no-change law R if
+ER[Eτ ]≤E R[τ]
+for every stopping time τ . Thresholding at A then gives both ERτA ≥A and the local bound PR(τA ≤m ) ≤m/A . Restarting an e-process at each time and summing the restarted processes produces an e-Shiryaev–Roberts detector; max/reset constructions give e-CUSUM analogues. Mixtures, baseline increments, and pruning can trade statistical power against
+4
+
+
+computational cost while preserving finite-sample ARL guarantees (Shin et al.,2023). Recent developments include sharp bounded-mean change-detection theory (Ram and Ramdas, 2026a), post-detection localization (Saha and Ramdas,2026), and applications to universal quantum measurements (Zecchin et al.,2026). Our contribution differs from the standard e-detector setup in one structural respect: the pre- and post-change families are not disjoint, so we aggregate point-null e-processes and then minimize over the candidate common law.
+Separated SCD.The classical literature begins with CUSUM and Shiryaev–Roberts procedures (Page,1954;Shiryaev,1963;Roberts,1966) and the Lorden–Pollak minimax formulations (Lorden,1971;Pollak,1985). Composite separated problems are commonly handled by generalized likelihood ratios, mixtures, or robust least-favorable models (Siegmund and Venkatraman,1995;Lai,1998;Tartakovsky et al.,2014). Modern nonparametric and computationally efficient variants include contrastive discrepancies (Puchkin and Shcherbakova, 2023), robust procedures for heavy-tailed means (Sankararaman and Narayanaswamy,2023), functional pruning for unknown mean shifts (Romano et al.,2023), and computationalgeometry methods for multivariate Gaussian changes (Pishchagina et al.,2026). These works typically retain some separation, training period, parametric structure, or prescribed discrepancy between the pre- and post-change regimes.
+Non-partitioned and fully unknown SCD.Several strands come particularly close to the present formulation. For sub-Gaussian piecewise-constant means,Maillard(2019) develop a doubly time-uniform scan/GLR detector when both segment means are unknown and give nonasymptotic delay guarantees.Alami et al.(2020) analyze a restarted Bayesian online detector when both segment distributions are unknown and obtain nonasymptotic delay and false-alarm guarantees under their modeling assumptions. In finite-alphabet settings,Malik and Bansal(2021) estimate the pre-change distribution empirically and use universal coding for the post-change law, proving asymptotic optimality;Gulaguli et al.(2025) extend this idea to finite- order Markov data. The change-point-model literature implemented in the cpm package includes sequential Gaussian and fully nonparametric procedures with unknown segment parameters or distributional form (Ross,2015). Data-driven kernel methods have also been studied when both Markov or hidden-Markov regimes are unknown (Zhang et al.,2022). For mean functionals,Liang and Veeravalli(2022) give a nonparametric quickest mean-change method, whileShekhar and Ramdas(2023b,a) reduce sequential change detection to confidence sequences and sequential estimation. Conformal test martingales and conformal CUSUM procedures test the massive i.i.d./exchangeability null without specifying either segment law (Vovk et al.,2003,2021,2025). These approaches provide important distribution-free or model-adaptive guarantees, but they do not yield the same general reduction from point-null KL-optimal e-processes to instance-optimal non-partitioned ARL and PFA detectors over an arbitrary classP.
+5
+
+
+1.3 Our contribution
+Our main contributions are summarized as follows:
+• We introduce e-detectors for the non-partitioned sequential change detection problem and prove finite-sample false-alarm guarantees, including ARL control and PFA control, over arbitrary distribution classesP.
+• Under suitable assumptions on P, we derive upper bounds on detection delay. We also derive lower bounds, matching those upper bounds and thus proving that our method achieves asymptotically optimal detection delay, under suitable assumptions.
+• We develop explicit detectors for sub-Gaussian means, bounded means, Gaussian means with unknown variance and change in a two-state Markov transition matrix.
+The rest of the paper is organized as follows.Section 2gives general ARL- and PFA-valid detectors.Sections 3to5give three concrete examples.Sections 6and7state the general upper and lower bounds.Section 8reports simulation experimental results. 1 Section A provides another concrete example with dependent data. Proofs of all the theoretical results are provided in the appendix.
+2 Method
+The following is the key ingredient behind our construction.
+Definition 2.1( s-delay e-processes).For every R∈ P and every start time s∈N , the process {M R
+s:t}t∈N with M R
+s:j = 1, for j = 1,· · ·, s− 1, is an s-delay e-process under P∞
+R if it is nonnegative and adapted to the filtration{F t}t∈N, and for every stopping timeτ,
+E∞
+R MR
+s:τ | Fs−1 ≤1.
+Ram and Ramdas(2026b) prove a general existence theorem for sequential tests and eprocesses for i.i.d. laws on Polish spaces: weak compactness of the null class is a sufficient condition for power-one tests against the complement, and their REGROW construction yields asymptotically relatively growth-rate optimal e-processes. Since a singleton {R} is weakly compact, their result supplies point-null primitives M R at the level of existence. For change detection, however, the statistic contains an infimum over R∈ P , so pointwise growth for each fixed R is not enough. The key issue is uniform growth over local sets of distributions. We do not assume that the entire model class P is weakly compact. Instead,Section 6.2 develops local REGROW witnesses, which are the only compactness/regularity properties needed by the delay proofs.
+1The code for reproducing all the experimental results in this paper is publicly available at https://github.com/Aytijhya/Nonseparated-e-detector.
+6
+
+
+2.1 SR-style e-detector for ARL control
+For a thresholdA >1, define
+DARL
+t = inf
+R∈P
+t
+X
+s=1
+MR
+s:t, τ ARL
+A = inf{t≥1 :D ARL
+t ≥A}.(1)
+Here and henceforth, we always implicitly assume that DARL
+t and similarly defined quantities are measurable, so that τ ARL
+A is a well-defined stopping time. This is not immediate by definition, since we are taking an infimum over a possibly nonparametric class P. In most examples of practical interest, we expect it to be measurable, and we provide several such examples later in the paper.
+Theorem 2.2(ARL control). DARL
+t is an e-detector, and thus for every R∈ P , E∞
+R τ ARL
+A ≥A, and, moreover, for everym∈N,
+P∞
+R (τ ARL
+A ≤m)≤ m
+A .(2)
+Proof.SeeSection B.1.
+2.2 SR-style detector for PFA control
+For false-alarm probability control, choose deterministic weights πs > 0 such that P∞
+s=1 πs ≤ 1. Define
+DPFA
+t = inf
+R∈P
+t
+X
+s=1
+πsM R
+s:t, τ PFA
+α = inf t≥1 :D PFA
+t ≥1
+α .(3)
+A canonical choice is
+πs = cπ
+s{log(es)}2 ,(4)
+wherec π >0 normalizes the sum to be at most one. Then
+−logπ s = logs+ 2 log log(es) +O(1).(5)
+Theorem 2.3(Global PFA control). DPFA
+t is an e-process and thus for every R∈ P , P∞
+R (τ PFA
+α <∞)≤α.
+Proof.SeeSection B.1.
+The next three sections examine some concrete methodological examples.
+7
+
+
+3 Example 1: Sub-Gaussian mean-change
+We first provide a concrete nonparametric example with P being the set of all σ2-sub-Gaussian distributions. Let
+Pθ ={P∈M 1(R) :E P [X] =θ,E P [eλ(X−EP [X]) ]≤e λ2
+2σ2 ,∀λ∈R}.
+Note that for eachP∈ P, there existsθ∈Rsuch thatP∈ P θ. Fix anyρ >0 and define
+Mθ
+s:t = 1
+p
+1 +ρ 2σ2ns:t
+exp ρ2n2
+s:t(X ̄s:t −θ) 2
+2(1 +ρ 2σ2ns:t) ,(6)
+wheren s:t =t−s+ 1, X ̄s:t = 1
+ns:t
+Pt
+i=s Xi.
+Proposition 3.1.For any P∈ P θ, each process( M θ
+s:t)t is an s-delay e-process as in Definition2.1. In particular, it is a test supermartingale:
+E∞
+P [M θ
+s:t | Ft−1]≤M θ
+s:t−1, s < t.
+Proof.SeeSection C.1.
+With the above e-process, our detector statistic for ARL control in (1) reduces to
+DARL
+t = inf
+θ∈R
+t
+X
+s=1
+Mθ
+s:t.(7)
+Suppose that the true pre-change P∈ P μ and the post-change Q∈ P ν, for some μ̸ = ν. The following theorem establishes the first-order upper bound in an asymptotic late-change regime in terms of
+I:= inf
+P0∈Pμ,P1∈Pν
+DKL(P1∥P0) = (μ−ν) 2
+2σ2 .(8)
+Theorem 3.2(First-order upper bound in the late-change regime).Consider a sequence α↓0, withA= 1/αandL= logA. Suppose the changepointT α satisfies
+Tα
+L → ∞,logT α =o(L).(9)
+Then, underP:=P Tα
+P,Q,
+τ ARL
+A −T α ≤(1 +o P(1)) L
+I .(10)
+Moreover,E Tα
+P,Q[(τ ARL
+A −T α)+]≤(1 +o(1)) L
+I ,and sinceP Tα
+P,Q(τ ARL
+A ≤T α) =o(1),
+CADDTα(τ ARL
+A )≤(1 +o(1)) L
+I.
+8
+
+
+Proof.SeeSection C.1.
+Similarly, our detector statistic for PFA control in (3) reduces to
+DPFA
+t = inf
+θ∈R
+t
+X
+s=1
+πsM θ
+s:t.(11)
+Suppose that the true pre-change P∈ P μ and the post-change Q∈ P ν, for some μ̸ = ν. The following theorem is the positive result for the false-alarm-valid detector. It is stated as a high-probability detection-delay bound (recall fromSection 1.1that CADD is not a right metric for the PFA setting). Define,
+hπ(T) := max{−logπ T+1 ,−logπ T−⌊T/2⌋+1 }+ 1
+2 log(1 + 2ρ2σ2T).(12)
+For the weight sequence{π s}s∈N in (4),
+hπ(T) =O(logT).(13)
+As before, suppose that the true pre-change P∈ P μ and the post-change Q∈ P ν, for some
+μ̸=νand letI= inf P0∈Pμ,P1∈Pν DKL(P1∥P0) = (μ−ν)2
+2σ2 .
+Theorem 3.3(Delay upper bound).Consider a sequence α↓ 0, with L = log(1/α), and the changepointsT α → ∞. Suppose
+Tα
+L+h π(Tα) → ∞.(14)
+Then, underP:=P Tα
+P,Q,
+τ PFA
+α −T α ≤(1 +o P(1)) L+h π(Tα)
+I .(15)
+For(4), this is
+τ PFA
+α −T α ≤(1 +o P(1)) L+O(logT α)
+I .(16)
+Proof.SeeSection C.1. Comparing this result with the CADD bound for the ARL controlling detector, we see that we need to pay an additional O(logT α) price for the stricter false alarm guarantee.
+Corollary 3.4(When the first-order term is unchanged).Use the spending sequence (4). If
+I Tα
+L → ∞,logT α =o(L),then
+τπ
+α −T α ≤(1 +o P(1)) L
+I.
+Proof.SeeSection C.1.
+9
+
+
+Thus, the strengthened false-alarm guarantee costs only a second-order additive term whenever logT α =o(L).
+It is worth mentioning that the above specific construction for the sub-Gaussian example can only give bounds in terms the infimum KL information, I = infP0∈Pμ,P1∈Pν DKL(P1∥P0), when the true pre-change P∈ P μ and the post-change Q∈ P ν. In general, this quantity can be substantially smaller than the instance-specific information number, I∗ = DKL(Q∥P ), which governs the optimal asymptotic delay in the classical separated SCD problems.
+A natural question is whether point-null e-processes can instead adapt to the true pair (P, Q) and attain the instance-specific rate I∗ = DKL(Q∥P ). The general theory inSection 6answers this affirmatively under local uniform-growth conditions.
+4 Example 2: Bounded mean change detection
+LetPbe the set of all distributions on [0,1]:
+P=M 1([0,1]),
+and Pθ be the set of all distributions on [0, 1] having mean θ, i.e., Pθ = {P∈ P : EP X = θ}. For predictable betsλ s,i(θ)∈ − 1
+1−θ , 1
+θ,
+Wθ
+s:t =
+t
+Y
+i=s
+{1 +λ s,i(θ)(Xi −θ)}(17)
+is a nonnegative test martingale whenever E[Xi | Fi−1] = θ. Thus mixtures and predictable no-regret strategies furnish restartable e-processes for the bounded conditional-mean null.
+A particularly natural choice is the two-asset universal portfolio ofCover(1991). For each θ∈(0,1), parameterize a constant portfolio by
+λθ(p) = p−θ
+θ(1−θ) , p∈[0,1],
+and mix against the arcsine law
+ΠJ (dp) = dp
+π
+p
+p(1−p)
+.
+The resulting restartable wealth is
+Uθ
+s:t =
+Z1
+0
+t
+Y
+i=s
+{1 +λ θ(p)(Xi −θ)}Π J (dp).(18)
+For a prescribed horizon, this continuous mixture can be evaluated exactly by Gauss– Chebyshev quadrature; it is not replaced below by a finite fixed portfolio grid.
+10
+
+
+For a post-change lawQ, define its betting information against the mean nullθby
+Ibet(Q, θ) = sup
+λ∈Λθ
+EQ log{1 +λ(X−θ)}.(19)
+The completed reverse information projection identity is
+Ibet(Q, θ) = inf
+R∈Pθ
+DKL(Q∥R).(20)
+Proposition 4.1(Validity, growth, and variance adaptivity).For each θ∈ (0, 1),( U θ
+s:t)t≥s−1
+is an s-delay test martingale under every adapted[0 , 1]-valued process satisfying E[Xt | Ft−1] =
+θ. IfX i
+ii∼dQwith meanb̸=θ, then
+lim inf
+n→∞
+1
+n logU θ
+1:n ≥I bet(Q, θ)Q ∞-a.s.
+SeeSection C.2.1for a proof.
+For deterministic weightsw s ∈(0,1], define
+DUP,w
+t = inf
+θ∈(0,1)
+t
+X
+s=1
+wsU θ
+s:t, τ UP,w
+A = inf{t:D UP,w
+t ≥A}.(21)
+The ARL detector uses ws ≡ 1; the PFA detector uses ws = πs and A = 1/α. It inherits ARL or PFA validity fromTheorems 2.2and2.3.
+Theorem 4.2(Bounded-mean delay).Suppose the pre-change mean is a∈ (0, 1)and the post-change law is Q with mean b̸ = a. Let Ibet := Ibet(Q, a) ∈ (0,∞ ). If TA/logA→ ∞ andlogT A =o(logA), then
+τ UP,ARL
+A −T A ≤(1 +o P(1)) logA
+Ibet
+,
+and
+CADDTA
+P,Q(τ UP,ARL
+A )≤(1 +o(1)) logA
+Ibet
+.
+If Tα
+log(1/α)−logπ Tα+1 → ∞,then the PFA detector satisfies
+τ UP,PFA
+α −T α ≤(1 +o P(1)) log(1/α)−logπ Tα+1
+Ibet
+.
+A complete proof is inSection C.2.2.
+For computation, a prescribed horizon H permits exact evaluation of the continuous arcsine mixture through time H by Gauss–Chebyshev quadrature with K≥ (H + 1)/2 nodes: the time-n integrand is a polynomial of degree n in p. A long-running detector can instead
+11
+
+
+use a no-regret portfolio, an increasing positive quadrature, or a mixture-of-lower-bounds implementation. A fixed no-regret portfolio takes O(1) work per active start and observation and therefore O(K) work per active start, unless further polynomial-recursion structure is exploited.
+5 Example 3: Gaussian change detection with unknown
+variance
+We now takePto be the set of all Gaussian distributions:
+P:={N(μ, σ 2) :μ∈R, σ 2 >0}.
+For eachθ∈R, define Nθ :={N(θ, σ 2) :σ 2 >0}.
+We consider two change detection problems in the following subsections. First, we consider the problem of detecting changes in the mean parameter only, when the variance is unknown and unrestricted. Second, we construct a detector for changes in either the mean or variance parameter and recover the stronger instance-specific information rate DKL(Q∥P).
+5.1 Mean change detection using universal-inference t-test e-process
+For every start s, let esμ:i−1 and e2σ
+s:i−1 be predictable estimators, with the latter strictly positive, based only onX s, . . . , Xi−1. A concrete online choice is
+esμ:i−1 :=
+(
+m0, k= 0,
+X ̄s:i−1, k≥1,
+e2σ
+s:i−1 :=
+v0 + Pi−1
+j=s (Xj − X ̄s:i−1)2
+k+ν 0
+, k=i−s,(22)
+wherem 0 ∈Randv 0, ν0 >0 are fixed, and the centered sum is zero whenk= 0.
+Forn=n s:t, define
+Rθ
+s:t :=
+(
+1
+n
+t
+X
+i=s
+(Xi −θ) 2
+)n/2
+en/2
+t
+Y
+i=s
+1
+esσ:i−1
+exp − (Xi −eμs:i−1)2
+2
+e2σ
+s:i−1
+,(23)
+with Rθ
+s:s−1 = 1. Notice that for a nonzero null mean θ, only the residual sum of squares in the first factor is shifted; the predictive numerator remains fitted to the unshifted observations. This is the power-preserving translation described byWang and Ramdas(2024).
+Proposition 5.1(Universal-inference t e-process).For every θ∈R , the process( Rθ
+s:t)t≥s−1
+is an s-delay e-process under every N (θ, σ2)∞, uniformly over σ2 > 0. If Xi
+ii∼dN (m, v)and the predictors satisfy the consistency and inverse-moment conditions ofWang and Ramdas
+12
+
+
+(2024, Proposition 3.3) —in particular, the regularized estimators(22)do—then
+1
+n logR θ
+1:n −→J m,v(θ) := 1
+2 log 1 + (m−θ) 2
+v almost surely.(24)
+Moreover,
+Jm,v(θ) = irn>f0 DKL N(m, v)∥N(θ, r) ,(25)
+so this is the largest possible first-order growth rate for an e-process valid under the whole composite mean nullN θ.
+Proof.SeeSection C.3.
+For weightsw s ∈(0,1], define the studentized detector
+Dt,w
+t := inf
+θ∈R
+t
+X
+s=1
+wsRθ
+s:t, τ t,w
+A := inf{t≥1 :D t,w
+t ≥A}.(26)
+It inherits ARL or PFA validity fromTheorems 2.2and2.3.
+The optimization in (26) is one-dimensional and convex. Indeed, apart from a positive factor independent ofθ,
+Rθ
+s:t ∝
+(t X
+i=s
+(Xi −θ) 2
+)ns:t/2
+=∥X s:t −θ1∥ ns:t
+2,
+which is convex forn s:t ≥1. Whenever the residual sum of squares is positive,
+∂
+∂θ logR θ
+s:t = n2
+s:t(θ− X ̄s:t)
+Pt
+i=s(Xi −θ) 2 .(27)
+The objective minimizer therefore lies between the smallest and largest interval means. At each new observation, all counts, sums, sums of squares, regularized predictors, and cumulative predictive log scores for the t active starts can be updated in O(t) operations. Each objective or subgradient evaluation is then O(t), so bisection or safeguarded Newton costs O(tlog (1/εnum)) at time t and uses O(t) memory. Thus the exact all-start detector has quadratic total cost through a horizon N , just as the other exact SR-style implementations in this paper.
+To study the asymptotics of the detection delay, suppose now that
+P=N(a, u), Q=N(b, v), a̸=b.
+Define the t-information number
+It(P, Q) :=J b,v(a) = 1
+2 log 1 + (b−a) 2
+v .(28)
+13
+
+
+For a common but unknown varianceu=v=σ 2, this is 1
+2 log(1 + (b−a) 2/σ2).
+Theorem 5.2(Delay of the studentized detector).Let Aα → ∞, Lα := logA α, and let ws,α ∈(0,1]. Define
+Bt
+α :=L α −logw Tα+1,α.(29)
+Assume
+Bt
+α → ∞, Tα
+Bt
+α
+→ ∞, Lα −logw 1,α =o(T α).(30)
+For every fixedε >0, let
+dα := (1 +ε) Bt
+α
+It(P, Q) .
+Then
+PTα
+P,Q τ t,w
+Aα ≤T α +d α −→1.(31)
+Consequently, for the ARL detector,
+τ t,ARL
+A −T A ≤(1 +o P(1)) logA
+It(P, Q)
+wheneverT A/logA→ ∞. For the PFA detector with(4),
+τ t,PFA
+α −T α ≤(1 +o P(1)) log(1/α) + logT α + 2 log log(eTα) +O(1)
+It(P, Q) .(32)
+The same statements hold conditionally on no false alarm before Tα whenever the corresponding ARL or PFA pre-change false-alarm probability vanishes.
+Proof.SeeSection C.3.
+The denominator It(P, Q) matches the reverse information projection in (25). Thus it is minimax optimal if the pre-change null is specified only by its mean and its variance is allowed to range freely. It need not equal the instance-specific information DKL(Q∥P ) once a long prefix can learn the actual pre-change variance; we return to this distinction below.
+5.2 An instance-optimal full Gaussian change detector
+If the entire Gaussian law is treated as the candidate no-change distribution, universal inference yields a point-null martingale with full KL growth. Let
+qs:i−1(x) :=φ esμ:i−1,e2σ
+s:i−1 (x)
+be any predictable Gaussian density, for example the online predictors in (22). For θ∈R andr >0, define
+Lθ,r
+s:t :=
+t
+Y
+i=s
+qs:i−1(Xi)
+φθ,r(Xi) , Lθ,r
+s:s−1 := 1.(33)
+14
+
+
+Under N (θ, r)∞, this is a test martingale in the canonical filtration. Under N (m, v)∞ and consistent predictors,
+1
+n logL θ,r
+1:n −→D KL N(m, v)∥N(θ, r) almost surely.(34)
+Define
+DG,w
+t := inf
+θ∈R, r>0
+t
+X
+s=1
+wsLθ,r
+s:t , τ G,w
+A := inf{t≥1 :D G,w
+t ≥A}.(35)
+Theorem 5.3(Instance-optimal Gaussian delay).Let P = N (a, u)and Q = N (b, v)be distinct, and put
+IG(P, Q) := DKL(Q∥P) = 1
+2 log u
+v + v+ (b−a) 2
+u −1 .(36)
+Let Aα → ∞, Lα = logA α, and define BG
+α := Lα −logw Tα+1,α. If BG
+α → ∞, Tα
+BαG →
+∞, Lα −logw 1,α =o(T α),then, for every fixedε >0,
+PTα
+P,Q τ G,w
+Aα −T α ≤ (1 +ε) BG
+α
+IG(P, Q) −→1.(37)
+In particular, when u = v = σ2, IG(P, Q) = (b−a)2
+2σ2 . Thus the ARL delay is first-order logA/I G(P, Q). The PFA delay is first-order
+log(1/α)−logπ T+1
+IG(P, Q) .
+The optimization in (35) is a smooth convex problem after reparametrizing by the Gaussian natural parameters
+η1 =θ/r, η 2 =−1/(2r)<0.
+For each starts,
+Lη
+s:t =C s:t exp{ns:tA(η)−η 1Ss:t −η 2Qs:t}, Qs:t :=
+t
+X
+i=s
+X2
+i,
+whereC s:t is independent ofηand
+A(η) =− η2
+1
+4η2
++1
+2 log π
+−η2
+is the convex Gaussian log-partition function. The sum over starts is therefore convex on {η2 < 0}. Prefix sufficient statistics and predictive log scores give O(t) objective, gradient, and Hessian evaluations; a warm-started damped Newton method is consequently practical.
+15
+
+
+When the variance is common,
+It(P, Q) = 1
+2 log 1 + (b−a) 2
+σ2 ≤I G(P, Q) = (b−a) 2
+2σ2 ,(38)
+with strict inequality for a nonzero fixed standardized shift. The studentized detector is growth-rate optimal for a mean-null with unrestricted variance, and it is locally efficient because 1
+2 log(1 + x) = x/2 + o(x) as x↓ 0. The full-Gaussian detector uses the prefix to learn the actual variance and attains the instance-specific denominator DKL(Q∥P).
+6 Detection delay upper bound for generalP
+6.1 Adjusters and nondecreasing block e-processes
+The restarted e-process t7→M R
+s:t need not be nondecreasing. Hence, at time T + d, the block MR
+1:T+d need not retain the pure pre-change evidence M R
+1:T . The fix is to apply the “adjuster” idea (Choe and Ramdas,2026) to the running maximum.
+Definition 6.1(Adjuster).An increasing, right-continuous function a : [1,∞ ] → [0,∞ ]is
+called an adjuster if
+Z∞
+1
+a(x)
+x2 dx≤1.
+We callagrowth preserving if, additionally,
+loga(e y) =y−o(y) (y→ ∞).
+The integral condition preserves e-validity after taking a running maximum, while the growthpreserving condition ensures that this operation changes log-growth only by a lower-order term. A convenient example is
+a(x) = 2x
+(2 + logx) 2 , x≥1.(39)
+Indeed, withu= 2 + logx,
+Z∞
+1
+2x
+(2 + logx) 2
+dx
+x2 =
+Z∞
+1
+2
+x(2 + logx) 2 dx=
+Z∞
+2
+2
+u2 du= 1,
+and loga(e y) =y−2 log(2 +y) + log 2 =y−o(y).
+The next lemma is the running-maximum special case of the adjuster theory ofChoe and Ramdas(2026).
+Lemma 6.2(Adjusted running maximum is an e-process).Let( Et)t≥0 be an e-process under
+16
+
+
+a null lawP, withE 0 = 1, and let
+E∗
+t = max
+0≤u≤t Eu.
+Ifais an adjuster, then(a(E ∗
+t ))t≥0 is an e-process underP.
+Definition 6.3(Adjusted s-delay e-process).For every R∈ P , s≤t , and s-delay e-process
+MR
+s:u, define the process{ M R
+s:t}t∈N such that M R
+s:t = 1,fort= 1,· · ·, s−1and
+MR
+s:t =a(M R,∗
+s:t ),
+whereM R,∗
+s:t = maxs−1≤u≤t M R
+s:u. Then we call{ M R
+s:t}t∈N an adjusteds-delay e-process.
+Note thatt7→ M R
+s:t is nondecreasing for each fixeds≤tandR.
+Corollary 6.4(Validity and evidence retention).For every R∈ P and every start s,( M R
+s:t)t
+is ans-delay e-process underP ∞
+R . Moreover, fors≤u≤t,
+MR
+s:t ≥a(M R
+s:u).
+In particular, if the true change is atT, then at timeT+d,
+MR
+1:T+d ≥a(M R
+1:T ), M R
+T+1:T+d ≥a(M R
+T+1:T+d ).(40)
+Proof.SeeSection D.
+The first inequality in (40) retains pre-change evidence against candidates far from the true pre-change law, while the second retains evidence from the pure post-change block against nearby candidates.
+6.2 Verifying uniform growth without weak compactness ofP
+Lemma 6.5(Local KL neighborhoods).Let P, Q∈ P and suppose I∗ = DKL(Q∥P ) ∈ (0,∞ ). For everyη∈(0, I ∗), the set
+Gη ={R∈ P: D KL(Q∥R)> I ∗ −η}
+is a relatively weakly open neighborhood of P . Moreover, if U⊆ P is any relatively weakly open neighborhood ofP, then
+cU := inf
+R∈P \U
+DKL(P∥R)>0.
+Consequently, ifU η is any relatively weakly open set satisfyingP∈U η ⊆G η, then
+inf
+R /∈ηU
+DKL(P∥R)≥c Uη >0,(41)
+17
+
+
+inf
+R∈Uη
+DKL(Q∥R)≥I ∗ −η.(42)
+Proof.SeeSection D.
+Thus, candidates near P can be rejected after the change at rate nearly I∗, while candidates outside a neighborhood of P are uniformly separated from P and can be rejected using the long pre-change prefix.
+We start with the following definition. LetK⊆ P,A ⊆K c, and define
+ΦK(S) := inf
+R∈K DKL(S∥R), S∈ P.
+Definition 6.6(Simultaneous REGROW regularity).We say that K issimultaneously REGROW-regular over A if there exists a single nondecreasing e-process {EK,A
+n }n≥0 which is valid under everyR∈K, and satisfies, simultaneously for everyS∈ A,
+lim inf
+n→∞
+1
+n logE K,A
+n ≥Φ K(S), S ∞-a.s.
+The essential requirement is that the same e-process works for all alternatives S∈ A ; it may not be chosen after the true alternative is known.
+Next, we show that weak compactness of K is a sufficient condition for this property by Theorem 2 ofRam and Ramdas(2026b), along withLemma E.5to make that e-process non-decreasing. Weak compactness is not claimed to be necessary; in their power-one theorem, the underlying local requirement is positivity and weak lower semicontinuity of ΦK at the alternatives of interest.
+Lemma 6.7(Weakly compact classes are simultaneously REGROW-regular).Let X be a Polish space, and let K⊆ M 1(X )be a nonempty weakly compact class of probability measures. ThenKis simultaneously REGROW-regular over anyA ⊆K c.
+Proof.SeeSection D.
+Definition 6.8(Countable local REGROW witness basis).We say that P has a countable local REGROW witness basis if there exists a countable family B = {Bj : j≥ 1} of relatively weakly open subsets ofPsuch that:
+(i) For every P∈ P and every relatively weakly open neighborhood G of P , there exists j≥1such that
+P∈B j ⊆ Bj ⊆G,
+where Bj denotes relative weak closure inP.
+(ii)For everyj≥1, the class Bj is weakly compact.
+(iii) For every j≥ 1, the exterior class Bc
+j := P \B j is simultaneously REGROW-regular overB j.
+18
+
+
+Moreover,Bis called the countable local REGROW witness basis ofP.
+Indeed, a weakly compact class is a compact metric space under the relative weak topology. It therefore has a countable basis with compact closures, and the complement of each open basis element is also weakly compact (and hence, simultaneously REGROW-regular). Thus global weak compactness is a convenient sufficient condition forDefinition 6.8, as stated formally below.
+Proposition 6.9(Weakly compact classes admit REGROW witness).Let X be a Polish space, B be its Borel σ-field, and let P be a weakly compact class of probability measures on X . Then P admits a countable universal local REGROW witness basis in the sense of Definition 6.8.
+Proof.SeeSection D.
+Proposition 6.10(Gaussian location family and REGROW witness).Let P = {N (θ, 1) : θ∈R} be the unit-variance Gaussian location family. Then P is not weakly compact, but it admits a countable local REGROW witness basis in the sense of Definition6.8.
+Proof.SeeSection D.
+The above result shows thatDefinition 6.8is strictly more flexible than global weak compactness. The following theorem shows how local REGROW witnesses help in achieving a uniform growth rate.
+Theorem 6.11(Universal local witnesses imply uniform growth).Assume that P has a countable local REGROW witness basis B = {Bj : j≥ 1}. Then for each R∈ P and s∈N ,
+there exists an s-delay e-process {M R
+s:t}t with the following properties. For every fixed R
+and s, the map t7→ M R
+s:t is nondecreasing for t≥s . Moreover, for any P, Q∈ P such that I∗ := DKL(Q∥P ) ∈ (0,∞ ), and any fixed ηin ∈ (0, I∗), there exists j∗ = j∗(P, Q, ηin) ∈N such that we have P∈B j∗, ΦBj∗ (Q) ≥I ∗ − ηin
+2 , and cηin := ΦBc
+j∗ (P ) > 0, and for every ηout ∈(0, c ηin ),
+P∞
+P inf
+R /∈ jB∗
+log M R
+1:n ≥n cηin −η out −→1,(43)
+and
+P∞
+Q inf
+R∈Bj∗
+log M R
+1:n ≥n I∗ −η in −→1.(44)
+Proof.SeeSection D. Remark6.12 (What is really assumed).The detector itself is defined from point-null eprocesses. The witness augmentation is a way to prove uniform delay bounds for the infimum over the point-nulls. The genuinely needed condition is not compactness of all of P, but rather the existence of local witnesses for the two classes that matter near a change: a compact
+19
+
+
+neighborhood of P , which handles post-change evidence uniformly near P , and the exterior of that neighborhood, which handles pre-change anchoring uniformly away fromP.
+6.3 A generic upper bound
+We state the result once for a generic weight sequence ws. The ARL detector corresponds to ws ≡ 1 and threshold A. The PFA detector corresponds to ws = πs with P∞
+s=1 πs = 1 and threshold Aα = 1/α. Let Aα → ∞ and set Lα = logA α. Let Tα be the changepoint, and let ws =w s,α ∈(0,1] be deterministic weights. Define
+Bα =L α −logw Tα+1.(45)
+For the ARL detector, ws ≡ 1, so Bα = Lα. For the PFA detector with weights (4), Aα = 1/α and Bα = log(1/α) + logT α + 2 log log(eTα) +O(1).
+For weightsw s, define
+Dw
+t = inf
+R∈P
+t
+X
+s=1
+wsM R
+s:t, τ w
+α = inf{t≥1 :D w
+t ≥A α}.(46)
+Theorem 6.13(Late-change delay bound).Assume that P has a countable local REGROW witness basis. Consider a sequenceα↓0, withA α = 1/α, Lα = log(Aα). Fixε >0and set
+dα = (1 +ε) Bα
+I∗ , Bα =L α −logw Tα+1.
+Suppose there exists ηin ∈ (0, I∗)and, for the corresponding cηin > 0furnished byTheorem 6.11, there exists anη out ∈(0, c ηin)such that
+Tα cηin −η out + logw 1 ≥L α eventually,(47)
+dα(I∗ −η in) + logw Tα+1 ≥L α eventually.(48)
+Then, for each s and R∈ P , there exists an s-delay e-process {M R
+s:t}t≥s−1, such that the corresponding stopping timeτ w
+α in(46)satisfies
+PTα
+P,Q τ w
+α ≤T α +d α →1.
+Proof.SeeSection B.2.
+Corollary 6.14(ARL late-change delay).Consider a sequence α↓ 0, with A = 1/α and L = logA . Suppose the changepoint TA satisfies TA
+L → ∞. If P has a countable local
+REGROW witness basis, then there exists an ARL detector τ ARL
+A of the form (1), such that
+20
+
+
+for everyε >0,
+PTA
+P,Q τ ARL
+A −T A ≤(1 +ε) L
+I∗ + 1 →1.
+If, additionally,T A/A→0, thenP TA
+P,Q(τ ARL
+A > TA)→1,and hence, for everyε >0,
+PTA
+P,Q τ ARL
+A −T A ≤(1 +ε) L
+I∗ + 1|τ ARL
+A > TA →1.
+Proof.SeeSection B.2.
+Corollary 6.15(PFA late-change delay).Consider a sequence α↓ 0, with A = 1/α and L = logA . Suppose the changepoint TA satisfies TA
+L → ∞. If P has a countable local
+REGROW witness basis, then there exists a PFA detector τ PFA
+α of the form (3), such that for everyε >0,
+PTA
+P,Q τ PFA
+α −T A ≤(1 +ε) log(1/α)−logπ TA+1
+I∗ + 1 →1.
+For the canonical weights(4), this upper bound is
+(1 +ε) log(1/α) + logT A + 2 log log(eTA) +O(1)
+I∗ .
+Moreover,
+PP,Q,TA (τ PFA
+α > TA)≥1−α.
+So, false alarms before the change vanish, i.e.,P P,Q,TA(τ PFA
+α > TA)→1, asα↓0.
+Proof.SeeSection B.2. Remark6.16 (Why the post-change start alone is not enough).The term starting at s = T + 1 cannot reject R = Q, because the block XT+1:T+d is from i.i.d. Q. The prefix term is needed to reject R = Q and nearby alternatives. The adjusted detector keeps the prefix evidence alive through monotonicity, avoiding the need to analyze the raw cross-blockM R
+1:T+d .
+Note that the above result proves the existence of such e-detectors achieving a detection delay bound that depends on (P, Q), while the construction of those e-detectors does not rely on the knowledge of (P, Q).
+7 Detection-delay lower bounds
+The matching lower bounds follow by change of measure. We state the three forms needed to interpret the upper bounds; proofs are inSection B.3. Let I∗ = DKL(Q∥P ) and Lα = log(1/α).
+Theorem 7.1(Pointwise PFA lower bound).Fix P, Q∈ P such that I∗ := DKL(Q∥P ) ∈ (0,∞ ), and fix ε∈ (0, 1). Let α↓ 0, set Lα := log(1/α), and let τα be any PFA-α stopping
+21
+
+
+time. For any deterministic changepoint Tα and any integer dα ≥ 1satisfying dα ≤ (1 −ε ) Lα
+I∗ ,
+we have
+PTα
+P,Q (Tα < τα ≤T α +d α)−→0.
+Letd α, Tmax,α ∈N, and define
+Nα := Tmax,α
+dα + 1 , Tj,α := (j−1)(d α + 1) + 1, j= 1, . . . , N α.
+Then the windows
+(Tj,α, Tj,α +d α], j= 1, . . . , N α,
+are pairwise disjoint and contained in{1, . . . , T max,α}.
+Assume
+dα −→ ∞, Nα −→ ∞,
+and that, for some fixedβ∈[0,1) and someρ α →0,
+inf
+1≤j≤Nα
+PTj,α
+P,Q (Tj,α < τα ≤T j,α +d α)≥1−β−ρ α.(49)
+Theorem 7.2(Horizon-uniform PFA lower bound).Let τα be any PFA-α stopping time. Under the preceding conditions, for every fixedη >0,
+dα ≥ Lα + logN α + log(1−β) +o(1)
+I∗ +η .(50)
+In particular,
+dα ≥ Lα + log⌊T max,α/(dα + 1)⌋+O(1)
+I∗ +η .
+Moreover, the start-time price is asymptotically log(Tmax,α/dα), and it equals logT max,α to first order whenever
+logd α =o(logT max,α).
+Theorem 7.3(Early-change impossibility).Let τα be any globally PFA-α detector, and fix P, Q∈ PwithP≪Q. Then, for everyT∈N,
+PT
+P,Q(τα <∞)≤min 1, T DKL(P∥Q) + log 2
+log(1/α) .
+Consequently, for any sequenceT α,T α =o log 1
+α impliesP Tα
+P,Q(τα <∞)−→0,asα↓0.
+An ARL analogue under the local finite-horizon guarantee supR P∞
+R (τA ≤m ) ≤m/A is stated and proved inSection B.4. Together, these results show that the upper bound established in the previous section is pointwise optimal and that the PFA spending penalty has the correct horizon-uniform logarithmic order.
+22
+
+
+8 Experiments
+8.1 Sub-Gaussian comparison with repeated CSs
+We first retain the original comparison with the repeated-CS detector ofShekhar and Ramdas (2023a). Data are N (0, 1) up to T = 500 and N (δ, 1) thereafter, with A = 1000, ρ2 = 1. For this model, the relevant information number is I = DKL N (δ, 1)∥N (0, 1) = δ2
+2 , so the
+first-order delay benchmark is d0 := logA
+I = 2 logA
+δ2 . The empirical CADD is estimated from 4000 independent replications, conditioning on the detector not having stopped beforeT.
+Table 1: Empirical CADD in the unit-variance Gaussian mean-shift experiment.
+δlog(A)/IOur e-detector repeated CS
+1.00 13.82 17.297 28.489 1.25 8.84 11.297 16.335 1.50 6.14 8.129 10.905 2.00 3.45 5.177 6.309
+We observe fromTable 1that our ARL e-detector using (7) is consistently and substantially faster. Its empirical delay is also substantially closer to the information benchmark log(A)/I.
+From the next experiment onwards, we only implement our e-detectors.
+8.2 Bounded observations: continuous universal portfolios
+Take a = 0.3, b = 0.5, and compare Bernoulli(0.5), Beta(10, 10), and the two-point law on {0.45, 0.55}. Their Ibet values are 0.087177, 0.485201, and 0.505800. We compute the continuous Jeffreys UP exactly by Gauss–Chebyshev quadrature, rather than by a fixed grid of bets. The results are reported inTable 2. Panel A confirms both the optimal point-null rate and low-variance adaptivity. Panel B uses d0 = log(A)/kl(b, a) and T /d0 = (logA )2/5. At finiteT, the relevant prediction is the smallestdsuch that
+inθf max{dkl(b, θ),(T+d)kl((T a+db)/(T+d), θ)} ≥logA.
+The ratio to this finite-prefix prediction decreases toward one. Thus, the moderate-threshold discrepancy is explained by the joint asymptotic and the logarithmic mixture regret, not by a failure of the information constant.
+23
+
+
+Table 2: Bounded experiments. Panel A gives exact point-null UP medians with median/{log(A)/Ibet} in parentheses (4000 replications). Panel B uses the conservative two-start composite statistic for the least-favorable Bernoulli change and compares the median with the finite-prefix prediction dFT defined by the information-balance equation in the text.
+Panel A: exact point-null universal portfolio
+ABernoulli Beta(10,10) two-point
+105 153 (1.159) 28 (1.180) 27 (1.186) 1012 349 (1.101) 62 (1.089) 60 (1.098) 1020 563 (1.066) 101 (1.064) 97 (1.065)
+Panel B: joint boundary/prefix asymptotic
+A T /d0 (d0, dFT) median /d FT
+105 26.5 (132.1,244.6) 314.0/244.6 = 1.284 108 67.9 (211.3,290.2) 330.5/290.2 = 1.139 1012 152.7 (317.0,385.0) 422.0/385.0 = 1.096 1020 424.2 (528.3,589.7) 635.5/589.7 = 1.078
+9 Conclusion
+We introduced a general framework for non-partitioned sequential change detection, in which both the pre-change and post-change distributions are unknown and belong to the same model class. Our construction combines point-null e-processes that start at each time point and then minimizes over candidate no-change laws, yielding detectors with finite-sample ARL or PFA guarantees. We developed explicit examples for sub-Gaussian means, bounded means, etc. Under suitable conditions, the resulting procedures attain first-order detection delays governed by the instance-specific information rate DKL(Q∥P ). The lower bounds reveal a fundamental distinction between late changes, for which classical KL-type delay rates are attainable, and early changes, for which insufficient pre-change information can make reliable detection impossible.
+References
+Alami, R., Maillard, O., and Feraud, R. (2020). Restarted bayesian online change-point detector achieves optimal detection delay. InProceedings of the 37th International Conference on Machine Learning, volume 119 ofProceedings of Machine Learning Research, pages 211–221. PMLR.
+Choe, Y. J. and Ramdas, A. (2026). Combining evidence across filtrations.Journal of the Royal Statistical Society Series B: Statistical Methodology, page qkag058.
+24
+
+
+Cover, T. M. (1991). Universal portfolios.Mathematical Finance, 1(1):1–29.
+Gr ̈unwald, P., de Heide, R., and Koolen, W. (2024). Safe testing.J. R. Statist. Soc. B, 86(5):1091–1128.
+Gulaguli, A. B., Singh, S., and Bansal, R. K. (2025). Sequential change detection under a markov setup with unknown pre-change and post-change distributions.arXiv preprint arXiv:2510.26204.
+Lai, T. L. (1998). Information bounds and quick detection of parameter changes in stochastic systems.IEEE Transactions on Information Theory, 44(7):2917–2929.
+Liang, Y. and Veeravalli, V. V. (2022). Non-parametric quickest mean-change detection. IEEE Transactions on Information Theory, 68(12):8040–8052.
+Lorden, G. (1971). Procedures for reacting to a change in distribution.The Annals of Mathematical Statistics.
+Maillard, O.-A. (2019). Sequential change-point detection: Laplace concentration of scan statistics and non-asymptotic delay bounds. InProceedings of the 30th International Conference on Algorithmic Learning Theory, volume 98 ofProceedings of Machine Learning Research, pages 610–632. PMLR.
+Malik, V. and Bansal, R. K. (2021). Sequential change detection through empirical distribution and universal codes.arXiv preprint arXiv:2112.07549.
+Page, E. S. (1954). Continuous inspection schemes.Biometrika, 41(1/2):100–115.
+Pishchagina, L., Romano, G., Fearnhead, P., Runge, V., and Rigaill, G. (2026). Online multivariate changepoint detection: Leveraging links with computational geometry.Journal of the Royal Statistical Society Series B: Statistical Methodology, 88(1):171–194.
+Pollak, M. (1985). Optimal detection of a change in distribution.The Annals of Statistics, 13(1):206–227.
+Puchkin, N. and Shcherbakova, V. (2023). A contrastive approach to online change point detection. InProceedings of the 26th International Conference on Artificial Intelligence and Statistics, volume 206 ofProceedings of Machine Learning Research, pages 5686–5713. PMLR.
+Ram, A. and Ramdas, A. (2026a). Asymptotically optimal sequential change detection for bounded means.arXiv preprint arXiv:2602.05272.
+Ram, A. and Ramdas, A. (2026b). Power one sequential tests for P against Pc.arXiv preprint arXiv:2604.03218.
+Ramdas, A., Gr ̈unwald, P., Vovk, V., and Shafer, G. (2023). Game-theoretic statistics and safe anytime-valid inference.Statistical Science.
+25
+
+
+Ramdas, A. and Wang, R. (2025). Hypothesis testing with e-values.Foundations and Trends in Statistics, 1(1).
+Roberts, S. (1966). A comparison of some control chart procedures.Technometrics, 8(3):411– 430.
+Romano, G., Eckley, I. A., Fearnhead, P., and Rigaill, G. (2023). Fast online changepoint detection via functional pruning CUSUM statistics.Journal of Machine Learning Research, 24(81):1–36.
+Ross, G. J. (2015). Parametric and nonparametric sequential change detection in R: The cpm package.Journal of Statistical Software, 66(3):1–20.
+Saha, A. and Ramdas, A. (2026). Post-detection inference for sequential changepoint localization.Journal of the Royal Statistical Society Series B: Statistical Methodology.
+Sankararaman, A. and Narayanaswamy, B. (2023). Online heavy-tailed change-point detection. InProceedings of the 39th Conference on Uncertainty in Artificial Intelligence, volume 216 ofProceedings of Machine Learning Research, pages 1815–1826. PMLR.
+Shekhar, S. and Ramdas, A. (2023a). Reducing sequential change detection to sequential estimation.arXiv preprint arXiv:2309.09111.
+Shekhar, S. and Ramdas, A. (2023b). Sequential changepoint detection via backward confidence sequences. InInternational Conference on Machine Learning, pages 30908– 30930. PMLR.
+Shin, J., Ramdas, A., and Rinaldo, A. (2023). E-detectors: A nonparametric framework for sequential change detection.The New England Journal of Statistics in Data Science, 2(2):229–260.
+Shiryaev, A. N. (1963). On optimum methods in quickest detection problems.Theory of Probability & Its Applications, 8(1).
+Siegmund, D. and Venkatraman, E. (1995). Using the generalized likelihood ratio statistic for sequential detection of a change-point.The Annals of Statistics, pages 255–271.
+Tartakovsky, A., Nikiforov, I., and Basseville, M. (2014).Sequential Analysis: Hypothesis Testing and Changepoint Detection. CRC Press.
+Vovk, V., Nouretdinov, I., and Gammerman, A. (2003). Testing exchangeability on-line. In Proceedings of the 20th International Conference on Machine Learning, pages 768–775.
+Vovk, V., Nouretdinov, I., and Gammerman, A. (2025). Validity and efficiency of the conformal CUSUM procedure. InProceedings of the Fourteenth Symposium on Conformal and Probabilistic Prediction with Applications, volume 266 ofProceedings of Machine Learning Research, pages 576–594. PMLR.
+26
+
+
+Vovk, V., Petej, I., Nouretdinov, I., Ahlberg, E., Carlsson, L., and Gammerman, A. (2021). Retrain or not retrain: Conformal test martingales for change-point detection. InConformal and Probabilistic Prediction and Applications, pages 191–210. PMLR.
+Wang, H. and Ramdas, A. (2024). Anytime-valid t-tests and confidence sequences for gaussian means with unknown variance.Sequential Analysis.
+Zecchin, M., Simeone, O., and Ramdas, A. (2026). Universal sequential changepoint detection of quantum observables via classical shadows.arXiv preprint arXiv:2602.11846.
+Zhang, Q., Sun, Z., Herrera, L. C., and Zou, S. (2022). Data-driven quickest change detection in (hidden) Markov models.arXiv preprint arXiv:2210.11988.
+A Dependent Data Example: Change in a two-state
+Markov transition matrix
+The validity arguments underlyingTheorems 2.2and2.3do not require the observations to be independent. They only require, for every candidate no-change law and every restart time, a conditionally valid delayed e-process. We illustrate this point with a two-state Markov chain.
+LetX 0, X1, . . .take values in{0,1}, and let
+Ft :=σ(X 0, . . . , Xt).
+Forp, q∈(0,1), write Markov(p, q)
+for the time-homogeneous two-state Markov chain satisfying
+P(Xt = 1| F t−1) =
+(
+p, Xt−1 = 0,
+q, Xt−1 = 1.
+Thus p is the probability of transitioning from state 0 to state 1, while q is the probability of transitioning from state 1 to state 1.
+Fixκ∈(0,1/2), and consider the compact parameter space
+Θκ := [κ,1−κ] 2.
+The no-change class is PMC :={Markov(p, q) : (p, q)∈Θ κ}.
+All validity statements below hold conditionally on X0, and therefore hold for any initial distribution ofX 0.
+27
+
+
+For a candidate parameterr= (p, q)∈Θ κ, define
+ρr(x) :=
+(
+p, x= 0,
+q, x= 1.
+For 1≤s≤t, let
+N s:t
+xy :=
+t
+X
+i=s
+1{Xi−1 =x, X i =y}, x, y∈ {0,1},
+and let
+N s:t
+x :=N s:t
+x0 +N s:t
+x1 .
+The transition likelihood under the candidate parameterr= (p, q) is
+Lp,q
+s:t :=p Ns:t
+01 (1−p) Ns:t
+00 qN s:t
+11 (1−q) Ns:t
+10 .
+We interpret a changepoint T as a change in the transition kernel: transitions 1, . . . , T are generated by the pre-change kernel, while transitions T + 1, T + 2, . . . are generated by the post-change kernel.
+A.1 A restartable Markov e-process
+Let
+ΠJ (du) := du
+π
+p
+u(1−u)
+, u∈(0,1),
+be the Jeffreys, or arcsine, distribution. Independently mixing the two transition probabilities against ΠJ , define
+M p,q
+s:t := B N s:t
+01 + 1
+2 , N s:t
+00 + 1
+2 B1
+2, 1
+2 pN s:t
+01 (1−p) Ns:t
+00
+× B N s:t
+11 + 1
+2 , N s:t
+10 + 1
+2 B1
+2, 1
+2 qN s:t
+11 (1−q) Ns:t
+10
+,(51)
+with
+M p,q
+s:s−1 := 1.
+HereB(·,·) denotes the beta function.
+Equivalently, define the predictable Jeffreys estimators
+bsρ,i−1(x) := N s:i−1
+x1 + 1
+2 N s:i−1
+x + 1 , x∈ {0,1},
+28
+
+
+where all counts are zero wheni=s. Then
+M p,q
+s:t =
+t
+Y
+i=s
+bsρ,i−1(Xi−1)Xi {1−bρs,i−1(Xi−1)}1−Xi
+ρ(p,q)(Xi−1)Xi {1−ρ (p,q)(Xi−1)}1−Xi .(52)
+For the expectation bound below, it is convenient to add a fixed baseline and define
+Mfp,q
+s:t := 1 +M p,q
+s:t
+2 .(53)
+This modification preserves e-validity and all positive first-order growth rates, while ensuring
+Mfp,q
+s:t ≥ 1
+2
+on every sample path.
+Proposition A.1(Validity and entropy-rate growth).For every( p, q) ∈ Θκ and every start time s, {Mfp,q
+s:t }t≥s−1 is an s-delay e-process under Markov(p, q). In fact, {M p,q
+s:t }t≥s−1 is a test martingale:
+Ep,q [M p,q
+s:t | Ft−1] =M p,q
+s:t−1, t≥s.
+For r = (p, q) ∈ Θκ, let πr(0) = 1−q
+1−q+p , πr(1) = p
+1−q+p denote its stationary distribution. For r1 = (p1, q1), r0 = (p0, q0),define the Markov relative-entropy rate
+I(r1∥r0) :=π r1(0)kl(p1, p0) +π r1(1)kl(q1, q0),(54)
+where kl(x, y) := xlog x
+y + (1 −x ) log 1−x
+1−y . If the observations are generated by Markov(r1), then, for everyr 0 ∈Θ κ,
+1
+n log Mfr0
+1:n −→ I(r1∥r0)almost surely.
+Moreover, this convergence is uniform overr 0 ∈Θ κ:
+sup
+r0∈Θκ
+1
+n log Mfr0
+1:n − I(r1∥r0) −→0almost surely.(55)
+Proof.Fixr= (p, q)∈Θ κ. From (52),
+Ep,q
+bsρ,t−1(Xt−1)Xt {1−bρs,t−1(Xt−1)}1−Xt
+ρr(Xt−1)Xt {1−ρ r(Xt−1)}1−Xt Ft−1
+=
+X
+y∈{0,1}
+bsρ,t−1(Xt−1)y{1−bρs,t−1(Xt−1)}1−y = 1.
+Thus M p,q
+s:t is a nonnegative test martingale. Since Mf = (1 + M )/2, the baseline-stabilized process is also ans-delay e-process.
+29
+
+
+We next prove the growth assertion. Put
+bnp := N 1:n
+01
+N 1:n
+0
+,
+bq n := N 1:n
+11
+N 1:n
+1
+,
+whenever the corresponding denominator is nonzero. Terms associated with an unvisited state are interpreted as zero. Standard bounds for the Jeffreys beta mixture give a constant C <∞, independent of the data and ofr 0 = (p0, q0)∈Θ κ, such that
+N 1:n
+0 kl(bnp, p0) +N 1:n
+1 kl(bnq, q0)−Clog(n+ 1)
+≤logM p0,q0
+1:n ≤N 1:n
+0 kl(bnp, p0) +N 1:n
+1 kl(bnq, q0).(56)
+Under Markov(r1), the Markov ergodic theorem gives
+N 1:n
+0
+n →π r1(0), N 1:n
+1
+n →π r1(1),
+and
+bnp →p 1,bq n →q 1
+almost surely. Since Θκ is compact and binary relative entropy is uniformly continuous on [0,1]×[κ,1−κ], division of (56) byngives
+sup
+r0∈Θκ
+1
+n logM r0
+1:n − I(r1∥r0) −→0
+almost surely. Replacing M by (1 + M )/2 does not change the normalized logarithm, which proves (55).
+A.2 ARL- and PFA-valid Markov e-detectors
+Using the point-null processes in (53), define
+DMC,ARL
+t := inf
+(p,q)∈Θκ
+t
+X
+s=1
+Mfp,q
+s:t , τ MC,ARL
+A := inf
+n
+t≥1 :D MC,ARL
+t ≥A
+o
+.(57)
+For deterministic weightsπ s >0 satisfying
+∞
+X
+s=1
+πs ≤1,
+define
+DMC,PFA
+t := inf
+(p,q)∈Θκ
+t
+X
+s=1
+πsMfp,q
+s:t , τ MC,PFA
+α := inf t≥1 :D MC,PFA
+t ≥1
+α .(58)
+30
+
+
+Corollary A.2(Finite-sample false-alarm validity).For every(p, q)∈Θ κ,
+E∞
+p,q
+h
+τ MC,ARL
+A
+i
+≥A,
+and, for everym∈N,
+P∞
+p,q τ MC,ARL
+A ≤m ≤ m
+A.
+Moreover,
+sup
+(p,q)∈Θκ
+P∞
+p,q τ MC,PFA
+α <∞ ≤α.
+Proof. The proof is identical to those ofTheorems 2.2and2.3. Those arguments use only the restartable conditional e-process property and do not use independence.
+A.3 Detection-delay guarantees
+Suppose the pre-change transition kernel is
+P= Markov(p 0, q0),
+and the post-change transition kernel is
+Q= Markov(p 1, q1),
+where both parameter pairs belong to Θκ and (p0, q0)̸= (p 1, q1). Define
+I∗
+MC :=I (p1, q1)∥(p0, q0) >0.(59)
+The following theorem is the Markov analogue of the previous sub-Gaussian, bounded-mean, and Gaussian delay results.
+For a transition-frequency arrayγ= (γ xy)x,y∈{0,1}, write
+γx :=γ x0 +γ x1.
+Wheneverγ 0, γ1 >0, define
+Ψ(γ, r) :=
+1
+X
+x=0
+γxkl γx1
+γx
+, ρr(x) .
+The Jeffreys-mixture regret bound (56) and Mf≥M/2 imply
+log Mfr
+s:s+n−1 ≥nΨ( Γbs:s+n−1, r)−Clog(n+ 1)−log 2.
+Theorem A.3(Delay for a two-state Markov change).Let P = Markov(p0, q0)and Q =
+31
+
+
+Markov(p1, q1)be distinct members of PMC. For the ARL detector, let A→ ∞ , put L = logA , and suppose the changepointT A satisfies TA
+L −→ ∞,logT A =o(L).Then
+τ MC,ARL
+A −T A ≤(1 +o P(1)) L
+I∗
+MC
+.
+Moreover,
+CADDTA
+P,Q τ MC,ARL
+A ≤(1 +o(1)) L
+I∗
+MC
+.
+For the PFA detector, letL α := log(1/α), Bα :=L α −logπ Tα+1.If Tα
+Bα −→ ∞,then
+τ MC,PFA
+α −T α ≤(1 +o P(1)) Bα
+I∗
+MC
+.
+For the canonical weights(4), this becomes
+τ MC,PFA
+α −T α ≤(1 +o P(1)) log(1/α) + logT α + 2 log log(eTα) +O(1)
+I∗
+MC
+.
+Proof ofTheorem A.3.Fixε >0. For generic weightsw s, put
+B:=L−logw T+1 , d:= (1 +ε) B
+I∗
+MC
+.
+Under the stated assumptions,
+d→ ∞, d
+T →0.
+Write
+r0 = (p0, q0), r1 = (p1, q1), I∗
+MC =I(r 1∥r0).
+Chooseη >0 sufficiently small that
+(1 +ε) I∗
+MC −3η
+I∗
+MC
+>1.(60)
+By continuity, there is a compact relative neighborhoodU⊂Θ κ ofr 0 such that
+inf
+r∈U I(r1∥r)≥I ∗
+MC −η.
+Also,
+cU := inf
+r /∈U
+I(r 0 ∥r)>0.
+Let Γbpre and Γbpost,d be the empirical transition frequencies in the first T and next d transitions, respectively. Since Ψ is uniformly continuous on the relevant compact sets, there is δ > 0
+32
+
+
+such that
+∥
+Γbpost,d −Γ r1∥∞ ≤δ=⇒inf r∈U Ψ(Γbpost,d, r)≥I ∗
+MC −2η,(61)
+∥γ−Γ r0∥∞ ≤δ=⇒inf
+r /∈U
+Ψ(γ, r)≥ cU
+2 .(62)
+On the event
+Gd :=
+n
+∥
+Γbpost,d −Γ r1 ∥∞ ≤δ
+o
+∩ ∥Γbpre −Γ r0∥∞ ≤ δ
+2,
+the regret inequality and (61) give, for all sufficiently largeL,
+inf
+r∈U log Mfr
+T+1:T+d ≥d(I ∗
+MC −3η).
+By (60),
+inf
+r∈U log
+n
+wT+1 Mfr
+T+1:T+d
+o
+≥L.
+Moreover,
+Γb1:T+d = T
+T+d
+Γbpre + d
+T+d
+Γbpost,d.
+Sinced/T→0, onG d,
+∥
+Γb1:T+d −Γ r0 ∥∞ ≤δ
+eventually. Hence (62) gives
+inf
+r /∈U
+log Mfr
+1:T+d ≥ cU
+3 (T+d)
+for all sufficiently largeT, where the logarithmic regret has again been absorbed. Since
+L−logw 1 =o(T),
+we obtain
+inf
+r /∈U
+log
+n
+w1Mfr
+1:T+d
+o
+≥L.
+ThusG d impliesτ w ≤T+d.
+ByLemma E.7, uniformly over the state at the changepoint,
+PT
+P,Q(τ w > T+d)≤C κe−cκδ2d +C κe−cκδ2T
+≤Ce −cεL,(63)
+becaused≥c ′
+εLandT /L→ ∞. This proves the high-probability delay bound.
+We now specialize to the ARL detector and prove the second, macroscopic tail bound. Put
+H:=⌊T /2⌋.
+33
+
+
+Forλ∈[0,1/2], define
+Γλ := Γr0 +λΓ r1
+1 +λ ,
+and let  ̄λr be the transition kernel obtained by normalizing the two rows of Γλ. The set
+K:={ ̄r λ : 0≤λ≤1/2}
+is compact and does not contain r1. Indeed, each coordinate of  ̄λr is a strict weighted average of the corresponding coordinates ofr 0 andr 1 whenever those coordinates differ.
+Choose a relatively open setV⊂Θ κ such that
+K⊂V, r 1 /∈V .
+Then
+aV := inf
+r∈V
+I(r 1 ∥r)>0.
+Furthermore,
+bV := inf
+0≤λ≤1/2 r /∈V
+Ψ(Γλ, r)>0,
+because Ψ(Γλ, r) = 0 only whenr=  ̄r λ ∈V.
+If both the pre-change transition frequencies and the H post-change transition frequencies are sufficiently close to Γr0 and Γr1, respectively, uniform continuity and the regret bound imply
+inf
+r∈V log Mfr
+T+1:T+H ≥ aV H
+2,
+and
+inf
+r /∈V
+log Mfr
+1:T+H ≥ bV (T+H)
+2
+for all sufficiently large T . Since T /L→ ∞ , both right-hand sides exceed L. Thus the ARL detector stops byT+Hon this event. Another application ofLemma E.7therefore gives
+PT
+P,Q τ MC,ARL
+A > T+H ≤Ce −cT .(64)
+Finally, the baseline
+Mfr
+s:t ≥ 1
+2
+implies
+DMC,ARL
+t ≥t
+2 , τ MC,ARL
+A ≤ ⌈2A⌉
+pathwise. Writing
+Y:= τ MC,ARL
+A −T
++
+,
+34
+
+
+we obtain from (63) and (64)
+ET
+P,Q[Y]≤d+TP T
+P,Q(Y > d) + 2AP T
+P,Q(Y > H)
+≤d+CT e −cεL + 2CAe−cT .
+Since
+logT=o(L), T
+L → ∞, A=e L,
+the last two terms converge to zero. Hence, for every fixedε >0,
+ET
+P,Q[Y]≤ (1 +ε) L
+I∗
+MC
++o(1).
+The usual fixed-εlim sup argument gives
+ET
+P,Q[Y]≤(1 +o(1)) L
+I∗
+MC
+.
+Finally, the local false-alarm guarantee gives
+PT
+P,Q τ MC,ARL
+A ≤T =P ∞
+P τ MC,ARL
+A ≤T ≤ T
+A =e logT−L −→0.
+Therefore,
+CADDT
+P,Q τ MC,ARL
+A = ET
+P,Q[Y]
+PT
+P,Q(τ MC,ARL
+A > T)
+≤(1 +o(1)) L
+I∗
+MC
+.
+Computation.For every starts, the four transition counts
+N s:t
+00 , N s:t
+01 , N s:t
+10 , N s:t
+11
+can be updated in constant time after each new observation. At a fixed time t, the objective
+(p, q)7−→
+t
+X
+s=1
+wsMfp,q
+s:t
+is smooth and convex on the compact rectangle Θκ, because each summand is a positive constant times the exponential of a convex negative transition log-likelihood. Thus the infimum is a two-dimensional convex optimization problem. The exact all-start implementation costs O(t) per objective, gradient, or Hessian evaluation and O(t) memory at time t. As in the preceding examples, pruning or geometric start grids can reduce the all-start computational cost while preserving validity when the resulting statistic is a pointwise lower bound on the full detector.
+35
+
+
+B Proofs of the main results
+B.1 Finite-sample ARL and PFA validity
+Proof ofTheorem 2.2.FixR 0 ∈ Pand define the oracle SR statistic
+S R0
+t=
+t
+X
+s=1
+M R0
+s:t .
+Let τ be any almost surely finite stopping time. By conditional e-process validity after time s−1,
+E∞
+R0 1{τ≥s}M R0
+s:τ ≤P ∞
+R0 (τ≥s).
+Summing overs≥1 gives
+E∞
+R0 SR0
+τ≤
+X
+s≥1
+P∞
+R0(τ≥s) =E ∞
+R0 τ,
+proving the e-detector claim. Apply this withτ=τ ARL
+A ∧m. Since
+DARL
+t ≤S R0
+t,
+on the event{τ ARL
+A ≤m}we have
+S R0
+τ ARL
+A ∧m =S R0
+τ ARL
+A
+≥D ARL
+τ ARL
+A
+≥A.
+Therefore
+AP∞
+R0 (τ ARL
+A ≤m)≤E ∞
+R0 SR0
+τ ARL
+A ∧m ≤E ∞
+R0 (τ ARL
+A ∧m)≤m.
+This proves the finite-horizon bound. Lettingm→ ∞yields
+AP∞
+R0 (τ ARL
+A <∞)≤E ∞
+R0 τ ARL
+A.
+IfP ∞
+R0 (τ ARL
+A <∞)<1, thenE ∞
+R0 τ ARL
+A =∞. Otherwise the above inequality gives
+E∞
+R0 τ ARL
+A ≥A.
+Proof ofTheorem 2.3.FixR 0 ∈ P. For eachs, define
+Z R0
+s,t =
+(
+1, t < s,
+M R0
+s:t , t≥s.
+36
+
+
+By restartable validity, (ZR0
+s,t )t≥0 is an e-process underP ∞
+R0. Hence
+E R0
+t = 1−
+∞
+X
+s=1
+πs +
+∞
+X
+s=1
+πs Z R0
+s,t
+is an e-process underP ∞
+R0. Also,
+DPFA
+t≤
+t
+X
+s=1
+πsM R0
+s:t ≤E R0
+t,
+hence is also an e-process as claimed. Therefore, by Ville’s inequality,
+P∞
+R0 (τ PFA
+α <∞)≤P ∞
+R0 sup
+t≥0
+E R0
+t ≥1
+α ≤α.
+Taking the supremum overR 0 proves the claim.
+B.2 Generic late-change upper bounds
+Proof ofTheorem 6.13. Define tα = Tα + dα. Since we have assumed that P has a countable local REGROW witness basis, byTheorem 6.11, for the given ηin ∈ (0, I∗), there exists Bηin ∈Bsuch thatP∈B ηin and, we have
+ΦBj∗ (Q)≥I ∗ −η in, cηin := ΦBc
+j∗ (P)>0.
+Moreover, for the given ηout ∈ (0, cηin) and for each s and R∈ P , there exists an s-delay
+e-process {M R
+s:t}t≥s−1 that is nondecreasing in t and satisfies (43) and (44) with this Bj∗, cηin, ηout, andη in.
+On the pre-change block 1 :T α, the law isP Tα. By (43),
+inf
+R /∈ jB∗
+log M R
+1:Tα ≥T α cηin −η out (65)
+holds with probability tending to one. Since M R
+1:t is nondecreasing int,
+inf
+R /∈ jB∗
+log M R
+1:tα ≥inf
+R /∈ jB∗
+log M R
+1:Tα .
+Thus, on the event (65), for everyR /∈Bj∗,
+log w1M R
+1:tα ≥logw 1 +T α cηin −η out ≥L α = logA α
+37
+
+
+by (47). Hence, on the event (65), for everyR /∈Bj∗,
+tα
+X
+s=1
+wsM R
+s:tα ≥A α.(66)
+On the post-change blockT α + 1 :T α +d α, the law isQ dα. By (44),
+inf
+R∈Bj∗
+log M R
+Tα+1:Tα+dα ≥d α(I∗ −η in) (67)
+holds with probability tending to one. On this event, for everyR∈B j∗,
+log wTα+1M R
+Tα+1:Tα+dα ≥logw Tα+1 +d α(I∗ −η in)≥L α
+by (48). Therefore, on the event (67), for everyR∈B j∗,
+tα
+X
+s=1
+wsM R
+s:tα ≥A α.(68)
+With probability tending to one, both (66) and (68) hold. On that event, for everyR∈ P,
+tα
+X
+s=1
+wsM R
+s:tα ≥A α.
+Taking the infimum overRgivesD w
+tα ≥A α, henceτ w
+α ≤t α. This proves the result.
+Proof ofCorollary 6.14.Fixε >0 and applyTheorem 6.13withw s ≡1. Then
+Bα =L, d A = (1 +ε) L
+I∗ .
+Choose
+ηin := ε
+2(1 +ε) I∗ ∈(0, I ∗),
+letc ηin >0 be furnished byTheorem 6.11, and set
+ηout := cηin
+2.
+SinceT A/L→ ∞,
+TA cηin −η out + logw 1 = cηin
+2 TA ≥L
+eventually. Moreover,
+dA(I∗ −η in) + logw TA+1 ≥(1 +ε) L
+I∗ (I∗ −η in)
+38
+
+
+=L(1 +ε) 1− ε
+2(1 +ε)
+=L 1 + ε
+2 ≥L.
+Thus both (47) and (48) hold. HenceTheorem 6.13gives
+PTA
+P,Q τ ARL
+A ≤T A +d A →1.
+Since
+dA ≤(1 +ε) L
+I∗ + 1,
+the first claim follows.
+For the second claim, the finite-horizon false-alarm bound inTheorem 2.2gives
+P∞
+P (τ ARL
+A ≤T A)≤ TA
+A →0.
+Before timeT A, the change lawP P,Q,TA agrees withP ∞
+P , so
+PP,Q,TA (τ ARL
+A > TA)→1.
+Conditioning the first conclusion on this event therefore preserves the probability-one limit, proving the conditional statement.
+Proof ofCorollary 6.15.ApplyTheorem 6.13withw s =π s, so
+Bα =L α −logπ Tα+1, dα = (1 +ε) Bα
+I∗ .
+Choose
+ηin = εI∗
+2(1 +ε) , ηout = cηin
+2.
+SinceT α/Lα → ∞and logπ 1 is constant,
+Tα(cηin −η out) + logπ 1 = cηin
+2 Tα + logπ 1 ≥L α
+eventually. Moreover,
+dα(I∗ −η in) + logπ Tα+1 ≥(1 +ε) Bα
+I∗ (I∗ −η in) + logπ Tα+1
+= 1+ ε
+2 Bα + logπ Tα+1
+=L α + ε
+2 Bα ≥L α.
+39
+
+
+Thus both conditions ofTheorem 6.13hold, and hence
+PTα
+P,Q τ PFA
+α −T α ≤(1 +ε) Lα −logπ Tα+1
+I∗ + 1 →1.
+The expression for the canonical weights follows from (5).
+Finally, the change law agrees withP ∞
+P up to timeT α, so byTheorem 2.3,
+PTα
+P,Q(τ PFA
+α ≤T α) =P ∞
+P (τ PFA
+α ≤T α)≤α.
+Therefore,
+PTα
+P,Q(τ PFA
+α > Tα)≥1−α→1.
+B.3 Information lower bounds
+Proof ofTheorem 7.1.Let
+Aα :={T α < τα ≤T α +d α}.
+Sinceτ α is PFA-αvalid,
+P∞
+P (Aα)≤P ∞
+P (τα <∞)≤α.
+OnF Tα+dα, the likelihood ratio ofP P,Q,Tα with respect toP ∞
+P is
+Λα =
+Tα+dα
+Y
+i=Tα+1
+dQ
+dP (Xi).
+Therefore, for everyc α ∈R,
+PTα
+P,Q(Aα) =E ∞
+P [Λα1Aα ]
+≤e cα P∞
+P (Aα) +P Tα
+P,Q(log Λα > cα).(69)
+Take
+cα = 1− ε
+2 Lα.
+Then
+ecα P∞
+P (Aα)≤e cαα=e −εLα/2 −→0.
+It remains to show that
+PTα
+P,Q(log Λα > cα)−→0.
+We consider two cases.
+First, along any subsequence for which dα → ∞, the weak law of large numbers under PP,Q,Tα gives log Λα =d αI∗ +o P(dα).
+40
+
+
+Since
+dαI∗ ≤(1−ε)L α
+andd α =O(L α), it follows that
+log Λα ≤(1−ε)L α +o P(Lα).
+Consequently,
+PTα
+P,Q log Λα > 1− ε
+2 Lα
+≤P Tα
+P,Q oP(Lα)> ε
+2 Lα −→0.
+Second, consider a subsequence along which dα is bounded. Since dα is integer-valued, it has a further subsequence on whichd α =dfor some fixedd≥1. Along this subsequence,
+log Λα
+d=
+d
+X
+i=1
+log dQ
+dP (Yi), Y1, . . . , Yd
+ii∼dQ,
+whose distribution does not depend onα. Hence log Λ α is tight. Since
+cα = 1− ε
+2 Lα −→ ∞,
+we again have
+PTα
+P,Q(log Λα > cα)−→0.
+Thus every subsequence has a further subsequence along which the second term in (69) converges to zero. Therefore, it converges to zero along the full sequence. Combining the two terms in (69) yields
+PTα
+P,Q (Tα < τα ≤T α +d α)−→0.
+Proof ofTheorem 7.2.Forj= 1, . . . , N α, define
+Aj,α :={T j,α < τα ≤T j,α +d α}.
+Because the corresponding time windows are pairwise disjoint, the events A1,α, . . . , ANα,α are pairwise disjoint under every probability law.
+OnF Tj,α+dα, the likelihood ratio ofP Tj,α
+P,Q with respect toP ∞
+P is
+Λj,α :=
+Tj,α +dα Y
+i=Tj,α+1
+dQ
+dP (Xi).
+41
+
+
+Sinced α → ∞, the weak law of large numbers gives, for every fixedη >0,
+uα :=P Tj,α
+P,Q (log Λj,α > dα(I∗ +η))−→0.(70)
+The quantityu α does not depend onj, because underP Tj,α
+P,Q ,
+log Λj,α
+=d
+dα
+X
+i=1
+log dQ
+dP (Yi), Y1, . . . , Ydα
+ii∼dQ.
+Thus the convergence in (70) is uniform overj.
+By change of measure,
+P∞
+P (Aj,α) =E Tj,α
+P,Q Λ−1
+j,α1Aj,α
+≥e −dα(I∗+η)PTj,α
+P,Q (Aj,α ∩ {log Λj,α ≤d α(I∗ +η)})
+≥e −dα(I∗+η) n
+PTj,α
+P,Q (Aj,α)−u α
+o
+.
+Using (49), uniformly overj= 1, . . . , N α,
+P∞
+P (Aj,α)≥e −dα(I∗+η){1−β−ρ α −u α}.
+Since theA j,α’s are pairwise disjoint andτ α is PFA-αvalid,
+α≥P ∞
+P (τα <∞)
+≥
+Nα
+X
+j=1
+P∞
+P (Aj,α)
+≥N αe−dα(I∗+η){1−β−ρ α −u α}.
+The term in braces is positive eventually because β < 1, ρα → 0, and uα → 0. Taking logarithms therefore gives
+dα(I∗ +η)≥L α + logN α + log{1−β−ρ α −u α}.
+Moreover, log{1−β−ρ α −u α}= log(1−β) +o(1),
+which proves (50).
+It remains to simplify the start-time term. Since
+Nα = Tmax,α
+dα + 1 −→ ∞,
+42
+
+
+we have
+logN α = log Tmax,α
+dα + 1 +o(1).
+Becaused α → ∞, log(dα + 1) = logd α +o(1),
+and hence
+logN α = log Tmax,α
+dα
++o(1).
+Finally, if logd α =o(logT max,α),
+then logN α = logT max,α −logd α +o(1) = (1 +o(1)) logT max,α.
+Proof ofTheorem 7.3.Let
+A:={τ <∞}, p:=P T
+P,Q(A), q:=P ∞
+Q (A).
+SinceQ∈ Pandτhas PFA at mostα,
+q≤α.
+The lawsP T
+P,Q =P T ⊗Q ∞ andP ∞
+Q =Q ∞ differ only in their firstTcoordinates. Hence
+DKL PT
+P,Q ∥P ∞
+Q =T D KL(P∥Q).
+Applying the data-processing inequality to the measurable mapω7→1 A(ω) gives
+T DKL(P∥Q)≥kl(p, q),
+where
+kl(p, q) =plog p
+q + (1−p) log 1−p
+1−q
+denotes the binary relative entropy. Moreover,
+kl(p, q) =plog 1
+q +plogp+ (1−p) log(1−p)−(1−p) log(1−q)
+≥plog 1
+q −log 2
+≥plog 1
+α −log 2.
+The first inequality uses the fact that −plogp− (1 −p ) log(1 −p ) ≤log 2 and −log (1 −q ) ≥ 0,
+43
+
+
+while the second usesq≤α. Therefore,
+plog 1
+α ≤T D KL(P∥Q) + log 2,
+which proves
+PT
+P,Q(τ <∞)≤ T DKL(P∥Q) + log 2
+log(1/α) .
+Taking the minimum with one gives the stated nonasymptotic bound.
+Finally, if Tα =o log(1/α) ,
+then
+TαDKL(P∥Q) + log 2
+log(1/α) −→0,
+which proves the final result.
+B.4 Early-change lower bound under local ARL control
+We now give analogues ofTheorem 7.1under the local finite-horizon ARL guarantee
+sup
+R∈P
+P∞
+R (τA ≤m)≤ m
+A , m∈N.(71)
+This guarantee is stronger than the usual condition infR∈P E∞
+R [τA] ≥A , and is satisfied by the ARL e-detectors constructed in this paper.
+Theorem B.1(Pointwise lower bound under local ARL control).FixP, Q∈ Psuch that
+I∗ :=D KL(Q∥P)∈(0,∞),
+and fix ε∈ (0, 1). Let A→ ∞ , and let τA satisfy (71). Suppose that TA, dA ∈N satisfy TA +d A < Aand
+HA := log A
+TA +d A
+−→ ∞.
+If
+dA ≤(1−ε) HA
+I∗ ,
+then
+PTA
+P,Q (TA < τA ≤T A +d A)−→0.
+Proof.Let
+AA :={T A < τA ≤T A +d A}.
+44
+
+
+By the local ARL guarantee,
+P∞
+P (AA)≤P ∞
+P (τA ≤T A +d A)≤ TA +d A
+A =e −HA.
+OnF TA+dA, the likelihood ratio ofP TA
+P,Q with respect toP ∞
+P is
+ΛA :=
+TA+dA
+Y
+i=TA+1
+dQ
+dP (Xi).
+Hence, for everyc A ∈R,
+PTA
+P,Q(AA) =E ∞
+P [ΛA1AA ]
+≤e cA P∞
+P (AA) +P TA
+P,Q(log ΛA > cA).(72)
+Take
+cA := 1− ε
+2 HA.
+Then
+ecA P∞
+P (AA)≤e −εHA/2 −→0.
+It remains to control the likelihood-ratio term. Along any subsequence for which dA → ∞, the weak law of large numbers gives
+log ΛA =d AI∗ +o P(dA).
+Since dAI∗ ≤(1−ε)H A andd A =O(H A),
+we obtain log ΛA ≤(1−ε)H A +o P(HA),
+and therefore
+PTA
+P,Q log ΛA > 1− ε
+2 HA −→0.
+Along any subsequence for which dA is bounded, there is a further subsequence on which dA =dis constant. Along that subsequence,
+log ΛA
+=d
+d
+X
+i=1
+log dQ
+dP (Yi), Yi
+ii∼dQ,
+so log ΛA is tight. Since cA → ∞, the same probability again converges to zero. Thus the likelihood-ratio term vanishes along the full sequence. Substitution into (72) proves the result.
+45
+
+
+Corollary B.2.Under the conditions ofTheorem B.1, if additionally
+log(TA +d A) =o(logA),
+then, for every fixedε∈(0,1),
+dA ≤(1−ε) logA
+I∗
+implies
+PTA
+P,Q (TA < τA ≤T A +d A)−→0.
+Proof.The assumption gives
+HA = logA−log(T A +d A) = (1 +o(1)) logA.
+Thus, after replacing ε by any slightly smaller positive constant, the conclusion follows from Theorem B.1.
+Theorem B.3(Early-change impossibility under ARL control with local guarantee).Let τA be a stopping time satisfying
+sup
+R∈P
+P∞
+R (τA ≤m)≤ m
+A for everym∈N.(73)
+FixP, Q∈ PandT, d∈Nsuch thatT+d < A, and supposeP≪Q. Then
+PT
+P,Q T < τA ≤T+d ≤min 1, T DKL(P∥Q) + log 2
+log(A/(T+d)) .(74)
+Moreover, sinceP T
+P,Q(τA > T)≥1− T
+A ,we have
+PT
+P,Q (τA −T≤d|τ A > T)≤min 1, T DKL(P∥Q) + log 2
+(1−T /A) log(A/(T+d)) .(75)
+In particular, consider sequencesA→ ∞,T A, andd A such thatT A +d A < A, TA
+A →0,and
+TA =o log A
+TA +d A
+.
+Then
+PTA
+P,Q (τA −T A ≤d A |τ A > TA)−→0.
+Proof.Let
+B:={T < τ A ≤T+d},
+which is measurable with respect toF T+d . Define
+p:=P T
+P,Q(B), q:=P ∞
+Q (B).
+46
+
+
+SinceQ∈ P, the local false-alarm guarantee (73) gives
+q≤P ∞
+Q (τA ≤T+d)≤ T+d
+A.
+Restricted toF T+d , the change law is
+P T ⊗Q d,
+whereas the all-Qno-change law is
+QT+d .
+Because these laws differ only in their firstTcoordinates,
+DKL P T ⊗Q d QT+d =T D KL(P∥Q).
+Applying the data-processing inequality to the mapω7→1 B(ω) yields
+T DKL(P∥Q)≥kl(p, q),
+where
+kl(p, q) =plog p
+q + (1−p) log 1−p
+1−q .
+Using
+kl(p, q)≥plog 1
+q −log 2,
+we obtain
+T DKL(P∥Q)≥plog 1
+q −log 2≥plog A
+T+d −log 2.
+Rearranging proves (74).
+Before timeT, the change law agrees with the no-change lawP ∞. Therefore,
+PT
+P,Q(τA ≤T) =P ∞
+P (τA ≤T)≤ T
+A,
+and consequently
+PT
+P,Q(τA > T)≥1− T
+A.
+It follows that
+PT
+P,Q (τA −T≤d|τ A > T) = PT
+P,Q(T < τA ≤T+d)
+PT
+P,Q(τA > T)
+≤ T DKL(P∥Q) + log 2
+(1−T /A) log(A/(T+d)) ,
+which proves (75). The asymptotic conclusion follows immediately.
+47
+
+
+C Proofs for the concrete examples
+C.1 Sub-Gaussian mean-change example
+Proof ofProposition 3.1. Fix θ∈R , a starting time s≥ 1, and a distribution P∈ P θ. For eachλ∈R, define
+Lλ
+s:t := exp
+(
+λ
+t
+X
+i=s
+(Xi −θ)− λ2σ2
+2 (t−s+ 1)
+)
+, t≥s,
+withL λ
+s:s−1 = 1.
+SinceP∈ P θ, we have
+EP eλ(Xt−θ) ≤e λ2σ2/2 for everyλ∈R.
+Moreover, underP ∞,X t is independent ofF t−1. Therefore, for everyt≥s,
+E∞
+P Lλ
+s:t | Ft−1 =L λ
+s:t−1EP exp λ(Xt −θ)− λ2σ2
+2
+≤L λ
+s:t−1.
+Thus, for each fixedλ∈R,{L λ
+s:t}t≥s−1 is a nonnegative test supermartingale underP ∞.
+Let Πρ be the centered Gaussian distribution N (0, ρ2) on R, and define the Gaussian mixture
+Mfθ
+s:t :=
+Z
+R
+Lλ
+s:t Πρ(dλ), t≥s−1.
+By Tonelli’s theorem and the preceding conditional supermartingale inequality,
+E∞
+P
+h
+Mfθ
+s:t | Ft−1
+i
+=
+Z
+R
+E∞
+P Lλ
+s:t | Ft−1 Πρ(dλ)
+≤
+Z
+R
+Lλ
+s:t−1 Πρ(dλ)
+=
+Mfθ
+s:t−1.
+Hence{ Mfθ
+s:t}t≥s−1 is also a nonnegative test supermartingale, with Mfθ
+s:s−1 = 1.
+It remains to evaluate the Gaussian integral. Write
+ns:t :=t−s+ 1, Xs:t := 1
+ns:t
+t
+X
+i=s
+Xi.
+48
+
+
+Using the density ofN(0, ρ 2), we obtain
+Mfθ
+s:t = 1
+p
+2πρ2
+Z
+R
+exp λns:t(Xs:t −θ)− λ2σ2ns:t
+2 − λ2
+2ρ2 dλ
+=1
+p
+2πρ2
+Z
+R
+exp − 1 +ρ 2σ2ns:t
+2ρ2 λ2 +λn s:t(Xs:t −θ) dλ.
+Completing the square and evaluating the Gaussian integral yields
+Mfθ
+s:t = 1
+p
+1 +ρ 2σ2ns:t
+exp ρ2n2
+s:t(Xs:t −θ) 2
+2 (1 +ρ 2σ2ns:t) .
+Thus Mfθ
+s:t =M θ
+s:t, whereM θ
+s:t is the process defined in (6).
+Finally, a nonnegative test supermartingale initialized at one is an e-process. Hence the process{M θ
+s:t :t≥s−1}is ans-delay e-process under everyP∈ P θ.
+Proof ofTheorem 3.2.Part 1. High probability bound on delay:
+Fixε >0 and set
+dα = (1 +ε) L
+I , T=T α, d=d α.
+Use the two intervals from LemmaE.2withm=T:
+J0 = (T+ 1) : (T+d), J 1 = 1 : (T+d).
+Let
+X ̄pre = X ̄1:T , X ̄post = X ̄T+1:T+d .
+Then
+X ̄0 = X ̄post, X ̄1 = T X ̄pre +d X ̄post
+T+d ,
+and hence
+X ̄0 − X ̄1 = T
+T+d (X ̄post − X ̄pre).(76)
+BecauseT /d→ ∞,
+T
+T+d = 1 +o(1).
+By Sub-Gaussian concentration,
+X ̄pre =μ+O P(T −1/2), X ̄post =ν+O P(d−1/2),
+so (76) gives X ̄0 − X ̄1 = (ν−μ){1 +o P(1)}.(77)
+49
+
+
+Also, by (128),
+κ−1/2
+d=
+r
+2σ2
+d {1 +o(1)},
+and, sinceT /d→ ∞,
+κ−1/2
+T+d =
+r
+2σ2
+T+d {1 +o(1)}=o(d −1/2).
+Therefore the quantityB T,d from (126) satisfies
+BT,d = (X ̄0 − X ̄1)2
+(κ−1/2
+d +κ −1/2
+T+d )2
+= (ν−μ) 2{1 +o P(1)}
+2σ2/d
+=Id{1 +o P(1)}.
+Sinced= (1 +ε)L/I+O(1),
+BT,d = (1 +ε)L{1 +o P(1)}.
+The mixture penalty is negligible because log(T+d) =o(L):
+1
+2 log(1 +ρ 2σ2(T+d)) =o(L).
+Thus
+BT,d − 1
+2 log(1 +ρ 2σ2(T+d))≥L
+with probability tending to one. By LemmaE.2,
+PT
+P,Q(τ ARL
+A ≤T+d)→1.
+This proves
+τ ARL
+A −T≤ (1 +ε) L
+I ≤(1 + 2ε) L
+I
+with probability tending to one. Since ε > 0 is arbitrary, the claimed in-probability upper bound follows.
+Part 2. CADD Bound:Let Y = (τA −T )+. To compute the expectation, we partition the tail into three regimes usingb α =⌊T /2⌋:
+ET
+P,Q[Y]≤d+b αPT
+P,Q(Y > d) +τ maxPT
+P,Q(Y > bα).(78)
+Step A (τmax: A deterministic upper bound on the stopping time).Let a = ρ2σ2. Since the
+50
+
+
+exponential factor inM θ
+s:t is at least one, for every data sequence and everyθ∈R,
+Mθ
+s:t ≥ 1
+p
+1 +a(t−s+ 1)
+.
+Consequently,
+Dt = inf
+θ∈R
+t
+X
+s=1
+Mθ
+s:t ≥
+t
+X
+n=1
+1
+√1 +an ≥ t
+√1 +at ≥
+r
+t
+1 +a ,
+where the last inequality follows from t≥ 1. Therefore, with tA = ⌈(1 +ρ 2σ2)A2⌉, we have DtA ≥A for every sample path, and hence τA ≤t A = ⌈(1 +ρ 2σ2)A2⌉. Thus, since A = eL, there is a constantC ′
+ρ,σ >0 such that
+τA ≤τ max :=C ′
+ρ,σ exp (2L)
+deterministically.
+Step B (Bounding PT
+P,Q(Y > d)):By the definition of the stopping time, if the detector fails to stop by time T + d (i.e., τA > T + d), the statistic must remain below the threshold: logD T+d < L. Meanwhile, the first part ofLemma E.2establishes the deterministic lower bound logD T+d ≥B T,d − 1
+2 log(1 +ρ 2σ2(T+d)). Chaining these inequalities yields:
+BT,d − 1
+2 log(1 +ρ 2σ2(T+d))≤logD T+d < L.
+Because the penalty term iso(L), this impliesB T,d < L+o(L).
+To see what this implies for the data, we expand BT,d. Let Z = X ̄post − X ̄pre. From the definition of the detector’s lower bound, we have:
+BT,d = Z2
+2σ2(1/d+ 1/T) {1 +o(1)}= Z2d
+2σ2 {1 +o(1)},
+where the second equality follows because d/T→ 0. Next, we substitute our chosen horizon
+d=⌈(1 +ε)L/I⌉ ≥(1 +ε)L/I, and recall the definition of the KL proxyI= (ν−μ)2
+2σ2 :
+BT,d ≥ Z2
+2σ2
+(1 +ε)L
+(ν−μ) 2/(2σ2) {1 +o(1)}= Z2
+(ν−μ) 2 (1 +ε)L{1 +o(1)}.
+The failure-to-stop conditionB T,d < L+o(L) therefore requires:
+Z2
+(ν−μ) 2 (1 +ε)L{1 +o(1)}< L+o(L).
+51
+
+
+Dividing both sides byL(1 +ε) yields:
+Z2
+(ν−μ) 2 {1 +o(1)}< 1 +o(1)
+1 +ε .
+Because ε > 0 is a strictly positive constant, the right-hand side is strictly less than 1 for all sufficiently largeL. Therefore, forδ= ε
+2(1+ε) (depending purely onε) and for all largeL:
+|Z| ≤ |ν−μ|(1−δ).
+The true expected value of Z is ν−μ . The above inequality demonstrates that to fail to stop by time T + d, the empirical difference Z must deviate significantly below its expected magnitude.
+Under PT
+P,Q, Z is the difference of independent sub-Gaussian sample averages, with variance
+proxy σ2
+∗ = σ2/d + σ2/T = σ2
+d {1 + o(1)}. By Hoeffding’s inequality for sub-Gaussian variables:
+PT
+P,Q |Z| ≤ |ν−μ|(1−δ) ≤exp − δ2(ν−μ) 2
+2σ2
+∗
+= exp −δ 2Id{1 +o(1)} .
+Since d = ⌈(1 + ε)L/I⌉, the exponent is strictly of order L. Thus, for cε := ε2
+4(1+ε) , we have
+PT
+P,Q(Y > d)≤exp(−c εL+o(L)).
+Step C (Bounding PT
+P,Q(Y > bα)):We apply the exact same chaining of inequalities at the macroscopic time scale bα = ⌊T /2⌋. By the definition of the stopping time, failing to stop by T+b α implies logD T+b α < L.
+Applying the deterministic lower bound fromLemma E.2at this horizon, we have:
+BT,bα − 1
+2 log(1 +ρ 2σ2(T+b α))≤logD T+b α < L.
+Because bα = ⌊T /2⌋, the penalty term is 1
+2 log(1 + ρ2σ2(1.5T )) = O(logT ). By the theorem’s assumption, logT=o(L), so the penalty term iso(L). Rearranging gives:
+BT,bα < L+o(L).
+To see what this requires of the data, let Z = X ̄post − X ̄pre be the empirical difference over these large blocks (where X ̄post is the average overb α samples). ExpandingB T,bα, we get:
+BT,bα = Z2
+2σ2(1/bα + 1/T) {1 +o(1)}.
+Sinceb α =⌊T /2⌋, we can bound the inverse sample sizes for allT≥6:
+1
+bα
++1
+T= 1
+⌊T /2⌋ + 1
+T≤4
+T.
+52
+
+
+Substituting this bound into the expansion forB T,bα yields:
+BT,bα ≥ Z2
+2σ2(4/T) {1 +o(1)}= Z2T
+8σ2 {1 +o(1)}.
+Therefore, the failure-to-stop conditionB T,bα < L+o(L) mathematically forces:
+Z2T
+8σ2 {1 +o(1)}< L+o(L).
+Rearranging this to isolateZ 2 gives:
+Z2 ≤ 8σ2L
+T {1 +o(1)}.
+By the late-change assumption T /L→ ∞ , we know that L/T→ 0. As a result, the righthand side converges to zero. This implies that for all sufficiently large A (and consequently largeT),Z 2 ≤ 1
+4 (ν−μ) 2, i.e.,|Z| ≤ 1
+2 |ν−μ|.
+However, the true expected value of Z under PT
+P,Q is ν−μ . For |Z| ≤ 1
+2 |ν−μ| to occur, the
+variableZmust deviate from its expectation by at least 1
+2 |ν−μ|.
+Under PT
+P,Q, Z is the difference of independent sub-Gaussian sample averages with variance proxy:
+σ2
+∗ = σ2
+bα
++ σ2
+T ≤ 4σ2
+T.
+By Hoeffding’s inequality for sub-Gaussian variables, the probability of this massive deviation is:
+PT
+P,Q |Z−(ν−μ)| ≥ 1
+2 |ν−μ| ≤exp − (|ν−μ|/2) 2
+2σ2
+∗
+.
+Substitutingσ 2
+∗ ≤4σ 2/Tinto the exponent gives:
+exp − (ν−μ) 2/4
+8σ2/T = exp − (ν−μ) 2T
+32σ2 .
+Recalling that I = (ν−μ)2
+2σ2 , the exponent is exactly −IT /16. Thus, letting c = 1/16, we conclude:
+PT
+P,Q(Y > bα)≤exp (−cIT).
+Since IT≫L , this probability decays exponentially faster than exp(−L) and contributes negligibly to the expected delay.
+Step D (Combining the bounds):Substituting these bounds into (78), we obtain
+ET
+P,Q[Y]≤ (1 +ε) L
+I +Texp{−c εL+o(L)}+C ′
+ρ,σ exp 2L− IT
+16 .(79)
+53
+
+
+We next show that the last two terms in (79) vanish. Write the o(L) term in the second term asr α,ε, where, for every fixedε >0,
+rα,ε
+L −→0 asα↓0.
+Sincec ε >0 is fixed, for all sufficiently smallα,r α,ε ≤ cε
+2 L.Therefore,
+Texp{−c εL+r α,ε} ≤Texp − cε
+2L
+= exp logT− cε
+2L
+= exp logT− ε2
+8(1 +ε) L .
+Because logT=o(L), logT− ε2
+8(1+ε) L=− ε2
+8(1+ε) L+o(L)−→ −∞.Hence
+Texp{−c εL+o(L)} −→0.
+For the third term, since I > 0 is fixed and T /L→ ∞ , 2L− IT
+16 = L 2− I
+16
+T
+L −→ −∞. Consequently,
+C′
+ρ,σ exp 2L− IT
+16 −→0.
+It follows from (79) that, for every fixedε >0,
+ET
+P,Q[Y]≤ (1 +ε) L
+I +o(1).
+Using⌈x⌉ ≤x+ 1, we obtain
+ET
+P,Q[Y]≤(1 +ε) L
+I + 1 +o(1).
+Dividing both sides byL/Igives
+ET
+P,Q[Y]
+L/I ≤1 +ε+ I
+L + o(1)
+L/I .
+SinceL→ ∞,
+lim sup
+α↓0
+ET
+P,Q[Y]
+L/I ≤1 +ε.
+The preceding inequality holds for every fixedε >0. Therefore,
+lim sup
+α↓0
+ET
+P,Q[Y]
+L/I ≤iεn>f0(1 +ε) = 1.
+54
+
+
+Equivalently,
+ET
+P,Q (τA −T) + ≤(1 +o(1)) L
+I.
+Finally, by the local false-alarm guarantee (2),
+PT
+P,Q(τA ≤T) =P ∞
+P (τA ≤T)≤ T
+A = exp(logT−L)−→0,
+where the last convergence follows from logT=o(L). Hence
+PT
+P,Q(τA > T) = 1−o(1).
+SinceY= (τ A −T) +, we have the exact identity
+ET
+P,Q[Y] =P T
+P,Q(τA > T)E T
+P,Q[τA −T|τ A > T].
+It follows that
+CADDT
+P,Q(τA) =E T
+P,Q[τA −T|τ A > T] = ET
+P,Q[(τA −T) +]
+PT
+P,Q(τA > T)
+≤ (1 +o(1))L/I
+1−o(1)
+= (1 +o(1)) L
+I.
+Proof ofTheorem 3.3.Fixε >0. WriteT=T α and
+Hα =L+h π(Tα), d=d α = (1 +ε) Hα
+I , m=⌊T /2⌋.
+Assumption (14) gives d/T→ 0, so for all sufficiently small α, m + d≤ 2T . Therefore the deterministic penalty in LemmaE.3is bounded byh π(T).
+Let
+X ̄pre = X ̄T−m+1:T , X ̄post = X ̄T+1:T+d .
+Then
+X ̄0 = X ̄post, X ̄1 = mX ̄pre +d X ̄post
+m+d , so
+X ̄0 − X ̄1 = m
+m+d (X ̄post − X ̄pre).(80)
+Sincem/d→ ∞, m
+m+d = 1 +o(1).
+55
+
+
+Sub-Gaussian concentration gives
+X ̄pre =μ+O P(m−1/2), X ̄post =ν+O P(d−1/2),
+and hence X ̄0 − X ̄1 = (ν−μ){1 +o P(1)}.(81)
+Also,
+κ−1/2
+d=
+r
+2σ2
+d {1 +o(1)}, κ −1/2
+m+d =
+r
+2σ2
+m+d {1 +o(1)}=o(d −1/2).
+Thus Bm,d =Id{1 +o P(1)}= (1 +ε)H α{1 +o P(1)}.
+By LemmaE.3,
+logD PFA
+T+d ≥B m,d −h π(T) = (1 +ε)H α{1 +o P(1)} −h π(T).
+SinceH α =L+h π(T), the right side is at leastLwith probability tending to one. Hence
+PT
+P,Q(τ PFA
+α ≤T+d)→1.
+This proves that for every fixedε >0,
+PTα
+P,Q τ PFA
+α −T α ≤(1 +ε) L+h π(Tα)
+I →1.(82)
+(15) and (16) follow immediately.
+C.2 Bounded mean change example
+Throughout this appendix,θ∈(0,1) andX i ∈[0,1]. Define
+fθ,p(x) := 1 + p−θ
+θ(1−θ) (x−θ) =x p
+θ + (1−x) 1−p
+1−θ , p∈[0,1],(83)
+and
+W θ,p
+s:t :=
+t
+Y
+i=s
+fθ,p(Xi), U θ
+s:t :=
+Z1
+0
+W θ,p
+s:t ΠJ (dp).
+Foru, v∈(0,1), write
+kl(u, v) :=ulog u
+v + (1−u) log 1−u
+1−v .(84)
+C.2.1 Validity, growth, and variance adaptivity proofs
+Lemma C.1(Legal-bet validity).If E[Xi | Fi−1] = θ, then for every fixed p∈ [0, 1],
+(W θ,p
+s:t )t≥s−1 is a nonnegative test martingale, and( U θ
+s:t)t≥s−1 is a nonnegative test martingale.
+56
+
+
+Proof. The two endpoint values in (83) are (1−p)/(1−θ ) and p/θ, so the factor is nonnegative on [0,1]. Moreover,
+E[fθ,p(Xi)| F i−1] = 1 + p−θ
+θ(1−θ) {E[Xi | Fi−1]−θ}= 1.
+Multiplication gives the first claim. Tonelli’s theorem gives the second.
+Lemma C.2(Pathwise regret against the best constant portfolio).For every data sequence x1, . . . , xn ∈[0,1],
+Uθ
+1:n ≥ 2
+π(n+ 1) sup
+p∈[0,1]
+W θ,p
+1:n .(85)
+Consequently the log-regret is at mostlog(n+ 1) + log(π/2).
+Proof.The arcsine density is at least 2/πon [0,1], hence
+Uθ
+1:n ≥ 2
+π
+Z1
+0
+W θ,p
+1:n dp.
+Each factor in (83) is a nonnegative linear combination of p and 1 −p . Expanding their product gives a Bernstein polynomial
+W θ,p
+1:n =
+n
+X
+k=0
+ak
+n
+k pk(1−p) n−k, ak ≥0.
+Since the Bernstein basis sums to one, supp W θ,p
+1:n ≤max k ak. Since each basis element integrates to 1/(n+ 1),
+Z1
+0
+W θ,p
+1:n dp= 1
+n+ 1
+n
+X
+k=0
+ak ≥ 1
+n+ 1 mkax ak ≥ 1
+n+ 1 sup
+p
+W θ,p
+1:n .
+Combining the displays proves (85).
+The next direct lower bound will be useful for prefix anchoring and for controlling the expectation of the detection delay. PutS n = Pn
+i=1 Xi and X ̄n =S n/n.
+Lemma C.3(Direct KL lower bound for the universal portfolio).There is a numerical constantc J >0such that, for alln≥1, all datax 1, . . . , xn ∈[0,1], and everyθ∈(0,1),
+Uθ
+1:n ≥ cJ
+√n+ 1 exp{nkl(X ̄n, θ)}.(86)
+In particular,U θ
+1:n ≥c J /√n+ 1pathwise.
+57
+
+
+Proof.Weighted AM–GM applied to (83) gives
+fθ,p(x)≥ p
+θ
+x 1−p
+1−θ
+1−x
+.
+Multiplying and integrating against the arcsine law yields
+Uθ
+1:n ≥ Γ(Sn + 1/2)Γ(n−S n + 1/2)
+πΓ(n+ 1)θ Sn(1−θ) n−Sn .(87)
+Lemma E.4imply, for everyz∈[0, n],
+Γ(z+ 1/2)Γ(n−z+ 1/2)
+πΓ(n+ 1) ≥ cJ
+√n+ 1
+z
+n
+z
+1− z
+n
+n−z
+,
+with the conventions 00 = 1. One obtains a common constant by applying the usual upper and lower Stirling bounds when z, n−z≥ 1 and checking the two compact boundary ranges
+z≤ 1 and n−z≤ 1 directly using continuity and Γ(1/2) = √π. Substitute z = Sn into (87) and take logarithms to obtain (86).
+Lemma C.4(Completed reverse information projection).For every law Q on[0 , 1]and θ∈(0,1), Ibet(Q, θ) = inf
+R:ERX=θ DKL(Q∥R).
+Proof. For λ∈ Λθ, set fλ(x) = 1 + λ(x−θ ). If ERX = θ, then ERfλ = 1. The variational inequality for relative entropy gives
+EQ logf λ ≤D KL(Q∥R) + logE Rfλ = DKL(Q∥R).
+Taking the supremum overλand then the infimum overRproves one direction.
+Let λ∗ maximize the concave function λ7→E Q logf λ. If λ∗ is interior, first-order optimality gives
+EQ
+X−θ
+fλ∗(X) = 0.
+Since fλ∗ = 1 + λ∗(X−θ ), this also implies EQ[1/fλ∗(X)] = 1. Define dR∗/dQ = 1/fλ∗. ThenR ∗ is a probability law,E R∗X=θ, and
+DKL(Q∥R∗) =E Q logf λ∗ =I bet(Q, θ).
+If λ∗ = 1/θ, then fλ∗(X) = X/θ. The left derivative condition gives EQ[θ/X] ≤ 1. Put mass with density θ/X relative to Q and place the remaining mass at zero. The resulting probability law has mean θ and again attains EQ log(X/θ). The case λ∗ = −1/(1 −θ ) is symmetric: use density (1 −θ )/(1 −X ) and place the remaining mass at one. If an endpoint
+58
+
+
+objective equals −∞, it cannot be the maximizer because EQX̸ = θ admits a sufficiently small bet of the correct sign with positive expected log wealth. This completes the proof.
+Lemma C.5(Worst-case and local betting information).Let Q be a distribution on[0 , 1], and write
+b:=E Q[X], vQ :=Var Q(X).
+Then, for everyθ∈(0,1),
+Ibet(Q, θ)≥kl(b, θ),inf
+Q:E Q[X]=b
+Ibet(Q, θ) = kl(b, θ).
+Proof.Recall that
+Ibet(Q, θ) = sup
+λ∈Λθ
+EQ log{1 +λ(X−θ)},Λ θ = − 1
+1−θ , 1
+θ.
+Choosingp=bin (83) and applying weighted AM–GM gives
+logf θ,b(x)≥xlog b
+θ + (1−x) log 1−b
+1−θ .
+TakingQ-expectations yields
+Ibet(Q, θ)≥kl(b, θ).
+ForQ= Bern(b), the objective equals
+blog{1 +λ(1−θ)}+ (1−b) log(1−λθ),
+whose maximizer is
+λ= b−θ
+θ(1−θ) .
+Its maximum value is kl(b, θ). The casesb∈ {0,1}follow directly. Hence
+inf
+Q:E QX=b Ibet(Q, θ) = kl(b, θ).
+Proof ofProposition 4.1. E-process validity isLemma C.1. For any fixed p∈ (0, 1), the functionx7→logf θ,p(x) is bounded and continuous on [0,1], so the strong law gives
+1
+n logW θ,p
+1:n −→E Q logf θ,p(X)Q ∞-a.s.
+59
+
+
+Together withLemma C.2, this implies
+lim inf
+n→∞
+1
+n logU θ
+1:n ≥sup
+p∈(0,1)
+EQ logf θ,p(X) =I bet(Q, θ).
+The last equality follows because p7→λ θ(p) maps [0, 1] onto Λθ and interior p values approximate either endpoint.
+The last two lemmas prove all information claims inProposition 4.1.
+C.2.2 Detection-delay proofs
+Lemma C.6(Uniform reduction to one post-change random walk).Fix a∈ (0, 1)and a law Q on[0 , 1]such that I := Ibet(Q, a) > 0. For every η∈ (0, I/2)there exist pη ∈ (0, 1), δη ∈ (0,min{a, 1 −a} ), and a bounded measurable function Yη : [0, 1] →R such that, writing
+Uη = [a−δ η, a+δ η], μη :=E QYη(X),
+we have
+μη ≥I−2η >0,(88)
+and, for everyn≥1, every data sequencex 1, . . . , xn ∈[0,1], and everyθ∈U η,
+Uθ
+1:n(x1, . . . , xn)≥ 2
+π(n+ 1) exp
+(n X
+i=1
+Yη (xi )
+)
+.(89)
+Proof.By the definition ofI bet(Q, a), choose an interior portfoliop η ∈(0,1) such that
+EQ logf a,pη (X)≥I−η.(90)
+It is enough to optimize over interior portfolios. Indeed, if an endpoint p∈ { 0, 1} has finite positive expected log wealth, then forp ρ = (1−ρ)p+ρa∈(0,1), weighted AM–GM gives
+fa,pρ(x) = (1−ρ)f a,p(x) +ρ≥f a,p(x)1−ρ,
+so EQ logf a,pρ(X) approaches the endpoint value from below as ρ↓ 0. An endpoint with expected log wealth−∞cannot be needed whenI >0.
+Because pη ∈ (0, 1), the function (θ, x) 7→logf θ,pη (x) is continuous and bounded on a compact neighborhood of{a} ×[0,1]. Shrinkingδ η >0 if necessary, we may arrange that
+sup
+|θ−a|≤δη x∈[0,1]
+logf θ,pη (x)−logf a,pη (x) ≤η.(91)
+60
+
+
+Define
+Yη(x) := inf
+θ∈Uη
+logf θ,pη (x).
+This function is bounded and measurable. By (90)–(91),
+μη ≥E Q logf a,pη (X)−η≥I−2η,
+which proves (88).
+For everyθ∈U η,
+W θ,pη
+1:n = exp
+(n X
+i=1
+logf θ,pη (xi)
+)
+≥exp
+(n X
+i=1
+Yη (xi )
+)
+.
+Applying the pathwise regret bound inLemma C.2and retaining the single portfolio pη proves (89).
+Lemma C.7(A bounded random walk crossing a logarithmic boundary).Let Y1, Y2, . . . be i.i.d., with y− ≤Y i ≤y + almost surely and mean μ > 0. Put Sn = Pn
+i=1 Yi. For B > 0and a fixedc≥0, define
+σB := inf{n≥1 :S n ≥B+ log(n+ 1) +c}.(92)
+Thenσ B <∞almost surely,Eσ B <∞, and
+EσB
+B −→ 1
+μ .(93)
+Moreover, for every fixedε >0, there isc ε >0such that, for all sufficiently largeB,
+P σB > (1 +ε) B
+μ ≤e −cεB.(94)
+IfH B/B→ ∞, then there isc H >0such that, for all sufficiently largeB,
+P(σB > HB)≤e −cHHB .(95)
+Proof. The strong law gives Sn/n→μ almost surely, while {B + log(n + 1) + c}/n→ 0. Hence σB <∞ almost surely. To see integrability explicitly, suppose first that y+ > y− and put rY = y+ −y −. For every sufficiently large multiple n of B, B + log(n + 1) + c≤μn/ 2. Hence
+P(σB > n)≤P(S n < B+ log(n+ 1) +c)≤P(S n −μn≤ −μn/2)≤exp − μ2n
+2r2
+Y
+.
+The tail-sum formula now gives EσB <∞ . If y+ = y−, the random walk is deterministic and all the claims are immediate.
+61
+
+
+Since the boundary in (92) is at leastB, Wald’s identity yields
+μEσB =ES σB ≥B,
+and therefore
+lim inf
+B→∞
+EσB
+B ≥1
+μ .(96)
+For the converse, fixξ∈(0, μ) and put
+Cξ,c := sup
+n≥1
+{log(n+ 1) +c−ξn}<∞.
+LetZ i =Y i −ξ, whose mean isμ−ξ >0, and define
+ρB := inf
+(
+n≥1 :
+n
+X
+i=1
+Zi ≥B+C ξ,c
+)
+.
+At timeρ B,
+SρB =
+ρB
+X
+i=1
+Zi +ξρ B ≥B+C ξ,c +ξρ B ≥B+ log(ρ B + 1) +c,
+so σB ≤ρ B pathwise. If z+ := (y+ −ξ )+, the overshoot of the Z-random walk is at most z+. Wald’s identity therefore gives
+(μ−ξ)Eρ B =E
+ρB
+X
+i=1
+Zi ≤B+C ξ,c +z +.
+Thus
+lim sup
+B→∞
+EσB
+B≤ 1
+μ−ξ .
+Lettingξ↓0 and combining with (96) proves (93).
+For (94), putn B =⌈(1 +ε)B/μ⌉. Since log(n B + 1) +c=o(B), for all sufficiently largeB,
+μnB − {B+ log(n B + 1) +c} ≥ εB
+2.
+The implication {σB > nB} ⊆ {SnB < B + log(nB + 1) + c} and Hoeffding’s inequality give (94). If HB/B→ ∞ , then {B + log(HB + 1) + c}/HB → 0. Hence, eventually, failure to cross by HB implies SHB −μH B ≤ −μHB/2, and another application of Hoeffding proves (95).
+Proof ofTheorem 4.2.Write
+I:=I bet(Q, a)>0.
+We first prove a generic weighted high-probability bound that contains the ARL and PFA claims as special cases. Let Aγ → ∞, Lγ = logA γ, let Tγ be the changepoint, and let
+62
+
+
+ws,γ ∈(0,1] be deterministic start weights. Define the effective post-change boundary
+Bγ :=L γ −logw Tγ+1,γ.(97)
+Assume Tγ
+Bγ
+−→ ∞, Lγ −logw 1,γ =o(T γ).(98)
+For the ARL detector, ws ≡ 1 and Bγ = Lγ. For the PFA detector, ws = πs and Bγ = log(1/α) −logπ Tα+1; because π1 is a fixed positive constant, the second condition in (98) follows from the first.
+Fixε >0. Chooseη∈(0, I/2) sufficiently small that
+(1 +ε)(I−2η)> I.(99)
+ApplyLemma C.6, and abbreviate pη = p, δη = δ, Uη = U , Yη = Y , and μη = μ. In particular, μ≥I−2η >0. Under the post-change law, define
+Sn :=
+n
+X
+i=1
+Y(X Tγ+i), c0 := log(π/2),
+and the post-change crossing time
+σγ := inf{n≥1 :S n ≥B γ + log(n+ 1) +c 0}.(100)
+ByLemma C.6, at timeT γ +σ γ, for everyθ∈U,
+log
+n
+wTγ +1,γ U θ
+Tγ +1:Tγ +σγ
+o
+≥logw Tγ+1,γ −log(σ γ + 1)−c 0 +S σγ (101)
+≥L γ.(102)
+Thus the pure post-change start rules out every candidate mean inUonceσ γ occurs.
+It remains to anchor the candidates outsideU. PutT=T γ and consider the prefix event
+GT := |X ̄1:T −a| ≤δ/4 .(103)
+Hoeffding’s inequality gives
+PT
+P,Q(Gc
+T ) =P ∞
+P (Gc
+T )≤2 exp(−δ 2T /8).(104)
+Let
+HT := δT
+4 .(105)
+63
+
+
+OnG T , for every 0≤n≤H T , boundedness of the observations gives
+|X ̄1:T+n −a| ≤ T
+T+n |X ̄1:T −a|+ 1
+T+n
+T+n
+X
+i=T+1
+(Xi −a) (106)
+≤δ
+4+n
+T ≤δ
+2 .(107)
+Consequently, if θ /∈U, then |θ− X ̄1:T+n | ≥δ/ 2. Pinsker’s inequality for Bernoulli relative entropy yields
+kl(X ̄1:T+n , θ)≥2| X ̄1:T+n −θ| 2 ≥ δ2
+2.
+The direct KL lower bound inLemma C.3therefore gives, uniformly over θ /∈U and 0≤n≤H T ,
+w1,γ U θ
+1:T+n ≥ w1,γ cJ
+p
+(1 +δ/4)T+ 1
+exp δ2T
+2 .(108)
+Here and in the detector definition, the endpoint values θ∈ { 0, 1} are understood by lowersemicontinuous extension. On GT the empirical mean is bounded away from both endpoints, so kl(X ̄1:T+n , θ) → ∞ as θ approaches an endpoint; hence the same uniform conclusion includesθ= 0,1.
+By the second condition in (98), the logarithm of the right-hand side of (108) is at least Lγ for all sufficiently large γ. Hence, on GT , every candidate θ /∈U is ruled out throughout the entire time interval [T, T+H T ] by the start-1 term.
+Combining (102) and (108) gives the following pathwise implication for all sufficiently large γ:
+GT ∩ {σγ ≤H T }=⇒τ UP,w
+Aγ ≤T γ +σ γ.(109)
+This is the non-partitioned analogue of reducing an SR detector to one good post-change betting component: the extra prefix term is used only to rule out candidate means away from a.
+Set
+dγ := (1 +ε) Bγ
+I.
+The first condition in (98) implies dγ ≤H T eventually. By (99), εη := (1 + ε)μ/I− 1 is strictly positive. Thus, up to the immaterial integer rounding, dγ ≥ (1 + εη)Bγ/μ.Lemma C.7 therefore gives
+PTγ
+P,Q(σγ > dγ)→0.
+Together with (104) and (109), this yields
+PTγ
+P,Q τ UP,w
+Aγ −T γ ≤ (1 +ε) Bγ
+I −→1.(110)
+Taking ws ≡ 1 proves the ARL high-probability claim. Taking Aγ = 1/α and ws = πs proves
+64
+
+
+the PFA claim.
+We now prove the ARL expectation and CADD statements. Here ws ≡ 1, L = logA , and B=L. The pathwise lower bound inLemma C.3implies, for a numerical constantc ∗ >0,
+DUP,ARL
+t ≥c J
+t
+X
+n=1
+(n+ 1) −1/2 ≥c ∗
+√
+t.
+Thus there is a numericalC ∗ <∞such that
+τ UP,ARL
+A ≤C ∗A2 on every sample path. (111)
+LetN A =C ∗A2. From (109) and (111),
+ET
+P,Q (τ UP,ARL
+A −T) + ≤E QσL +N A PT
+P,Q(Gc
+T ) +P Q(σL > HT ) .(112)
+The first error probability is bounded by 2e−δ2T/8. Since HT ≍T and T /L→ ∞ ,Lemma C.7 givesP Q(σL > HT )≤e −cHT for somec >0 and all sufficiently largeA. Therefore
+NA PT
+P,Q(Gc
+T ) +P Q(σL > HT ) −→0,
+because logN A = 2L+O(1) =o(T). On the other hand,Lemma C.7gives
+EQσL
+L −→ 1
+μ≤ 1
+I−2η .
+Sinceη >0 can be arbitrarily small,
+lim sup
+A→∞
+ETA
+P,Q[(τ UP,ARL
+A −T A)+]
+logA ≤ 1
+I .(113)
+Finally, the finite-horizon false-alarm inequality inTheorem 2.2gives
+PTA
+P,Q(τ UP,ARL
+A > TA)≥1− TA
+A = 1−o(1),
+where the last step uses logT A =o(logA). Since
+CADDTA
+P,Q(τ UP,ARL
+A ) = ETA
+P,Q[(τ UP,ARL
+A −T A)+]
+PTA
+P,Q(τ UP,ARL
+A > TA)
+,
+(113) proves the CADD assertion.
+ByLemma C.4, Ibet(Q, a) is the reverse information projection of Q onto the bounded mean-a class. Consequently, when the delay criterion is worst-cased over pre-change laws with mean a, the usual change-of-measure lower bound has the same leading constant. For a fixed fully specified pre-change law P , the sharper information number DKL(Q∥P ) may be
+65
+
+
+larger. Finally, byLemma C.5, worst-casing also over post-change laws with mean b replaces Ibet(Q, a) by kl(b, a), attained by the Bernoulli pair.
+C.3 Gaussian unknown-variance mean-change example
+Proof ofProposition 5.1.For a fixedr >0, let
+qs:i−1(x) :=φ esμ:i−1,e2σ
+s:i−1 (x)
+and define
+Λθ,r
+s:t :=
+t
+Y
+i=s
+qs:i−1(Xi)
+φθ,r(Xi) .
+Under N (θ, r)∞, conditional integration of the predictive density qs:i−1 shows that this is a test martingale. Maximizing the Gaussian null likelihood overr >0 gives
+sup
+r>0
+t
+Y
+i=s
+φθ,r(Xi) = (2πebθr)−n/2,br θ = 1
+n
+t
+X
+i=s
+(Xi −θ) 2.
+Therefore
+Rθ
+s:t = inf
+r>0 Λθ,r
+s:t .
+For the true null variance r0, this implies Rθ
+s:t ≤ Λθ,r0
+s:t at every time. Hence Rθ is dominated by a test martingale under each member ofN θ, which proves the e-process assertion.
+For the growth calculation, write
+1
+n logR θ
+1:n = 1
+2 log
+(
+1
+n
+n
+X
+i=1
+(Xi −θ) 2
+)
++1
+2−1
+n
+n
+X
+i=1
+logeσi−1
+−1
+2n
+n
+X
+i=1
+(Xi −eμi−1)2
+e2σ
+i−1
+.
+Under the conditions ofWang and Ramdas(2024, Proposition 3.3), the last two averages converge almost surely to 1
+2 logv and 1/2, respectively. The first empirical moment converges
+to v + (m−θ )2. This proves (24). For the concrete estimators (22), the required convergence follows from the strong law and standard positive and inverse moments of a chi-square variable; the fixed ridgev 0 handles the finitely many small sample sizes.
+Finally,
+DKL{N(m, v)∥N(θ, r)}= 1
+2 log r
+v + v+ (m−θ) 2
+r −1 .
+The right side is minimized atr=v+ (m−θ) 2, giving (25).
+Proof ofTheorem 5.2. Write T = Tα, B = Bt
+α, d = dα, and I = It(P, Q). Then d/T→ 0. Choose η > 0 so small that (1 + ε)(I− 2η)/I > 1. By continuity of θ7→J b,v(θ), choose δ > 0
+66
+
+
+such that
+inf
+|θ−a|≤δ
+Jb,v (θ)≥I−η .
+The compact-uniform version of the growth calculation inProposition 5.1, applied to the pure post-change block, gives
+inf
+|θ−a|≤δ
+logR θ
+T+1:T+d ≥d(I−2η)
+with probability tending to one. Hence, uniformly on this inner set,
+log{wT+1,α Rθ
+T+1:T+d } ≥L α
+eventually with probability tending to one, becaused(I−2η)> B+o(B).
+For the exterior set,Lemma E.6gives, withc δ = 1
+2 log(1 +δ 2/u)>0,
+inf
+|θ−a|≥δ
+logR θ
+1:T+d ≥(T+d)c δ/2
+with probability tending to one. The final condition in (30) then implies
+inf
+|θ−a|≥δ
+log{w1,αRθ
+1:T+d } ≥L α
+eventually. Thus every θ has one detector summand at least Aα, proving (31). The ARL and PFA displays follow by substituting ws ≡ 1 and (4). Conditional versions follow by dividing by the probability of no pre-change alarm, which tends to one byTheorems 2.2and2.3under the stated regimes.
+Proof ofTheorem 5.3.The martingale assertion for (33) follows from
+EN(θ,r)
+qs:i−1(Xi)
+φθ,r(Xi) Fi−1 =
+Z
+qs:i−1(x)dx= 1.
+UnderN(m, v), consistency of the predictive density and the strong law give
+1
+n
+n
+X
+i=1
+logq i−1(Xi)→E N(m,v) logφ m,v(X),
+whereasn −1 P
+i logφ θ,r(Xi)→E N(m,v) logφ θ,r(X). Their difference is (34).
+We now prove the delay bound. Let I = DKL(Q∥P ) and fix η > 0 small enough that (1 + ε)(I− 2η)/I > 1. By continuity of Gaussian KL, there is a compact parameter neighborhoodUofP= (a, u) such that
+inf
+R∈U DKL(Q∥R)≥I−η.(114)
+67
+
+
+Moreover,
+cU := inf
+R /∈U
+DKL(P∥R)>0.(115)
+To see this, use the explicit Gaussian KL formula: it is continuous, vanishes only at R = P , and tends to infinity as the candidate mean diverges or the candidate variance tends to 0 or ∞.
+On a pure i.i.d. Gaussian block, the explicit representation
+1
+n logL θ,r
+1:n =C n + 1
+2 log(2πr) + bnv + (X ̄n −θ) 2
+2r ,
+where Cn is independent of (θ, r), shows that the convergence in (34) is uniform on compact parameter sets. The same display and coercivity show uniform convergence of the infimum over the closed exterior U c. It remains valid for the T + d cross block when d = o(T ), because its empirical mean, variance, and predictive score converge to their P limits exactly as in Lemma E.6. Therefore, with probability tending to one,
+inf
+R∈U logL R
+T+1:T+d ≥d(I−2η),
+inf
+R /∈U
+logL R
+1:T+d ≥(T+d)c U /2.
+The first bound, the definition d = ⌈(1 + ε)BG
+α /I⌉, and BG
+α = Lα −logw T+1,α imply that the weighted post-change summand exceeds Aα uniformly on U . The second bound and Lα −logw 1,α = o(Tα) imply that the weighted cross summand exceeds Aα uniformly on U c. Thus the infimum in (35) is at least Aα at time T + d with probability tending to one, proving (37).
+D Adjusters and local REGROW witnesses
+Proof ofLemma 6.2. Let τ be any almost surely finite stopping time. By Ville’s inequality applied to the stopped process,
+P(E∗
+τ ≥x)≤ 1
+x , x≥1.
+Thusp τ = 1/E∗
+τ is a p-value in the sense that
+P(pτ ≤u)≤u,0≤u≤1.
+Define b(u) = a(1/u) for u∈ (0, 1]. Since a is increasing, b is decreasing, and the change of variablesx= 1/ugives
+Z1
+0
+b(u)du=
+Z1
+0
+a(1/u)du=
+Z∞
+1
+a(x)
+x2 dx≤1.
+68
+
+
+For completeness, we recall the calibration step. If p is superuniform and b is decreasing, nonnegative, and integrable, then
+Eb(p) =
+Z∞
+0
+P{b(p)> y}dy≤
+Z∞
+0
+λ{u∈[0,1] :b(u)> y}dy=
+Z1
+0
+b(u)du,
+whereλdenotes Lebesgue measure. Applying this top τ yields
+Ea(E∗
+τ ) =Eb(p τ )≤1.
+Since this holds at every almost surely finite stopping timeτ, (a(E ∗
+t )) is an e-process.
+Proof ofCorollary 6.4. Validity follows by applyingLemma 6.2conditionally after the restart times. The inequalities follow fromM R,∗
+s:t ≥M R
+s:u and monotonicity ofa.
+Proof ofLemma 6.5. The map (S, R) 7→ DKL(S∥R) is lower semicontinuous for weak convergence on Polish spaces by the Donsker–Varadhan variational formula. Hence R7→ DKL(Q∥R) is weakly lower semicontinuous, and the strict superlevel set Gη is weakly open. Since DKL(Q∥P) =I ∗ > I∗ −η,P∈G η.
+It remains to prove the positive separation outside an arbitrary weak neighborhood U of P . If cU = 0, there exist Rn ∈ P \U such that DKL(P∥R n) → 0. Pinsker’s inequality gives ∥P−R n∥TV → 0, hence Rn ⇒P weakly. Since U is a weak neighborhood of P , eventually Rn ∈U , a contradiction. Thus cU > 0. The displayed inequalities follow immediately from the definitions.
+Proof ofLemma 6.7. By the REGROW result ofRam and Ramdas(2026b, Theorem 2), there exists a single e-process
+EK ={E K
+n }n≥0, EK
+0 = 1,
+which is valid under everyR∈Kand satisfies, for everyQ /∈K,
+lim inf
+n→∞
+1
+n logE K
+n ≥Φ K(Q), Q∞-a.s. (116)
+Importantly,E K depends only onK, not onQ.
+Letabe a fixed growth-preserving e-process adjuster, and define
+(EK )∗
+n := max
+0≤t≤n EK
+t , EeK
+n :=a (EK)∗
+n.
+ByLemma 6.2, EeK is a nondecreasing e-process valid under everyR∈K.
+Moreover, ΦK (Q)>0.
+Indeed, if ΦK(Q) = 0, there would exist Rm ∈K such that DKL(Q∥Rm) → 0. Pinsker’s
+69
+
+
+inequality would then imply Rm →Q in total variation, and hence weakly. By weak compactness of K, some subsequence converges weakly to an element of K; uniqueness of the weak limit would then imply Q∈K , a contradiction. Since a is growth preserving, Lemma E.5gives
+lim inf
+n→∞
+1
+n log EeK
+n ≥Φ K(Q), Q∞-a.s.
+Neither EK nor the adjuster a depends on Q. Therefore, the same nondecreasing e-process EeK has the stated REGROW guarantee for everyQ /∈K.
+Proof ofProposition 6.9. Let ∆(X ) denote the space of all probability measures on X equipped with the topology of weak convergence. Because X is a Polish space, ∆(X ) is metrizable, for example by the Le ́vy–Prokhorov metric. Consequently,P, being a weakly compact subset of a metrizable space, is a compact metric space under the relative weak topology.
+Because compact metric spaces are second countable, the relative weak topology on P admits a countable basis, which we denote by B. Furthermore, compact metric spaces are regular. Therefore, for any P∈ P and any relatively weakly open neighborhood G of P , there exists a relatively weakly open setVsuch that
+P∈V⊆ V⊆G,
+where V denotes the closure in the relative weak topology of P. Because B is a topological basis, there exists a basis elementB∈ Bsuch that
+P∈B⊆V.
+It follows that
+P∈B⊆ B⊆ V⊆G.
+Thus,Bsatisfies Condition (i) of Definition6.8.
+To verify Condition (ii), fix B∈ B . Its relative closure B is a relatively closed subset of the weakly compact space P. Hence B is weakly compact as a subset of ∆(X ). By Lemma6.7, there exists a single nondecreasing e-process, valid under every R∈ B, whose REGROW guarantee holds simultaneously for every S /∈B. Therefore, B is simultaneously REGROW-regular overP \ B, and Condition (ii) holds.
+Finally, we verify Condition (iii). For anyB∈ B, define the exterior class
+Bc :=P \B.
+Because B is relatively weakly open in P, its complement Bc is relatively weakly closed in P. Since P is weakly compact, Bc is also weakly compact. Applying Lemma6.7to Bc, there exists a single nondecreasing e-process, valid under every R∈B c, whose REGROW
+70
+
+
+guarantee holds simultaneously for everyS /∈Bc. Since
+P \B c =B,
+this guarantee holds simultaneously for every S∈B . Therefore, Bc is simultaneously REGROW-regular overB, and Condition (iii) holds.
+Having constructed a countable family B satisfying all three required conditions, we conclude thatPadmits a countable local REGROW witness basis.
+Proof ofProposition 6.10.We divide the proof into two parts.
+Part 1: P is not weakly compact.By Prokhorov’s theorem, a family of probability measures on a Polish space is relatively weakly compact if and only if it is uniformly tight.
+LetK⊆Rbe compact. Then there existsM >0 such that
+K⊆[−M, M].
+Consider the sequence
+Pn =N(n,1)∈ P, n≥1.
+Writing Φ for the standard Gaussian distribution function, we have
+Pn(K)≤P n([−M, M])
+= Φ(M−n)−Φ(−M−n)−→0
+asn→ ∞. Consequently, for every compactK⊆R,
+inf
+P∈P P(K) = 0.
+In particular, there is no compactKsuch that
+inf
+P∈P P(K)≥ 1
+2.
+Thus P is not uniformly tight. By Prokhorov’s theorem, P is not relatively weakly compact and hence is not weakly compact.
+Part 2: Construction of a countable local REGROW witness basis.Consider the parameterization
+f:R−→ P, f(θ) =P θ.
+We first verify that f is a homeomorphism from R, equipped with its usual topology, onto P, equipped with the relative weak topology.
+71
+
+
+Ifθ n →θ, then the characteristic functions satisfy
+exp iuθn − u2
+2 −→exp iuθ− u2
+2
+for everyu∈R. Hence, by L ́evy’s continuity theorem,
+Pθn ⇒P θ.
+Thusfis continuous.
+Conversely, suppose
+Pθn ⇒P θ.
+Because the distribution function ofP θ is continuous atθ, weak convergence implies
+Φ(θ−θ n) =P θn((−∞, θ])
+−→P θ((−∞, θ]) = 1
+2.
+Since Φ is continuous and strictly increasing,
+θ−θ n −→0,
+and therefore θn →θ . Since the weak topology on P is metrizable, this proves continuity of f −1. Hencefis a homeomorphism.
+Define
+B:={B q,r :q, r∈Q, q < r},
+where
+Bq,r :={P θ ∈ P:q < θ < r}.
+The collectionBis countable. We verify the three conditions inDefinition 6.8.
+Condition(i): local refinement.
+Fix Pθ0 ∈ P, and let G be a relatively weakly open neighborhood of Pθ0. Since f is a homeomorphism,
+f −1(G)
+is an open neighborhood ofθ 0 inR. Hence there existsε >0 such that
+[θ0 −ε, θ 0 +ε]⊆f −1(G).
+By density of the rational numbers, we can chooseq, r∈Qsuch that
+θ0 −ε < q < θ 0 < r < θ0 +ε.
+72
+
+
+Then
+Pθ0 ∈B q,r.
+Moreover, becausefis a homeomorphism,
+Bq,r
+P ={P θ :q≤θ≤r}=f([q, r]),
+where the closure is taken relative toP. Therefore,
+Pθ0 ∈B q,r ⊆ Bq,r
+P ⊆G.
+Thus Condition (i) holds.
+Condition(ii): simultaneous inner witnesses.
+Fixq, r∈Qwithq < r. The relative weak closure ofB q,r is
+K in
+q,r := Bq,r
+P ={P θ :q≤θ≤r}=f([q, r]).
+Since [q, r] is compact andfis continuous,K in
+q,r is weakly compact as a subset ofM 1(R).
+ByLemma 6.7, there exists a single e-process
+V q,r,in ={V q,r,in
+t }t≥0
+which is valid under everyR∈K in
+q,r and satisfies, for everyQ /∈Kin
+q,r ,
+lim inf
+t→∞
+1
+t logV q,r,in
+t ≥Φ Kiqn,r (Q), Q∞-a.s.
+Importantly, the same processV q,r,in works for everyQ /∈Kin
+q,r .
+If V q,r,in is not already nondecreasing, let a be a fixed growth-preserving e-process adjuster
+and define
+V q,r,in ∗
+t := max
+0≤u≤t V q,r,in
+u,
+and
+E q,r,in
+t :=a V q,r,in ∗
+t.
+ByLemma 6.2,E q,r,in is a nondecreasing e-process valid under everyR∈K in
+q,r .
+We briefly verify preservation of the simultaneous growth rate. Fix
+Q /∈Kin
+q,r .
+SinceK in
+q,r is weakly compact andQ /∈Kin
+q,r ,
+ΦKiqn,r (Q)>0.
+73
+
+
+Furthermore,
+V q,r,in ∗
+t ≥V q,r,in
+t,
+so
+lim inf
+t→∞
+1
+t log V q,r,in ∗
+t ≥Φ Kiqn,r (Q)>0, Q ∞-a.s.
+In particular,
+log V q,r,in ∗
+t −→ ∞
+almost surely underQ ∞. Sinceais growth preserving,
+loga(e y)
+y −→1 asy→ ∞.
+It follows that
+lim inf
+t→∞
+1
+t logE q,r,in
+t ≥Φ Kiqn,r (Q), Q∞-a.s.
+The process Eq,r,in is independent of Q. Therefore Kin
+q,r is simultaneously REGROW-regular over
+P \K in
+q,r .
+This proves Condition (ii).
+Condition(iii): simultaneous exterior witnesses.
+Fixq, r∈Qwithq < r, and write
+K out
+q,r :=B c
+q,r ={P θ :θ≤q} ∪ {P θ :θ≥r},
+where the complement is taken relative toP.
+We construct a single e-process, depending only on (q, r), which is valid under every distribution inK out
+q,r and achieves the REGROW rate under everyP θ0 ∈B q,r.
+Enumerate the countable dense subset
+Q∩(q, r) ={h m :m≥1},
+and set ρm := 2−m, m≥1.
+Then
+ρm >0,
+∞
+X
+m=1
+ρm = 1.
+For eachh∈(q, r), define
+L(q,h)
+t :=
+t
+Y
+i=1
+ph(Xi)
+pq(Xi) = exp
+(
+(h−q)
+t
+X
+i=1
+Xi − t
+2 (h2 −q 2)
+)
+,(117)
+74
+
+
+L(r,h)
+t :=
+t
+Y
+i=1
+ph(Xi)
+pr(Xi) = exp
+(
+(h−r)
+t
+X
+i=1
+Xi − t
+2 (h2 −r 2)
+)
+,(118)
+with
+L(q,h)
+0 =L (r,h)
+0 = 1.
+Define
+E (h)
+t := min
+n
+L(q,h)
+t , L(r,h)
+t
+o
+, E(h)
+0 = 1.
+We first verify thatE (h) is an e-process for the composite nullK out
+q,r .
+IfX∼P θ, then
+Eθ
+ph(X)
+pq(X) = exp (h−q)θ+ 1
+2 (h−q) 2 − 1
+2 (h2 −q 2)
+= exp{(h−q)(θ−q)}.
+Becauseh > q, this quantity is at most one wheneverθ≤q. Hence
+Eθ
+h
+L(q,h)
+t | Ft−1
+i
+≤L (q,h)
+t−1
+for every θ≤q . Thus L(q,h) is a nonnegative test supermartingale under every Pθ with θ≤q .
+Similarly,
+Eθ
+ph(X)
+pr(X) = exp{(h−r)(θ−r)}.
+Because h−r < 0, this quantity is at most one whenever θ≥r . Therefore L(r,h) is a nonnegative test supermartingale under everyP θ withθ≥r.
+Let τ be an arbitrary stopping time. By optional stopping for nonnegative supermartingales, with the usual Fatou argument whenτis unbounded, ifθ≤q, then
+Eθ E(h)
+τ ≤E θ L(q,h)
+τ
+≤1.
+Ifθ≥r, then
+Eθ E(h)
+τ ≤E θ L(r,h)
+τ
+≤1.
+Thus, for everyh∈(q, r),
+sup
+Pθ ∈Kqo,urt
+Eθ E(h)
+τ ≤1
+for every stopping timeτ. HenceE (h) is an e-process for the composite nullK out
+q,r .
+75
+
+
+Now define the fixed mixture
+V q,r,out
+t :=
+∞
+X
+m=1
+ρm E (hm )
+t .(119)
+This process depends only on the interval (q, r) and not on the true interior parameter.
+For every fixedtand every realized (X 1, . . . , Xt), the functions
+h7−→L (q,h)
+t andh7−→L (r,h)
+t
+are continuous and bounded on the compact interval [q, r]. Consequently, the series in (119) is finite.
+Moreover, for every stopping timeτand everyP θ ∈K out
+q,r , Tonelli’s theorem gives
+Eθ V q,r,out
+τ=
+∞
+X
+m=1
+ρmEθ E(hm)
+τ
+≤
+∞
+X
+m=1
+ρm
+= 1.
+ThusV q,r,out is an e-process under every distribution inK out
+q,r .
+We next prove that this single mixture achieves the desired growth rate under every Pθ0 ∈B q,r. Fix an arbitrary
+θ0 ∈(q, r).
+For every fixedh∈(q, r), the strong law of large numbers gives
+1
+t
+t
+X
+i=1
+Xi −→θ 0, P ∞
+θ0 -a.s.
+It follows from (117) that
+1
+t logL (q,h)
+t −→(h−q)θ 0 − 1
+2 (h2 −q 2)
+=1
+2 (θ0 −q) 2 − 1
+2 (θ0 −h) 2,
+and from (118) that
+1
+t logL (r,h)
+t −→(h−r)θ 0 − 1
+2 (h2 −r 2)
+=1
+2 (θ0 −r) 2 − 1
+2 (θ0 −h) 2,
+76
+
+
+almost surely underP ∞
+θ0 . Therefore,
+1
+t logE (h)
+t −→I q,r(θ0)− 1
+2 (θ0 −h) 2, P ∞
+θ0 -a.s.,(120)
+where
+Iq,r(θ0) := min 1
+2 (θ0 −q) 2, 1
+2 (θ0 −r) 2
+= inf
+Pθ ∈Kqo,urt
+DKL(Pθ0 ∥Pθ)
+= ΦKqo,urt (Pθ0 ).(121)
+Since the set {hm : m≥ 1} is countable, (120) holds simultaneously for all m on an event of P∞
+θ0 -probability one.
+For each fixedm,
+V q,r,out
+t ≥ρ mE(hm)
+t.
+Hence
+lim inf
+t→∞
+1
+t logV q,r,out
+t ≥lti→ m∞
+logρ m
+t +1
+t logE (hm)
+t
+=I q,r(θ0)− 1
+2 (θ0 −h m)2
+almost surely underP ∞
+θ0 .
+Because this inequality holds for everym,
+lim inf
+t→∞
+1
+t logV q,r,out
+t ≥sup
+m≥1
+Iq,r(θ0)− 1
+2 (θ0 −h m)2
+=I q,r(θ0),
+where the last equality follows from density of {hm : m≥ 1} in (q, r). Together with (121), this gives
+lim inf
+t→∞
+1
+t logV q,r,out
+t ≥Φ Kqo,urt (Pθ0 ), P ∞
+θ0 -a.s.
+The process V q,r,out is fixed independently of θ0, and the preceding conclusion holds for every θ0 ∈ (q, r). Thus it is a simultaneous exterior witness, except that it need not be nondecreasing.
+To obtain a nondecreasing process, define
+V q,r,out ∗
+t := max
+0≤u≤t V q,r,out
+u,
+and
+E q,r,out
+t :=a V q,r,out ∗
+t,
+77
+
+
+where a is the same fixed growth-preserving adjuster as above. ByLemma 6.2, Eq,r,out is a nondecreasing e-process under everyP θ ∈K out
+q,r .
+Finally, fixθ 0 ∈(q, r). Since
+ΦKqo,urt (Pθ0 ) =I q,r(θ0)>0,
+we have
+lim inf
+t→∞
+1
+t log V q,r,out ∗
+t ≥I q,r(θ0)>0.
+Therefore,
+log V q,r,out ∗
+t −→ ∞
+almost surely underP ∞
+θ0 . The growth-preserving property ofathen yields
+lim inf
+t→∞
+1
+t logE q,r,out
+t ≥I q,r(θ0) = ΦKqo,urt (Pθ0 ), P ∞
+θ0 -a.s.
+Since the same process Eq,r,out works for every θ0 ∈ (q, r), Kout
+q,r = Bc
+q,r is simultaneously REGROW-regular overB q,r. This proves Condition (iii).
+We have verified all three conditions ofDefinition 6.8. Therefore,
+B={B q,r :q, r∈Q, q < r}
+is a countable local REGROW witness basis forP.
+Proof ofTheorem 6.11. We first construct the entire family of point-null e-processes without fixingP,Q,η in, orη out.
+For everyj≥1, let
+Ej,in ={E j,in
+n }n≥0
+be a nondecreasing e-process which is valid under every R∈ Bj and satisfies, for every S /∈Bj,
+lim inf
+n→∞
+1
+n logE j,in
+n ≥Φ Bj (S), S ∞-a.s.
+Existence of such an e-process follows directly from Condition (ii) ofDefinition 6.8(because weak compactness of Bj implies that it is simultaneously REGROW-regular). Similarly, it follows from Condition (iii) ofDefinition 6.8that we have a nondecreasing e-process
+Ej,out ={E j,out
+n }n≥0
+which is valid under everyR∈B c
+j and satisfies, for everyS∈B j,
+lim inf
+n→∞
+1
+n logE j,out
+n ≥Φ Bc
+j (S), S ∞-a.s.
+78
+
+
+For every starting times, let
+E j,in
+s:t andE j,out
+s:t , t∈N,
+with Ej,in
+s:t = Ej,out
+s:t = 1, for t < s denote the corresponding s delay processes obtained by applying the original processes to Xs, . . . , Xt for t≥s . Under any i.i.d. no-change law, these ares-delay e-processes for their respective null classes. We use the inactive convention that every delayed process equals one for t < s. Monotonicity is asserted only after activation, that is, fort≥s.
+For eachj≥1,R∈ P, andt≥s−1, define
+M R,j
+s:t :=
+
+      
+      
+1, t < s,
+1 +E j,in
+s:t
+2 , t≥s, R∈B j,
+1 +E j,out
+s:t
+2 , t≥s, R /∈B j.
+(122)
+Fix a sequence {γj}j∈N such that γj > 0 and P
+j γj = 1. Now define the universal point-null process
+MR
+s:t :=
+∞
+X
+j=1
+γj M R,j
+s:t .(123)
+This construction depends only on the fixed basis, its fixed simultaneous witnesses, and the fixed weights{γ j}j≥1.
+We first verify validity. FixR∈ P,s≥1, andj≥1. IfR∈B j, then
+R∈B j ⊆ Bj,
+and henceE j,in
+s:t is ans-delay e-process underR ∞. Therefore,
+M R,j
+s:t = 1 +E j,in
+s:t
+2 , t≥s,
+together with the inactive value one before times, is ans-delay e-process underR ∞.
+If R /∈Bj, then R∈B c
+j , and the same argument, using Ej,out, shows that M R,j
+s:t is an s-delay e-process underR ∞.
+Since all summands in (123) are nonnegative, conditional Tonelli’s theorem gives, for every stopping timeτ,
+E∞
+R
+h
+MR
+s:τ Fs−1
+i
+=
+∞
+X
+j=1
+γj E∞
+R
+h
+M R,j
+s:τ Fs−1
+i
+≤
+∞
+X
+j=1
+γj = 1.
+79
+
+
+Thus {M R
+s:t}t≥s−1 is an s-delay point-null e-process under R∞. Since all active component
+processes are nondecreasing, so ist7→ M R
+s:t fort≥s.
+We now fixP, Q∈ Pwith I∗ = DKL(Q∥P)∈(0,∞)
+and fixη in ∈(0, I ∗). Define
+Gηin :=
+n
+R∈ P: D KL(Q∥R)> I ∗ − ηin
+2
+o
+.
+ByLemma 6.5, Gηin is a relatively weakly open neighborhood of P . By Condition (i) of Definition 6.8, there exists an indexj ∗ such that
+P∈B j∗ ⊆ Bj∗ ⊆G ηin .
+Set
+Uηin :=B j∗ , Kηin,in := Bj∗ , Kηin,out :=B c
+j∗ .
+Since Bj∗ ⊆G ηin,
+ΦKηin,in (Q) = inf
+R∈Bj∗
+DKL(Q∥R)
+≥I ∗ − ηin
+2.
+Also, becauseU ηin =B j∗ is a relatively weakly open neighborhood ofP,Lemma 6.5gives
+cηin := inf
+R /∈ηUin
+DKL(P∥R)>0.
+SinceK ηin,out =B c
+j∗, this is exactly
+cηin = ΦKηin,out (P).
+Notice also that
+Q /∈Bj∗.
+Indeed,
+DKL(Q∥Q) = 0< I ∗ − ηin
+2,
+so Q /∈Gηin, whereas Bj∗ ⊆G ηin. Consequently, the simultaneous inner-witness guarantee applies to Q, while P∈B j∗ ensures that the simultaneous outer-witness guarantee applies to P.
+For brevity, define the fixed mixture penalty
+Cj∗ := log 2
+γj∗
+<∞.
+80
+
+
+We first prove the exterior growth statement. For every R /∈Uηin = Bj∗, (123) and (122) imply
+MR
+1:n ≥γ j∗ M R,j∗
+1:n
+=γ j∗
+1 +E j∗,out
+n
+2
+≥ γj∗
+2 Ej∗,out
+n.
+The right-hand side is independent ofR, and hence
+inf
+R /∈ηUin
+log M R
+1:n ≥logE j∗,out
+n −C j∗.(124)
+By simultaneous exterior REGROW regularity andP∈B j∗,
+lim inf
+n→∞
+1
+n logE j∗,out
+n ≥Φ Bc
+j∗ (P) =c ηin, P ∞-a.s.
+Therefore, for everyη out ∈(0, c ηin),
+P∞
+P
+1
+n logE j∗,out
+n ≥c ηin − ηout
+2 −→1.
+SinceC j∗ is fixed,
+Cj∗
+n ≤ ηout
+2
+for all sufficiently largen. Combining this with (124) gives
+P∞
+P inf
+R /∈ηUin
+log M R
+1:n ≥n cηin −η out −→1.
+This proves (43).
+We next prove the inner growth statement. For everyR∈U ηin =B j∗,
+MR
+1:n ≥γ j∗ M R,j∗
+1:n
+=γ j∗
+1 +E j∗,in
+n
+2
+≥ γj∗
+2 Ej∗,in
+n.
+Thus
+inf
+R∈Uηin
+log M R
+1:n ≥logE j∗,in
+n −C j∗.(125)
+81
+
+
+By simultaneous inner REGROW regularity andQ /∈Bj∗,
+lim inf
+n→∞
+1
+n logE j∗,in
+n ≥Φ Bj∗ (Q)
+≥I ∗ − ηin
+2 , Q∞-a.s.
+It follows that
+P∞
+Q
+1
+n logE j∗,in
+n ≥I ∗ − 3ηin
+4 −→1.
+SinceC j∗ is fixed,
+Cj∗
+n ≤ ηin
+4
+for all sufficiently largen. Combining this with (125) gives
+P∞
+Q inf
+R∈Uηin
+log M R
+1:n ≥n I∗ −η in −→1.
+This proves (44).
+The family {M R
+s:t} was constructed before fixing (P, Q) or either slack parameter. Therefore, the same detector works simultaneously for every pair (P, Q) and for every fixed choice of ηin andη out; only the basis element used in the analysis changes.
+E Auxiliary Lemmas
+Lemma E.1(Balancing two quadratic terms).Fora, b∈RandK 0, K1 >0,
+inf
+θ∈R max{K0(θ−a) 2, K1(θ−b) 2}= (a−b) 2
+(K −1/2
+0 +K −1/2
+1 )2 .
+Proof.Foru >0, the inequalities
+K0(θ−a) 2 ≤u, K 1(θ−b) 2 ≤u
+hold simultaneously if and only if the intervals
+h
+a−
+p
+u/K0, a+
+p
+u/K0
+i
+and
+h
+b−
+p
+u/K1, b+
+p
+u/K1
+i
+intersect. They first intersect when
+|a−b|=
+p
+u/K0 +
+p
+u/K1.
+Solving forugives the claim.
+82
+
+
+Fix a changepointTand a delayd≥1. At timet=T+d, define the post-change interval
+J0 = (T+ 1) : (T+d),|J 0|=d,
+and, for a pre-change block lengthm≤T, define the crossing interval
+J1 = (T−m+ 1) : (T+d),|J 1|=m+d.
+Let X ̄0 = X ̄J0, X ̄1 = X ̄J1.
+Define
+Bm,d = (X ̄0 − X ̄1)2
+(κ−1/2
+d +κ −1/2
+m+d )2 .(126)
+and
+cn = (1 +ρ 2σ2n)−1/2, κn = ρ2n2
+2(1 +ρ 2σ2n) .(127)
+Then, we have
+Mθ
+s:t =c ns:t exp{κns:t (X ̄s:t −θ) 2}.
+Asn→ ∞,
+κn = n
+2σ2 {1 +o(1)},logc n =− 1
+2 log(1 +ρ 2σ2n).(128)
+Lemma E.2(A sufficient condition for stopping).At timeT+d,
+logD T+d ≥B m,d − 1
+2 log(1 +ρ 2σ2(m+d)).(129)
+Consequently, if
+Bm,d ≥L+ 1
+2 log(1 +ρ 2σ2(m+d)),(130)
+thenτ A ≤T+d.
+Proof. Since DT+d sums over all intervals ending at T + d, it is at least the sum of the two terms indexed byJ 0 andJ 1:
+DT+d ≥inθf {M θ
+J0 +M θ
+J1} ≥inθf max{M θ
+J0 , M θ
+J1 }.
+Becausec d ≥c m+d,
+Mθ
+J0 ≥c m+d exp{κd(θ− X ̄0)2},
+and
+Mθ
+J1 =c m+d exp{κm+d(θ− X ̄1)2}.
+Therefore logD T+d ≥logc m+d + inθf max{κd(θ− X ̄0)2, κm+d(θ− X ̄1)2}.
+83
+
+
+LemmaE.1gives the second term asB m,d, while
+logc m+d =− 1
+2 log(1 +ρ 2σ2(m+d)).
+This proves (129). If the right side is at least L = logA , then DT+d ≥A and hence τA ≤T+d.
+Define the two-start spending penalty
+lπ(T, m) := max{−logπ T+1 ,−logπ T−m+1 }.(131)
+Lemma E.3(Weighted sufficient condition for stopping).At timeT+d,
+logD PFA
+T+d ≥B m,d −l π(T, m)− 1
+2 log(1 +ρ 2σ2(m+d)).(132)
+Consequently, if the right side is at leastL, thenτ PFA
+α ≤T+d.
+Proof.The weighted detector contains the two terms corresponding toJ 0 andJ 1, hence
+DPFA
+T+d ≥inθf {πT+1 M θ
+J0 +π T−m+1 M θ
+J1} ≥inθf max{πT+1 M θ
+J0 , πT−m+1 M θ
+J1 }.
+By definition ofl π(T, m) and becausec d ≥c m+d,
+πT+1 M θ
+J0 ≥exp{−l π(T, m)}cm+d exp{κd(θ− X ̄0)2},
+and
+πT−m+1 M θ
+J1 ≥exp{−l π(T, m)}cm+d exp{κm+d(θ− X ̄1)2}.
+Taking logarithms and applying LemmaE.1yields
+logD PFA
+T+d ≥ −lπ(T, m) + logc m+d +B m,d.
+Since logc m+d =− 1
+2 log(1 +ρ 2σ2(m+d)), the result follows.
+Lemma E.4(Uniform Robbins–Stirling lower bound).There exists a universal numerical constantc J >0such that, for every integern≥1and everyz∈[0, n],
+Γ(z+ 1/2)Γ(n−z+ 1/2)
+πΓ(n+ 1) ≥ cJ
+√n+ 1
+z
+n
+z
+1− z
+n
+n−z
+,(133)
+where we use the convention0 0 = 1.
+Proof.Write
+a:=z, b:=n−z,
+so thata, b≥0 anda+b=n.
+84
+
+
+We first record uniform Stirling bounds that will be used below. The standard Stirling formula with remainder gives, for everyy >0,
+√
+2π yy+1/2e−y ≤Γ(y+ 1)≤
+√
+2π yy+1/2e−y+1/(12y) .(134)
+In particular, for everyx≥1, applying the lower bound in (134) withy=x− 1
+2 gives
+Γ x+ 1
+2≥
+√
+2π x− 1
+2
+x
+e−(x−1/2)
+=
+√
+2π e1/2xxe−x 1− 1
+2x
+x
+.(135)
+By Bernoulli’s inequality, sincex≥1,
+1− 1
+2x
+x
+≥1− x
+2x = 1
+2.
+Consequently,
+Γ x+ 1
+2 ≥c −xxe−x, x≥1,(136)
+where
+c− :=
+√
+2π e1/2
+2 >0.
+Similarly, applying the upper bound in (134) withy=n≥1 yields
+Γ(n+ 1)≤c +
+√n nne−n, c+ :=
+√
+2π e1/12.(137)
+We now divide the proof into cases.
+Case 1:a≥1andb≥1.
+Using (136) twice and (137), we obtain
+Γ(a+ 1/2)Γ(b+ 1/2)
+πΓ(n+ 1) ≥ c2
+−aabbe−(a+b)
+πc+
+√n nne−n .
+Sincea+b=n, the exponential factors cancel, and hence
+Γ(a+ 1/2)Γ(b+ 1/2)
+πΓ(n+ 1) ≥ c2
+−
+πc+
+√n
+aabb
+nn
+= c2
+−
+πc+
+√n
+a
+n
+ab
+n
+b
+≥ c2
+−
+πc+
+√n+ 1
+a
+n
+ab
+n
+b
+.(138)
+85
+
+
+Case 2:0≤a≤1andb≥1.
+Define
+m0 := min
+0≤x≤1 Γ x+ 1
+2.
+Since the Gamma function is continuous and strictly positive on the compact interval [1/2, 3/2], we havem 0 >0. Therefore,
+Γ a+ 1
+2 ≥m 0.
+Using this inequality, (136) forb, and (137), we obtain
+Γ(a+ 1/2)Γ(b+ 1/2)
+πΓ(n+ 1) ≥ m0c−bbe−b
+πc+
+√n nne−n
+= m0c−
+πc+
+√n
+eabb
+nn
+= m0c−
+πc+
+√n
+ea
+na
+b
+n
+b
+.
+Fora∈[0,1], with the convention 0 0 = 1, we have
+ea ≥a a.
+Indeed, fora∈(0,1],
+log ea
+aa =a−aloga≥0,
+and the assertion also holds at a = 0 by continuity and the convention 00 = 1. It follows that
+Γ(a+ 1/2)Γ(b+ 1/2)
+πΓ(n+ 1) ≥ m0c−
+πc+
+√n
+a
+n
+ab
+n
+b
+≥ m0c−
+πc+
+√n+ 1
+a
+n
+ab
+n
+b
+.(139)
+The casea≥1 and 0≤b≤1 follows symmetrically.
+Case 3:n= 1.
+In this casea, b∈[0,1]. Hence
+Γ a+ 1
+2 ≥m 0,Γ b+ 1
+2 ≥m 0.
+Since Γ(2) = 1, Γ(a+ 1/2)Γ(b+ 1/2)
+πΓ(2) ≥ m2
+0
+π.
+86
+
+
+Moreover,
+aabb ≤1,
+becausea, b∈[0,1]. Therefore,
+Γ(a+ 1/2)Γ(b+ 1/2)
+πΓ(2) ≥
+√
+2m 2
+0
+π
+√
+2 aabb.(140)
+Finally, define
+cJ := min
+(
+c2
+−
+πc+
+, m0c−
+πc+
+,
+√
+2m 2
+0
+π
+)
+.
+This is a strictly positive universal constant. Combining (138), (139), its symmetric counterpart, and (140), we conclude that
+Γ(a+ 1/2)Γ(b+ 1/2)
+πΓ(n+ 1) ≥ cJ
+√n+ 1
+a
+n
+ab
+n
+b
+.
+Substitutinga=zandb=n−zproves (133).
+Lemma E.5(Positive lower growth is preserved).Let a be a growth-preserving adjuster, and letY n ≥1be random variables. If, for somer >0,
+lim inf
+n→∞
+1
+n logY n ≥ralmost surely,
+then
+lim inf
+n→∞
+1
+n loga(Y n)≥ralmost surely.
+Proof.Becauseais growth preserving,
+loga(e y)
+y −→1 (y→ ∞).
+Fixε∈(0,1). Then there existsy ε <∞such that
+loga(e y)≥(1−ε)y, y≥y ε.
+Work on the probability-one event on which
+lim inf
+n→∞
+1
+n logY n ≥r.
+For all sufficiently largen,
+1
+n logY n ≥r−ε >0,
+87
+
+
+whereε < rmay be assumed. Consequently,
+logY n ≥n(r−ε)−→ ∞,
+soY n ≥1 and logY n ≥y ε eventually. Therefore, for all sufficiently largen,
+1
+n loga(Y n)≥(1−ε) 1
+n logY n.
+Taking lower limits gives
+lim inf
+n→∞
+1
+n loga(Y n)≥(1−ε) lim inf
+n→∞
+1
+n logY n ≥(1−ε)r.
+Lettingε↓0 proves the result.
+Lemma E.6(Stability under a vanishing contaminated suffix).Let Tn → ∞, dn → ∞, and dn/Tn → 0. Suppose the first Tn observations are i.i.d. N (a, u)and the remaining dn observations are i.i.d. from a fixed Gaussian law, independently. Put n = Tn + dn and use (22). Then, for everyδ >0,
+inf
+|θ−a|≥δ
+1
+n logR θ
+1:n −→ 1
+2 log 1 + δ2
+u (141)
+in probability. Moreover, for every compactK⊂R,
+sup
+θ∈K
+1
+n logR θ
+1:n −J a,u(θ) −→0 (142)
+in probability.
+Proof ofLemma E.6.Write
+Nn :=T n +d n,
+so that Nn is denoted by n in the statement. Let the contaminating Gaussian law be N (b, v), wherev >0.
+Since only convergence in probability is claimed, we may realize all rows of the triangular array on a common probability space as follows. Let
+Z1, Z2, . . . ii∼dN(a, u), Y 1, Y2, . . . ii∼dN(b, v),
+with the two sequences independent, and, in then-th row, set
+Xi =
+(
+Zi,1≤i≤T n,
+Yi−Tn, Tn < i≤N n.
+Each row then has exactly the distribution specified in the lemma. We prove the desired
+88
+
+
+convergence almost surely under this coupling, which implies the stated convergence in probability.
+Fork≥1, let
+X ̄k := 1
+k
+k
+X
+i=1
+Xi,bv k := 1
+k
+k
+X
+i=1
+(Xi − X ̄k)2.
+Step 1: Uniform stability of the empirical moments and predictors over the suffix.
+We first show that
+sup
+0≤j≤dn
+X ̄Tn+j −a −→0,sup
+0≤j≤dn
+|
+bTvn+j −u| −→0 (143)
+almost surely.
+Indeed, for 0≤j≤d n,
+X ̄Tn+j −a=
+PTn
+i=1(Zi −a) + Pj
+l=1(Yl −a)
+Tn +j .
+Consequently,
+sup
+0≤j≤dn
+|X ̄Tn+j −a| ≤ 1
+Tn
+Tn
+X
+i=1
+(Zi −a) + 1
+Tn
+max
+0≤j≤dn
+j
+X
+l=1
+(Yl −a) .
+The first term converges to zero almost surely by the strong law. For the second term, write
+Yl −a= (Y l −b) + (b−a).
+Thus
+1
+Tn
+max
+0≤j≤dn
+j
+X
+l=1
+(Yl −a) ≤ dn
+Tn
+|b−a|+ dn
+Tn
+1
+dn
+max
+0≤j≤dn
+j
+X
+l=1
+(Yl −b) .
+Since
+1
+m max
+0≤j≤m
+j
+X
+l=1
+(Yl −b) −→0 a.s.,
+and dn/Tn → 0, the second term also converges to zero almost surely. This proves the first assertion in (143).
+The same argument applied to the second moments gives
+sup
+0≤j≤dn
+1
+Tn +j
+Tn+j
+X
+i=1
+X2
+i −(u+a 2) −→0 a.s.
+89
+
+
+Indeed, decompose
+Y2
+l −(u+a 2) = Y 2
+l −E[Y 2
+l ] + E[Y 2
+l ]−(u+a 2) ,
+and use the same maximal strong-law argument, noting thatE[Y 2
+1 ]<∞. Since
+bkv = 1
+k
+k
+X
+i=1
+X2
+i − X ̄ 2
+k,
+the second assertion in (143) follows.
+Fork≥1, abbreviate the regularized predictors after observingX 1, . . . , Xk by
+ekμ := X ̄k,eσ 2
+k := v0 + Pk
+i=1(Xi − X ̄k)2
+k+ν 0
+= v0 +kbvk
+k+ν 0
+.
+It follows from (143) that
+sup
+Tn≤k≤Nn
+|
+ekμ−a| −→0,sup
+Tn≤k≤Nn
+|
+e2σ
+k −u| −→0 (144)
+almost surely. For the variance predictor, this follows from
+e2σ
+k −u= k
+k+ν 0
+(
+bkv −u) + v0 −uν 0
+k+ν 0
+.
+Step 2: The suffix contributeso(N n)to the predictive score.
+Define
+li := logeσi−1 + (Xi −eμi−1)2
+2
+e2σ
+i−1
+,
+with the prescribed initial predictors used when i = 1. By (144), almost surely, for all sufficiently largen, there are deterministic constants 0< c < C <∞such that
+|
+eTμn+j−1| ≤C, c≤eσ 2
+Tn+j−1 ≤C,1≤j≤d n.
+Hence, for another finite constantC 1,
+|lTn+j| ≤C 1(1 +Y 2
+j ),1≤j≤d n.
+Therefore,
+1
+Nn
+dn
+X
+j=1
+lTn+j ≤C 1
+dn
+Nn
+1+ 1
+dn
+dn
+X
+j=1
+Y2
+j
+!
+−→0 (145)
+90
+
+
+almost surely, becaused n/Nn →0 and
+1
+dn
+dn
+X
+j=1
+Y2
+j −→E[Y 2
+1 ] a.s.
+Step 3: Identification of theθ-independent term.
+For any sample sizem, write
+Cm := 1
+2− 1
+m
+m
+X
+i=1
+li.
+Then the definition ofR θ
+1:m gives the exact decomposition
+1
+m logR θ
+1:m =C m + 1
+2 log bmv + (X ̄m −θ) 2 .(146)
+Let CP
+Tn denote the corresponding quantity computed from the uncontaminated observations Z1, . . . , ZTn. Proposition5.1, applied underN(a, u) withθ=a, gives
+1
+Tn
+logR a
+1:Tn −→J a,u(a) = 0 a.s.
+On the other hand,
+1
+Tn
+logR a
+1:Tn =C P
+Tn + 1
+2 log bTvn + (Z ̄Tn −a) 2 .
+Since
+bTvn −→u, Z ̄Tn −→aa.s.,
+we obtain
+CP
+Tn −→ − 1
+2 logua.s. (147)
+The prefix predictors in the contaminated row coincide exactly with those computed from Z1, . . . , ZTn. Hence
+CNn = Tn
+Nn
+CP
+Tn + dn
+2Nn
+−1
+Nn
+dn
+X
+j=1
+lTn+j .
+UsingT n/Nn →1,d n/Nn →0, (145), and (147), we conclude that
+CNn −→ − 1
+2 logua.s. (148)
+Also, by (143) withj=d n,
+X ̄Nn −→a,bv Nn −→ua.s. (149)
+91
+
+
+Step 4: Uniform convergence on compact sets.
+LetK⊂Rbe compact. From (149),
+sup
+θ∈K
+bNvn + (X ̄Nn −θ) 2 − u+ (a−θ) 2
+≤ |bNvn −u|+| X ̄Nn −a|sup
+θ∈K
+|X ̄Nn +a−2θ| −→0
+almost surely. Moreover, sinceu >0,
+inf
+θ∈K bNvn + (X ̄Nn −θ) 2 ≥bvNn ≥ u
+2
+for all sufficiently large n, almost surely. The logarithm is therefore uniformly Lipschitz on the relevant range. Combining this with (146) and (148) yields
+sup
+θ∈K
+1
+Nn
+logR θ
+1:Nn − − 1
+2 logu+ 1
+2 log{u+ (a−θ) 2} −→0
+almost surely. Since
+−1
+2 logu+ 1
+2 log{u+ (a−θ) 2}= 1
+2 log 1 + (a−θ) 2
+u =J a,u(θ),
+this proves (142).
+Step 5: Uniform convergence over the exterior set.
+Because the logarithm is increasing andC Nn does not depend onθ,
+inf
+|θ−a|≥δ
+1
+Nn
+logR θ
+1:Nn =C Nn + 1
+2 log bNvn + inf
+|θ−a|≥δ
+(X ̄Nn −θ) 2 .
+The distance from X ̄Nn to the closed set{θ:|θ−a| ≥δ}is
+δ− | X ̄Nn −a| + ,
+so
+inf
+|θ−a|≥δ
+(X ̄Nn −θ) 2 = δ− | X ̄Nn −a| 2
++ −→δ 2 a.s.
+Together with (148) and (149), this gives
+inf
+|θ−a|≥δ
+1
+Nn
+logR θ
+1:Nn −→ − 1
+2 logu+ 1
+2 log(u+δ 2) = 1
+2 log 1 + δ2
+u
+almost surely under the coupling, and hence in probability under the original triangular-array laws. This proves (141).
+92
+
+
+Lemma E.7(Concentration of empirical transition frequencies).For r = (p, q) ∈ Θκ, let Kr be its transition matrix, let πr be its stationary distribution, and define the stationary transition frequencies
+Γr(x, y) :=π r(x)Kr(x, y), x, y∈ {0,1}.
+For a block ofntransitions, write
+Γbn(x, y) := N 1:n
+xy
+n.
+There exist constants Cκ, cκ > 0, depending only on κ, such that, uniformly over r∈ Θκ, the initial state,n≥1, andz∈(0,1),
+Pr ∥Γbn −Γ r∥∞ > z ≤C κe−cκnz2.
+Proof.Fixx, y∈ {0,1}, and put
+f(u, v) :=1{u=x, v=y}, h(u) :=E r[f(X i−1, Xi)|X i−1 =u].
+Then
+πrh= Γ r(x, y).
+The Dobrushin contraction coefficient ofK r is
+δ(Kr) =|p−q| ≤1−2κ.
+Consequently, the Poisson series
+g:=
+∞
+X
+m=0
+(K m
+r h−π rh)
+converges and satisfies
+∥g∥∞ ≤ 1
+2κ .
+Moreover,
+g−K rg=h−π rh.
+Writing
+ξi :=f(X i−1, Xi)−h(X i−1) +g(X i)−K rg(Xi−1),
+we have
+Er[ξi | Fi−1] = 0
+and
+|ξi| ≤1 + 2∥g∥ ∞ ≤1 + 1
+κ.
+93
+
+
+The Poisson decomposition gives
+n
+X
+i=1
+{f(X i−1, Xi)−Γ r(x, y)}=
+n
+X
+i=1
+ξi +g(X 0)−g(X n).
+Azuma–Hoeffding therefore yields constantsC κ, cκ >0 such that
+Pr Γbn(x, y)−Γ r(x, y) > z ≤C κe−cκnz2.
+A union bound over the four pairs (x, y) proves the result.
+94

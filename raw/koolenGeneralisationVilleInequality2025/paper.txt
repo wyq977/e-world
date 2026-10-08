@@ -1,0 +1,828 @@
+arXiv:2502.16019v1 [math.ST] 22 Feb 2025
+A Generalisation of Ville’s Inequality to Monotonic
+Lower Bounds and Thresholds
+Wouter M. Koolena,b, Muriel F. P ́erez-Ortizc, Tyron Lardya,d
+aCentrum Wiskunde & Informatica, Amstedam, The Netherlands bUniversity of Twente, Enschede, The Netherlands cTechnical University Eindhoven, Eindhoven, The Netherlands dLeiden University, Leiden, The Netherlands
+Abstract
+Essentially all anytime-valid methods hinge on Ville’s inequality to gain validity across time without incurring a union bound. Ville’s inequality is a proper generalisation of Markov’s inequality. It states that a non-negative supermartingale will only ever reach a multiple of its initial value with small probability. In the classic rendering both the lower bound (of zero) and the threshold are constant in time. We generalise both to monotonic curves. That is, we bound the probability that a supermartingale which remains above a given decreasing curve exceeds a given increasing threshold curve. We show our bound is tight by exhibiting a supermartingale for which the bound is an equality. Using our generalisation, we derive a clean finite-time version of the law of the iterated logarithm.
+Keywords:
+Ville’s Inequality, supermartingales, anytime-valid, optional stopping, Law of Iterated Logarithm
+1. Introduction
+We revisit Ville’s inequality. To set the stage, consider a filtered probability space (Ω, F , (Fn)n≥0, P). Recall that an adapted process (Mn)n≥0 is a supermartingale if for all time steps n ≥ 0
+E [Mn+1|Fn] ≤ Mn and E[|Mn|] < ∞. (1)
+The classic inequality by Ville (1939) states that a supermartingale which is bounded below will only ever reach a large threshold with small probability.
+Preprint submitted to SPL: E-values Special Issue February 25, 2025
+
+
+In the customary presentation with zero as the lower bound, it reads
+Theorem 1.1 (Ville’s Inequality). Let (Mn)n≥0 be a non-negative supermartingale. Then for every threshold C > 0, P {∃n ≥ 0 : Mn ≥ C} ≤ E[M0]
+C.
+This strengthens Markov’s inequality by including a search over time steps, while keeping the threshold C and probability 1
+C inversely propor
+tional. This reveals that, as test statistics, supermartingales are immune to the multiple testing problem that would otherwise require a Bonferroni-type union bound. The statistical use of Ville’s inequality stems from the fact that many events of interest can be encoded as a fixed supermartingale not growing. As such Ville’s inequality is a workhorse in the fields of sequential analysis (Wald, 1952), game-theoretic probability (Shafer and Vovk, 2019), e-values (Ramdas et al., 2023) and many more.
+Generalisations. Multiple extensions of Ville’s inequality have been proposed in discrete and continuous time. Ruf et al. (2022) study a composite null hypothesis, and they characterise the events that can be expressed as a uniform (in P) supermartingale getting big. Wang and Ramdas (2023) study the nonintegrable case, dropping the right hand side condition from (1), and obtain a correction for the threshold/probability relationship. Ramdas and Manole (2023) develop a randomised sharpening of Markov’s inequality, which also extends to a Ville-type inequality under external stopping.
+Our Question. We investigate an orthogonal direction: what if the lower bound and threshold are not constant in time? That is, suppose supermartingale (Mn)n≥0 is bounded below by Mn ≥ −f (n) for some increasing function f , and fix some increasing target threshold g(n). What can we say about P {∃n ≥ 0 : Mn ≥ g(n)}? And what applications could this tackle?
+Ville & LIL. We focus on the paradigmatic application of Ville’s inequality for deriving anytime-valid concentration inequalities of iterated-logarithm type (for the history, see Shafer and Vovk, 2001, Section 5.5). These state that for X1, X2, . . . conditionally sub-Gaussian with mean μ1, with empirical
+mean abbreviated by μˆn = 1
+n
+∑n
+i=1 Xi, for any confidence δ ∈ (0, 1], we have
+P
+
+
+
+∃n : μˆn − μ ≥ (1 + o(1))
+√
+2 ln 1
+δ + ln ln n
+n
+
+
+
+≤ δ. (2)
+1That is, E[eη(Xn+1−μ)|Fn] ≤ e
+1
+2 η2 for all η ∈ R and n ≥ 0.
+2
+
+
+Darling and Robbins (1967); Robbins (1970); De la Pe ̃na (1999); Balsubramani and Ramdas (2016); Kaufmann and Koolen (2021) prove versions of (2) by applying Ville’s inequality to a mixture martingale, crafted to implement a “slicing” weighted union bound over near-exponentially spaced time intervals. Could a more powerful or versatile version of Ville’s inequality result in a cleaner path to form (2) with an explicit and interpretable o(1) term?
+Partial Proof of Concept. Our prime example of a load-bearing supermartingale with a diverging lower bound comes from Koolen and Van Erven (2015, Section 3.3). For bounded outcomes X1, X2, . . . ∈ [−1, +1] with conditional mean at most E [Xn+1|Fn] ≤ μ, they build supermartingales of the form n 7→
+∫b
+0
+∏n
+i=1(1 + η(Xi − μ)) − 1
+η dη or
+∫b
+0
+eη ∑n
+i=1(Xi−μ)− n
+2 η2 − 1
+η dη. (3)
+It is well known (see e.g. Shafer and Vovk, 2001) that for η ≥ 0 sufficiently small, the factors 1 + η(Xi − μ) and eη(Xi−μ)− 1
+2 η2 are non-negative and have expectation bounded by one. Hence taking products over timesteps i = 1, . . . , n, and mixing over η ∈ [0, b] with positive weights results in a supermartingale. The innovation in (3) is to mix the increments (over the starting value 1) with an improper prior 1
+η dη. The resulting processes (3) are bona fide supermartingales, satisfying both parts of (1), but they are not bounded below by any constant, but instead by −1 − ln n at time n. If we assume that supermartingale (3) is not high, a concentration inequality of iterated-logarithm type follows deterministically. But why would it not be high? In the context of individual sequence prediction, a super-martingale can be prevented from growing by the method of defensive forecasting. In that context, the key advantage of improper vs standard mixtures is computational: the integral required for defensive forecasting admits a closed form. Instead, in the context of stochastic concentration inequalities the growth of a non-negative supermartingale is controlled by Ville’s inequality. But how to control (3) and friends? And what are the trade-offs?
+Our contributions. In this article we extend Ville’s inequality to handle supermartingales with arbitrary lower bounds and thresholds. We arrive at a tight characterisation of the threshold-crossing probability for any monotonic lower bound and threshold curves. Comparing to Koolen and Van Erven (2015), we find a way to handle sub-Gaussian distributions with unbounded outcomes (for which (3) would be unbounded below at every n). Using our extensions, we prove a cleaner iterated logarithm concentration inequality.
+3
+
+
+2. Main Result
+We show the following generalisation of Ville’s inequality Theorem 1.1.
+Theorem 2.1. Consider two non-decreasing functions f and g defined on {0, 1, . . .} such that −f (0) < g(0).
+(a) For any supermartingale (Mn)n≥0 bounded below by Mn ≥ −f (n) for all n ≥ 0 and with initial expectation E[M0] ∈ [−f (0), g(0)], we have
+P
+{
+∃n ≥ 0 : Mn ≥ g(n)
+}
+≤ 1 − g(0) − E[M0]
+g(0) + f (0)
+∞
+∏
+n=1
+g(n) + f (n − 1)
+g(n) + f (n) . (4)
+(b) For any m ∈ [−f (n), g(n)] there is a martingale (Mn)n≥0 bounded below by M ≥ −f and with E[M0] = m such that (4) holds with equality.
+We recover Theorem 1.1 for constant f (n) = 0 and g(n) = C in (4). In Section 2.1 we discuss the martingale that proves tightness (b), and then we prove the upper bound (a) in Section 2.2. A more interpretable bound and examples of the use of Theorem 2.1 are obtained in Section 3.
+2.1. Proof of Tightness (Theorem 2.1(b)) by Floor Hugging
+We will first consider the case M0 = −f (0) deterministically. Then to create a witness martingale for E[M0] ∈ (−f (0), g(n)], we simply randomise (with weights chosen to control the mean) between starting at either M0 = −f (0) or M0 = g(0). We now define the floor-hugger martingale. It starts with M0 = −f (0). If it finds itself at time n at value Mn = −f (n), then it either jumps up to Mn+1 = g(n + 1) or drops down to Mn+1 = −f (n + 1)—it hugs the floor. The martingale property forces the jump probability pn to satisfy
+−f (n) = png(n + 1) − (1 − pn)f (n + 1) i.e. pn = f (n + 1) − f (n)
+g(n + 1) + f (n + 1) . (5)
+Let s(n) := P(∀t ≥ n : Mt = −f (t)|Mn = −f (n)) denote the the floor-hugger probability to never hit M = g, starting from time n at value −f (n). Then
+s(n) =
+∞
+∏
+t=n
+(
+1 − f (t + 1) − f (t)
+g(t + 1) + f (t + 1)
+)
+. (6)
+We observe that s(n) ∈ [0, 1]. Taking n = 0, we see that the floor-hugger martingale witnesses (4) with equality.
+4
+
+
+2.2. Proof of Upper Bound (Theorem 2.1(a)) using Classic Ville
+Fix any supermartingale (Mn)n≥0 bounded below by Mn ≥ −f (n). Based on it, we construct the auxiliary non-negative supermartingale (Kn)n≥0 by
+Kn := 1 − g(n) − Mn
+g(n) + f (n)s(n), (7)
+where s(n) is the probability, defined in (6), that the floor-hugger martingale never reaches g when starting from value −f (n) at time n. We prove that (Kn)n≥0 is a non-negative supermartingale, and then derive our upper bound using Ville’s inequalty.
+Lemma 2.2. The process (Kn)n≥0 in (7) is a non-negative supermartingale.
+Proof. First, Kn is non-decreasing in Mn ≥ −f (n), and hence non-negativity follows by Kn ≥ 1 − s(n) ≥ 0. For the supermartingale claim, we have
+E [Kn+1|Fn] ≤ 1 − g(n + 1) − Mn
+g(n + 1) + f (n + 1) s(n + 1) = 1 − g(n + 1) − Mn
+g(n + 1) + f (n) s(n) ≤ 1 − g(n) − Mn
+g(n) + f (n) s(n) = Kn,
+where we used the definition of Kn, the fact that Mn is a supermartingale, the
+recurrence s(n) =
+(
+1 − f(n+1)−f(n)
+g(n+1)+f (n+1)
+)
+s(n + 1) by (6), and Mn ≥ −f (n).
+Corollary 2.3. The first claim of Theorem 2.1, i.e. (4) holds.
+Proof. As s(n) ∈ [0, 1], Kn is non-decreasing in Mn and hence Mn ≥ g(n) implies Kn ≥ 1. Hence by Ville’s inequality (Theorem 1.1), we find
+P {∃n ≥ 0 : Mn ≥ g(n)} ≤ P {∃n ≥ 0 : Kn ≥ 1}
+≤ E[K0] = 1 − g(0) − E[M0]
+g(0) + f (0) s(0),
+which, upon rewriting, yields (4).
+The two key properties used in the proof are that the auxiliary martingale (Kn)n≥0 is non-negative and that Mn ≥ g(n) ⇒ Kn ≥ 1. However, the definition of Kn might seem unintuitive because it involves s(n), which consists of future values of f and g. Could one design a non-trivial non-negative martingale (Ln)n≥0 based on the history, Ln = Ln((Mi)i≤n, (g(i))i≤n, (f (i))i≤n),
+5
+
+
+such that Mn ≥ g(n) ⇒ Ln ≥ 1? For instance, one could consider defining Ln as a scaled and/or translated version of Mn based on past and present values of f and g (e.g. (7) without the factor s(n)). Such a construction turns out to be impossible. This follows from the fact that we must have E [Ln+1|Fn] ≤ Ln regardless of what the original martingale (Mn)n≥0 does after time n; in particular, this must hold if it does a “floor-hugger” type jump (see Section 2.1) from Mn to g(n + 1). If this jump is succesful, then Mn+1 = g(n+1), which would imply that Ln+1 ≥ 1. However, the probability of success (5) can be made arbitrarily close to one by taking f (n + 1) → ∞, which gives E [Ln+1|Fn] = 1 ≤ Ln. It follows that Ln ≥ 1 for all n, so the implication Mn ≥ g(n) ⇒ Ln ≥ 1 is powerless. The only way to avoid this is for Kn to account for future values of f and g.
+3. A Continuous Bound and Examples
+We present a more interpretable relaxation of (4) by considering lower bound f and threshold g defined on real-valued inputs.
+Corollary 3.1. Let f, g : R+ → R+ be increasing with f differentiable. Under the setup of Theorem 2.1(a),
+P {∃n ≥ 0 : Mn ≥ g(n)} ≤ 1 − g(0) − E[M0]
+g(0) + f (0) exp
+(
+−
+∫∞
+0
+f ′(t)
+g(t) + f (t) dt
+)
+.
+Proof. For every n ≥ 1, as g is increasing,
+−
+∫n
+n−1
+f ′(t)
+g(t) + f (t) dt ≤ −
+∫n
+n−1
+f ′(t)
+g(n) + f (t) dt = ln
+(
+1 − f (n) − f (n − 1)
+g(n) + f (n)
+)
+.
+This bound is convenient in discrete time, and tight in continuous time (by an analogue of the floor hugger from Section 2.1). Furthermore, its right-hand side is pleasantly invariant under reparametrisations of time by any increasing bijection. Next we explore convenient choices for f and g.
+Example 3.2 (Quadratic). Fix increasing differentiable f with f (0) = 0 and limn→∞ f (n) = ∞. We propose to study g(t) = (af (t) + b)2 − f (t), which is increasing when 2ab ≥ 1. The exponent in Corollary 3.1 evaluates to
+−
+∫∞
+0
+f ′(t)
+g(t) + f (t) dt = −
+∫∞
+0
+f ′(t)
+(af (t) + b)2 dt = 1
+a(af (t) + b)
+∣ ∣ ∣ ∣
+∞
+0
+= −1
+ab .
+6
+
+
+Equating the threshold crossing probability bound 1 − e− 1
+ab to δ requires picking ab = 1
+− ln(1−δ) .
+The quadratic is in fact a member of a more general construction, which we present in Appendix A. If g vs f grows too slowly, (4) trivialises to 1:
+Example 3.3 (Counterexample). For diverging f (t), when we take g = O(f ), the upper bound in Corollary 3.1 is the trivial 1: let t0 ≥ 0 and c > 0 be such that g(t) ≤ cf (t) for all t ≥ t0. Then
+∫∞
+0
+f ′(t)
+g(t) + f (t) dt ≥
+∫∞
+t0
+f ′(t)
+(1 + c)f (t) dt = ln f (n)|∞
+t0 = ∞.
+4. Finite-time Law of the Iterated Logarithm (LIL)
+Let X1, X2, . . . be a sequence of independent sub-Gaussian random variables with common conditional mean μ, and let Sn = ∑
+i≤n(Xi − μ) be their centered sum. In this sub-Gaussian case we can derive an iterated-logarithm bound of form (2) using the supermartingale
+Mn = √1
+2π
+∫∞
+−∞
+{
+exp
+(
+ηSn − 1
+2 η2n
+)
+−1
+}
+e−η2/2 dη
+|η| . (8)
+This choice of Mn is inspired by (3), but now instead of using the improper
+“prior” 1{|η|≤b}
+|η| dη, (8) uses e−η2/2
+|η| dη, which eases some Gaussian-integral computations. Lemma Appendix B.2 shows that Mn ≥ −√1
+2π ln(1 + n). Thus,
+we can apply Theorem 2.1 with f (n) = √1
+2π ln(1 + n). The following is shown
+using a specific choice of threshold g in Theorem 2.1 and a linearization of the ensuing implicit bound. A slightly tighter version is in Appendix B.
+Lemma 4.1. Let X1, X2, . . . be a sequence of independent sub-Gaussian random variables with common conditional mean μ, and let Sn = ∑
+i≤n(Xi − μ).
+As long as δ ≤ 3/5, with probability larger than 1 − δ and δ′ := − ln(1 − δ),
+∀n :
+∣ ∣ ∣ ∣
+Sn
+√n + 1
+∣ ∣ ∣ ∣
+≤
+√ √
+√
+√2 ln
+{
+1 + ln(n + 1)/√π + e
+√
+2
+δ′ ln2 ( ln(n+1)
+√
+2π + e
+)
+}
++ √1
+2
+.
+7
+
+
+5. Discussion
+We extended Ville’s inequality to supermartingales that are bounded below by a time-decreasing lower bound, and to time-increasing thresholds. We then put the result to use in deriving concentration inequalities of iteratedlogarithm type. Let us discuss what we learned on the way.
+Is our extended Ville’s inequality strictly more general?. Here our study reveals that the answer is, surprisingly, no. This becomes apparent in the proof of the upper bound in Section 2.2, which operates by applying Ville’s inequality to an auxiliary non-negative supermartingale. Indeed if one is able to encode an event of interest directly in the form of that auxiliary supermartingale, classic Ville suffices.
+Is our extension more user friendly?. We strongly believe that the auxiliary supermartingale from Section 2.2 is not intuitive or natural, and we are not aware of any result that can be rendered as having guessed it. We certainly discovered it last, when trying to prove that the Floor Hugger martingale from Section 2.1 is the worst case. This suggests that possible consequences of our extension, even though accessible in principle, were not practically available. In that sense we claim our extension is more empowering.
+Is our finite-time LIL better?. To put our result to use, we develop a subGaussian concentration inequality of iterated logarithm type. If we juxtapose the consequence of applying Ville to proper and improper mixture approaches, and ignore constants, we need to unpack respectively
+∫b
+−b
+eηSn− 1
+2 nη2
+|η| (ln |η|)1+c dη ≤ 1
+δ or
+∫b
+−b
+eηSn− 1
+2 nη2 − 1
+|η| dη ≤ ln n
+δ (ln ln n)1+c .
+Any lower bound of either integral gives a LIL bound. The comparison then boils down to which form is easier to bound tightly. We show in Lemma Appendix B.2 that the right-hand inequality rewrites to a fixed function of the deviation Sn
+√n+1 being below the threshold ln n
+δ (ln ln n)1+c.
+Due to this separation, obtaining a LIL bound reduces to inverting that function. A similar modularity is not present in the left-hand inequality, and its tight analysis is considerably more involved (Robbins, 1970; Koolen and Van Erven, 2015).
+8
+
+
+One-sided LIL bounds. The proper mixture technique easily adapts to delivering one-sided LIL bounds, simply by mixing only over η ≥ 0. A one-sided improper mixture analogue of (8) would be well-defined. But it would not be bounded below, as can be seen by taking Sn → −∞, which takes the exponential to zero. This is a curious downside that invites further investigation.
+Multiple Testing / Betting with Subsidies. Theorem 2.1 reveals that the worst-case nonnegative martingale only makes a single all-or-nothing attempt to cross the threshold. This is how Ville generalises Markov’s inequality without any overhead. The story changes fundamentally with a receding lower bound −f . Now, every time margin is created by growing f , the worstcase martingale makes a new independent attempt to hit the then-current threshold g. These attempts all contribute to the overall probability of ever reaching g. In that light, non-constant lower bounds correspond to multiple testing scenarios. Our relation between f, g and the probability of ever reaching g quantifies the exact multiple testing correction required. Yet another equivalent perspective is to consider the non-negative semimartingale Mn + f (n) consisting of a stochastic supermartingale part Mn and a deterministic increasing “subsidy” part f (n). In betting language, the subsidies allow for engaging in multiple all-or-nothing bets, and consequently reduce the surprise upon sizeable gain. Our main result quantifies exactly the relation between surprise and gain g as a function of the subsidy f .
+References
+A. Balsubramani and A. Ramdas. Sequential nonparametric testing with the law of the iterated logarithm. In Proceedings of the Thirty-Second Conference on Uncertainty in Artificial Intelligence, 2016.
+D. A. Darling and H. Robbins. Iterated logarithm inequalities. Proceedings of the National Academy of Sciences, 57(5):1188–1192, 1967.
+V. H. De la Pe ̃na. A general class of exponential inequalities for martingales and ratios. Annals of Probability, 27(1):537–564, 1999.
+E. Kaufmann and W. M. Koolen. Mixture martingales revisited with applications to sequential tests and confidence intervals. Journal of Machine Learning Research, 22:246–1, 2021.
+9
+
+
+W. M. Koolen and T. van Erven. Second-order quantile methods for experts and combinatorial games. In Proceedings of The 28th Annual Conference on Learning Theory (COLT), June 2015.
+A. Ramdas and T. Manole. Randomized and exchangeable improvements of Markov’s, Chebyshev’s and Chernoff’s inequalities. arXiv:2304.02611, 2023.
+A. Ramdas, P. Gr ̈unwald, V. Vovk, and G. Shafer. Game-theoretic statistics and safe anytime-valid inference. Statist. Sci., 38(4):576–601, 2023.
+H. Robbins. Statistical methods related to the law of the iterated logarithm. The Annals of Mathematical Statistics, 41(5):1397–1409, 1970.
+J. Ruf, M. Larsson, W. M. Koolen, and A. Ramdas. A composite generalization of Ville’s martingale theorem. arXiv:2203.04485, 2022.
+G. Shafer and V. Vovk. Probability and Finance – It’s Only a Game! Wiley, New York, 2001.
+G. Shafer and V. Vovk. Game-Theoretic Probability: Theory and Applications to Prediction, Science and Finance. Wiley, 2019.
+J. Ville. E ́tude critique de la notion de collectif. Gauthier-Villars, 1939.
+A. Wald. Sequential Analysis. Wiley, New York, 1952.
+H. Wang and A. Ramdas. The extended Ville’s inequality for nonintegrable nonnegative supermartingales. arXiv:2304.01163, 2023.
+Appendix A. Exp-concave Dampener Example
+In this section we present an extension of Example 3.2 that allows for g(n) to grow slower than quadratic in f (n) (but still super-linear).
+Example Appendix A.1 (Exp-concave). Fix increasing differentiable f with f (0) = 0 and limn→∞ f (t) = ∞, and let h be 1-exp-concave—the function ξ 7→ e−h(ξ) is concave—and twice differentiable such that limξ→∞ h(ξ) =
+0 (the quadratic above corresponds to h(ξ) = 1
+a(aξ+b) ). We propose to investigate g(t) = −1
+h′(f(t)) − f (t). Now g(t) being non-decreasing translates
+to 0 ≤ g′(t) =
+( h′′(f (t))
+h′(f (t))2 − 1
+)
+f ′(t), and given that f ′(t) ≥ 0, it remains
+10
+
+
+to check h′(f (t))2 ≤ h′′(f (t)), which holds by the exp-concavity assumption. Then, as h(f (∞)) = h(∞) = 0,
+−
+∫∞
+0
+f ′(t)
+g(t) + f (t) dt =
+∫∞
+0
+h′(f (t))f ′(t) dt = h(f (t))|∞
+0 = − h(0).
+So to ascertain threshold crossing probability bounded by δ, it suffices to pick 1 − e−h(0) = δ, i.e. h(0) = − ln(1 − δ). Interesting choices for h include the polynomial h(ξ) = (aξ+b)1−c
+a(c−1) for c > 1 (the quadratic being c = 2) and
+a, b > 0 which is exp-concave provided ac ≥ b1−c. They also include the fat-tailed h(ξ) = 1
+ln(aξ+b)c−1 for a > 0, b ≥ e, c > 1, which is exp-concave.
+The latter ensures g(n) ∼ f (n)(ln f (n))c as n → ∞.
+Appendix B. Proof of Lemma 4.1
+In this section, we show Lemma Appendix B.1, which directly implies Lemma 4.1.
+Lemma Appendix B.1. Under the set up of Lemma Appendix B.3, as long as δ ≤ 3/5, with probability larger than 1 − δ,
+∀n :
+∣ ∣ ∣ ∣
+Sn
+√n + 1
+∣ ∣ ∣ ∣
+≤
+√ √
+√
+√2 ln
+{
+1 + ln(n + 1)/√π + e
+√
+2
+δ′ ln2
+(ln(n + 1)
+√
+2π
++e
+)
+}
++R(n),
+where δ′ = − ln(1 − δ), the function ln(δ)(n) = 1 + ln(1+n)
+δ′√
+2π , and the residual
+quantity R(n) =
+τ
+(
+1−
+√
+τ (n) τ (n)+2
+√
+2
+1 ln(1+
+√
+2τ (n))
+)
+1 2 ln(1+
+√
+2τ (n)) [(1+
+√
+2τ (n)){2 ln(1+
+√
+2τ (n))−1}+ln(1+
+√
+2τ (n))+1]
+√ τ (n) τ +2
+√
+2
+with
+τ (n) = ln(n+1)/
+√
+2π+e
+δ′ ln2 ( ln(n+1)
+√
+2π + e
+)
+. Furthermore, the remainder term
+R = R(n) is harmless: R ≤ 1/
+√
+2, the function n 7→ R(n) is increasing, and
+R(n) ∼ √1
+2
+(
+1− 1
+√
+2 ln ln n
+)
+as n → ∞.
+If one considers a version Mκ
+n of Mn with “prior” e−η2κ2/2
+|η| dη for some κ > 0, the time-uniform high-probability bound ∀n : Sn ≤ Fδ(n) from Mn scales to ∀n : Sn ≤ κFδ(n/κ2) from M κ
+n.
+Throughout this section, we will make use of the following function
+I(x) :=
+∫x
+0
+eu2/2 erf
+( √u
+2
+)
+du (B.1)
+11
+
+
+We begin with the following lemma (its proof can be found in Section Appendix B.1), which presents a rewrite of Mn from (8).
+Lemma Appendix B.2. The martingale (Mn)n from (8) satisfies
+Mn = I
+( Sn
+√n + 1
+)
+− √1
+2π ln(1 + n)
+where I from (B.1) is nonnegative and consequently Mn ≥ −√1
+2π ln(1 + n).
+This result decomposes Mn into a contribution only dependent on the
+scaled and smoothed empirical mean Sn
+√n+1 and a contribution only dependent
+on the sample size n. With a choice of g, we obtain an implicit concentration inequality in terms of the function I (see the proof in Section Appendix B.2).
+Lemma Appendix B.3. Let X1, X2, . . . be an i.i.d. sequence of standard normal random variables. Then, as long as δ ≤ 3/5, with probability larger than 1 − δ,
+∀n : I
+( Sn
+√n + 1
+)
+≤ ln(n + 1)/
+√
+2π + e
+δ′ ln2
+(ln(n + 1)
+√
+2π
++e
+)
+, (B.2)
+where I is defined in (B.1) and δ′ = − ln(1 − δ).
+The right hand side of (B.2) is of order ln(n) + o(ln(n)) as n → ∞,
+and, as we will see, I(x) & ex2/2/x as x → ∞. Thus, (B.2) implies that, uniformly over time and with probability larger than 1 − δ, we have that
+Sn/√n ≤
+√
+2(ln(ln(n)/δ))(1 + o(1)) as n → ∞. The last step of the proof, is to invert the implicit bound in Lemma Appendix B.3 to obtain an explicit bound for Sn. The following lemma provides a tool to do so (its proof is in Section Appendix B.4).
+Lemma Appendix B.4. Let I be as in Lemma Appendix B.3 and let τ > 0. Then, if I(x) ≤ τ , then
+|x| ≤
+√
+2 ln(1 +
+√
+2τ ) + R(τ )
+with R(τ ) =
+τ
+(
+1−
+√τ τ +2
+√
+2
+1 ln(1+
+√
+2τ )
+)
+1 2 ln(1+
+√
+2τ) [(1+
+√
+2τ ){2 ln(1+
+√
+2τ )−1}+ln(1+
+√
+2τ )+1]√ τ
+τ +2
+√
+2
+, which satisfies
+the following: R(τ ) ≤ 1/
+√
+2, and τ 7→ R(τ ) is increasing, and R(τ ) ∼
+√1
+2
+(
+1 − √1
+ln τ
+)
+as τ → ∞.
+12
+
+
+With these results at hand, we can proof Lemma Appendix B.1.
+Proof of Lemma Appendix B.1. Using the Lemma Appendix B.3, we ob
+tain a uniform bound for I(Sn/√n + 1). Using Lemma Appendix B.4, we obtain the explicit bound for Sn that is claimed.
+The next sections are respectively dedicated to the proofs of Lemma Appendix B.2, Lemma Appendix B.3, , and Lemma Appendix B.4.
+Appendix B.1. Proof of Lemma Appendix B.2
+Proof of Lemma Appendix B.2. We use Feynman’s trick. It begins by introducing an extraneous factor into the integral that defines Mn. Define
+v(x) := √1
+2π
+∫∞
+−∞
+{
+exp
+(
+ηSn − 1
+2 η2n
+)
+−1
+}
+e−η2x2/2 dη
+|η|
+and obtain
+v′(x) =
+√
+2
+πn
+nx + x3 −
+Snxe
+S2n
+2(n+x2) erf
+(
+Sn
+√2(n+x2)
+)
+(n + x2)3/2 . (B.3)
+Now we compute Mn = v(1) = −
+∫∞
+1 v′(x) dx. The first term on the right
+hand side of (B.3) contributes − ln(n+1)
+√
+2π to the integral. For the second term,
+we need to compute
+∫∞
+1
+Snxe
+S2n
+2(n+x2) erf
+(
+Sn
+√2(n+x2)
+)
+(n + x2)3/2 dx.
+After reparameterising by u(x) = Sn
+√
+n+x2 with u′(x) = − Snx
+(x2+n)3/2 , this can be
+written as
+∫ u(∞)
+u(1)
+−e u2
+2 erf
+( √u
+2
+)
+du =
+∫ √Snn+1
+0
+e
+u2
+2 erf
+( √u
+2
+)
+du.
+All in all, this gives
+Mn = − ln(n + 1)
+√
+2π +
+∫ √Snn+1
+0
+e
+u2
+2 erf
+( √u
+2
+)
+du
+13
+
+
+Appendix B.2. Proof of Lemma Appendix B.3
+Lemma Appendix B.2 allows us to use Theorem 2.1 with lower bound f (x) = ln(1 + x)/
+√
+2π. All that is left is to choose a threshold function g(x). The next lemma shows such a choice (its proof is in Appendix B.2.1).
+Lemma Appendix B.5. Let f (x) = √1
+2π ln(1 + x), let u be the function
+u(x) = 1
+d (e + x) ln (e + x)2 , and let g(x) := u(f (x)) − f (x). Then, the
+following two hold.
+1. If 0 < d ≤ 1, then g ≥ f , and the function g is increasing. 2.
+∫∞
+0
+f ′(x)
+f(x)+g(x) dx = d
+We can now proceed to prove Lemma Appendix B.3.
+Proof of Lemma Appendix B.3. By Lemma Appendix B.2, the martingale
+Mn can be rewritten as Mn = I(Sn/√n + 1) − ln(1 + n)/
+√
+2π with I defined in (B.1). Use Theorem 2.1 with f (x) = ln(1 + x)/
+√
+2π and g(x) = u(f (x)) − f (x) with u(x) = 1
+δ′ (e + x) ln (e + x)2 where δ′ = − ln(1 − δ). By
+Lemma Appendix B.5 (with d = δ′) this is a valid choice of g as long as − ln(1 − δ) ≤ 1, that is, as long as δ ≤ 1 − e−1 ≈ 0.63. Theorem 2.1 then
+implies that, with probability smaller than 1 − exp
+(
+−
+∫∞
+0
+f ′(u) f (u)+g(u)
+)
+du =
+1 − exp(δ′) = δ,
+∃n : I(Sn/
+√
+n + 1) ≥ u(f (n)).
+This is equivalent to the claim that we set ourselves to prove.
+Appendix B.2.1. Proof of Lemma Appendix B.5
+Proof of Lemma Appendix B.5. The function u is convex, u(0) = e/d, and u′(0) = 3/c. Then, the function u is bounded by its tangent at zero, that is u(x) ≥ e/d3x/d, which is larger than e + 3x because 0 < d ≤ 1. Then g(x) = u(f (x)) − f (x) ≥ 2f (x) + e ≥ f (x), which proves the first claim. The second claim—that g is increasing—follows because x 7→ f (x) is increasing and x 7→ u(x) − x is convex, and, as shown before, u′(0) − 1 ≥ 0. The third claim follows because the u was chosen so that u = − 1
+h′ with h(x) =
+d
+ln(e+x) (see Example Appendix A.1), and
+∫∞
+0
+f ′(x)
+f(x)+g(x) dx =
+∫∞
+0
+f ′(x)
+u(f(x)) dx =
+−
+∫∞
+0 h′(x)dx = h(0) − h(∞) = d.
+14
+
+
+Appendix B.3. Proof of Lemma Appendix B.4
+We would like, for a given threshold τ , to find a ξ so that x ≤ ξ anytime that I(x) ≤ τ . Ideally, ξ = I−1(τ ), but we do not have access to an explicit form for I−1. We begin by given a lower bound on I that is more amenable to explicit computation.
+Lemma Appendix B.6. With I defined in (B.1), I(x) ≥ l(x) :=
+√
+(ex2 /2 −1)3
+x2ex2/2 .
+The function l from Lemma Appendix B.6 is convex, and any tangent
+is a lower bound. Note additionally that l(x) ∼ (ex2/2 − 1)/
+√
+2 as x ↓ 0 so
+that l−1(τ ) ∼
+√
+2 ln(1 +
+√
+2τ ) as τ ↓ 0. This is behind the next lemma (its proof is in Section Appendix B.3.2).
+Lemma Appendix B.7. Assume that τ > 0 and x is such that l(x) ≤ τ , where l is as in Lemma Appendix B.6. Then, for any ξ > 0
+|x| ≤ ξ + τ − l(ξ)
+l′(ξ) .
+In particular, if ξ =
+√
+2 ln(1 +
+√
+2τ ), then
+|x| ≤
+√
+2 ln(1 +
+√
+2τ ) + R(τ )
+with R(τ ) =
+τ
+(
+1−
+√τ τ +2
+√
+2
+1 ln(1+
+√
+2τ )
+)
+1 2 ln(1+
+√
+2τ) [(1+
+√
+2τ ){2 ln(1+
+√
+2τ )−1}+ln(1+
+√
+2τ )+1]√ τ
+τ +2
+√
+2
+, which satisfies
+the following: R(τ ) ≤ 1/
+√
+2, and τ 7→ R(τ ) is increasing, and R(τ ) ∼
+√1
+2
+(
+1 − √1
+ln τ
+)
+as τ → ∞.
+With this, the proof of Lemma Appendix B.4 is immediate.
+Proof of Lemma Appendix B.4. By Lemma Appendix B.6, I ≤ l. Lemma Appendix B.7 then implies the result.
+Appendix B.3.1. Proof of Lemma Appendix B.6
+Proof of Lemma Appendix B.6. Through a series of rewrites, we will show that
+I(x) =
+√
+2 π
+∫∞
+0
+{
+e
+1
+2 x2sech2(w) − 1
+}
+dw. (B.4)
+15
+
+
+Once this is proven, we use that
+ln
+(
+e
+1
+2 x2sech(w) − 1
+)
+≥ ln(ex2/2 − 1) − 1
+2 v(x)w2
+with v(x) = x2ex2/2
+(ex2/2−1) and that consequently
+I(x) ≥
+√
+2
+π (ex2/2 − 1)
+∫∞
+0
+e−v(x)w2 dw =
+√
+(ex2/2 − 1)3
+x2ex2/2 = l(x),
+which is the claim. Now we show (B.4). Writing out the defintion of the error function and a change of variables shows that
+∫x
+0
+eu2/2 erf
+( √u
+2
+)
+du = √2π
+∫x
+0
+∫ u/
+√
+2
+0
+eu2/2−v2 dvdu
+=
+√
+2 π
+∫x
+0
+∫u
+0
+eu2/2−v2/2dvdu.
+Use the change of variables a = (u − v)/
+√
+2 and b = (u + v)/
+√
+2. Its Jacobian is 1 and its inverse is given by u = (a + b)/
+√
+2 and v = (b − a)/
+√
+2. The integral becomes
+I=
+√
+2 π
+∫ x′
+0
+∫ 2x′−a
+a
+eabdbda, (B.5)
+where x′ = x/
+√
+2. Use now the change of variables u = ln(
+√
+b/a) and v=
+√
+ab. Then,
+I=
+√
+2 π
+∫∞
+0
+∫ x′√1−tanh2(u)
+0
+ev2 2vdvdu (B.6)
+=
+√
+2 π
+∫∞
+0
+{
+ex′2sech2(u) − 1
+}
+du. (B.7)
+This concludes the proof.
+Appendix B.3.2. Proof of Lemma Appendix B.7
+Proof of Lemma Appendix B.7. The function l is convex and increasing. Convexity implies that any tangent line to l is a lower bound on it. Hence,
+16
+
+
+for any point ξ and any x, we have that l(ξ) + l′(ξ)(x − ξ) ≤ l(x). This implies the first claim. The derivative of l is
+l′(x) = sign(x)
+x2
+√
+ex2/2 − 1
+ex2/2
+(
+ex2/2(x2 − 1) + 1
+2 x2 + 1
+)
+Thus, using the first claim with ξ =
+√
+2 ln(1 +
+√
+2τ ), we obtain that |x| ≤
+√
+2 ln(1 +
+√
+2τ ) +
+√2 ln(1+
+√
+2τ )−l(√2 ln(1+
+√
+2τ ))
+l′(√2 ln(1+
+√
+2τ)) . Writing this last term explic
+itly, gives the expresion for R in the claim. The fact that R(τ ) is increasing follows from the convexity of l and the asymptotic expression is readily obtained from the explicit form of R. This is all that was to be proven.
+17

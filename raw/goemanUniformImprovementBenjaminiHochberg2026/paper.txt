@@ -1,0 +1,747 @@
+A Uniform Improvement of the Benjamini-Hochberg
+Procedure via e-Closure
+Jelle Goeman*
+Leiden University Medical Center, The Netherlands
+Abstract
+This paper presents closed BH, a uniform improvement of the False Discovery Rate controlling method of Benjamini and Hochberg (BH). Closed BH is valid under the same assumption of Positive Regression Dependency on a Subset (PRDS) as BH, but also under an alternative and weaker minimal sufficient condition. As a uniform improvement, closed BH never rejects fewer hypotheses than BH, but it may reject quite a few more. An increase in power is observed especially when the number of false null hypotheses is large. The novel method is constructed using the e-Closure principle, a recently derived general principle for multiple testing. The method is implemented in the eClosure package in R.
+1 Introduction
+In their seminal paper, Benjamini and Hochberg (1995) introduced the False Discovery Rate (FDR), the proportion of false discoveries among the discoveries, and advocated its use as the error rate of choice in moderate- and large-scale multiple testing. In the same paper they introduced a simple and elegant method controlling FDR, which became known as the Benjamini-Hochberg (BH) procedure. In their original paper, Benjamini and Hochberg (1995) proved that BH controls FDR when p-values are independent. Benjamini and Yekutieli (2001) extended the applicability of BH by proving the validity of the same procedure under a weaker condition of positive correlation among the p-values, the assumption of Positive Regression Dependency on a Subset (PRDS). Now more than thirty years later, FDR control has established itself firmly as the dominant error rate for multiple testing in many scientific fields, and BH remains the primary workhorse for controlling FDR. However, there are some indications that BH is not optimal as a method for controlling FDR. Designed for control at level α, it controls at the more stringent level π0α instead, where π0 is the proportion of true null hypotheses (Benjamini and Yekutieli, 2001). This suggests that a power gain might be achievable. Much research effort has been made to try to repair the gap between α and π0α. The most common approach is to find a suitable estimate πˆ0 of π0 and plug this into BH (Storey, 2002; Storey et al., 2004; Benjamini et al., 2006; Blanchard and Roquain, 2008; Sarkar, 2008b; Blanchard and Roquain, 2009; Gavrilov et al., 2009; Finner et al., 2009; Heesen and Janssen, 2016; MacDonald et al., 2019; Gao, 2023; Gao and Roquain, 2025; Ignatiadis et al., 2026). While such methods often reject more than BH, they all require either a conservative correction factor to α or must allow the possibility that πˆ0 > 1. As a
+*j.j.goeman@lumc.nl
+1
+arXiv:2606.01854v2 [stat.ME] 10 Jun 2026
+
+
+result, these improvements over BH are not uniform, i.e., these methods may sometimes reject fewer hypotheses than BH. The net result is a gain in power relative to BH when π0 is small (and power is plentiful), but a loss when π0 is large (and power is low), a trade-off few researchers are willing to make. Moreover, none of these methods has proven validity under PRDS. Fithian and Lei (2022) uniformly improved BH under positive dependence, but their method requires knowledge of the precise form of the dependency, which the PRDS assumption does not offer. Only one method, Minimally Adaptive BH (MABH; Solari and Goeman, 2017), uniformly improves BH and is valid under PRDS, but the power gain of that method relative to BH is negligible unless the number of hypotheses is very small. This paper uses a different approach to improve BH, exploiting the recently proposed e-Closure principle (Xu et al., 2025). This principle says that every FDR-controlling procedure is a special case of a general e-closed procedure based on e-values, a recently proposed expectation-based alternative to p-values (Vovk and Wang, 2021; Gru ̈nwald et al., 2024; Ramdas and Wang, 2025). An e-closed procedure is a generalization of Closed Testing (Marcus et al., 1976) to expectation-based error rates. E-closed procedures are based on an e-collection, which is an analogue of the suite of local tests that defines a closed testing procedure. By writing known procedures in the form of e-closed procedures, they can sometimes be uniformly improved, as Xu et al. (2025) have demonstrated for the FDR-controlling procedures of Benjamini and Yekutieli (2001), Su (2018) and Wang and Ramdas (2022). Xu et al. (2025) did not improve BH itself beyond MABH, and left the question of whether or not it could be improved by e-Closure as an open problem. This paper solves that open problem by constructing an appropriate e-closed procedure, closed BH, which uniformly improves BH, and is valid under PRDS. Like adaptive BH methods, closed BH exploits the gap between π0α and α and rejects more hypotheses than BH especially when π0 is small. However, unlike plug-in methods, the improvement of closed BH over BH is uniform, implying that the researcher choosing closed BH never loses out on any rejections BH would have made. Rather than estimating and plugging in πˆ0, the method operates by exploiting the event that some p-values are much smaller than needed for rejection by BH; the existence of such p-values makes rejection of ‘later’ hypotheses with larger p-values easier. Valid under PRDS, closed BH actually only requires a more lenient minimal sufficient condition, which will be derived later. The paper is organized as follows. We present a class of “BH-like” methods in Section 2, and an e-collection in Section 3. Section 4 combines the two, showing through e-Closure that all BH-like methods control FDR. BH-like methods are a family of methods that depend on a matrix of parameters, which includes MABH as a special case. Section 5 defines the closed BH method by arguing for a single canonical choice for these parameters. We discuss simultaneous FDR control and algorithms in Sections 6 and 7. Simulations in Section 8 illustrate the gains of the new method relative to BH. Proofs are found in Appendix A. As a preview, Table 1 gives the number of hypotheses rejected for several data sets used for illustration in well-known publications on multiple testing, the same that were used by Xu et al. (2025). As a uniform improvement, closed BH will never reject fewer hypotheses than BH, and may reject the same number, but it may reject quite a few more, as illustrated in the table.
+2 BH-like methods
+We start by defining a family of “BH-like” methods that depend on a matrix of parameters rk,s. Closed BH and MABH will emerge in Section 5 as members of this family for specific choices of rk,s. This paper uses the same notational conventions used by Xu et al. (2025) that lowercase is for both
+2
+
+
+Table 1: Number of discoveries by the NH and MABH procedures vs. the new closed BH procedure across multiple simulated and real datasets and FDR thresholds α. The selection of datasets follows Xu et al. (2025). Bold indicates where closed BH makes more discoveries than BH. Sources: APSAC: Benjamini and Hochberg (1995); NAEP: Benjamini and Hochberg (2000); PADJUST: p.adjust R function; PVALUES fdrtool R package; VANDEVIJVER: Goeman and Solari (2014); GOLUB: Efron and Hastie (2021).
+Dataset # hypotheses α = 0.05 α = 0.1
+BH MABH closed BH BH MABH closed BH
+APSAC 15 4 4 4 9 9 9 NAEP 34 11 11 12 12 12 15 PADJUST 50 20 21 21 21 21 22 PVALUES 4,289 767 767 801 1139 1139 1214 VANDEVIJVER 4,919 1340 1340 1412 1728 1728 1856 GOLUB 7,128 1249 1249 1275 1605 1605 1688
+scalars and vectors, capital letters indicate sets, and caligraphic, e.g., R, collections of sets. Boldface indicates random variables. Suppose we have null hypotheses H1, . . . , Hm. Let p = (p1, . . . , pm) be p-values for these null hypotheses. We write p(1) ≤ . . . ≤ p(m) for the ordered p-values, and let p(0) = 0 for convenience. Let Ir denote the index set of the r smallest p-values, with ties broken according to original index. Let integer horizon values rk,s be defined for 0 ≤ k ≤ m and 1 ≤ s ≤ m. The name of horizon will be explained in detail in Section 4; roughly, the horizon rk,s indicates the maximal size of the rejection set that p(k) can achieve in step s of the algorithm. Initialize, for all k + s ≤ m + 1,
+rk,s =
+(
+m if k = 1 and s = m;
+k otherwise. (1)
+This leaves rk,s still undefined for k + s > m + 1. These remaining values of rk,s can be chosen freely subject to two constraints. We need, for all k and s,
+k ≤ rk,s ≤ m, (2)
+and, whenever k > 0,
+rk−1,s ≤ rk,s ≤ bk,s, (3)
+where bk,s depends on rk−1,s through
+bk,s =
+(
+m ∧ (m−s)(k+s−m−1)rk−1,s
+(k+s−m)(m−s)−rk−1,s if (k + s − m)(m − s) − rk−1,s > 0;
+m otherwise.
+We see that rk,s is non-decreasing in k for each s from r0,s = 0 to rm,s = m, but that (3) constrains the growth not to be “too fast” (which will be necessary for Lemma 7 later). We have no choice for s = m, where we must take rk,m = m for k > 0 because of the initialization r1,m = m. Constraints (2) and (3) are automatically fulfilled for the rk,s defined in (1) for k + s ≤ m + 1, so they only need to be verified for the free part. An example choice of rk,s is given in Table 2.
+3
+
+
+k
+s1234567
+0 0000000 1 1111117 2 2222227 3 3333347 4 4444677 5 5556777 6 6667777 7 7777777
+Table 2: Example horizon values rk,s for m = 7. The values of rk,s for which there is some freedom of choice are in bold.
+We will now verify that Constraints (2) and (3) are not (self-)contradictory. Lemma 1 proves that Constraint (3) always allows at least one value for rk,s.
+Lemma 1. bk,s ≥ rk−1,s.
+Lemma 2 shows that the bound k ≤ rk,s ≤ bk,s implied by combining Constraints (2) and (3) also always allows at least one value for rk,s.
+Lemma 2. bk,s ≥ k
+Based on the chosen rk,s, we define threshold values
+ak,s =
+( (k+s−m)rk,sα
+(rk,s+s−m)s if rk,s > k; kα
+s otherwise.
+(4)
+In step s of the algorithm, each p(k) will be compared to the threshold value ak,s to see if it contributes. We have ak,s > 0 whenever k > 0 and α > 0, since rk,s = k when k + s ≤ m. Note that (k + s − m)rk,s/(rk,s + s − m)s actually reduces to k/s naturally when rk,s = k, so the split in the definition of ak,s is only needed to avoid 0/0 issues when k + s = m. Remark also that the value of rk,s is immaterial for ak,m, since ak,m = kα/m always. This is the rationale behind the seemingly incongruent initialization choice r1,m = m in (1). For the example of the rk,s of Table 2, the threshold values for ak,s are displayed (up to a factor α) in Table 3. Next, we compare p(0), . . . , p(m) to these thresholds to calculate thresholded horizon values, defined as
+rk,s = rk,s1{p(k) ≤ ak,s}.
+Suppose that p1 = p2 = 2α/7; p3 = p4 = 7α/12; p5 = α; p6 = 15α/8, and p7 = 2α have been observed and that rk,s had been chosen (independently of these p-values) according to the example of Table 2. Then the thresholded horizon values are given in Table 4. We reject k hypotheses if, for every step s from 1 to m, some index k′ ≤ k has a horizon reaching to at least k. From rk,s we therefore define cumulative maxima over k for each s, i.e.,
+vk,s = max
+0≤k′≤k rk′,s,
+4
+
+
+k
+s1 2 3 4 5 6 7
+0 00 0 0 0 0 0 1 1 1/2 1/3 1/4 1/5 1/6 1/7 2 2 1 2/3 1/2 2/5 1/3 2/7 3 3 3/2 1 3/4 3/5 4/9 3/7 4 4 2 4/3 1 3/5 7/12 4/7 5 5 5/2 5/3 1 21/25 7/9 5/7 6 6 3 2 21/16 28/25 35/36 6/7 7 7 7/2 7/3 7/4 7/5 7/6 1
+Table 3: The threshold values ak,s/α corresponding to the choice of rk,s of Table 2.
+k
+s1234567
+0 0000000 1 1110000 2 2222227 3 3333300 4 4444670 5 5556000 6 6660000 7 7770000
+Table 4: The thresholded horizon values rk,s corresponding to Table 2 for p1 = p2 = 2α/7; p3 = p4 = 7α/12; p5 = α; p6 = 15α/8, and p7 = 2α. The boldface values are the values of rks,s, the locations driving the cumulative maximum at r. The ks are defined in (8).
+and look for the largest k such that the cumulative maxima at k are consistently (over s) above this k:
+r = max{0 ≤ k ≤ m : vk,s ≥ k for all 1 ≤ s ≤ m}. (5)
+We can check that r is always defined since v0,s = 0 always. The BH-like procedure now rejects the r hypotheses with smallest p-values, i.e., the hypotheses with indices in Ir. In the example, we see that r takes the value 6. We can easily compare this to the number of rejections of BH for the same p-values. Since the ak,m = kα/m are exactly the critical values of BH, the number of rejections of BH is the largest k for which rk,m ≥ k, which is 2 in this case. In the next sections, we will investigate and motivate this class of methods. In Section 3 we will put the BH-like method in the context of the e-Closure principle (Xu et al., 2025) by constructing an e-collection for this method, and we will use this principle in Section 4 to prove FDR control for the method as sketched here. During these investigations, the rationale of the procedure sketched above, which may seem a bit peculiar at first sight, will become clearer.
+5
+
+
+3 An e-collection
+The e-Closure principle (Xu et al., 2025) links FDR control closely to the concept of e-values (Vovk and Wang, 2021; Gru ̈nwald et al., 2024; Ramdas and Wang, 2025). An e-value for a null hypothesis is a non-negative test statistic whose expectation is at most one under the null hypothesis. E-values can be used for hypothesis testing like p-values, rejecting when the e-value exceeds 1/α. A useful property of e-values is that the average of e-values is again an e-value. The e-Closure principle says that to make an FDR-controlling procedure, we should construct an e-collection of 2m e-values eS ≥ 0, for all S ∈ 2[m], such that
+E(eN ) ≤ 1, (6)
+where N ⊆ [m] denotes the unknown set of indices of the hypotheses that are true. Here, [m] is a shorthand for {1, . . . , m} and 2[m] is the power set of [m]. An e-collection is essentially a collection of 2m e-values, one for every intersection hypothesis HS = T
+i∈S Hi. However, rather than all e-values for all true HS having expectation at most 1, we require this only for eN , noting that HN is always a true hypothesis. Based on such an e-collection, Xu et al. (2025) show that we can make an FDR-controlling procedure using Theorem 3. In fact, Xu et al. (2025) show that Theorem 3 is necessary for FDR control, in the sense that all FDR-controlling procedures can be reconstructed, and often improved, by appealing to the e-Closure Principle.
+Theorem 3 (e-Closure). If, for some e-collection E = (eS)S∈2[m] , we have
+eS ≥ |R ∩ S|
+(|R| ∨ 1)α for all S ∈ 2[m], (7)
+then R controls FDR.
+We will now make an e-collection for the BH-like procedure. First, define
+ks = max{0 ≤ k ≤ r : p(k) ≤ ak,s}. (8)
+Since rk,s is non-decreasing in k by (3), ks is a largest location k at which rk,s attains the cumulative maximum in the definition of vr,s. Note that we have vks,s ≥ r by definition of r. The value of ks are always defined since p(0) = 0 = a0,s, so the set in (8) is never empty. The values of ks are illustrated for the running example in Table 4. The boldface numbers there are the rks,s = vks,s. The ks themselves are the corresponding row locations. Using these ks, we define the following e-collection. Let e∅ = 1 and, for S ̸= ∅, eS = 0 if k|S| = 0, and otherwise
+eS =
+P
+i∈S 1{pi ≤ a|S|}
+|S|a|S|
+, (9)
+where a|S| = ak|S|,|S|, which is random through k|S|. The eS averages e-values constructed per p-value with index in S, and the threshold applied for each p-value depends on |S|. The minimal sufficient condition that our proof of FDR control of closed BH will require is that (6) holds for this e-collection, i.e.,
+Assumption 4 (Minimal Sufficient Condition).
+E1
+|N |
+X
+i∈N
+1{pi ≤ a|N|}
+a|N |
+≤1
+6
+
+
+We will now show that this minimal sufficient condition is implied by PRDS. The argument relies on a very useful result of Blanchard and Roquain (2008), repeated here as Theorem 5. According to that theorem, it suffices to show that an, with n = |N |, is coordinatewise non-increasing in p in order to show that our e-collection (9) is valid under PRDS.
+Theorem 5 (Blanchard & Roquain). Suppose p1 . . . , pm are valid, i.e.,
+P(pi ≤ t) ≤ t for all t ∈ [0, 1] and all i ∈ N ; (10)
+and satisfy PRDS, i.e.,
+P(p ∈ D | pi ≤ x) is non-decreasing in x for all decreasing sets D and all i ∈ N . (11)
+Then, for every i ∈ N , and every coordinatewise non-increasing function f , we have
+E 1{pi ≤ f (p)}
+f (p) ≤ 1.
+We show the necessary monotonicity in Lemmas 6 and 7. First, Lemma 6 shows that ks increases as the p-values decrease. This is quite intuitive from their construction. As the p-values get smaller the rk,s flip from 0 to rk,s, allowing the boldface “front” in Table 4 to move down.
+Lemma 6. ks is coordinatewise non-increasing in p.
+Lemma 7 shows that monotonicity of as follows from monotonicity of ks. It relies heavily on Constraint (3), and the form of bk,s was chosen there as the maximal bound needed for the proof of Lemma 7 to work.
+Lemma 7. ak,s is non-decreasing in k.
+Taking Lemmas 6 and 7 and Theorem 5 together, we have the e-collection we need.
+Theorem 8. If (10) and (11) hold, then E = (eS)S∈2[m] defined in (9) is an e-collection.
+Proof. By Lemma 6, k|N| is coordinatewise non-increasing in p and by Lemma 7 ak,|N| is non-decreasing in k. Therefore a|N| = ak|N|,|N| is coordinatewise non-increasing in p. By Theorem 5,
+E(eN ) = E 1
+|N |
+X
+i∈N
+1 pi ≤ a|N|
+a|N |
+=1
+|N |
+X
+i∈N
+E 1 pi ≤ a|N|
+a|N |
+≤ 1.
+Remark 9. Benjamini and Yekutieli (2001) showed the validity of BH under PRDS. Sarkar (2008a) and Fithian and Lei (2022) showed that PRDS is actually quite a restrictive condition. Many important distributions for which BH appears to be valid in practice do not satisfy PRDS. Indeed, PRDS is sufficient but not necessary for FDR control of BH. From the proof of Blanchard and Roquain (2008), we see that a minimal sufficient condition for the validity of BH for FDR control at level π0α is that
+E1
+|N |
+X
+i∈N
+1{pi ≤ bα/m}
+bα/m ≤ 1, (12)
+where b is the number of BH rejections, defined formally in (13) below. This condition is much less restrictive than PRDS, which is a condition on all combinations of all null p-values for all increasing sets. Instead, we have a single condition on the expectation of a single random variable. Similarly, PRDS is sufficient but not necessary for closed BH, and also Assumption 4 requires only a single, and very comparable expectation to be checked.
+7
+
+
+4 FDR control
+We will now show that the FDR-controlling method implied by the e-collection of Section 3 is equal to the BH-like method described in Section 2. We will do this by showing that (7) holds for R = Ir, with r defined in (5), for the e-collection E as defined in (9). The main workhorse for this is Lemma 10. This lemma shows that if we can make sure that the kth largest e-value is at least 1/ak,s, which happens in our e-collection if the kth smallest p-value is at most ak,s, then this facilitates the necessary condition (7) for all S with |S| = s not just for R = Ik, but of all Ik, . . . , Irk,s . This lemma motivates the name of rk,s as a horizon, since it allows p(k) to “look ahead” to larger potential rejection sets than Ik up to the horizon Irk,s . It also explains the precise form of the definition of ak,s in (4), which was chosen as the maximal value that makes Lemma 10 work.
+Lemma 10. Suppose e1, . . . , em ≥ 0 are given and let 0 < k ≤ m exist such that for all 1 ≤ i ≤ k,
+ei ≥ 1/ak,s.
+Then for every S ⊆ [m] with |S| = s and for every R = [j] with k ≤ j ≤ rk,s, we have
+1 |S|
+X
+i∈S
+ei ≥ |R ∩ S|
+|R|α .
+The FDR control condition (7) of e-Closure for Ir follows almost immediately from Lemma 10. The argument is that, by construction, the conditions for Lemma 10 hold for k = ks, and that, also by construction, ks ≤ r ≤ rks,s.
+Lemma 11. Let eS be defined in (9) and r in (5). Then for all S ∈ 2[m] we have
+eS ≥ |Ir ∩ S|
+(r ∨ 1)α .
+FDR control for Ir is now immediate from the e-Closure principle.
+Theorem 12. Let r be as defined in (5). If Assumption 4 holds, then the method that rejects the hypotheses with indices in Ir has FDR control at level α, i.e.,
+E |Ir ∩ N |
+r ∨ 1 ≤ α.
+Proof. Combine Theorem 3 with Lemma 11.
+The proof of validity under PRDS of the method follows by combining Theorem 12 with Theorem 8. If PRDS does not hold, we may not have Assumption 4. However, if we know by how much Assumption 4 is violated, we know exactly what level of FDR control is retained. Theorem 13 makes this precise. This theorem can be used to show robustness: violations of PRDS that lead to small γ lead to small excess FDR.
+Theorem 13. Let r be as defined in (5). If
+E1
+|N |
+X
+i∈N
+1{pi ≤ a|N|}
+a|N |
+≤ γ,
+then the method that rejects the hypotheses with indices in Ir has FDR control at level γα, i.e.,
+E |Ir ∩ N |
+r ∨ 1 ≤ γα.
+8
+
+
+Proof. Let e ̃S = eS/γ for all S ∈ 2[m]. Then (e ̃S)S∈2[m] is an e-collection. By Lemma 11, for all S ∈ 2[m],
+e ̃S = eS
+γ ≥ |Ir ∩ S|
+(r ∨ 1)γα .
+The result now follows from Theorem 3.
+5 Closed BH
+We have developed not a single FDR-controlling procedure under PRDS, but a whole family of such methods. This family is parameterized by the choice of rk,s. Though subject to some constraints, the number of possible configurations for rk,s explodes very quickly as m grows. In this section, we will investigate properties of methods resulting from some of these choices and define the closed BH method. The choice of rk,s represents a true trade-off. A choice r′
+k,s > rk,s means that r′
+k,s is larger than rk,s if the former is not zero, but, because a′
+k,s < ak,s, r′
+k,s is more likely to be zero than rk,s. Therefore, one choice of rk,s does not generally dominate another. We can think of larger rk,s as “ambitious,” high-risk high-gain, and smaller rk,s as “cautious”. However, the net effect of any choice of rk,s depends on the full configuration of all the other rk,s and the resulting landscape is complex. Since our stated purpose is to improve BH, a frame of reference will be the performance of BH-like methods relative to BH and to MABH, which is known to improve BH. BH rejects a number
+b = max{0 ≤ k ≤ m : p(k) ≤ kα/m} (13)
+of hypotheses, while MABH rejects
+b′ = 1{b > 0} · max{0 ≤ k ≤ m : p(k) ≤ kα/(m − 1)}. (14)
+We will first consider the most cautious choice of rk,s. By (2) the minimal choice for rk,s is
+rˇk,s =
+(
+m if s = m and k ̸= 0;
+k otherwise. (15)
+Let ˇr be the number of rejections resulting from this choice of rk,s. This choice exactly reconstructs MABH, as Lemma 14 claims. It follows that MABH is the most cautious among all BH-like methods.
+Lemma 14. rˇ = b′
+Although the improvement of MABH over BH is uniform, the improvement is also tiny, especially if m is large (Solari and Goeman, 2017). We have, trivially,
+b′ ≤ bmα/(m−1), (16)
+where bα′ is the number of BH-rejections at level α′. This relationship is immediate from (14). It follows that the gain of MABH relative to BH vanishes as m grows, and the improvement of MABH over BH has rightfully been described as “tiny” (Solari and Goeman, 2017). Still, it turns out that we cannot uniformly improve upon MABH within the class of BH-like methods, as Proposition 15 claims. We call one BH-like method rejecting r′ a uniform improvement of another BH-like method rejecting r if, for all α > 0, (1.) r′ ≥ r for all p, and (2.) r′ > r for at least one choice of p.
+9
+
+
+Proposition 15. No BH-like method uniformly improves MABH.
+By Proposition 15 we cannot hope to improve upon MABH uniformly with the theory we have developed in this paper. However, we can improve upon BH in alternative and less cautious ways than MABH does. Indeed, MABH is not the only BH-like method that uniformly improves BH. Proposition 16 characterizes a necessary condition for BH-like procedures uniformly to improve BH. They do so if they are not too ambitious.
+Proposition 16. We have r ≥ b for all α > 0 if and only if
+rk,s ≤ ks
+m−k
+whenever k + s > m + 1, s < m and k < m.
+The proof of Proposition 16 is essentially the observation that rk,s ≤ ks/(m − k) is equivalent to ak,s ≥ kα/m.
+Remark 17. It is perhaps counterintuitive that according to the definition, BH is not itself a BH-like method. However, BH could be constructed with the recipe of Section 2 if the requirement that r1,m = m would be relaxed, thus allowing the choice that rk,s = k for all k, s. This choice recovers BH, as is easily checked. This choice is suboptimal, however, since ak,m does not depend on rk,m at all, so we may take rk,m maximal without paying any price. Since a larger rk,s for the same ak,s is never worse, rk,m = k is suboptimal.
+Proposition 16 suggests that alternatives to MABH exist for uniformly improving BH. Because of the underwhelming performance of the maximally cautious MABH, we define closed BH as the maximally ambitious method improving BH uniformly, i.e., the BH-like method with maximal rk,s while still satisfying the condition of Proposition 16. It is defined recursively as the BH-like method with the choice
+r ̄k,s = min bk,s,
+j ks m−k
+k
+,
+for k + s > m + 1 and s < m from the initialization (1), where we remember that rk,m = m is forced for k > 0. Let r ̄ be the resulting number of rejections. The example of Table 2 corresponds to the rk,s of closed BH for m = 7. It illustrates that closed BH is indeed a uniform improvement of BH, since, with the p-values of Table 4, the method rejects more than BH. It is interesting to contrast closed BH to MABH. We see from the proof of Proposition 15 that a method trying to be at least as good as MABH everywhere must have rk,s = k like MABH. In contrast, Proposition 16 gives much more room for rk,s if the goal is to improve BH. In the example of Table 2, the only choice of rk,s that was restricted by the constraint rk,s ≤ ks/(m − k) is at k = 3, s = 6; all others were already constrained by bk,s. The price to pay, in terms of lower critical values ak,s compared to MABH, is limited however, since by (16) the critical values of closed BH are at least those of BH, so (m − 1)/m times those of MABH. This is a small price to pay for a large increase in rk,s. However, the constraint due to Proposition 16 does bind closed BH closely to MABH when the
+number of rejections of the latter method is small. We have that if k < √m, then ks/(m − k) < k + 1.
+Therefore, r ̄k,s = k if k < √m, implying that closed BH and MABH have identical rk,s for k < √m. The consequence of this observation is made clear in Proposition 18.
+Proposition 18. If rˇ < √m, then  ̄r = ˇr.
+10
+
+
+Proposition 18 limits the potential gain of closed BH relative to MABH, but also the potential loss. In practice, as we will see in Table 1 and Section 8, closed BH tends to reject more than MABH when the number of rejections of the latter method is large. This suggests that, although closed BH is not a uniform improvement of MABH in theory, it is a uniform improvement in practice. MABH outperforms closed BH primarily in the unusual situation that most of the p-values are nearly equal. A corollary to Proposition 18 is that b = 0 implies  ̄r = 0. Therefore, closed BH has the same implied global test as BH. In fact, b = 0 implies r = 0 for all BH-like methods, since vk,m = 0 for all k if b = 0.
+6 Simultaneity
+So far, we have used the e-Closure principle to show FDR control of a single set R, as in the classical definition of FDR control of Benjamini and Hochberg (1995). However, Xu et al. (2025) showed that any procedure that controls FDR also controls simultaneous FDR. Let, for some e-collection (eS)S∈2[m] , a collection of rejection sets be defined as
+R=
+n
+R ∈ 2[m] : eS ≥ |R ∩ S|
+(|R| ∨ 1)α for all S ∈ 2[m]o
+. (17)
+Then we have simultaneous FDR control over all R ∈ R, i.e., we have
+E max
+R∈R
+|R ∩ N |
+|R| ∨ 1 ≤ α.
+Because the max is inside the expectation, simultaneous FDR control allows a researcher to choose any set R post hoc from R, while still controlling FDR for this set. Such simultaneity may also occur with BH-like methods. To see an example, consider the BH-like method illustrated in Table 4. Here, we found r = 6, implying that R = [6] may be rejected. However also R′ = {1, 2, 3, 4, 5, 7} can be rejected. To see why, note that p6 and p7 pass and fail exactly the same thresholds as, s ∈ [m], and that membership of in R is determined solely by passing and failing of thresholds, not by the ranking of p-values. It follows that R′ is an equivalent rejected set to [6]. In addition, we always, trivially, have ∅ ∈ R. Although some simultaneity exists for BH-like methods, as we have just seen, it is actually highly limited. The precise extent of the simultaneity of BH-like methods is characterized by Theorem 19, which says that all possible cases of simultaneity exchange one or more rejected hypotheses from Ir for the same number of other hypotheses with similar p-values, just as happened in the example. In particular, non-trivial simultaneity is restricted to sets of the same size. Applying Theorem 19 to the example of Table 4, we see that R = {∅, [6], {1, 2, 3, 4, 5, 7}}.
+Theorem 19. Let R be defined in (17), based on the e-collection with eS defined in (9). We have R ∈ R if and only if R = ∅ or
+|R| = r,
+and, for every s,
+|{i ∈ R : pi ≤ as}| ≥ ks.
+Note that R = Ir fulfills the criteria of the theorem by definition. For some configurations of rk,s, the second condition of Theorem 19 can be fulfilled only for R = Ir. MABH is an example of this, and Xu et al. (2025) already proved that R = {∅, Ir} for MABH.
+11
+
+
+The simultaneity offered by Theorem 19 is much more limited than the simultaneity that has been achieved by improving some other methods through the e-Closure Principle. For the closed versions of the methods of Benjamini and Yekutieli (2001), Su (2018) and Wang and Ramdas (2022), Xu et al. (2025) showed in particular that any additional rejections in the closed method relative to the original are optional: the researcher may choose post hoc whether to use the new, larger rejected set or to retain the original. In contrast, closed BH replaces the original BH-rejected set by a different, potentially larger random set. The researcher using closed BH may not decide post hoc to take the BH-rejected set after all. Closed BH is therefore a uniform improvement of BH in the classical sense that requires R′ ⊇ R and R′ ⊃ R for some p, since  ̄r ≥ b, but not according to the simultaneity-focused definition of Xu et al. (2025) that requires R′ ⊇ R and R′ ⊃ R for some p, since generally Ib ∈/ R. Moreover, the collection R for the methods in Xu et al. (2025) typically contains sets of different sizes, while the simultaneity of closed BH is strictly limited to sets of the same size. We can say that the simultaneity offered by Theorem 19 is essentially negligible.
+7 Algorithms
+Algorithm 1 below implements the general BH-like procedure, calculating the number of hypotheses rejected. A naive implementation following the construction of Section 2 would take O(m2) time and memory. The implementation of Algorithm 1 reduces memory use to O(m) and computation time to about O(m log(m) + r2) after sorting. The algorithm works as follows. It starts by considering [m] as candidate values for r. These are stored in a doubly linked list for O(1) removal of elements during traversal, while always keeping track of the maximum. Iterating through all s ∈ [m], it discards candidate values that do not meet the criterion vk,s ≥ k. Iteration on s proceeds in breadth-first order, i.e., roughly considering integers close to m/2, 3m/4, m/4, 7m/8, 5m/8, . . . , until all s ∈ [m] are enumerated. Exploring more diverse values of s in this way makes it likely that the candidate set shrinks faster. Within each s, the algorithm iterates on k, starting from k = m − s + 1. This late start is allowed because, for fixed k, p(k) ≤ ak,s for k + s = m + 1, implies
+p(k) ≤ ak,s = kα
+s ≤ kα
+s′ = ak,s′
+for all s′ < s. Therefore, if k fails the criterion at s′, it also fails at the boundary s = m − k + 1. It follows that it is sufficient for the algorithm to check only the region k + s ≥ m + 1. Iteration on k can stop after k reaches the largest remaining value in the candidate set, since r ≥ k. Iteration on k can also stop when the cumulative maximum vk,s exceeds the largest remaining value in the candidate set, since in that case no more values will be removed from the candidate set. The algorithm achieve approximately O(m log(m) + r2), since large values are pruned relatively quickly in about O(m log m) time because of the breadth-first search. Next, verification requires checking about m values of s and r values of k, but the late start reduces this burden from O(mr) to O(r2). Instead of counting rejections at fixed α, we may also calculate FDR-adjusted p-values. The ith FDR-adjusted p-value qi is defined as the smallest α-level for which Hi is rejected, i.e.,
+qi = min{α′ : {i} ∈ Rα′ },
+where we emphasize the dependence of the rejected set R on α. FDR-adjusted p-values are often misunderstood. It is important to realize that FDR-adjusted p-values cannot be interpreted as a property of Hi
+12
+
+
+Algorithm 1: General BH-like procedure
+Input: p1, . . . , pm: p-values; α: significance level; next.r: horizon function Output: Number of rejections Sort p(1) ≤ · · · ≤ p(m);
+Let p ̃k = p(k)/α for k = 1, . . . , m; embed α into the p-values
+Initialize ordered set K = [m]; doubly linked list; O(1) max and removal
+foreach s ∈ {1, . . . , m} do breadth-first order; see text
+k ← m − s + 1;
+r ← rk,s; initialize horizon; m if s = m; k otherwise
+v ← 0; initialize cumulative maximum
+while k ≤ max K do
+a ← (k + s − m) r
+(r + s − m) s ; critical value a = ak,s/α
+if p ̃k ≤ a then v ← max(v, r); cumulative maximum v = vk,s
+if v < k and k ∈ K then
+Remove k from K; k fails the criterion; guard against re-removal
+if K = ∅ then return 0;
+if v ≥ max K then break; all remaining k survive this s
+k ← k + 1; advance one step (may pass over removed indices)
+r ← next.r(r, m, s, k); incremental horizon update
+return max K;
+in isolation, but are always a joint property of the rejected set and the hypothesis (Goeman and Solari, 2014, Section 5.4). The adjusted p-value Algorithm 2, given in pseudocode in Appendix B, follows a similar structure to Algorithm 1, but instead of removing candidates, it computes for each k the minimal significance level α′ at which k would survive all s. At s, hypothesis k survives if there exists k′ ≤ k with rk′,s ≥ k and p(k′) ≤ ak′,s. The minimal α′ for k to survive step s is therefore
+min
+k′≤k, rk′,s≥k
+p(k′)
+ ̃ak′,s
+,
+where a ̃k,s = ak,s/α. The q(k), i.e., the minimal α′ for k to survive all steps, is the maximum of this quantity over s. Since rk′,s is non-decreasing in k′, the constraint rk′,s ≥ k defines a window [l, k] whose left edge l advances as k increases. The minimum of p(k′)/ ̃ak′,s over this sliding window is maintained efficiently using a monotone double-ended queue (deque), giving O(1) cost per step. Unlike the candidate-set algorithm, no elements are removed, so a breadth-first ordering of s would give no pruning advantage; instead, s is simply iterated from m down to 1. The early stopping rules from the candidate-set algorithm also no longer apply, making the worst-case computational complexity O(m2), although memory use is O(m). Since the procedure returns the largest survivor rather than individual survival decisions, a final pass takes the cumulative minimum from the right: q(k) ← mink′≥k q(k′). Like other π0-adaptive FDR controlling methods, BH-like methods can reject hypotheses with pvalues greater than α, and as a consequence adjusted p-values can be smaller than unadjusted. This can
+13
+
+
+be confusing for practitioners. Algorithm 2 therefore has the option to restrict adjusted p-values to be at least as large as unadjusted, which is enabled by default. Both algorithms are implemented in the eClosure R package, available on cran.
+8 Applications and simulations
+8.1 Simulation
+A small simulation experiment was performed to investigate the improvement in power of closed BH versus BH and MABH. Data were generated from an equi-correlated standard normal distribution with correlation ρ and dimension m = 200. To the first π1m coordinates, with π1 = 1 − π0, a signal was added of magnitude
+μ = Φ−1 1 − tα(1 − π0)
+1 − π0α − Φ−1(1 − t),
+for a chosen target power of t, where Φ−1 is the standard normal quantile function. This size of signal gives an approximately constant average power over π0 of magnitude t for BH if ρ = 0 (Storey et al., 2004) if one-sided tests are used. In the two-sided case similar constant average power is achieved if the value of μ is taken as the solution of
+1 − t = Φ Φ−1 1 − tα(1 − π0)
+2(1 − π0α) − μ − Φ − Φ−1 1 − tα(1 − π0)
+2(1 − π0α) − μ ,
+where t again is the target power. Next, one-sided and two-sided p-values were calculated. The parameters were chosen as ρ = 0, 0.3, 0.6, 0.9, t = 0.2, 0.4, 0.6, 0.8, and π0 = 0.1, 0.2, . . . , 0.9. The value of α was fixed at 0.05. All results were based on 105 simulation runs. First, we checked Assumption 4 for closed BH and the corresponding assumption (12) for BH. The results are given in Figure 1. It is known that PRDS holds for p-values from one-sided normal tests with positive correlations (Sarkar, 2008a), but not for the two-sided case (Fithian and Lei, 2022). Since PRDS is sufficient for Assumption 4, we see E(eN ) ≤ 1 in Figure 1 everywhere for one-sided tests. For the two-sided case, we see some mild violations for small ρ, high power t and high π1 (low π0). From this plot and Theorem 13 we might expect some violation of FDR control, but to a maximal level of about 0.055, since we never observe γ > 1.1. Interestingly closed BH tends to keep E(eN ) lower than BH. This may relate to k|N| depending on all of rk,s rather than only on rk,|N|. Figure 2 gives the realized FDR for closed BH, MABH and BH. This figure confirms that Assumption 4 is sufficient but not necessary for FDR control. We see that FDR control is below nominal level for all simulation scenarios with E(eN ) ≤ 1 from Figure 1, but also in the problematic cases. To understand why FDR can still be controlled while E(eN ) > 1, note that some eS with S ̸= N may take low values due to imperfect power. Such low e-values reduce the number of rejections, resulting in a lower power but also in a lower realized FDR. This is part of the explanation of the robustness of BH, which seems to translate, at least in this example, to closed BH. Average power is given in Figure 3. We see that MABH is all but indistinguishable from BH, as advertised (Solari and Goeman, 2017), since m is not small. Closed BH, however, obtains moderate to substantial gains relative to BH/MABH. These gains are greatest when π0 is small and when ρ is small, and when t is large, i.e., in situations when the number of rejections of BH/MABH is substantial, as expected from Proposition 18. Although closed BH is not a uniform improvement of MABH by Proposition 15, there is never a noticeable power loss against the latter method.
+14
+
+
+variant: one−sided variant: two−sided rho: 0 rho: 0.3 rho: 0.6 rho: 0.9 rho: 0 rho: 0.3 rho: 0.6 rho: 0.9
+target: 0.8 target: 0.6 target: 0.4 target: 0.2
+0.250.500.75 0.250.500.75 0.250.500.75 0.250.500.75 0.250.500.75 0.250.500.75 0.250.500.75 0.250.500.75
+0.0
+0.3
+0.6
+0.9
+1.2
+0.0
+0.3
+0.6
+0.9
+1.2
+0.0
+0.3
+0.6
+0.9
+1.2
+0.0
+0.3
+0.6
+0.9
+1.2
+fraction π1 of false null hypotheses
+E(eN)
+method cBH BH
+Figure 1: E(eN ) for closed BH (“cBH”) and BH for the simulation settings of Section 8. Here, target is the parameter t.
+8.2 Applications
+Next, adjusted p-values were calculated for several data sets used for illustration in well-known publications on multiple testing, following Xu et al. (2025). The number of rejected hypotheses for closed BH versus BH is given in Table 1. Figure 4 gives the adjusted p-values of closed BH versus BH. The plot gives both the variant that constrains the adjusted p-values to be never lower than the unadjusted and the unconstrained variant. The difference between the closed BH and BH adjusted p-values increases with the p-values. The most noticeable difference is the maximal adjusted p-value, which in BH is always simply the maximal p-value. Closed BH, in contrast, may already reject all hypotheses when the α-level is much smaller than that. In contrast, the smallest adjusted p-value of closed BH is always equal to that of BH, since b = 0
+15
+
+
+variant: one−sided variant: two−sided rho: 0 rho: 0.3 rho: 0.6 rho: 0.9 rho: 0 rho: 0.3 rho: 0.6 rho: 0.9
+target: 0.8 target: 0.6 target: 0.4 target: 0.2
+0.250.500.75 0.250.500.75 0.250.500.75 0.250.500.75 0.250.500.75 0.250.500.75 0.250.500.75 0.250.500.75
+0.00
+0.01
+0.02
+0.03
+0.04
+0.05
+0.00
+0.01
+0.02
+0.03
+0.04
+0.05
+0.00
+0.01
+0.02
+0.03
+0.04
+0.05
+0.00
+0.01
+0.02
+0.03
+0.04
+0.05
+fraction π1 of false null hypotheses
+average power
+method cBH MABH BH
+Figure 2: Realized FDR of closed BH (“cBH”) versus MABH and BH for the simulation settings of Section 8.
+implies  ̄r = 0 for all α.
+9 Discussion
+This paper derived closed BH, a uniform improvement of the method of Benjamini and Hochberg that has proven validity under PRDS, and under a more lenient minimal sufficient condition implied by PRDS. The power gain relative to BH is appreciable. It can be especially substantial if the proportion π1 of false null hypotheses is large. Because the improvement is uniform, a researcher aiming to maximize the number of rejected hypotheses, while controlling FDR at α under PRDS, should always prefer closed BH over BH. The additional cost is only computational. It is true that closed BH offers no meaningful
+16
+
+
+variant: one−sided variant: two−sided rho: 0 rho: 0.3 rho: 0.6 rho: 0.9 rho: 0 rho: 0.3 rho: 0.6 rho: 0.9
+0.250.500.75 0.250.500.75 0.250.500.75 0.250.500.75 0.250.500.75 0.250.500.75 0.250.500.75 0.250.500.75
+0.2
+0.4
+0.6
+0.8
+fraction π1 of false null hypotheses
+average power
+method cBH MABH BH
+Figure 3: Average power of closed BH (“cBH”) versus MABH and BH for the simulation settings of Section 8.
+simultaneity, but so does BH, so there is nothing lost there. The improvement was not derived in the classical way, by applying BH on an adjusted level α/πˆ0, for a suitable estimate πˆ0 of π0. Rather, the derivation proceeded through the e-Closure Principle of Xu et al. (2025). The improvement mechanism, therefore, is different from that of the plug-in methods. Rather than using the entire p-value distribution, it exploits the event that some p-values are much smaller than needed for rejection to make rejection of later (larger) p-values easier. This has something of the flavor of a step-down method, but without the α-level adjustment that was needed for step-down methods so far (Benjamini et al., 2006; Gavrilov et al., 2009). Closed BH was shown to be valid under PRDS, but also under a milder minimal sufficient condition. This minimal sufficient condition follows directly from the e-Closure principle, which says that the validity of a method derived from e-Closure rests on the validity of a single e-value eN (Xu et al.,
+17
+
+
+0.00
+0.25
+0.50
+0.75
+1.00
+0.00 0.25 0.50 0.75 1.00 BH adjusted
+closed BH adjusted
+APSAC
+0.00
+0.25
+0.50
+0.75
+1.00
+0.00 0.25 0.50 0.75 BH adjusted
+closed BH adjusted
+NAEP
+0.00
+0.25
+0.50
+0.75
+1.00
+0.00 0.25 0.50 0.75 BH adjusted
+closed BH adjusted
+p.adjust
+0.00
+0.25
+0.50
+0.75
+1.00
+0.00 0.25 0.50 0.75 1.00 BH adjusted
+closed BH adjusted
+fdrtool
+0.00
+0.25
+0.50
+0.75
+1.00
+0.00 0.25 0.50 0.75 1.00 BH adjusted
+closed BH adjusted
+Van de Vijver
+0.00
+0.25
+0.50
+0.75
+1.00
+0.00 0.25 0.50 0.75 1.00 BH adjusted
+closed BH adjusted
+Golub
+Figure 4: Adjusted p-values with closed BH versus BH for the 6 data sets of Table 1. The open dots (upper curve) represent the adjusted p-values constrained to be not smaller than the unadjusted. The filled dots (lower curve) give the unconstrained adjusted p-values.
+2025). If the assumptions of the method are violated and eN is not an e-value, the expectation of eN can be used to bound the anti-conservativeness of the method. This property can hopefully be used in the future to extend the scope of closed BH beyond PRDS and to investigate its robustness. Still, even the new condition is only sufficient and not necessary for FDR control, and we have seen situations in which FDR control was achieved even when the minimal sufficient condition was not met. This latter property also holds for BH, which is known to be quite robust against violation of PRDS. It remains to be investigated whether closed BH has a similar robustness. Unlike other novel FDR-control methods derived from e-Closure so far (Xu et al., 2025; Li and Goeman, 2026), closed BH does not offer much in terms of simultaneity of FDR control. This is a substantial drawback of the method, which apparently emphasizes power over simultaneity. Lack of simultaneity means that known problems surrounding non-simultaneous FDR control with BH remain relevant for closed BH. In particular, researchers may not reduce the set of rejected hypotheses of closed BH in any way while still claiming FDR control (Finner and Roters, 2001; Goeman and Solari, 2014; Ebrahimpoor and Goeman, 2021; Katsevich et al., 2023). Future alternative uniform improvements of BH that emphasize simultaneity rather than power could therefore be more relevant than closed BH for some application areas. Care must also be taken when interpreting FDR-adjusted p-values. Although BH never gives adjusted p-values that are smaller than their unadjusted counterpart, this property is not a feature of FDR methods in general, and most π0-adaptive FDR control methods return adjusted p-values smaller than unadjusted. This can be confusing for researchers, and this confusion stems from an overinterpretation of adjusted p-values (Goeman and Solari, 2014, Section 5.4). To avoid some of this confusion, adjusted p-values are capped by default in the software in such a way that they cannot be smaller than unadjusted p-values.
+18
+
+
+Closed BH is a member of a whole class of BH-like methods which all control FDR under PRDS. Closed BH was motivated as the most “ambitious” member of this class under the contraint that it should uniformly improve BH, i.e., the furthest such uniform improvement from MABH, which is at the other extreme of the same class, and which is known to have low power. It is worthwhile investigating the class as a whole, choosing the parameters rk,s to achieve certain specific goals. For example, if a researcher is not interested in rejecting more than, say, n hypotheses, then capping rk,s at n for k ≤ n may gain some power. It is also interesting to investigate whether BH-like methods that do not uniformly improve BH, i.e., which do not fulfil the condition of Proposition 16, might gain substantial power in a trade-off. It is conceivable that not all BH-like methods are admissible, and a criterion for admissibility of BH-like methods would be of interest. The class of BH-like methods encompasses all uniform BH improvements valid under PRDS in the literature, and even all uniform improvements under independence the author is aware of. It is unclear whether any other improvements of BH are possible, and whether the class of BH-like methods itself is admissible. Certainly, the BH-like methods are far less elegant than BH itself, and we might hope that other, more elegant uniform improvements might exist. Given the completeness of e-Closure for FDR control, any further improvements or alternative methods should benefit from consideration of the e-Closure Principle. The construction of the closed BH method in this paper is, first and foremost, a demonstration of the versatility and power of e-Closure as the central design principle for multiple testing methods.
+A Deferred proofs
+This section contains the formal proofs of the lemmas in the paper, with some additional helper lemmas.
+Lemma 20. bk,s < m implies s < m − 1 and k + s > m + 1.
+Proof. If bk,s < m then rk−1,s < (k + s − m)(m − s). This implies by (2) that
+0 ≤ rk−1,s − k + 1 < (k + s − m − 1)(m − s) + (m − s) − k + 1 = (k + s − m − 1)(m − s − 1).
+Either both terms are strictly positive or both are strictly negative. Both negative implies s = m and hence k < 1, which is inconsistent with the premise k > 0. So both are strictly positive and the result follows.
+Lemma 1. bk,s ≥ rk−1,s.
+Proof. If bk,s = m the result is immediate from (2). Suppose bk,s < m. Then since rk−1,s ≥ k − 1 > m − s by (2) and Lemma 20, we have
+(k + s − m − 1)(m − s) ≥ (k + s − m)(m − s) − rk−1,s.
+Since bk,s < m implies rk−1,s < (k + s − m)(m − s), we get
+bk,s = (m − s)(k + s − m − 1)
+(k + s − m)(m − s) − rk−1,s
+rk−1,s ≥ rk−1,s.
+Lemma 2. bk,s ≥ k
+19
+
+
+Proof. If bk,s = m, the result is immediate. Suppose bk,s < m. Note that bk,s is non-decreasing in rk−1,s since the numerator increases in rk−1,s and the denominator is positive and decreasing in rk−1,s. Since rk−1,s ≥ k − 1 by (2), we get, using that k + s − m − 1 > 0 and m − s − 1 > 0 due to Lemma 20,
+bk,s ≥ (m − s)(k + s − m − 1)(k − 1)
+(k + s − m)(m − s) − k + 1 = (m − s)(k + s − m − 1)(k − 1)
+(k + s − m)(m − s − 1) + (k + s − m) − k + 1
+= (m − s)(k − 1)
+m−s−1 =k−1+ k−1
+m − s − 1 ≥ k.
+Lemma 6. ks is coordinatewise non-increasing in p.
+Proof. Let p′ ≥ p coordinatewise, and let r′
+k,s, v′
+k,s, r′ and k′s be the values of rk,s, vk,s, r and ks calculated using p′. Note that p′ ≥ p coordinatewise implies also that p′
+(k) ≥ p(k). We have r′
+k,s ≤ rk,s
+by definition since ak,s does not depend on p. We have v′
+k,s ≤ vk,s by the order-preservation of max. r′ ≤ r follows since v′
+k,s ≥ k implies vk,s ≥ k. Finally, since both {0 ≤ k ≤ r′} ⊆ {0 ≤ k ≤ r} and {p′
+(k) ≤ ak,s} ⊆ {p(k) ≤ ak,s}, and since the maximum over a smaller set is never larger, we have k′s ≤ ks.
+Lemma 7. ak,s is non-decreasing in k.
+Proof. We need to show that ak,s ≥ ak−1,s. Consider the case k ≤ m−s+1 first. We have immediately
+ak,s = k
+sα ≥ k−1
+s α = ak−1,s.
+Next, consider the case k > m − s + 1. Write d = m − s; c = k − d = k + s − m; r′ = rk,s and r = rk−1,s. We have
+ak,s = α
+s c + cd
+r′ − d ,
+both when k = m − s + 1 and when k > m − s + 1. Therefore,
+s
+α (ak,s − ak−1,s) = 1 + cd
+r′ − d − d(c − 1)
+r−d ,
+which means we need to show that c
+r′ − d − c − 1
+r −d ≥ −1
+d.
+By (3) we have
+r′ ≤ (c − 1)dr
+cd − r = cdr − dr
+cd − r = cd2 − dr + cdr − cd2
+cd − r = d(cd − r) + cd(r − d)
+cd − r = d + cd(r − d)
+cd − r .
+Therefore, since c = k + s − m > 0 and r′ − d ≥ k + s − m > 0 by (2), we have
+c
+r′ − d ≥ cd − r
+d(r − d) = (c − 1)d − (r − d)
+d(r − d) = c − 1
+r−d − 1
+d.
+Note that we have equality if r′ = bk,s < m.
+20
+
+
+Lemma 10. Suppose e1, . . . , em ≥ 0 are given and let 0 < k ≤ m exist such that for all 1 ≤ i ≤ k,
+ei ≥ 1/ak,s.
+Then for every S ⊆ [m] with |S| = s and for every R = [j] with k ≤ j ≤ rk,s, we have
+1 |S|
+X
+i∈S
+ei ≥ |R ∩ S|
+|R|α .
+Proof. We distinguish between the cases k ≤ m − s + 1 and k > m − s + 1. Write t = |[k] ∩ S|, and r = rk,s.
+Let k ≤ m − s + 1. Then r = k, so we only need to consider j = k.
+1 s
+X
+i∈S
+ei ≥ t
+s
+s
+kα = t
+kα = S ∩ [j]
+jα = |R ∩ S|
+|R|α .
+Let k > m − s + 1. We have t ≥ s − (m − k) = k + s − m, because at most m − k elements of S fit into [m] \ [k]. We have
+1 |S|
+X
+i∈S
+ei ≥ t
+s
+(r + s − m)s
+(k + s − m)rα = (r + s − m)t
+(k + s − m)rα .
+The set S ∩ [j] contains at most t elements from [k] and at most j − k elements from [j] \ [k]. Therefore,
+|R ∩ S|
+|R|α ≤ t + j − k
+jα .
+It suffices to show that, for k ≤ j ≤ r, we have
+(r + s − m)t
+(k + s − m)rα ≥ t + j − k
+jα ,
+or equivalently (dropping α) that
+h(j) = (r + s − m)tj − (k + s − m)(t + j − k)r ≥ 0.
+This function is linear in j, so we only need to check the endpoints. We have
+h(k) = (r + s − m)tk − (k + s − m)tr = t(m − s)(r − k) ≥ 0,
+since r ≥ k, and
+h(r) = (r + s − m)tr − (k + s − m)(t + r − k)r
+= tr(r − k) − (k + s − m)(r − k)r
+= r(r − k)(t − k − s + m) ≥ 0,
+since r ≥ k and t ≥ k + s − m.
+Lemma 11. Let eS be defined in (9) and r in (5). Then for all S ∈ 2[m] we have
+eS ≥ |Ir ∩ S|
+(r ∨ 1)α .
+21
+
+
+Proof. Choose any S ∈ 2[m] and let s = |S|. If s = 0 or r = 0 there is nothing to prove, so assume s > 0 and r > 0.
+By definition of r, there exists k′ ≤ r such that rk′,s ≥ r. Since rk,s is non-decreasing in k, we can take this k′ as the largest index ≤ r such that rk′,s > 0, which is k′ = ks. Therefore ks ≤ r ≤ rks,s. By definition of ks, we have p(ks) ≤ aks,s = as. Define ei,s = 1{p(i) ≤ aks,s}/aks,s. Then ei,s ≥ 1/aks,s for i ≤ ks, so by Lemma 10, taking the permutation of the indices into account, we have eS ≥ |Ij ∩ S|/jα for all ks ≤ j ≤ rks,s. Since ks ≤ r ≤ rks,s, this holds in particular for j = r.
+Lemma 14. rˇ = b′
+Proof. By definition of b′ we have (1.) p(i) ≤ iα/m for at least one i ≤ b′; (2.) p(b′) ≤ b′α/(m − 1); and (3.) p(j) > jα/(m − 1) for all j > b′. In this situation we have, for s = m − 1, p(b′) ≤ ab′,m−1, so rb′,m−1 = b′; and p(j) > aj,m−1 for j > b′, so rj,m−1 = 0 for j > b′. It follows that ˇr ≤ b′. For s = m, p(i) ≤ ai,m, so ri,m = m; For s ≤ m − 1 we have p(b′) ≤ ab′,m−1 = b′α/(m − 1) ≤ b′α/s = ab′,s, so rb′,s = b′. Therefore ˇr ≥ b′.
+Lemma 21. ak,s ≤ mα.
+Proof. By Lemma 7, ak,s is maximized when k = m, which implies rk,s = m, so that am,s = mα/s. This in turn is maximized when s = 1.
+Proposition 15. No BH-like method uniformly improves MABH.
+Proof. Suppose rk,s is such that r ≥ ˇr. We wil first show that this implies that rk,m−1 = k for all k, then that rk,m−1 = k for all k in turn implies that r = rˇ. Choose α < 1/m. Suppose for some k, rk,m−1 > k; we must have k > 2. Define p1 = α/m; p2 = . . . = pk = kα/(m − 1), and pk+1 = . . . = pm = 1. Then rˇ = k. We have
+p(k) = kα
+m > (k + s − m)rk,sα
+(rk,s + s − m)s = ak,s,
+since a is increasing in rk,s. For all j > k, we have
+p(j) = 1 > aj,s,
+by Lemma 21. It follows that for all j ≥ k, we have vj,m−1 ≤ rm−1,k−1 = k − 1, so r ≤ k − 1 < rˇ. So r cannot uniformly improve ˇr. Next, suppose rk,m−1 = k for all k. Then by definition of rˇ we have p(rˇ) ≤ ˇrα/(m − 1) = ak,s and for all j > ˇr, p(j) > jα/(m − 1) = aj,s. Therefore, rk,m−1 = k when k ≤ rˇ and rk,m−1 = 0 when k > rˇ. It follows that r ≤ ˇr.
+Proposition 16. We have r ≥ b for all α > 0 if and only if
+rk,s ≤ ks
+m−k
+whenever k + s > m + 1, s < m and k < m.
+22
+
+
+Proof. Let k + s > m + 1, s < m and k < m. We have, since ak,s is strictly decreasing in rk,s, that rk,s ≤ ks/(m − k) if and only if
+ak,s = (k + s − m)rk,sα
+(rk,s + s − m)s ≥ (k + s − m) ks
+m−k α ( ks
+m−k + s − m)s = (k + s − m)ksα
+(ks + (m − k)(s − m))s = kα
+m.
+If k + s > m + 1, or s < m, or k < m, we have ak,s = kα/s ≥ kα/m always. Therefore, ak,s ≥ kα/m if and only if rk,s ≤ ks/(m − k) whenever k + s > m + 1, s < m and k < m. We will now show that ak,s ≥ kα/m if and only if r ≥ b for all p and α. Suppose ak,s ≥ kα/m. Then p(b) ≤ bα/m implies p(b) ≤ ab,s for all s, so r ≥ b. Suppose ak,s < kα/m for some k, s. Choose α < 1/m. Define pi = kα/m for i ≤ k and pi = 1 for i > k, so b = k > 0. Then we have, for i ≤ k, by Lemma 7, p(i) = kα/m > ak,s ≥ ai,s. For i > k, we have p(i) = 1 > mα ≥ ai,s by Lemma 21. Therefore, ri,s = 0 for all i, so r = 0 < b.
+Proposition 18. If rˇ < √m, then  ̄r = ˇr.
+Proof. Let  ̄ak,s and r ̄k,s refer to the corresponding quantities for  ̄r. Let k + s > m + 1 and k < √m.
+Then
+ks
+m − k = k(m − k) + k(k + s − m)
+m − k = k + k2 + s − m
+m−k <k+ s
+m − k ≤ k + 1.
+Therefore, r ̄k,s = k for k < √m.
+Suppose rˇ < √m. Then by Lemma 14 there exists i < √m such that p(i) ≤ iα/m and i ≤ j ≤ √m such that p(j) ≤ iα/(m − 1). Further, for all k > j, we have p(k) > kα/(m − 1). In this situation we have, for s = m − 1, p(rˇ) ≤ rˇα/(m − 1) = a ̄rˇ,m−1, so r ̄rˇ,m−1 = ˇr; and p(k) > kα/(m − 1) =  ̄ak,m−1 for k > rˇ, so r ̄k,m−1 = 0 for k > rˇ. It follows that  ̄r ≤ rˇ. For s = m, p(i) ≤ iα/m =  ̄ai,m, so r ̄i,m = m; For s ≤ m − 1 we have p(rˇ) ≤ rˇα/(m − 1) ≤ ˇrα/s =  ̄arˇ,s, so  ̄rrˇ,s = ˇr. Therefore r ̄ ≥ ˇr.
+Lemma 22. If r > 0, there exists s < m such that rks,s = r and, if ks < m, that p(ks+1) > aks,s.
+Proof. If r = m, the statement is immediate. Let r < m. By definition of r, there exists a witness s such that vr+1,s < r + 1, while vr,s ≥ r (since this holds for all s). We claim that any such s satisfies s < m. Indeed, for k ≥ 1 we have rk,m = m by (1) and (3), so rk,m ∈ {0, m} and also vk,m ∈ {0, m}. Since vr,m ≥ r ≥ 1, we have vr,m = m. Consequently, vr+1,m = m ≥ r + 1, which violates the condition vr+1,s < r + 1 we established above for the witness s.
+For the witness s, we have r ≤ rks,s < r + 1, so rks,s = r. If ks < r, we have rks+1,s = 0 since ks is maximal; if ks = r we have rks+1,s = 0 since otherwise r + 1 ≤ rks+1,s = vr+1,s < r + 1. So
+p(ks+1) > aks+1,s ≥ aks,s.
+Lemma 23. If |R| ̸= r, then R ∈/ R.
+Proof. Assume R ∈ R and |R| ̸= r. We will arrive at a contradiction by finding an S such that eS < |S ∩ R|/|R|α.
+Suppose |R| < r. Choose any i ∈ R. We have, for S = {i},
+e{i} ≤ 1
+a1
+=1
+ak1,1
+=1
+ar,1
+=1
+rα < 1
+|R|α = |{i} ∩ R|
+|R|α .
+23
+
+
+Suppose |R| > r. Let s < m be as constructed in Lemma 22. Suppose ks + s ≤ m + 1, then r = ks. Choose any i ∈ R \ Ir. Then, for S = {i},
+e{i} = 0 < 1
+|R|α = |R ∩ {i}|
+|R|α .
+Suppose ks +s > m+1. Since all eS are decreasing in p, and r ≥ ks, we may assume that R ⊃ Iks . By Lemma 22,
+ei,s = 1{pi ≤ aks,s}
+aks,s
+is non-zero only for i ∈ Iks . Choose any S ⊃ [m]\Iks with |S| = s, which is possible since s > m−ks. Then |S ∩ Iks | = ks + s − m, so
+eS = |S ∩ Iks |
+saks,s
+= |S ∩ Iks |
+s
+(r + s − m)s
+(ks + s − m)rα = r + s − m
+rα .
+By construction of S, we have, since R ⊃ Iks ,
+|S ∩ R| = |S ∩ Iks | + |R| − ks = |R| + s − m.
+Since (r + s − m)/r is increasing in r because s < m, we have
+eS = r + s − m
+rα < |R| + s − m
+|R|α = |S ∩ R|
+|R|α .
+Lemma 24. Let |R| = r > 0. Then R ∈ R if and only if |{i ∈ R : pi ≤ aks,s}| ≥ ks , for all s.
+Proof. Suppose |{i ∈ R : pi ≤ aks,s}| ≥ ks , for all s. Let π be a permutation that sorts R before
+[m] \ R, Then define ei,s = 1{pπi ≤aks,s}
+aks,s . By sorting the elements of R first, and by the assumption, we
+fulfill the condition of Lemma 10 for every s. Therefore,
+eS ≥ |R′ ∩ S|
+|R′|α ,
+for S with |S| = s and all R′ = {π1, . . . , πj} for ks ≤ j ≤ rks,s. Since ks ≤ r ≤ rks,s, this holds in particular for R. Therefore, R ∈ R. Let |{i ∈ R : pi ≤ aks,s}| < ks ≤ r for at least one s, which implies s < m. Define A = {i ∈ R : pi ≤ aks,s}, so |R \ A| > 0. Since K = {i ∈ [m] : pi ≤ aks,s} has |K| ≥ ks by definition of ks, we have |K \ R| ≥ 1. Choose S with |S| = s such that it exhausts first R \ A, then [m] \ K, then A and finally K \ R. For this S we have, if ks + s > m, that |S ∩ K| = ks + s − m, and |S ∩ R| > r + s − m, so
+eS = 1
+s
+X
+i∈S
+1
+aks
+1{pi ≤ aks,s} = |K ∩ S|(r + s − m)
+(ks + s − m)rα < |R ∩ S|
+|R|α .
+If ks + s ≤ m, we have |K ∩ S| < |S ∩ R|. Therefore,
+eS = 1
+s
+X
+i∈S
+1
+aks
+1{pi ≤ aks,s} = |S ∩ K|
+rα < |S ∩ R|
+|R|α .
+It follows that R ∈/ R.
+24
+
+
+Theorem 19. Let R be defined in (17), based on the e-collection with eS defined in (9). We have R ∈ R if and only if R = ∅ or
+|R| = r,
+and, for every s,
+|{i ∈ R : pi ≤ as}| ≥ ks.
+Proof. Combine Lemma 23 and Lemma 24.
+B Algorithm
+Algorithm 2 gives the pseudo-code for the calculation of adjusted p-values for closed BH.
+Algorithm 2: Adjusted p-values for the general BH-like method
+Input: p1, . . . , pm: p-values; next.r: horizon function Output: q1, . . . , qm: adjusted p-values Sort and let p(1) ≤ · · · ≤ p(m); Initialize q(k) ← 0 for k = 1, . . . , m;
+for s = m, m − 1, . . . , 1 do
+Initialize empty deque D; stores (k′, p(k′)/ ̃ak′,s) pairs; min at front
+l ← m − s + 1; left edge of qualifying window
+for k = m − s + 1, . . . , m do
+Compute rk,s and ak,s as in Algorithm 1; r updated incrementally via next.r
+ρk ← p(k) /  ̃ak,s;
+while D ̸= ∅ and back(D).ρ ≥ ρk do
+Remove back of D; maintain deque monotonicity
+Push (k, ρk) to back of D;
+while l ≤ k and rl,s < k do
+l ← l + 1; advance window: need rk′,s ≥ k
+while D ̸= ∅ and front(D).k′ < l do
+Remove front of D; evict entries outside window
+if D = ∅ then
+q(j) ← 1 for all j = k, . . . , m; no qualifying k′; window only shrinks
+break;
+else
+q(k) ← max q(k), front(D).ρ ; sliding window minimum
+Post-processing
+for k = m − 1, . . . , 1 do function returns max survivor, not individual survivors
+q(k) ← min(q(k), q(k+1));
+q(k) ← max(q(k), p(k)) for k = 1, . . . , m; optional: adjusted ≥ raw
+Restore original ordering; return q1, . . . , qm;
+25
+
+
+References
+Benjamini, Y. and Hochberg, Y. (1995). Controlling the false discovery rate: A practical and powerful approach to multiple testing. Journal of the Royal Statistical Society: Series B (Methodological), 57(1):289–300.
+Benjamini, Y. and Hochberg, Y. (2000). On the adaptive control of the false discovery rate in multiple testing with independent statistics. Journal of Educational and Behavioral Statistics, 25(1):60–83.
+Benjamini, Y., Krieger, A. M., and Yekutieli, D. (2006). Adaptive linear step-up procedures that control the false discovery rate. Biometrika, 93(3):491–507.
+Benjamini, Y. and Yekutieli, D. (2001). The control of the false discovery rate in multiple testing under dependency. Annals of statistics, pages 1165–1188.
+Blanchard, G. and Roquain, E. (2008). Two simple sufficient conditions for FDR control. Electronic Journal of Statistics, 2:963–992.
+Blanchard, G. and Roquain, E. (2009). Adaptive FDR control under independence and dependence. Journal of Machine Learning Research, 10:2837–2871.
+Ebrahimpoor, M. and Goeman, J. J. (2021). Inflated false discovery rate due to volcano plots: problem and solutions. Briefings in bioinformatics, 22(5):bbab053.
+Efron, B. and Hastie, T. (2021). Computer age statistical inference, student edition: algorithms, evidence, and data science, volume 6. Cambridge University Press.
+Finner, H., Dickhaus, T., and Roters, M. (2009). On the false discovery rate and an asymptotically optimal rejection curve. The Annals of Statistics, 37(2):596–618.
+Finner, H. and Roters, M. (2001). On the false discovery rate and expected type i errors. Biometrical Journal, 43(8):985–1005.
+Fithian, W. and Lei, L. (2022). Conditional calibration for false discovery rate control under dependence. The Annals of Statistics, 50(6):3091–3118.
+Gao, Z. (2023). Adaptive Storey’s null proportion estimator. arXiv preprint arXiv:2310.06357. arXiv:2310.06357.
+Gao, Z. and Roquain, E. (2025). On min-Storey estimators for multiple testing and conformal novelty detection. arXiv preprint arXiv:2603.17984. arXiv:2603.17984.
+Gavrilov, Y., Benjamini, Y., and Sarkar, S. K. (2009). An adaptive step-down procedure with proven FDR control under independence. The Annals of Statistics, 37(2):619–629.
+Goeman, J. J. and Solari, A. (2014). Multiple hypothesis testing in genomics. Statistics in medicine, 33(11):1946–1978.
+Gru ̈nwald, P., de Heide, R., and Koolen, W. (2024). Safe testing. Journal of the Royal Statistical Society Series B: Statistical Methodology, 86(5):1091–1128.
+26
+
+
+Heesen, P. and Janssen, A. (2016). Dynamic adaptive multiple tests with finite sample FDR control. Journal of Statistical Planning and Inference, 168:38–51.
+Ignatiadis, N., Wang, R., and Ramdas, A. (2026). Tiny but uniform improvements of adaptive BH procedures via compound e-values. arXiv preprint arXiv:2603.21424. arXiv:2603.21424.
+Katsevich, E., Sabatti, C., and Bogomolov, M. (2023). Filtering the rejection set while preserving false discovery rate control. Journal of the American Statistical Association, 118(541):165–176.
+Li, J. and Goeman, J. J. (2026). On the error control of invariant causal prediction. arXiv preprint arXiv:2401.03834.
+MacDonald, P., Liang, K., and Janssen, A. (2019). Dynamic adaptive procedures that control the false discovery rate. Electronic Journal of Statistics, 13(2):3009–3024.
+Marcus, R., Eric, P., and Gabriel, K. R. (1976). On closed testing procedures with special reference to ordered analysis of variance. Biometrika, 63(3):655–660.
+Ramdas, A. and Wang, R. (2025). Hypothesis testing with E-values. Foundations and Trends in Statistics, 1(1-2):1–390.
+Sarkar, S. K. (2008a). On methods controlling the false discovery rate. Sankhy ̄a: The Indian Journal of Statistics, Series A (2008-), pages 135–168.
+Sarkar, S. K. (2008b). Two-stage stepup procedures controlling FDR. Journal of Statistical Planning and Inference, 138(4):1072–1084.
+Solari, A. and Goeman, J. J. (2017). Minimally adaptive BH: A tiny but uniform improvement of the procedure of Benjamini and Hochberg. Biometrical Journal, 59(4):776–780.
+Storey, J. D. (2002). A direct approach to false discovery rates. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 64(3):479–498.
+Storey, J. D., Taylor, J. E., and Siegmund, D. (2004). Strong control, conservative point estimation and simultaneous conservative consistency of false discovery rates: A unified approach. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 66(1):187–205.
+Su, W. J. (2018). The fdr-linking theorem. arXiv preprint arXiv:1812.08965.
+Vovk, V. and Wang, R. (2021). E-values: Calibration, combination, and applications. The Annals of Statistics, 49(3):1736–1754.
+Wang, R. and Ramdas, A. (2022). False discovery rate control with e-values. Journal of the Royal Statistical Society Series B: Statistical Methodology, 84(3):822–852.
+Xu, Z., Solari, A., Fischer, L., de Heide, R., Ramdas, A., and Goeman, J. (2025). Bringing closure to false discovery rate control: A general principle for multiple testing. arXiv preprint arXiv:2509.02517.
+27

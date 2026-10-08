@@ -1,0 +1,363 @@
+RESEARCH ARTICLE STATISTICS
+Beyond Neyman–Pearson: E-values enable hypothesis testing
+with a data-driven alpha
+Peter D. Grünwalda,b,1 ID
+Edited by David Weitz, Harvard University, Cambridge, MA; received February 6, 2023; accepted August 21, 2024
+A standard practice in statistical hypothesis testing is to mention the P-value alongside the accept/reject decision. We show the advantages of mentioning an e-value instead. With P-values, it is not clear how to use an extreme observation (e.g. P 휶) for getting better frequentist decisions. With e-values it is straightforward, since they provide Type-I risk control in a generalized Neyman–Pearson setting with the decision task (a general loss function) determined post hoc, after observation of the data—thereby providing a handle on “roving 휶’s.” When Type-II risks are taken into consideration, the only admissible decision rules in the post hoc setting turn out to be e-value-based. Similarly, if the loss incurred when specifying a faulty confidence interval is not fixed in advance, standard confidence intervals and distributions may fail, whereas e-confidence sets and e-posteriors still provide valid risk guarantees. Sufficiently powerful e-values have by now been developed for a range of classical testing problems. We discuss the main challenges for wider development and deployment.
+hypothesis testing | decision theory | e-values | confidence | evidence
+We perform a null hypothesis test with significance level 훼 and we observe a P-value P 훼. Why aren’t we allowed to say “we have rejected the null at level P”? While a constant source of bewilderment to the applied scientist, professional statisticians understand the reason: to get a Type-I error probability guarantee of 훼—a cornerstone of the Neyman–Pearson (NP) theory of testing—we must set 훼 in advance. But this immediately raises another question: why should the P-value be mentioned at all in scientific papers, next to the reject/accept decision for the prespecified 훼 (1, 2)? The prevailing attitude is to accept this standard practice, on the grounds that it “provides more information”—as explicitly stated by, for example, Lehmann (3), one of NP theory’s main contributors. But this is problematic: there is nothing in NP theory to tell us what the decision-theoretic consequences of “P 훼” could be, whereas at the same time, the fundamental motivation behind NP theory is decision-theoretic: according to Neyman (4), “[all of] mathematical statistics deals with problems relating to performance characteristics of rules of inductive behavior [i.e. decision rules] based on random experiments.” There is no simple way though to translate observation of a P with P 훼 into better decisions: as is well known and reviewed below (Eqs. 4 and 26), intuitive and common decisiontheoretic interpretations of P 훼 are usually just wrong. We are therefore faced with a standard practice in NP testing that, according to (strict, behaviorist) NP theory, is not part of mathematical statistics! E As an Alternative for P. In our main result, Theorem 1, we show that this issue can be resolved by mentioning e-values rather than P-values next to the accept/reject decision. E-values (5–9) are a recently popularized alternative for P-values that are related to, but far more general than, likelihood ratios. Importantly, as reviewed in Example 2 below, for any NP test with the accept/reject-decision based on a P-value, the exact same test can be implemented by basing the decision on an e-value. Thus there is no a priori reason why one should accompany the decision of a NP test with a P-value rather than an e-value. But, in contrast to the P-value, the e-value has a clear decision-theoretic justification that remains valid if decision tasks are formulated post hoc, i.e. after seeing, and in light of, the data. Concretely, after the result of a study has been published, and when new circumstances prevail, one conceivably might contemplate different actions, with different associated losses, than originally planned. For example, a study about vaccine efficacy (ve) in a pandemic may have been set up as a test between null hypothesis ve ≤ 30% and alternative ve ≥ 50% (10). The original plan was to vaccinate all people above 60 years of age if the null is rejected. But suppose the null actually gets rejected with a very small P-value 훼, and at the same time the virus’ reproduction rate may be much higher than anticipated. Based on both the observed data (summarized by P) and the changed circumstances, one might now contemplate a new action, vaccinate
+Significance
+Throughout the applied sciences, statistical evidence is still routinely expressed by the P-value, a concept that has come under much scrutiny in recent years. We propose to mention an e-value instead. We show that unlike P-values, e-values provide valid performance guarantees if the costs for making wrong decisions only become known post hoc, after data were observed, and even if these costs change over time. In particular, e-values allow for practically meaningful guarantees without a prespecified significance level 훼, offering a take on statistical testing that radically alters the classical Neyman–Pearson paradigm. Similarly, e-based confidence intervals remain meaningful without prespecified 훼.
+Author affiliations: aMachine Learning Group, National research institute for mathematics and computer science in the Netherlands (Centrum Wiskunde & Informatica), Amsterdam 1098 XG, The Netherlands; and bMathematical Institute, Leiden University, Leiden 2333 CC, The Netherlands
+Author contributions: P.D.G. designed research; performed research; and wrote the paper.
+The author declares no competing interest.
+This article is a PNAS Direct Submission.
+Copyright © 2024 the Author(s). Published by PNAS. This article is distributed underCreative Commons Attribution-NonCommercial-NoDerivatives License 4.0 (CC BY-NC-ND).
+1 Email:pdg@cwi.nl.
+This article contains supporting information online athttps://www.pnas.org/lookup/suppl/doi:10.1073/pnas. 2302098121/-/DCSupplemental.
+Published September 20, 2024.
+PNAS 2024 Vol. 121 No. 39 e2302098121 https://doi.org/10.1073/pnas.2302098121 1 of 10
+Downloaded from https://www.pnas.org by 194.171.31.97 on May 7, 2025 from IP address 194.171.31.97.
+
+
+everyone over 40, with higher losses if the alternative is false and higher pay-offs if it is true. E-values can be used unproblematically for such a post hoc formulated decision task; P-values cannot. A second example is simply the fact that scientific results are published: they remain on record so as to be useful for future deployment. For example, a company contemplating to produce medication X may find a publication about the efficacy of X that is, say, 15 years old. Back then, in two independent studies the null (no efficacy) was rejected at the given 훼 = 0.05, but producing X would have been prohibitively expensive so this finding was not acted upon. But recently the company managed a technological breakthrough making production of X much cheaper. But now suppose that in both original studies, P < 0.01 yet 훼 = 0.05. Had 훼 been smaller than 0.01, they could now decide to take X into production—but this is not allowed in the NP framework for P-values. In contrast, as we will see in Example 1, Proposition 1, and Theorem 1 below, the e-value framework would allow for this type of updated decision to be made in hindsight. The e-value version of this scenario is Type-I risk safe, in the precise sense of Eq. 1 below; but acting (producing X) based on P < 0.01 with 훼 = 0.05 as above is unsafe in the sense that no clear risk (performance) bounds can be given when engaging in such behavior.
+From Testing to Estimation with Confidence: The E-Posterior. The medication X example is too simplistic: it only deals with rejecting the null of “no efficacy.” In reality, one wants to take effect sizes into account as well when making decisions. Section 3 shows that e-value methods extend to that setting as well. Upon observing data from a statistical model with parameter of interest 휃, the question now becomes how to properly interpret the statement “휃 ∈ cs훼,” where cs훼 is a (1 − 훼)-confidence set, usually an interval. The correct, basic interpretation only says that, when repeatedly performing studies, the true parameter will lie in cs훼 in a fraction of about 1 − 훼 studies. But practitioners want more, and indeed, confidence sequences are often given an evidential interpretation—one outputs not one but a system of CIs, one for each of a series of coefficients such as 80%, 90%, 95%, 99%, or even a full confidence distribution (11, 12) and this, it is said “summarizes what the data tell us about 휃, given the model” (13, page 227) or “the information about the parameter” (14). As our second contribution, we show there is benefit in replacing standard confidence sequences by econfidence sequences, and confidence distributions by e-posteriors (15): again, these stand on firmer decision-theoretic ground.
+BIND Assumption Underlying P-Values and Standard CSs. While so far we highlighted the problems with post hoc determined loss functions, below we show that decisions based on P’s (Section 1) and confidence sequences (Section 3) may already become unsafe, in the Type-I risk sense of Eq. 1, as soon as the decision task involves a “Type-I” loss function that can take on more than two values, even if this loss function is determined in advance. Essentially, we can only be sure that decisions based on P’s and cs’s are reliable if both 1) the loss function is binary-valued (B) and 2), it is determined in advance, or at least independently (IND) of the observed data. Thus, they really operate under a BIND (binary + independence) assumption. E-values andposteriors lead to decisions that retain Type-I risk safety if BIND is violated.
+Technical Contribution and Contents. To obtain frequentist guarantees without BIND, we first need to reformulate NP testing in terms of losses and risks rather than errors and error probabilities, an idea going back to Wald’s seminal 1939 paper introducing statistical decision theory (16). But while Wald lets
+go of the Type-I/II error distinction as soon as he allows for more than two actions, we stick with Type-I and Type-II risks (replacing Type-I and Type-II error probabilities, respectively) and show that the e-value is then the natural statistic to base decisions upon, and remains so if the decision task is determined post hoc. Therefore, our GNP (Generalized Neyman–Pearson) Theory follows a path opened up by Wald but apparently not pursued further thereafter. In Section 1, we informally present this reformulation, show how P-based procedures get in trouble if BIND is violated, introduce e-values, and explain how, when combined with a maximally compatible decision rule, they guarantee Type-I risk safety even without BIND. Section 2 then formalizes the reasoning and presents our main result, Theorem 1. Among all Type-I risk safe decision rules, we aim only for those that have admissible Type-II risk behavior; we call a rule admissible if there exists no other decision rule that is never worse and sometimes strictly better. Theorem 1, which has the flavor of a complete class theorem (17, 18) shows that, under mild regularity conditions, the set of admissible decision rules are precisely those that are based on some e-variable S via a maximally compatible decision rule. Section 3 extends our findings to CIs and distributions. The latter can be replaced by e-posteriors, a novel notion treated in much more detail in my recent paper (15), which may be viewed as a companion to this one, more oriented toward a Bayesian-inclined readership. An Important Caveat. Systematic development of e-values has only started very recently (in 2019). While a lot of progress has been made, and by now useful (i.e. reasonably powerful) e-values are available for a number of practically important parametric and nonparametric testing and estimation problems, there is still an enormously wide range of problems for which P-values—systematically developed since the 1930s—exist yet e-values have not yet been developed. We briefly review initial success stories and current challenges in Section 4, informing the final Section 5 which indicates the way forward and reinterprets our findings as establishing a quasi-conditional paradigm. All longer mathematical derivations and proofs are delegated to SI Appendix.
+1. Generalized Neyman–Pearson Theory
+1.1. Losses Instead of Errors. In the basic NP setting, we observe data Y taking values in some set Y, with both the null hypothesis H(0) and the alternative H(1) being represented as collections of distributions for Y . NP (19) tell us to fix some 훼 and then adopt the decision rule that, among all decision rules with Type-I error bounded by 훼, minimizes the Type-II error. Following Wald (16), we reinterpret this procedure in terms of a nonnegative loss function L(·, ·), with L(휅, a) denoting the loss made by action a if 휅 is the true state of nature. We have 휅 ∈ {0, 1} and A = {0, 1}, 휅 = 0 representing that the null is correct, 휅 = 1 that the alternative is correct, a = 0 standing for “accept” and a = 1 for “reject” the null. We invariably assume L(0, 1) > L(0, 0) ≥ 0, L(1, 0) > L(1, 1) ≥ 0. “Of course” (as Wald writes), we may want to set L(0, 0) = L(1, 1) = 0, and we will do this for now, but it is not required for the subsequent developments. In this formulation, the usual 훼-Type-I error guarantee is replaced by an `-Type-I risk guarantee. Formally, we fix an ` in advance of observing the data and we say that decision rule 훿 (i.e. a test), defined as a function from Y to A, is Type-I risk safe if
+sup
+P0∈H(0)
+EY ∼P0 [L(0, 훿(Y ))] ≤ `, [1]
+2 of 10 https://doi.org/10.1073/pnas.2302098121 pnas.org
+Downloaded from https://www.pnas.org by 194.171.31.97 on May 7, 2025 from IP address 194.171.31.97.
+
+
+where, for j = 0, 1, Pj ∈ H(j), EY ∼Pj [L(0, 훿(Y ))] is called the
+risk of Pj, i.e. the expected loss under Pj. Following NP again, with again “error probability” replaced by “risk,” we now postulate that among all Type-I risk safe decision rules 훿, we ideally want to pick one that has small worst-case Type-II risk
+sup
+P1∈H(1)
+EY ∼P1 [L(1, 훿(Y ))]. [2]
+Eq. 1 expresses that, whatever we decide, we want to make sure that our risk (expected loss) under the null is no larger than `. In a standard level-훼 test, one rejects the null if P(y), the P-value corresponding to data y, satisfies P(y) ≤ 훼. A corresponding decision rule in terms of loss functions is to reject the null whenever the observed P(y) satisfies
+P(y) · L(0, 1) ≤ `. [3]
+We get exactly the same behavior as for the standard level 훼-test whether we set L(0, 1) = `/훼. For example, for 훼 = 0.05 we can set ` = 1 and then L(0, 1) := 20; then, just like in NP testing Eq. 3 tells us to pick a 훿◦ which rejects the null if P ≤ 0.05. If P is defined so that 훿◦ is uniformly most powerful, then combined with any loss function L(1, 0) > 0, 훿◦ will also minimize the worst-case Type-II risk Eq. 2 among all 훿 that satisfy Type-I error probability ≤ 훼: up until now we have merely reformulated standard NP theory.
+1.1.1. Actions of varying intensity. But now suppose we have more than two actions available. For example, consider four alternative actions: accept the null (retain the status quo), take mild action (e.g. vaccinate all people over 60), take more drastic action (vaccinate everyone over 40) and extreme action (vaccinate the whole population). We consider this question, too, in terms of Type-I and Type-II risk and confidence—thereby taking a different direction than standard decision theory. For example, our action space could now be Ab = {0, 1, 2, 3} with loss
+function Lb(0, 0) = 0, Lb(0, 1) = 20`, Lb(0, 2) = 100`,
+Lb(0, 3) = 500` and Lb(1, 3) < Lb(1, 2) < Lb(1, 1) <
+Lb(1, 0) = `. More generally, as long as Type-I loss is increasing in a and Type-II loss is decreasing, such an extension of the NP setting makes intuitive sense. In terms of P-values, the straightforward extension of Eq. 3 to this multiaction case would be to play action a, where a is the largest value such that
+P(y) · Lb(0, a) ≤ `. [4]
+But, assuming our P-value is strict so that it has a uniform distribution under the null, this gives a Type-I risk of
+EY ∼P0 [Lb(0, 훿(Y ))] =
+(1
+20 −
+1 100
+)
+· 20` +
+(1
+100 −
+1 500
+)
+· 100` + 1
+500 · 500` = 2.6`, [5]
+violating t mpose and showing that a naive P-value-based procedure does not work. The problem gets exacerbated if we allow for more than four actions: In SI Appendix, we show that the expected loss of the naive procedure Eq. 4 may go to ∞ as we add additional actions with Lb(0, a) increasing and Lb(1, a) decreasing in a. There we also show that an obvious “fix,” namely modifying Eq. 4 to make sure that for each action a, Lb(0, a) gets multiplied by exactly the probability that action a is taken, does not solve this issue.
+1.1.2. Post hoc loss functions. Allowing more than two actions is really just a warm-up to a further extension which arguably better models what often happens in, for example, medical practice: the post hoc determination or modification of a decision task, after seeing the data and dependent on the data, such as in the vaccine efficacy example in the introduction. That is, there is really an underlying class (whose definition may be unknowable) of loss functions Lb(·, ·) with associated action spaces Ab, and the decision-maker (DM) is posed a particular decision task Lb(·, ·), where b, indexing the loss actually used, is really the outcome of a random variable B = b, whose distribution may depend on the data in all kinds of ways. The actual B = b that is presented is thus random and only fixed after the study result has become available; i.e. “post hoc.” Crucially, the process determining the actual value of B is typically murky; nobody knows exactly what loss function would have been considered in what alternative circumstances; DM only knows the loss function finally arrived at. Again, with P-values, we might be tempted to pick the largest action a such that Eq. 4 holds, where now b is really the (observed, known) outcome of random variable B whose definition is itself unknown. Now, even if for each b, Lb allows for only two actions, so that the problem superficially resembles the standard NP setting, using Eq. 4 can have disastrous consequences in the post hoc setting, as the following example shows.
+Example 1: Suppose there are three loss functions Lb, for b ∈ B = {1, 2, 3}, with corresponding actions Ab = {0, b}. We set
+L1(0, 1) = 20`, L2(0, 2) = 100`, L3(0, 3) = 500`, Lb(0, 0) =
+0, Lb(1, 0) := ` for all b ∈ B, and Lb(1, b) strictly decreasing in b. This is like the previous example, but rather than always being able to choose one among four actions, the very set of choices that is presented to DM via setting B = b might depend on the data Y or on external situations. One cannot rule out that this is done in an unfavorable manner—if the data suggest strong evidence, then the policy developers (e.g. a pandemic outbreak management team) might only suggest actions with drastic consequences. Suppose, for example, that if P > 0.02, the DMs are presented loss L1; if 0.001 < P ≤ 0.02 they are presented loss L2; and if P ≤ 0.001 they are presented loss L3. A DM that uses Eq. 4 as before, will choose the alternative action B whenever P ≤ `/LB(0, B), where LB is the presented loss. We thus get (assuming again uniform P) a Type-I risk of
+EY ∼P0 [L(0, 훿(y))] =(0.05 − 0.02) · 20` + (0.02 − 0.001) · 100` + 0.001 · 500` = 3 · `.
+As in Eq. 5 the resulting decision rule Eq. 4 is not Type-I risk safe, and again, the Type-I risk can even go to infinity with the number of potential actions.
+1.2. E-Values to the Rescue. Reporting evidence as e-values (as defined by Eq. 6) rather than P-values solves both the multiple action and post hoc loss issue identified above. An e-value is the value of a special type of statistic called an e-variable. An e-variable is any nonnegative random variable S = S(Y ) that can be written as a function of the observed Y and that satisfies the inequality:
+for all P ∈ H(0): EP[S] ≤ 1. [6]
+The e-variable’s simplest application is in defining tests: the S-based hypothesis test at level 훼 is defined to reject the null iff S ≥ 1/훼. Since for any e-variable S, all P ∈ H(0), by Markov’s inequality, P(S ≥ 1/훼) ≤ 훼), with such a test we
+PNAS 2024 Vol. 121 No. 39 e2302098121 https://doi.org/10.1073/pnas.2302098121 3 of 10
+Downloaded from https://www.pnas.org by 194.171.31.97 on May 7, 2025 from IP address 194.171.31.97.
+
+
+get a Type-I error guarantee of 훼, with the advantage that [as shown by Grünwald et al. (5) and Vovk and Wang (6)] unlike with P-values, the Type-I error guarantee remains valid under optional continuation, i.e., deciding based on a study result whether new studies should be undertaken and if so, multiplying the corresponding e-values. The term “e-variable” was coined in 2019 (5, 6) but the concept’s history is older, as described by Grünwald et al. (5) and Ramdas et al. (9). We may now simply pick any e-variable S we like and replace decision rule Eq. 4 by the following maximally compatible alternative rule: upon observing data Y = y and loss function indexed by B = b with accompanying maximum imposed risk bound `, select the largest a for which
+1
+S(y) · Lb(0, a) ≤ `, i.e. Lb(0, a) ≤ S(y) · `, [7]
+where we adopt the (in our setting harmless) convention that, for u = 0 and v ≥ 0, v/u := 0 if v = 0 and v/u = ∞ if v > 0. Theorem 1 below gives conditions under which Eq. 7 has a unique solution. For the original NP setting of two actions, Eq. 7 is simply the P-value-based rule Eq. 4 with P replaced by 1/S, illustrating that large (not small!) e-values correspond to evidence against the null. But in contrast to the P-value-based rule, with the e-based rule, no matter what e-variable S we take (as long as it is itself chosen before data are observed), no matter how many actions A contains, no matter the process determining the loss B, we have the Type-I risk guarantee Eq. 1 (Theorem 1 below): replacing P by 1/S resolves the BIND problem. Of course, this raises the question whether P-values cannot be used safely for Type-I risk after all, in a manner different from Eq. 4. The only such method we know of is to first convert a P-value into an evalue and then use Eq. 7 after all. As discussed in SI Appendix, the e-values resulting from such a conversion are usually suboptimal, so we prefer to design and use e-values directly.
+Example 2[The NP and Likelihood Ratio E-Variables]: As with P-values, many different e-variables can be defined for the same H(0). As discussed by Shafer (7), an extreme choice is to start with a fixed level 훼 and P-value P and to set Snp(훼) := (1/훼) if P ≤ 훼 and Snp(훼) = 0 otherwise. Clearly EY ∼P0 [Snp(훼)] ≤
+훼(1/훼) = 1 so Snp(훼) is an e-variable. In the case of a classical, 2-action NP problem as defined underneath Eq. 3, the test Eq. 7
+based on e-variable S = Snp(훼) will lead to a = 1 (reject the null) iff the classical NP test based on P does. This shows that any P-based NP test can also be arrived at using Eq. 7 with a special e-value: nothing is lost by replacing P-values with e-values. Still, in case there are more than 2 actions and/or post hoc decisions, while preserving the `-Type-I risk guarantee, decisions based
+on Snp(훼) may not be very wise in the Type-II risk sense. For example, with the loss function used in Eq. 5 and 훼 = 0.05, we get that even for very small underlying P (i.e. extreme data), we will still choose action 1, whereas it seems more reasonable to select more extreme actions, minimizing Type-II loss, as the evidence against the null gets stronger. In case H(0) = {P0} and H(1) = {P1} are simple, this can be achieved by taking S to be a likelihood ratio: assuming Pj has density pj,
+S
+lr := p1(Y )
+p0(Y ) [8]
+which is immediately seen to be an e-variable:
+EP0 [Slr] =
+∫
+p0(y) p1(y)
+p0(y) d 휇 =
+∫
+p1(y)d 휇 = 1, [9]
+i.e. to satisfy Eq. 6. We can compare Snp(훼) and Slr if P
+underlying Snp(훼) is itself a monotonic function of the likelihood ratio Slr, as it will be for the standard optimal power NP test. In
+the decision task above Eq. 4, when used in Eq. 7, Snp(훼) can, for each 훼, select at most 2 actions whereas Slr leads to selection of action 0, 1, 2 or 3 depending on the amount of evidence, at the price of imposing a larger threshold before any particular action
+is selected compared to the S훼 that is optimal for that action (e.g. S0.05 is optimal for action 1 in this sense). We will see more sophisticated e-variables in Example 4 and refer to numerous further examples of useful e-variables in Section 4.
+2. Mathematical Formalization and Results
+2.1. Type-I Risk Safety and Compatibility. Let H(0), the null hypothesis, be a set of probability distributions for random Y taking values in a outcome space Y. Definition 1: A GNP testing problem is a tuple (H(0), B, {(Ab, Lb(0, ·) : Ab → R+
+0 ) : b ∈ B}), where
+we call Lb(0, ·) the Type-I loss indexed by b with action space Ab.
+In Section 3, we informally extend this concept to uncertainty quantification with CIs; in SI Appendix, we formally extend the definition to general uncertainty quantification beyond testing. Relative to any given GNP testing problem, we further define a decision rule to be any collection of functions {훿b : b ∈ B}, where 훿b(y) denotes the a ∈ Ab picked when loss function indexed by B = b (i.e. Lb) is presented and Y = y is observed. Let 훿 be any decision rule and let S = S(Y ) be any e-variable. We call 훿 compatible with S if
+Lb(0, 훿b(y)) ≤ S(y) for all y ∈ Y, b ∈ B. [10]
+We now prepare the definition of Type-I risk safety for GNP decision problems. First, we note that in general, the threshold ` a DM would like to impose on the risk via Eq. 7 when confronted with loss function Lb may be an arbitrary positive real. However, using this maximal rule Eq. 7, for every observed Y = y and B = b, the exact same decision will be taken if we normalize all losses, using L′
+b with L′
+b(0, a) = Lb(0, a)/` instead of Lb and
+`
+′ = 1 instead of `. Hence, without loss of generality, from now on we simplify the treatment by taking ` = 1 (in SI Appendix, we discuss in more detail why this is not harmful). With this in mind, consider a concrete setting in which the actual loss function LB with index B presented to DM is determined in a data-dependent manner (perhaps by some policy makers, perhaps completely implicitly). Since we do not know the definition of B, i.e. how the choice is made, we want to ensure that the analogue of Eq. 1 holds, in the worst case, over all possible choices. Thus, as a first attempt, we may extend Eq. 1, by defining 훿 to be Type-I risk safe if
+sup
+P0∈H(0)
+EP0
+[
+sup
+b
+∈B
+Lb(0, 훿b(Y ))
+]
+≤ 1. [11]
+As discussed in SI Appendix, the expectation might be undefined for pathological choices of the set B and the functions {Lb : b
+∈ B}—after all, we have not restricted the choice of B and Lb at all. We can simply avoid this issue by slightly modifying the definition: we define 훿 to be Type-I risk safe if there exists a function U : Y → R+
+0 such that for all P0 ∈ H(0), EP0 [U (Y )]
+is well defined, and for all y ∈ Y,
+sup
+b
+∈B
+Lb(0, 훿b(y)) ≤ U (y) ; sup
+P0∈H(0)
+EP0 [U (Y )] ≤ 1. [12]
+4 of 10 https://doi.org/10.1073/pnas.2302098121 pnas.org
+Downloaded from https://www.pnas.org by 194.171.31.97 on May 7, 2025 from IP address 194.171.31.97.
+
+
+2.1.1. E-variable compatibility ⇔ type-I risk safety. In NP Theory, Type-I error guarantees come first—we look for an optimal decision rule among all rules that have the desired Type-I error guarantee. Analogously, here we first restrict our search for “good” decision rules to those that are Type-I risk safe for the given decision problem. How to find these? Realizing that the second equation in Eq. 12 expresses that U is an e-variable, and the first equation says that 훿 is compatible with this e-variable, we see that the Type-I risk safe decision rules are exactly those that are compatible with an e-variable, thereby explaining the importance of e-variables to generalized NP testing. Formally, we have just proved the following trivial consequence of our definitions:
+Proposition 1. Fix an arbitrary GNP testing problem. For every 훿 defined relative to this problem:
+1.For every e-variable S for H(0): if 훿 is compatible with S, then 훿 is Type-I risk safe. 2.Suppose that 훿 is Type-I risk safe. Let S = U be as in Eq. 12 [in standard cases, we can simply take S(y) = supb∈B Lb(0, 훿b(y))].
+Then S is an e-variable for H(0), and 훿 is compatible with S.
+2.2. Admissibility. We now turn to Type-II losses. The reader may have wondered why the specification of Type-II loss functions Lb(1, a) : Ab → R as in Eq. 2 was not made part of Definition 1. The following crucial observation implies that this is superfluous, thereby greatly simplifying the treatment: suppose there were two actions a, a′ ∈ Ab such that Lb(0, a′) > Lb(0, a)
+and Lb(1, a′) > Lb(1, a). Then any rational DM would always prefer a over a′, and hence never want to play a′. We can thus take a′ out of the set Ab without affecting the set of decisions that a DM might ever want to consider. Assuming that Ab has been preprocessed like this, we automatically obtain that the larger the Type-I loss of an action, the smaller the Type-II loss, allowing us to refrain from specifying Lb(1, ·): we may simply call a decision rule 훿◦ Type-II strictly better than 훿 if for all b ∈ B, all P ∈ H(0), we have
+P(Lb(0, 훿◦
+b (Y )) < Lb(0, 훿b(Y ))) = 0, [13]
+whereas there exist b ∈ B, P ∈ H(0) such that
+P(Lb(0, 훿◦
+b (Y )) > Lb(0, 훿b(Y ))) > 0. [14]
+If Y is uncountable, Lb, 훿◦ and 훿 could again be picked in highly pathological ways, such that the probabilities above are undefined. This is fully resolved by the generalization of Eqs. 13 and 14 given in SI Appendix. Clearly, if both 훿◦ and 훿 are Type-I risk safe and 훿◦ is Type-II strictly better than 훿, we would always prefer playing 훿◦ over 훿. We may say that 훿 is inadmissible. Formally, for any decision rule 훿, we say that it is admissible if it is Type-I risk safe and no other Type-I risk safe decision rule is Type-II strictly better. 2.2.1. Main result. This admissibility notion is reminiscent of standard admissibility notions in classical statistical decision theory, and the theorem below is in the spirit of a complete class theorem (17, 18) expressing that in searching for reasonable (i.e., admissible) decision rules in GNP problems, we may restrict ourselves to those based on e-variables via maximally compatible decision rules. Formally, we call a decision rule 훿 maximally compatible with e-variable S relative to a given GNP testing problem, if it is compatible with S and there exists no decision rule 훿◦ such that 훿◦ is also compatible with S yet 훿◦ is Type-II
+strictly better than 훿. We will relate this to the earlier informal definition of maximum compatibility (Eq. 7) further below. To state the theorem, we need two more concepts: first, we call an e-variable S sharp relative to a given GNP testing problem if EP0 [S] = 1 for some P0 ∈ H(0). Second, we call a GNP testing
+problem rich relative to e-variable S = S(Y ) if for every s in the codomain of S, there exist b ∈ B and a ∈ Ab such that Lb(0, a) = s. An example of a simple GNP testing problem that is rich relative to any e-variable at all is obtained whenever B = {sq} ∪ B′, for arbitrary B′, where Asq = R+
+0 and Lsq(0, a) = a2 (the squared
+error loss—richness follows since it can take on any value in R+
+0 ). An example of a GNP testing problem that is rich relative
+to e-variable Snp(훼) of Example 2 is given by B = {np} ∪ B′, for arbitrary B′, where Anp = {0, 1} and Lnp(0, 0) = 0, Lnp(0, 1) = 1/훼 (if B′ = ∅, this is the classical NP setting of Section 1 again):
+choose B = np, a = 0 if Snp(훼) = 0, and choose B = np, a = 1
+if Snp(훼) = 1/훼.
+Theorem 1. Consider a GNP testing problem. Then:
+1.If 훿 is an admissible decision rule, then there exists an e-variable S such that 훿 is a maximally compatible decision rule for S. 2.As a partial converse, suppose that 훿 is a maximally compatible decision rule for some e-variable S. If (a) all P ∈ H(0) are mutually absolutely continuous (see below) and (b) S is sharp relative to the given testing problem and (c) the GNP testing problem is rich relative to S, then 훿 is admissible.
+Part 1 shows that we can restrict our search for admissible decision rules to the ones that are maximally compatible for some e-variable S. Part 2 is in essence a converse, showing that, under some regularity conditions, maximally compatible decision rules must be admissible. All three conditions required are weak: (a) Two distributions P, P′ are mutually absolutely continuous if “they agree on what is practically impossible,” i.e. for each event E, we have P(E) = 0 iff P′(E) = 0. Most standard parametric families are absolutely continuous or can be made such by excluding the boundary of the parameter space. (b) Sharpness of S expresses that S cannot be uniformly improved—a mild requirement satisfied by all e-variables considered in this paper [and also in most other papers on e-variables (5, 9)]. (c) Richness relative to the S considered holds in all examples encountered in this paper (see Example 3 below for further illustration). More importantly perhaps, for any sharp e-variable S which we might want to base our decisions on, we can trivially enlarge any given GNP testing problem by adding one particular loss function so that the extended GNP decision problem will automatically be rich relative to S, and Part 2 of Theorem 1 can then be applied. In SI Appendix, we explain how this enlargement works and why it is a reasonable operation. The theorem thus expressing that maximally compatible 훿 tend to coincide with admissible 훿, we would still like to be assured that such maximally compatible 훿 exist in wide generality. To briefly illustrate that this is the case, at the same time connecting the formal notion to the earlier informal definition based on Eq. 7, let us consider what we will call simple GNP testing problems. All GNP testing problems encountered in this and the previous section are simple. They are defined as those GNP testing problems for which, i) for all b ∈ B, Ab is a finite union of
+closed intervals in R+
+0 ∪ {∞} (in particular this includes the case
+that Ab is finite); ii) the Type-I loss Lb(0, a) is monotonically and, on each interval, continuously increasing in a, and iii) all P
+∈ P are mutually absolutely continuous. The following is easily checked: for arbitrary e-variable S, such simple GNP decision
+PNAS 2024 Vol. 121 No. 39 e2302098121 https://doi.org/10.1073/pnas.2302098121 5 of 10
+Downloaded from https://www.pnas.org by 194.171.31.97 on May 7, 2025 from IP address 194.171.31.97.
+
+
+problems must have a maximally compatible 훿∗ relative to S that generalizes Eq. 7, with our simplification ` = 1: 훿∗ is the rule which selects, when presented Y = y, B = b,
+훿
+∗
+b (y) := largest a ∈ Ab with Lb(0, a) ≤ S(y). [15]
+Moreover, this maximally compatible 훿∗ is essentially unique, i.e. if 훿∗, 훿 are both maximally compatible, then for all P ∈ H(0), we have P(훿∗ 6= 훿′) = 0.
+Example 3: Consider a simple vs. simple testing problem with H(0) = {P0}, H(1) = {P1}. Let P(Y ) be a strict P-value, i.e. P0(P ≤ 훼) = 훼 for 훼 ∈ [0, 1], that is monotonically and continuously decreasing in the likelihood ratio Slr(Y ); use of such a P-value is standard in NP testing with continuousvalued outcome spaces. Consider the following variation of Example 1: B ⊂ R+
+0 with for b ∈ B, Ab = {0, 1} and
+Lb(0, 0) = 0, Lb(0, 1) = b. Take arbitrary but fixed 0 < 훼 < 1. Then, the maximally compatible decision rule 훿∗ as in Eq. 15
+relative to e-variable Snp(훼) is sharp. When presented with loss function Lb, this 훿∗ always plays 0 if b > 1/훼. If b ≤ 1/훼, it plays 1 if b ≤ Snp(훼) (i.e. if Snp(훼) = 1/훼, i.e. if P ≤ 훼)
+and 0 otherwise (i.e. if Snp(훼) = 0, i.e. if P > 훼). By Part 2 of Theorem 1, this 훿∗ is admissible if B contains b = 1/훼, which ensures richness relative to Snp(훼). In contrast, consider the 훿∗ as in Eq. 15 based on the likelihood ratio e-variable Slr, which is also sharp. When presented Lb, this decision rule plays 1 if b ≤ Slr and 0 otherwise. If we set B = R+
+0 , we have richness relative to Slr so by Theorem 1, this
+훿
+∗ is admissible as well. In this case though, admissibility of 훿∗ may fail if we take B a strict subset of R+
+0.
+3. Robust Confidence via the E-Posterior
+Now let us consider a statistical model P partitioned according to a parameter of interest 휃 ∈ Θ, with 휙 : P → Θ indicating the parameter corresponding to each P; for example, 휃 = 휙(P) might be the mean of P, or, if P = {P휃 : 휃 ∈ Θ} is a parametric model, 휙 might simply denote the parameterization function, 휙(P휃) = 휃. Any collection of P-values {P휃 : 휃 ∈ Θ}, with P휃 a P-value for the “null” H(휃) := {P ∈ P : 휙(P) = 휃} can be used to build a valid (1 − 훼) confidence set, by setting cs훼(Y ) = {휃 : P휃(Y ) > 훼} to be the set of 휃’s that would not have been rejected at the given level 훼. For simplicity, we restrict attention to scalar Θ ⊆ R; then, the cs훼 will usually be intervals, and indeed this P-value-based construction is a standard way to construct such intervals. Analogously (9, 20), any e-collection, i.e. a collection of e-variables {S휃 : 휃 ∈ Θ} such that S휃 is an e-variable for the “null” H(휃) (by this we mean that S휃 must satisfy Eq. 6, i.e. EP[S휃] ≤ 1, for all P ∈ H(휃)) can be used to build an equally valid, usually larger, e-based (1 − 훼)-confidence set (again, for scalar 휃 this usually becomes an interval), one for each 훼, by setting cs∗
+훼(Y ) = {휃 : S휃(Y ) < 1/훼} as the set of 휃’s that would not have been rejected at level 훼 with an e-value-based test. Below, we first give a simple example. We then, in Section 3.2 retrace the steps of Section 1 and Section 2, reinterpreting confidence sets in terms of actions with associated losses and risks. Sections 3.3 and 3.4 show that, once again, if losses are determined post hoc (BIND is violated), then standard CIs loose their validity whereas e-based CIs remain Type-I risk safe. Relatedly, without BIND, decisions based on confidence distributions can be unsafe, but those based on the e-posteriora means of summarizing e-confidence sequences for all 훼’s at once—remain Type-I risk safe.
+Example 4: Consider the normal location family: data are Y =
+X n, where, under P휃, X n = (X1, . . . , Xn) are i.i.d. ∼ N (휃, 1). We consider e-based CIs based on e-collections. Ref. 15 gives various suitable collections, but for simplicity, we here stick to a single, simple choice, taken from Example 8 of ref. 15, that, like the standard CI, is symmetric around the maximum likelihood
+estimator 휃ˆ(X n) = n−1 ∑ Xi. Fix anticipated sample size n∗ and
+confidence level 0 < 훼∗ < 1. For each 휃 we define 휃− < 휃 and
+휃+ > 휃 to satisfy
+1
+2 n∗(휃 − 휃+)2 = 1
+2 n∗(휃 − 휃−)2 = log 2
+훼
+∗ . [16]
+Now define e-variables S−
+휃 (y) = p휃− (y)/p휃(y), S+
+휃 (y) =
+p휃+ (y)/p휃(y) and S휃(y) = (1/2)(S−
+휃 (y)+S+
+휃 (y)). These choices can be motivated based on the fact that S−
+휃 and S+
+휃 are also
+uniformly most powerful Bayes factors (15, 21) and hence reasonable e-variables for 1-sided confidence sequences. We continue with S휃 for two-sided confidence sequences. As is proved analogously to Eq. 9, S휃 remains an e-variable even if neither the actual sample size n nor the to-be-used significance level 0 < 훼 < 1 are equal to the hoped-for n∗ and 훼∗; more on this below. In SI Appendix, we show that a sufficient condition for S휃(Y ) ≥ 훼−1, i.e. for 휃 6∈ cs∗
+훼(Y ) is that
+∣ ∣
+∣휃 − 휃ˆ
+∣ ∣
+∣≥
+√
+2
+n
+· log 2
+훼 · g(c), with
+c = n∗
+n
+·
+log(2/훼)
+log(2/훼∗) , g(c) = 1
+2
+(
+c1/2 + c−1/2)
+. [17]
+As explained in SI Appendix, for fixed 훼, Eq. 17 is tight for all but the smallest n. Thus, the e-based CI cs∗
+훼(Y ) has width
+|휃 − 휃ˆ| 1/√n, of the same order as the region for the standard Neyman–Pearson test, with a factor g(c) depending on how well aligned n, n∗, 훼 and 훼∗ are: g(c) and hence the width is minimized, if c = 1 (and then g(c) = 1) which is the case if n = n∗ and 훼 = 훼∗. At 훼 = 0.05, we get in this optimal case that S휃(Y ) ≥ 훼−1 if |휃 − 휃ˆ| ≥
+√
+(2 log 40)/n ≈ 2.72/√n, making the e-based CI wider than the standard one by a constant factor of ≈ 2.72/1.96 ≈ 1.4 (Fig. 1).
+3.1. E-Processes. Why do we not simply set n∗ in the definition of S휃 actual to the actual n? The reason is that we allow the actual n to be unknown in advance, and even to be random (i.e. a stopping time with unknown definition): it is easily seen
+that, if Y = X 휏 with X 휏 = (X1, . . . , X휏 ) for a stopping time
+휏 (whose definition may be unknown to DM), then S휃(X 휏 ) is
+still an e-variable. Formally, S휃(X 1), S휃(X 2), . . . constitutes an e-process in the sense of refs. 9 and 22. Thus, we can use S휃 without knowing the definition of 휏, and in particular, 휏 may be unequal to n∗—such as an extension of e-variables to be used with arbitrary stopping times is often, but not always possible (5); whenever it is, it provides an additional bonus over use of standard p-variables in testing, which require the stopping time to be set in advance. As stated, assuming that we base the S휃 on the correct n and 훼, this e-based CI is about 1.4 times as wide as the standard one; the inevitable (yet, I feel, worthwhile!) price to pay for the added flexibility and robustness: in contrast to the standard one, we can use the e-based interval for unknown n (or 휏) as well, and we can also use it to get valid CIs for B if BIND is violated, as we proceed to show.
+6 of 10 https://doi.org/10.1073/pnas.2302098121 pnas.org
+Downloaded from https://www.pnas.org by 194.171.31.97 on May 7, 2025 from IP address 194.171.31.97.
+
+
+Fig. 1. The solid line depicts the e-posterior (capped at 1) corresponding to the e-collection of Example 4, i.e. min{1, P ̄ (휃 | y)}, for data y = xn with n = 100 and maximum likelihood estimator 휃ˆ(y) = 1.00. The dashed green line depicts twice the tail area of the objective Bayes posterior/confidence distribution W
+◦ | Y = xn of Eq. 23, given by f (휃) := 2W ◦(휃 ̄ ≥ 휃 | y) = 2
+∫∞
+휃 w◦(휃 ̄ | y)d휃. The standard two-sided (1 − 훼)-CI is given by [휃L, 휃R], where 휃L < 휃ˆ = 1.00 is the
+leftmost 휃 at which the dashed green curve takes value 훼, and 휃R is the rightmost such 휃. The (1 − 훼)-e-CI based on S휃 as defined above Eq. 17, and with boundaries approximately equal to, Eq. 17, is given by the [휃L, 휃R] at which the solid line takes value 훼. The right picture zooms in on the right for 훼 ≤ 0.05. As
+expected, the dashed line hits 0.05 for 휃R = 휃ˆ(xn) + 1.96/√n = 1.196, the solid (e-based) line at 휃R = 휃ˆ(xn) + 2.72/√n = 1.272.
+3.2. Reformulating Coverage in Terms of Type-I Risk. In SI Appendix, we formally generalize GNP testing problems (Definition 1 above) to strictly more general GNP decision problems, that (besides much more) allow for estimation with CIs. There we also provide the corresponding generalization of Theorem 1. In the main text below we keep the treatment informal. To accommodate e-based CIs as in Example 4 into our decision-theoretic framework, we interpret them as actions. The loss incurred by action [휃L, 휃R] if 휃 is the true state of the world
+is now given by loss function Lb (with b > 0) defined by
+Lb(휃, [휃L, 휃R]) = b · 1휃6∈[휃L,휃R]. [18]
+Thus, we incur a Type-I loss, if the sampling distribution 휃 is not in the interval [휃L, 휃R] we specified, and b determines how bad such a mistake is—this may again be data-dependent: we assume once again that we are presented B = b via a random and potentially unknowable process. Again, we want to guarantee Type-I risk safety. The natural generalization of its definition (Eqs. 1 and 11) to our CI setting is obtained by requiring the guarantee to hold no matter what the state of nature 휃 is. Type-I risk safety is thus defined as
+∀휃 ∈ Θ : sup P
+∈H(휃)
+EP [sup
+b
+∈B
+b
+· 1휃6∈훿b(Y )] ≤ 1, [19]
+where H(휃) is defined as in the beginning of Section 3 and 훿b(Y ) = [휃L(Y, b), 휃R(Y, b)] is the interval chosen by DM when presented loss Lb and data Y . Among all decision rules (i.e. CIs) 훿 satisfying Eq. 19, we want to find the narrowest ones. The natural generalization of Type-II strictly better presented in SI Appendix automatically accounts for this: it implies that [휃L, 휃R] is Type-II strictly better than [휃′
+L, 휃′
+R] iff [휃L, 휃R] is a proper subset
+of [휃′
+L, 휃′
+R ].
+Generalizing Eq. 10, again by requiring it to hold for all 휃, we now say that 훿 is compatible with e-collection {S휃 : 휃 ∈ Θ} if we have for all y ∈ Y, b ∈ B that
+∀휃 ∈ Θ : Lb(휃, 훿b(y)) ≤ S휃(y). [20]
+The upshot of the results in SI Appendix is that, as in the testing scenario, every decision rule 훿b (i.e. a function of Y that outputs CIs) that is compatible in the sense of Eq. 20, is also Type-I risk safe in the sense of Eq. 19. Moreover, it is admissible if there exists no 훿′
+b that is also compatible and never outputs wider, yet
+sometimes outputs strictly narrower CIs.
+3.2.1. Connection to standard CIs. If we may assume that BIND holds we can take the supremum over B in Eq. 19 out of the expectation, i.e. bEP [1휃6∈훿b(Y )] ≤ 1 must hold for all fixed 휃, P ∈ H(휃) and b. We may then think of b as set in advance: If we set b = 1/훼 for some 0 < 훼 ≤ 1, then, the requirement says that 훿b(Y ) is a standard (1 − 훼)-CI. Thus, under BIND, standard CIs 훿b coincide with Type-I risk safe CIs as defined above: just as for P-value-based tests in Section 1, under BIND the new setting is simply an equivalent reformulation of the existing theory of confidence sets. Yet, again, if BIND is violated, then standard CIs are not Type-I safe any more, whereas e-based CIs still are.
+Example 5[Ex. 4, Continued]: Suppose you observe Y = y, B = b. Let us use the e-CIs as defined relative to a particular anticipated n∗ and 훼∗. Using Eq. 17 and substituting 1/b for 훼 [so that now c = (n∗/n)·(log(2b)/(log(2/훼∗))], gives that ∀휃 ∈ Θ : Lb(휃, 훿b(y)) ≤ S휃 with 훿b(y) = [휃L, 휃R] [i.e. compatibility (Eq. 20) holds and hence Type-I risk safety Eq. 19 holds as well] as soon as 휃L ≤ 휃ˆ − A and 휃R ≥ 휃ˆ + A, where
+A=
+√
+2
+n
+·
+√
+log(2b) · g(c). [21]
+We may choose 훿B(Y ) = [휃ˆ − A, 휃ˆ + A] to satisfy this with equality to make the interval as narrow as possible, making our interval admissible. We are then guaranteed Type-I safety, Eq. 19, irrespective of the definition of B. In contrast, it is not clear how to construct Type-I safe CIs for data-dependent B without e-values.
+PNAS 2024 Vol. 121 No. 39 e2302098121 https://doi.org/10.1073/pnas.2302098121 7 of 10
+Downloaded from https://www.pnas.org by 194.171.31.97 on May 7, 2025 from IP address 194.171.31.97.
+
+
+We might be tempted to do this based on confidence distributions (11, 12) that summarize CIs for each 훼 into a posterior-like quantity, or objective Bayes posteriors (17), but as we now show, this can have bad results.
+3.3. Confidence Distributions and Objective Bayes Posteriors Are Not Valid Post Hoc. Consider the normal location family again. With the standard (uniform, improper) “objective Bayes”
+prior for this family and data Y = xn, the posterior W ◦ | Y = xn
+has a normal density w◦(휃 | xn) with mean and median equal
+to the maximum likelihood estimator (MLE) 휃ˆ(xn) and variance 1/n (17). In this case, the objective Bayes posterior also coincides with the fiducial (23) and the confidence distribution (12) based
+on xn, and has an exact coverage property: if we let [휃L, 휃R] represent the standard (1 − 훼)-Bayesian credible interval based
+on w◦(휃 | xn), i.e. taken symmetrically around the maximum likelihood estimator 휃ˆ(xn) then this coincides exactly with the standard (1 − 훼)-CI, e.g. for 훼 = 0.05, we have 휃L = 휃ˆ(xn) −
+1.96/√n, 휃R = 휃ˆ(xn) + 1.96/√n. The question is now how to base inferences on the objective Bayes or confidence distributions within our current GNP decision problem, i.e. if the goal is to come up with an interval as narrow as possible that contains the true 휃, where making a mistake is weighted by some B that is determined post hoc. Upon
+observing Y = xn and B = b, and based on w◦(휃 | Y ), one would presumably pick the smallest interval symmetric around 휃ˆ for which the Bayes posterior satisfies the required risk bound, i.e. 훿′
+b(Y ) = [휃ˆ − A, 휃ˆ + A], where A, depending on b, is the
+smallest number such that
+E
+휃 ̄∼W ◦|Y =xn [Lb(휃 ̄, 훿′
+b(xn))] ≤ 1, [22]
+i.e. E휃 ̄∼W ◦|Y =xn [b · 1휃 ̄6∈[휃ˆ−A,휃ˆ+A]] ≤ 1, [23]
+with b the observed value taken by B; and for this smallest A,
+Eq. 23 holds with equality. Since W ◦(휃 ̄ 6∈ [휃ˆ − A, 휃ˆ + A] |
+Y = xn) = 1/b, this 훿′
+b(Y ) is equal to the standard (1 − 훼)-CI
+for 훼 = 1/b. The intuitive appeal for choosing this 훿 is clear: Eq. 23 expresses that as a DM one can expect the loss given the data to be bounded by 1; one simply wants to pick the smallest, most informative interval for which this holds true. Yet the real expectation of the loss may very well be different from Eq. 23assuming that B is a fixed function of Y , it is given by
+EY ∼P휃∗
+[
+B(Y ) · 1휃∗6∈훿′
+B(Y )(Y )
+]
+, [24]
+with 휃∗ indexing the true sampling distribution. This quantity may be much larger than 1 if B is dependent on Y . In SI Appendix, we provide a simple yet extreme example (inspired by the less extreme Example 8 of ref. 24) in which Eq. 24 evaluates to ∞. 3.3.1. Repercussions for Neyman’s inductive behavior. This discrepancy between what one believes will happen according to a posterior (risk bounded by 1) and what actually will happen (potentially infinite risk) has repercussions for Neyman’s interpretation of statistics as long-run performance guarantees of inductive behavior. To illustrate, imagine a DM who is confronted with such a decision problem many times (each time j the underlying 휃(j) with Y(j) ∼ P휃(j) and the sample size n(j) and the importance function B(j) may be different). Then, based on Eq. 23, she might think to have, by the law of large numbers,
+the guarantee that, almost surely,
+lim sup
+m
+→∞
+1
+m
+m
+∑
+j=1
+B(j) · 1휃6∈[휃L(Y(j)),휃R(Y(j))] ≤ 1. [25]
+Unfortunately however, this statement is likely false if in reality there is a dependence between B(j) and Y(j). In SI Appendix, we show that, based on the example above, the average in Eq. 25 may in fact a.s. converge to infinity, even though the individual B(j)’s look pretty innocuous. A first reaction may be to require the DM to address this problem by modeling the dependency between B(j) and Y(j). But the precise relation may be unknowable, and then it is not clear how to do this. To avoid the issue one may output CIs based on e-values or, equivalently but perhaps more illuminatingly, based on the e-posterior that we now introduce.
+3.4. The E-Posterior Remains Valid Post Hoc. Let S = {S휃 : 휃 ∈ Θ} be an e-collection. Just like it is tempting to interpret a “system” of CIs, one for each 훼, i.e. a confidence distribution, as a type of “posterior,” one can also view the S휃-reciprocal P ̄ (휃 | Y ) := 1/S휃(Y ) as a type of “posterior representation of uncertainty” for parameter 휃. This idea is due to Grünwald et al. (15), who called P ̄ (휃 | Y ) the e-posterior, yet was conceived of also, independently but earlier, by Waudby-Smith and Ramdas (25) (arXiv version 2020—their Appendix D5 introduces the idea by means of plots analogous to Fig. 1). The crucial difference between e-posteriors and confidence distributions is that the former enable valid inferences under specific post hoc, datadependent assessments of Type-I risk, whereas the latter can only be validly used as in Eq. 22 if BIND holds. We thus recommend e-posteriors, like Cox (11) did for confidence distributions, as a summary of estimation uncertainty—but a summary that is significantly more robust than that provided by confidence distributions. In ref. 15, I show that the e-posterior provides a non-Bayesian alternative for Bayes-posterior expected loss assessment. In that paper, I also list a variety of e-posteriors, including an extension of the one of Example 4 to general exponential families and point out deeper relations between e-posteriors and Bayesian posteriors. In the present paper, we merely present the e-posterior as a graphical tool which summarizes the e-based CIs as given by Eq. 20 and helps to visualize how they relate to standard CIs: see Fig. 1.
+4. E-Value Development: The State of the Art
+The modern development of e-values and e-processes started only in 2019 when first versions of the four ground-breaking papers (5–8) appeared on arxiv. Since then, development has been remarkably fast, often centering around GRO (growthrate optimal) e-variables and -processes (see refs. 5 and 9 which also provide more historical context). Growth rate [also called e-power (26)] is a natural analogue of power in the e-process setting, in which sample sizes are not fixed in advance, related to the minimum sample size needed to reject the null and CI width. As a first step, GRO e-methods were successfully developed for basic workhorses of statistics such as the z-test (the one appearing in Example 4 has GRO status), the t-test (5), the test of two proportions (27) and the logrank test (28), which has been successfully deployed in a “live” metaanalysis of ongoing clinical trials (29). The t-test setting has been extended to general tests and CIs with group invariances and
+8 of 10 https://doi.org/10.1073/pnas.2302098121 pnas.org
+Downloaded from https://www.pnas.org by 194.171.31.97 on May 7, 2025 from IP address 194.171.31.97.
+
+
+linear and nonparametric Gaussian process regression (30–32). The test of two proportions has been extended to k-sample tests of general exponential families (33), CMH tests (34) and to conditional independence (of X and Y given Z ) testing under a model-X assumption (combinable with arbitrary models for Y
+| X, Z ) (35). E-variables that are not GRO yet still have good power-like properties have been quite successful in multiple testing applications (36, 37) as well as several other nonparametric problems (25, 38, 39)—the recent overview (9) provides a comprehensive list. In all applications mentioned, the qualitative behavior is similar to that of Example 4, with CI widths of
+order O(f (n)/√n) per parameter of interest, f (n) varying from constant to O(
+√
+log n), depending on the specific application.
+4.1. (Current) Limitations and Challenges. These initial successes notwithstanding, the development of e-values is, of course, still in its infancy, competing with almost a century of P-value development. As such, many challenges remain. To appreciate these, we first note that the aforementioned GROtype approaches can in principle be made competitive, in terms of sample sizes needed to draw a conclusion, with classical ones that rely on BIND—see below; sometimes they even significantly beat such classical methods (e.g., refs. 25 and 34). Also, (5) shows that GRO e-values exist and can be calculated for very general testing problems. Yet in general, this calculation is not efficient. In some cases (such as refs. 30, 34, and 35 mentioned above), they admit an analytical and hence efficiently calculable expression, but for others, they do not. These hard cases include regression (i.e. Y = f휃(X, Z )+noise) that involves a nonlinearity, such as generalized linear models (GLMs) and Cox proportional hazards, whenever the variable X to be tested (e.g. treatment vs. control) does not satisfy the model-X assumption (conditional distribution of X given Z known). While model-X is automatically satisfied in clinical trials, there are, of course, many important cases in which it is not. Universal inference (8) provides an alternative generic e-design method that does lead to efficiently calculable e-values in such cases, but in regression problems it is not competitive in terms of power with classical methods for medium- to highdimensional models (40)—its strength has rather been to provide e-values for complex H(0) that have simply eluded classical testing (41).
+5. Discussion, Future Work, Conclusion
+We provide a few concluding remarks. We analyze in what sense we solved the “roving 훼” issue that motivated this work; we discuss related work and a major challenge; and we suggest a “road ahead” for e-methods.
+5.1. Roving 휶 Revisited: The Quasi-Conditional Paradigm. Assume we have a prior on H(0) and H(1) and priors W0 and W1 on the distributions inside these hypotheses. We can then use Bayes’ theorem to calculate the Bayes posterior P(H(0) | Y ) based on data Y . Suppose we reject the null if P(H(0) | Y ) ≤ 훼. We may then define, for all y for which this holds, i.e. for which we reject the null, the conditional Type-I error probability 훼ˆ to be simply equal to this posterior probability, 훼ˆ := 훼ˆ|y := P(H(0) | Y = y). Then it will hold that, for any fixed 훼0 ≤ 훼, for any long sequence of studies, with probability tending to one,
+“among all studies with 훼ˆ ≤ 훼0, we make a
+Type-I error at most a fraction 훼0 of the time”. [26]
+Such a fully conditional statement, with post hoc determined 훼ˆ|Y , is only correct if the priors can be fully trusted, i.e. if one accepts a fully subjective Bayesian stance. It would definitely be incorrect if we set 훼ˆ|Y either to a P-value or the reciprocal of an e-value based on Y . Still, as we have seen, if we instead use e-values to perform a data-dependent action, which is allowed to get more extreme (higher Type-I loss) as our evidence against the null increases (higher e-value) according to the maximally compatible rule (which in simple cases is given by Eq. 7), then we do get an “unconditionally” valid bound on Type-I risk. Thus, using e-values, setting a roving 훼 to be equal to 훼ˆ := `/S(y) for the observed y is still incorrect if we interpret it as expressing Eq. 26; but it is correct if we interpret it as setting a “roving bound” of `/훼ˆ on the Type-I loss LB(0, a) we dare to make:
+if we make sure to pick a so that LB(0, a) ≤ `/훼ˆ , then we have compatibility and hence Type-I risk safety, Eq. 11. Note that B is allowed to be any function of, hence “conditional on” data; but its performance is evaluated “unconditionally,” i.e. by means of Eq. 11 which is an unconditional expectation. This quasi-conditional stance, explained further in ref. 15, provides a middle ground between fully Bayesian and traditional NeymanPearson-Wald type methods and analysis.
+5.2. Where Does the Type-I Risk Bound ` Come From? Whereas B may arbitrarily depend on data Y , the upper bound ` in Eq. 1 has to be set independently of Y after all. It may still vary from decision problem to decision problem though (in SI Appendix, we explain what this means in terms of Neyman’s inductive behavior paradigm and we explain that setting ` = 1, as was done for mathematical convenience in Section 2, is unproblematic). In many practical testing problems, we might expect that for all b
+∈ B, Ab contains a special action 0, which stands for “do nothing” (keep status quo), which would then have the same Type-II loss under all b ∈ B, i.e. there is an `′ such that for all b ∈ Ab, Lb(1, 0) = `′. We might then simply set ` = `′, making sure that we can expect our result (with all costs and benefits incorporated), whatever action we take, to be no worse than “the cost of doing nothing when we really should have done something.”
+5.3. Related Work: Inferential Models. Like we do in Example 4, Martin, Liu, and collaborators (42, 43) point out discrepancies between what one would expect to be a valid confidence set according to a fiducial/confidence distribution or Bayesian posterior and what are actually valid confidence sets according to the unknown, true distribution. They provide inferential models (IMs) as a safer alternative. Unlike e-posteriors, the specific IMs proposed by Martin and Liu (42) still work under the BIND assumption and thus will not provide reliable inferences if BIND does not hold. But it may very well be that some other IMs (IMs constitute a family of methods, not a single method) essentially behave like e-posteriors.
+5.4. A Major Challenge. With e-value methods one can often obtain comparable performance in terms of power (or more precisely, sample size needed to reject a null under the alternative) as with classical approaches. In many (not all) settings though, one needs to engage in optional stopping to achieve this. However, abandoning the P-value and at the same time, even more radically, embracing optional stopping amounts to no less than a major paradigm shift—which is, of course, always hard to accomplish. In contrast to the challenges reviewed Section 4 , this challenge is sociological/psychological rather than statistical, and presumably much harder to deal with. In this respect,
+PNAS 2024 Vol. 121 No. 39 e2302098121 https://doi.org/10.1073/pnas.2302098121 9 of 10
+Downloaded from https://www.pnas.org by 194.171.31.97 on May 7, 2025 from IP address 194.171.31.97.
+
+
+the tech industry is at the forefront: anytime-valid methods based on e-processes have been adopted by several major tech companies (31).
+5.5. The Road Ahead. Future work will include a further investigation of the “quasi-conditional” idea launched above, as well as of the precise relation to Martin’s IMs and other related uses of e-variables such as ref. 44 who, like us, employ e-values with a Type-I/II-error distinction with more than 2 actions. Another unresolved fundamental issue is this: most practitioners still interpret P-values in a Fisherian way, as a notion of evidence against H(0). Although this interpretation has always been controversial, it is to some extent, and with caveats [such as “single isolated small P-value does not give substantial evidence” (45) or “only work with special, evidential P-values (46)”], adopted by highly accomplished statisticians, including the late Sir David Cox (47, 48). Even Neyman (49) has written “my own preferred substitute for “do not reject H ” is “no evidence against H is found.” “In light of the present results, one may ask if, perhaps, e-values are more suitable than P-values as such a measure. We preliminarily conjecture they are, and motivate this in SI Appendix—although a proper analysis of such a claim warrants a separate paper, which we hope to provide in the future. Perhaps more important for practice than all of this though, especially in light of the sociological challenge discussed above,
+is the further development of practically useful e-variables for standard settings (such as generalized linear model) in which they are not yet available, as well as more accompanying software such as (50), as well as practical use cases, and finally, more accessible tutorial-style texts such as ref. 51.
+5.6. Conclusion: A Different Kind of Robustness. Standard P and CI-based decisions rely on BIND, an assumption that will often be false or unverifiable at the time study results are published. In this paper, we showed that e-values provide valid error and risk guarantees without making such assumptions, and are therefore robust tools for inference. But whereas “robustness” usually refers to robust inference in the presence of outliers, or model structure or noise process misspecification, this is a different, much less studied form of robustness: robustness in terms of the actual decision task that the study results will be used to solve.
+Data, Materials, and Software Availability. There are no data underlying this work.
+ACKNOWLEDGMENTS. I would like to thank an anonymous referee and Dr. W. Koolen, who both independently alerted me to the fact that, without essential loss of generality, one may assume Type-II loss to decrease whenever Type-I loss increases.
+1.J. Berger, Could Fisher, Jeffreys and Neyman have agreed on testing? Stat. Sci. 18, 1–12 (2003). 2.R. Hubbard, Alphabet soup: Blurring the distinctions between p’s and 훼’s in psychological research. Theory Psychol. 14, 295–327 (2004).
+3.E. Lehmann, The Fisher, Neyman-Pearson theories of testing hypotheses: One theory or two? J. Am. Stat. Assoc. 88, 1242–1249 (1993). 4.J. Neyman, First Course in Probability and Statstics. (Henry Holt and Company, New York, 1950). 5.P. Grünwald, R. de Heide, W. Koolen, Safe testing. J. Royal Stat. Soc. Ser. B. (2024). 6.V. Vovk, R. Wang, E-values: Calibration, combination, and applications. Ann. Stat. 49, 1736–1754 (2021). 7.G. Shafer, Testing by betting: A strategy for statistical and scientific communication. J. R. Stat. Soc. Ser. A 184, 407–431 (2021). 8.L. Wasserman, A. Ramdas, S. Balakrishnan, Universal inference. Proc. Natl. Acad. Sci. U.S.A. 117, 16880–16890 (2020). 9.A. Ramdas, P. Grünwald, V. Vovk, G. Shafer, Game-theoretic statistics and safe anytime-valid inference. Stat. Sci. 38, 576–601 (2023). 10.J. Ter Schure, P. Grünwald, ALL-IN meta-analysis: Breathing life into living systematic reviews. Research 11, F1000 (2022). 11.D. R. Cox, Some problems connected with statistical inference. Ann. Math. Stat. 29, 357–372 (1958).
+12.T. Schweder, N. Hjort, Confidence, Likelihood, Probability: Statistical Inference with Confidence Distributions (Cambridge University Press, 2016). 13.D. Cox, D. Hinkley, Theoretical Statistics (Chapman and Hall, London, 1974). 14.E. Lehmann, Testing Statistical Hypotheses (Wiley, ed. 1, 1959). 15.P. Grünwald, The E-posterior. Philos. Trans. R. Soc. Ser. A 381, 20220146 (2023). 16.A. Wald, Contributions to the theory of statistical estimation and testing hypotheses. Ann. Math. Stat. 10, 299–326 (1939).
+17.J. Berger, Statistical Decision Theory and Bayesian Analysis, Springer Series in Statistics (SpringerVerlag, New York, 1985). 18.H. Duanmu, D. M. Roy, On extended admissible procedures and their nonstandard Bayes risk. Ann. Stat. 49, 2053–2078 (2021). 19.J. Neyman, E. S. Pearson, On the problem of the most efficient tests of statistical hypotheses. Philos. Trans. R. Soc. Lond. A. 231, 289–337 (1933).
+20.Z. Xu, R. Wang, A. Ramdas, Post-selection inference for e-value based confidence intervals. Electron. J. Stat. 18, 2292–2338 (2024). 21.V. E. Johnson, Uniformly most powerful Bayesian tests. Ann. Stat. 41, 1716–1741 (2013). 22.A. Ramdas, J. Ruf, M. Larsson, W. Koolen, Admissible anytime-valid sequential inference must rely on nonnegative martingales. arXiv [Preprint] (2020).http://arxiv.org/abs/2009.03167(Accessed 2 September 2024). 23.J. Hannig, H. Iyer, R. Lai, T. Lee, Generalized fiducial inference: A review and new results. J. Am. Stat. Assoc. 111, 1346–1361 (2016). 24.P. Grünwald, Safe probability. J. Stat. Plan. Infer. 195, 47–63 (2018). 25.I. Waudby-Smith, A. Ramdas, Estimating means of bounded random variables by betting. J. R. Stat. Soc. Ser. B 86, 1–27 (2024). 26.Z. Zhang, A. Ramdas, R. Wang, On the existence of powerful P-values and e-values for composite hypotheses. Annals of Statistics.https://imstat.org/journals-and-publications/annals-of-statistics/ annals- of- statistics- future- papers/(2024). 27.R. Turner, P. Grünwald, Anytime-valid confidence intervals for contingency tables and beyond. Stat. Probab. Lett. 198, 109835 (2023).
+28.J. Ter Schure, M. Perez-Ortiz, A. Ly, P. Grünwald, The anytime-valid logrank test: Error control under continuous monitoring with unlimited horizon. New Engl. J. Stat. Data Sci. (NEJSDS) 2, 190–214 (2024).
+29.J. Ter Schure et al., Bacillus Calmette-Guérin vaccine to reduce COVID-19 infections and hospitalisations in healthcare workers. medRxiv [Preprint] (2022).https://doi.org/10.1101/2022. 12.15.22283474(Accessed 2 September 2024). 30.M. F. Pérez-Ortiz, T. Lardy, R. De Heide, P. Grünwald, E-statistics, group invariance and anytime valid testing. The Annals of Statistics.https://imstat.org/journals-and-publications/annals-ofstatistics/annals- of- statistics- future- papers/https://imstat.org/journals- and- publications/annals- ofstatistics/annals- of- statistics- future- papers/(2024). 31.M. Lindon, D. W. Ham, M. Tingley, I. Bojinov, Anytime-valid linear models and regression adjusted causal inference in randomized experiments. arXiv [Preprint] (2022).http://arxiv.org/abs/2210 (Accessed 2 September 2024).
+32.W. Neiswanger, A. Ramdas, Uncertainty Quantification Using Martingales for Misspecified Gaussian Processes in Algorithmic Learning Theory (PMLR, 2021), pp. 963–982.
+33.Y. Hao, P. Grünwald, T. Lardy, L. Long, R. Adams, E-values for k-sample tests with exponential families. Sankhya A 86, 596–636 (2024). 34.R. Turner, P. Grünwald, “Safe sequential testing and effect estimation in stratified count data” in Proceedings of Machine Learning Research (PMLR), F. Ruiz, J. Dy, J.-W. van de Meent, Eds. (2023), vol. 206. 35.P. Grünwald, A. Henzi, T. Lardy, Anytime-valid tests of conditional independence under model-x. J. Am. Stat. Assoc. 119, 1554–1565 (2023).
+36.R. Wang, A. Ramdas, False discovery rate control with e-values. J. R. Stat. Soc. Ser. B 84, 822–852 (2022). 37.N. Ignatiadis, R. Wang, A. Ramdas, E-values as unnormalized weights in multiple testing. Biometrika 111, 417–439 (2024). 38.A. Podkopaev, P. Bloebaum, S. Kasiviswanathan, A. Ramdas, “Sequential kernelized independence testing” in Proceedings of Machine Learning Research (PMLR), A. Krause et al., Eds. (2023), vol. 202. 39.A. Henzi, J. F. Ziegel, Valid sequential inference on probability forecast performance. Biometrika 109, 647–663 (2022). 40.T. Tse, A. C. Davison, A note on universal inference. Stat 11, e501 (2022). 41.R. Dunn, A. Gangrade, L. Wasserman, A. Ramdas, Universal inference meets random projections: a scalable test for log-concavity. J. Comput. Graph. Stat., 1–13 (2024).
+42.R. Martin, C. Liu, Inferential Models: Reasoning with Uncertainty (CRC Press, 2015).
+43.R. Martin, Inferential models and the decision-theoretic implications of the validity property. arXiv [Preprint] (2021).http://arxiv.org/abs/2112.13247(Accessed 2 September 2024). 44.S. Bates, M. I. Jordan, M. Sklar, J. Soloff, Principal-agent hypothesis testing. arXiv [Preprint] (2022). http://arxiv.org/abs/2205.06812(Accessed 2 September 2024).
+45.D. G. Mayo, Statistical Inference As Severe Testing: How to Get Beyond the Statistics Wars (Cambridge University Press, 2018). 46.S. Greenland, Divergence vs. decision P-values: A distinction worth making in theory and keeping in practice. Scand. J. Stat. 50, 54–88 (2022). 47.D. R. Cox, In gentle praise of significance tests (2018) Talk given at RSS 2018 keynote conference session.https://youtu.be/txLj_P9UlCQ?si=NO4JY4pnRFQ-qfQo. Accessed 2 September 2024. 48.D. G. Mayo, D. R. Cox, Frequentist statistics as a theory of inductive inference. Lect. Notes-Monogr. Ser. 2nd Lehmann Symp. 49, 77–97 (2006).
+49.J. Neyman, Tests of statistical hypotheses and their use in studies of natural phenomena. Commun. Stat. Theory Methods 5, 737–751 (1976).
+50.R. Turner, A. Ly, M. F. Ortiz-Perez, J. ter Schure, P. Grünwald, R-package safestats (2022) CRAN. https://cran.r-project.org/package=safestats. Accessed 2 September 2024. 51.A. Ly, U. Boehm, P. Grünwald, A. Ramdas, D. van Ravenzwaaij, Safe anytime-valid inference: Practical maximally flexible sampling designs for experiments based on e-values. arXiv [Preprint] (2024).http://arxiv.org/abs/2409(Accessed 2 September 2024).
+10 of 10 https://doi.org/10.1073/pnas.2302098121 pnas.org
+Downloaded from https://www.pnas.org by 194.171.31.97 on May 7, 2025 from IP address 194.171.31.97.

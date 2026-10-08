@@ -1,0 +1,599 @@
+Journal of the Royal Statistical Society Series B: Statistical Methodology, 2026, 00, 1–19 https://doi.org/10.1093/jrsssb/qkag050
+Original Article
+Anytime validity is free: inducing sequential tests
+Nick W. Koning and Sam van Meer
+Econometric Institute, Erasmus University Rotterdam, Burgemeester Oudlaan 50 3062PA Rotterdam, the Netherlands
+Address for correspondence: Nick W. Koning, Econometric Institute, Erasmus University Rotterdam, Burgemeester Oudlaan 50 3062PA Rotterdam, the Netherlands. Email: n.w.koning@ese.eur.nl
+Abstract
+Anytime valid sequential tests permit us to stop testing based on the current data, without invalidating the inference. Given a maximum number of observations N, one may believe this must come at the cost of power when compared to a conventional test that waits until all N observations have arrived. Our first contribution is to show that this is false: for any valid test based on N observations, we show how to construct an anytime valid sequential test that matches it after N observations. Our second contribution is that we may use the outcome of a [0, 1]-valued test as a conditional significance level in subsequent testing, leading to an overall procedure that is valid at the original significance level. This shows that anytime validity and optional continuation are readily available in traditional testing, without requiring explicit use of e-values. We illustrate this by deriving the anytime valid sequentialized z-test and t-test, which at time N coincide with the traditional z-test and t-test. Finally, we characterize the Sequential Probability Ratio Test by invariance under test induction, and show that it is induced by the Neyman–Pearson test for a tiny level and huge N under an i.i.d. assumption.
+Keywords: anytime validity, e-values, optional continuation, randomized testing, sequential t-test, sequential testing
+Received: March 11, 2025. Revised: January 21, 2026. Accepted: February 2, 2026 © The Royal Statistical Society 2026. This is an Open Access article distributed under the terms of the Creative Commons Attribution License (https:// creativecommons.org/licenses/by/4.0/), which permits unrestricted reuse, distribution, and reproduction in any medium, provided the original work is properly cited.
+1 Introduction
+Suppose that we are to observe N observations XN := (X1, . . . , XN). We are interested in testing the null hypothesis that the data is sampled from the distribution P, against the alternative hypothesis that it is sampled from the distribution Q. Traditionally, we wait until all N observations have been collected, and then perform a test which either rejects the hypothesis or not. It is common to define such a test as a random variable φN on the interval [0, 1], that depends on
+the data XN. Here, φN = 1 represents a rejection of the hypothesis and φN = 0 a non-rejection. If 0 < φN < 1, the value of φN is traditionally interpreted as the probability with which we may subsequently reject by using external randomization. However, we have no intention to randomize, and it will suffice, for now, to view a test outcome in (0, 1) as ‘progress’ towards a rejection. It is standard practice to use a test that is valid at some level of significance α > 0. This means that the probability that it rejects the null hypothesis is at most α if the null hypothesis is true. This can be translated to a condition on the expectation of φN:
+EP[φN] ≤ α, (1)
+for every data-independent N.
+N.W.K and S.v.M contributed equally.
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026
+
+
+An unfortunate feature of traditional testing is that we must sit on our hands and wait until all N observations have arrived to preserve this validity. One may naively believe that, after seeing n < N observations, we could simply use the test φn that we would have used if we had set out to collect n observations. However, this makes the number of observations data-dependent, so that the resulting procedure is generally not valid. For this to be allowed, a sequence of tests φ1, φ2, . . . should not just be valid, but anytime valid:
+EP[φτ] ≤ α, (2)
+for every data-dependent (‘stopping’) time τ. Following seminal work by Robbins, Darling, Wald and others in the previous century, there has recently been a renaissance in anytime valid testing (P. Grünwald et al., 2024; Howard et al., 2021; Ramdas et al., 2023; Shafer, 2021). Such anytime valid sequential tests are typically of a different form than traditional tests. The most popular sequential test remains the Sequential Probability Ratio Test (SPRT), which equals αLRn ∧ 1 at every observation n, where LRn denotes
+the likelihood ratio between Q and P of the n observations.1 At time N, this sequential test is usually substantially less powerful than the optimal ‘NeymanPearson’ test. For example, in a standard normal location setting where we test μ = 0 against μ = .3 with N = 100 observations, the z-test rejects with probability 91% while this sequential test rejects at any time n ≤ N with probability just 79%.2 Moreover, this power comparison is very generous towards the sequential test, as it uses oracle knowledge of the alternative μ, whereas the z-test does not. If we were to sequentially learn the alternative with the maximum likelihood estimator, then its power is just 47%.
+1.1 Inducing a sequential test
+The large power gap between the state-of-the-art sequential test and the traditional NeymanPearson test seems to be generally viewed as the cost of anytime validity. Indeed, this additional anytime validity must come at a price? Our first contribution is to show that this is false: anytime validity can be obtained for free. In particular, for any valid test φN we show how to construct a sequence of tests φ′
+1, . . . φ′
+N that is any
+time valid and matches φN at the end: φ′
+N = φN.
+Moreover, the sequential test is of a simple form: it simply equals the conditional expectation of φN given the current data Xn under the null hypothesis P:
+φ′
+n := EP[φN ∣ Xn],
+for all n ≥ 0. This may be interpreted as tracking the conditional probability that φN will reject, including randomization at the final step to come to a binary decision if necessary. We illustrate this for the one-sided z-test and t-test in Figure 1 for a typical sample of i.i.d. normal data with a power of 91% at N = 100 observations. We formalize the induction of sequential tests in Section 2. There, we also show that every admissible anytime valid sequential test can be induced from some ‘terminal test’. Moreover, we generalize to composite hypotheses and study composite hypotheses that possess the Monotone Likelihood Ratio property. In Sections 3 and 4, we apply this to the z-test and t-test, respectively.
+1.2 Using test outcomes as conditional significance levels
+A natural next question is what we should do with a test outcome φn ∈ (0, 1): are such outcomes just entertainment while we wait for the eventual rejection decision of φN? This is important, be
+cause even though φ′
+n > 0.999 for n > 77 in Figure 1, we technically have that φ′
+n ∈ (0, 1) for all n < N. Indeed, in this example the final observation may be arbitrarily small or large with some tiny probability, swinging φN to a rejection or non-rejection.
+1 The name SPRT is usually reserved for the ‘binary’ version of this test: I{αLRn ≥ 1} ≤ αLRn ∧ 1, and can be slightly further improved (Fischer & Ramdas, 2024; Koning, 2025). 2 This increases to 84% using external randomization at the final observation N.
+2 Koning and van Meer
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026
+
+
+Our second contribution is to show the merit of test outcomes in (0, 1) through optional continuation: the outcome of a (0, 1)-valued test may be used as a conditional significance level in subsequent testing. In particular, given the outcome of a test φ1 that is (unconditionally) valid at significance level α:
+EP[φ1] ≤ α,
+we may initialize a new test φ2 that is conditionally valid at conditional significance level φ1:
+EP[φ2 ∣ φ1] ≤ φ1.
+The new test φ2 is then (unconditionally) valid at (unconditional) significance level α:
+EP[φ2] = EP[EP[φ2 ∣ φ1]] ≤ EP[φ1] ≤ α.
+Overall, this supports the idea that an outcome φ1 ∈ (0, 1) can be interpreted as ‘progress towards a rejection’. This idea also gives a new interpretation to tests on [0, 1], beyond the traditional randomized testing interpretation. In fact, randomized testing may be viewed as a special case, where a [0, 1]-valued test φ is implicitly followed by a test at conditional level φ that uses uninformative data and so ‘randomly’ rejects with probability φ. We formalize these ideas in Section 5. There, we show how this procedure may be used to modify a sequential experiment at a stopping time τ. Moreover, we generalize the procedure to composite hypotheses, and discuss adaptively switching to a different baseline significance level, which allows one to continue after a rejection at level α in order to obtain a rejection at some level α′ < α. Furthermore, we discuss the relationship to optional continuation with e-values.
+1.3 Contributions to the anytime validity literature
+A more abstract contribution of our work is the establishment of a bridge between classical testing and the recent literature on anytime validity and optional continuation. In the current literature, anytime validity and optional continuation are often presented as the primary advantages of e-values (P. Grünwald et al., 2024; Ramdas et al., 2023). Indeed, inference based on e-values is frequently described as a different paradigm from inference based on tests and p-values. Anytime validity is then viewed as a natural property of the e-value paradigm, which is not easily available in the traditional paradigm. Our work dispels this myth: both anytime validity and optional continuation come naturally to tests, and it is not necessary to (explicitly) introduce e-values. Our work also adds a new tool to the toolbox of anytime valid sequential testing: the induction of a sequential test from a terminal test. This effectively constructs a sequential test in a ‘backward’
+Figure 1. Illustration of the sequential z-test and t-test over 100 observations sampled from N (.3, 1).
+J R Stat Soc Series B: Statistical Methodology 3
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026
+
+
+fashion by relying on a Doob martingale. This is different from the ‘forward’ construction that is common in the literature, which relies on designing martingale-increments and sequentially accumulating these. To the best of our knowledge, we are the first to propose such a Doob martingale approach to actively construct anytime valid sequential tests. Doob martingales have been featured in the context of anytime valid sequential testing before, but only as a technical tool, such as in a proof in Section 6.3 of Ramdas et al. (2022) and in the construction of time uniform concentration inequalities in Howard et al. (2020). In Section 6 we describe the precise connection of our work to the e-value literature. There, we show that the uncapped version of the SPRT, known in the e-value literature as the ‘log-utility-optimal e-process’, is characterized by an invariance property under the operation of inducing a sequential test. To the best of our knowledge, this is the first motivation of log-utility that does not rely on an independence assumption over time. Moreover, we discover that the SPRT can be induced from a limiting Neyman–Pearson test with αN → 0 as N → ∞, substantially generalizing a finding of Breiman (1961). Finally, our study of optional continuation for a composite hypothesis H in Section 5.2 suggests that for the purpose of optional continuation it is better to report a test (e-value) for every P ∈ H rather than a single test (e-value) for H. This echoes recent calls to report this collection, under the name fuzzy confidence set (Koning & van Meer, 2025) or E-posterior (P. D. Grünwald, 2023).
+1.4 Other related literature
+Koning (2025) unifies e-values and tests, arguing that e-values are merely tests disguised by rescaling from [0, 1] to [0, 1/α], so that calls to directly use an e-value as evidence are equivalent to calls to directly report a test outcome in [0, 1]. Our work supports this call, by adding an additional interpretation to such test outcomes as a conditional significance level for subsequent experimentation. We are not the first to consider tracking the conditional probability that a test will reject. Indeed, it also appears in a stream of literature initiated by Lan et al. (1982), who propose to reject whenever φ′
+n > γ for some pre-specified γ under the name stochastic curtailment. This induces a sequen
+tial test φγ
+n = I{φ′
+n > γ}, which they show has a Type I error bounded by α/γ. In subsequent
+literature, the induced test φ′
+n appears under the name conditional power, and is also used as a diag
+nostic tool to stop for futility (Lachin, 2005). The idea to use E[φN ∣ Xn] as a significance level ap
+pears in Müller and Schäfer (2004). Perhaps our key conceptual leap is that E[φN ∣ Xn] itself can be replaced by any [0, 1]-valued test, showing the general evidential merit of such [0, 1]-valued tests. Moreover, by applying the rich mathematical toolbox of martingales, filtrations and stopping times we can expand beyond this line of work. To the best of our knowledge, this stream of literature has gone entirely unnoticed in the current renaissance in anytime valid testing, and our work shows the relationship between the streams of literature.
+2 Inducing a sequential test 2.1 Setup
+Let X be our sample space equipped with some sigma-algebra F that encapsulates all the possible information that can be obtained. All processes and stopping times are silently considered to be measurable with respect to a filtration (F n)n≥0, where F n ⊆ F describes the available information at time n ≥ 0. Statements such as ‘F n-measurable’ may be interpreted as ‘known when the information F n is revealed’. Throughout, we abbreviate the notation for sequences (F n)n≥0 to (F n). For simplicity, let F 0 = {∅, X } represent the information set before any data has been observed, so that we can write the expectation E[ · ] for the conditional expectation E[ · ∣ F 0]. Furthermore, we de
+fine F ∞ = σ( 􏽓
+n≥0 F n) and note that F ∞ ⊆ F . We define a hypothesis H as a collection of probability measures P ∈ H on our sample space. We define a test as an F -measurable map φ : X → [0, 1]. We fix a level α > 0 throughout, and say that the test φ is valid for H if
+sup
+P∈H
+EP[φ] ≤ α. (3)
+4 Koning and van Meer
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026
+
+
+A sequence of tests (φn) adapted to the filtration (F n) is said to be anytime valid for H if the test φτ is valid for every (possibly infinite) stopping time τ adapted to (F n):
+sup
+P∈H
+EP[φτ] ≤ α. (4)
+Here, we define φ∞ := lim supn→∞φn, which is F ∞-measurable.
+2.2 Simple hypotheses
+In this section, we study the induction of a sequential test (φn) from a test φ for a simple hypothesis H = {P}. Given an F -measurable test φ, we define its (induced) sequential test (φn) as
+φn := EP[φ ∣ F n], (5)
+which is P-almost surely uniquely defined. In Theorem 1, we discuss the properties that a test φ passes on to its sequential test (φn). The most important result here is that if φ is valid, then (φn) is anytime valid. Interestingly, we also obtain a strong converse: if φ is not valid, then not only is (φn) not anytime valid; φτ is not valid for any stopping time. Furthermore, if φ is measured at some (stopping) time τ, then the sequential test (φn) equals it at time τ. By separating out the final claim, we also wish to highlight that we can induce a sequential test (φn) from a test φ even if we have no hope or no intention to actually observe it. The proof of this result and all other omitted proofs may be found in online supplementary material, Appendix B.
+Theorem 1 ((Simple hypotheses)). Let φ be an F -measurable test.
+1. If φ is valid, then (φn) is anytime valid. 2. If φ is not valid, then φτ is not valid for any τ. 3. If φ is F τ-measurable, then φτ = φ.
+Looking in the other direction, any sequential test (φn) induces an F ∞-measurable (and hence F -measurable) terminal test φ∞ := lim supn→∞φn. In Proposition 1, we show that if (φn) is anytime valid, then φ∞ is valid.
+Proposition 1 If (φn) is anytime valid, then φ∞ is valid.
+In Proposition 2, we show that the construction we describe in Theorem 1 is a powerful tool, in the sense that every anytime valid admissible sequential test may be induced from a test. Here, admissibility means that there exists no other anytime valid sequential test (φ′
+n) such that P(φ′
+n≥
+φn) = 1 for all n and P(φ′
+n > φn) > 0 for some n (Ramdas et al., 2022). A consequence of this result is that all properties of an (admissible) sequential test are summarized by a single test φ.
+Proposition 2 If (φn) is admissible, then there exists an F -measurable test φ such that
+φn = EP[φ ∣ F n], P-almost surely, for every n.
+Remark 1 ((Observing how a test comes to its conclusion)). By tracking the induced sequential test (φn) of the test φ, we are effectively observing how φ uses the information to come to its conclusion. Indeed, the starting point φ0 of the sequential
+test coincides with the size of the test φ: φ0 = EP[φ ∣ F 0] = EP[φ]. Moreover, the
+value φn = EP[φ ∣ F n] can be interpreted as reflecting the current expectation about the eventual outcome of the test φ.
+Remark 2 ((Doob martingale)). In the literature on anytime valid inference, the standard strategy to build anytime valid sequential tests is to propose a sequence (φn) of
+J R Stat Soc Series B: Statistical Methodology 5
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026
+
+
+tests and then show that this constitutes a martingale. Our approach here turns this around: we start with some target test φ, from which we then induce a sequential test (φn) by conditioning on the filtration. For the simple hypothesis setting, this approach is also known as the Doob martingale of φ.
+Remark 3 ((Inducing test at stopping time)). In the introduction, we focused on inducing a sequential test from a test that is measurable at some data-independent time N. In Theorem 1, we show that we may also induce a sequential test from a test at some stopping time, so that the sequential test coincides with the test at the stopping time. As the stopping time is part of the sequential test that we induce, this stopping time must be chosen at the moment the sequential test is induced.
+Remark 4 As closed forms for φn = E[φ ∣ F n] are not always available, one may have to resort to numerical approximations. One potential approach is to represent φn as the outcome of an optimization problem, by using the representation
+of the conditional expectation of φ as its L2-projection onto the class of F n-measurable functions: φn = arg minφ′ : Fn−measurableEP[(φ − φ′)2]. Another is to sequentially update Monte Carlo approximations of E[φ ∣ F n], for example via particle filtering (Doucet et al., 2001).
+2.3 Composite hypotheses
+In this section, we generalize Theorem 1 to composite null hypotheses H. In the composite setting, we rely on Proposition 3 which shows that a test φH for H can be represented as the infimum ess infP∈H of a collection (φP)P∈H of tests for P ∈ H. Here, ess infP∈H denotes the greatest measurable lower bound to ensure the measurability of the infimum (see Remark 7 for more details). While we believe this proposition is known, we are only aware of a sequential analogue that appears in Ramdas et al. (2022).
+Proposition 3 A test φH is valid for H if and only if φH = ess infP∈HφP, for some collection
+(φP)P∈H with elements φP that are individually valid for P.
+To obtain the composite generalization of Theorem 1, we now induce a sequential test (φP
+n ) from
+each test φP, and construct the sequential test (φH
+n ) for H as the running infimum:
+φH
+n := ess inf
+P∈H φP
+n ≡ ess inf
+P∈H EP[φP ∣ F n].
+Moreover, to obtain a counterpart to the second claim of Theorem 1 we must define the limiting test as φH
+∞ := ess infP∈HφP
+∞ here.3
+Theorem 2 ((Composite hypotheses)). For every P ∈ H, let φP be an F -measurable test.
+1. If every test φP is valid, then (φH
+n ) is anytime valid. 2. Suppose every φP is F ∞-measurable. If the test φH ≡ ess infP∈HφP is not valid, then (φH
+n ) is not anytime valid. 3. If every test φP is F τ-measurable, then φH
+τ = ess infP∈HφP.
+Remark 5 ((Extending to e-values)). We choose to present these results in terms of tests, as these are the most well-known kind of evidence variable (Koning, 2024). However, we stress that most of the results in this section easily generalize to e-values through the bridge between e-values recently established in Koning (2025), which we describe in Section 6. Two exceptions are the second claim in Theorem 1 and Proposition 2, which rely on the uniform integrability that is automatically guaranteed by the uniform boundedness of sequential tests.
+3 We generally only have φH
+∞ ≥ lim supn→∞φH
+n because the limsup and essinf need not commute.
+6 Koning and van Meer
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026
+
+
+Remark 6 ((Selecting the collection (φP)P∈H)). Unfortunately, it is not always clear how
+to appropriately select the collection of tests (φP)P∈H, or whether there even exists a unique ‘natural’ choice. For example, we would like to apply our machinery to derive optimal sequential tests by applying it to the most powerful test φ∗ for H against some alternative Q, or a log-utility-optimal (Larsson et al., 2025) or more generally utility-optimal test (Koning, 2025). Copying the approach for the z-test, we could naively select each φP as the optimal test between P and Q, which may be viewed as a generalization of the ‘universal inference’ approach of Wasserman et al. (2020) beyond log-utility-optimal e-values. However, this does not guarantee that ess infP∈HφP = φ∗. That is, the optimal test for H against Q is not necessarily the essential infimum of the optimal tests for P ∈ H against Q. A naive approach that does ensure ess infP∈HφP = φ∗ is to select φP = φ∗ for every P. Unfortunately, plugging this into Theorem 2 often results in an uninteresting sequential test of the form 0, 0, . . . , 0, φ∗ or α, α, . . . , α, φ∗.
+Remark 7 ((Existence of (essential) infimum)). A technical problem arises if the hypothesis H is uncountable. In that case, we would like to take the infimum over an uncountable collection of F n-measurable functions, which is itself possibly not F n-measurable stemming from the fact that a σ-algebra is only guaranteed to be closed under countable unions. Assuming the σ-algebra is also closed under uncountable unions is one approach, but this may ban important applications. The route we take to avoid this problem is to replace the infimum by the essential infimum ess infPYP: the greatest measurable almost-sure lower bound of the collection (YP). Such an essential infimum exists if we assume H is locally absolutely continuous with respect to some reference measure (see e.g. online supplementary material, Appendix A.1 in Ramdas et al., 2022). Another approach is to avoid taking an infimum by defining (φH
+n ) as some process such
+that φH
+n ≤ EP[φP ∣ F n] for every P ∈ H. Unfortunately, this makes it difficult to derive a satisfying version of the third claim in Theorem 2. We acknowledge that this is somewhat unsatisfying, but we are not sure whether a satisfying solution exists within standard analysis.
+2.4 Sufficient monotone likelihood ratio
+As highlighted in Remark 6, it is not always clear how to pick the collection of tests (φP)P∈H. For example, for the one-sided t-test for the composite hypothesis that the effect size δ is smaller than 0, we may be tempted to choose each φδ as the one-sided t-test for the simple hypothesis that the effect size equals δ. While applying the infimum-construction in Theorem 2 to this collection of tests will lead to a sequential test that is valid for the composite hypothesis and ends at the t-test, it is not admissible. In this section, we discuss an alternative approach to tackle composite hypotheses recently laid out by P. Grünwald and Koolen (2025), in the presence of a Monotone Likelihood Ratio with respect to a sufficient statistic. They use this to derive a log-utility-optimal sequential version of the t-test (see Section 6 for a primer on utility-optimal testing). We present a generalization of their result in Theorem 3 that allows us to derive a sequential version of the traditional t-test and more general utility-optimal variants of the t-test in Section 4. In the result, we consider a model (Pδ)δ∈Δ, where Δ is a totally ordered set, which we assume admits some dominating measure.
+Theorem 3 Assume for every n, when the probabilities are restricted to F n,
+1. the Monotone Likelihood Ratio property holds in Δ, with respect to a realvalued sufficient statistic Tn, 2. the test φn is non-decreasing in Tn. If (φn) is a non-negative martingale for Pδ0 starting at α, then it is anytime valid for (Pδ− )δ−≤δ0 .
+J R Stat Soc Series B: Statistical Methodology 7
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026
+
+
+Compared to P. Grünwald and Koolen (2025), the generalization is that we merely assume the tests φn are non-decreasing in the sufficient statistic Tn, whereas they assume they are likelihood ratios, and so non-decreasing in Tn by the Monotone Likelihood Ratio property. We omit the proof, as it is easily obtained from the proof of P. Grünwald and Koolen (2025) by noticing that the non-decreasing-in-Tn property suffices in the proof of their Proposition 2. While the second condition of Theorem 3 is quite straightforward to handle when building up a martingale forwards in time, it is not always easy to verify when inducing a sequential test with our Doob martingale construction, as in Theorem 1. For this reason, we provide sufficient conditions in Proposition 4, which are easier to verify.
+Proposition 4 Let T and Tn be real-valued statistics. Assume F := σ(T) and F n := σ(Tn), F n ⊆ F , for every n ≥ 0. Let φ denote an F -measurable test. Assume that under Pδ0 ,
+1. φ is non-decreasing in T, 2. T is stochastically non-decreasing in Tn, Then, φn = EPδ0 [φ ∣ F n] is non-decreasing in Tn.
+The first condition in Proposition 4 is very natural. For example, it holds if the Monotone Likelihood Ratio property holds with respect to T, and φ maximizes some expected utility U under some alternative Pδ+ , δ+ ≥ δ0,
+max φ : valid
+EPδ+ [U(φ)],
+where U is assumed to be some concave and non-decreasing utility function that satisfies some regularity conditions. Indeed, as we briefly discuss in Section 6, Koning (2025) shows that under such conditions the optimizing test φ is non-decreasing in the likelihood ratio between Pδ0 and Pδ+ , which is non-decreasing in T by the Monotone Likelihood Ratio property so that φ is also non-decreasing in T. Optimizing some utility against some alternative is quite a weak condition that seems reasonable in most applications of Theorem 3. This means only the second condition truly needs to be checked, for which we can use Proposition 4. One may suspect that the second condition in Proposition 4 is somehow implied by the assumptions of Theorem 3 if we additionally assume that a Monotone Likelihood Ratio property holds with respect to a sufficient statistic T. Unfortunately this does not guarantee that T is stochastically non-decreasing in Tn, which we demonstrate with a counterexample in online supplementary material, Appendix A.
+3 Application to the z-test
+In this section, we illustrate our methods in the context of a one-sided z-test. Suppose that X1, . . . , XN are independently drawn from the normal distribution N (μ, σ2), with mean μ ∈ R and σ > 0. Then, the uniformly most powerful test for testing the null hypothesis μ = 0 against the alternative hypothesis μ > 0 is the one-sided z-test. At a given level α > 0, this test equals
+φN = I 1���
+N
+√
+N 􏽘
+i=1
+Xi
+σ > z1−α
+􏼨􏼩
+,
+8 Koning and van Meer
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026
+
+
+where z1−α is the α upper-quantile of the distribution P = N (0, 1). By Theorem 1, for n < N, the induced anytime valid sequential test is given by
+φ′
+n = P 1���
+N
+√
+N 􏽘
+i=1
+Xi
+σ > z1−α
+􏼠 􏼌􏼌􏼌􏼌􏼌X1 = x1, . . . , Xn = xn
+􏼡
+= P 1���
+N
+√
+N 􏽘
+i=n+1
+Xi
+σ > z1−α − 1���
+N
+√
+n 􏽘
+i=1
+xi σ
+􏼠􏼡
+=Φ
+􏽐n i=1
+xi
+σ−
+���
+N
+√
+z1−α �������
+N−n
+√
+⎛
+⎝
+⎞
+⎠,
+where Φ is the CDF of the standard normal distribution N (0, 1), and x1, . . . , xn are the realizations of X1, . . . , Xn. If n = N, this is poorly defined as the denominator equals zero, but still works if we define y/0 as +∞ if y > 0 and as −∞ if y < 0. To interpret the sequential test φ′
+n and compare it to the z-test at time N, φN, it helps to write it as
+Φ
+N−1/2 􏽐n
+i=1
+xi
+σ − z1−α
+�r�n�
+√
+⎛
+⎝
+⎞
+⎠, (6)
+where rn := (N − n)/N is the proportion of remaining observations. Here, we see that the argument of Φ is simply the difference between the current progress on the
+z-score test statistic N−1/2 􏽐n
+i=1
+xi
+σ and the critical value z1−α, divided by the square-root of the pro
+portion rn of observations that remain. This means that if there are few observations remaining, so rn is close to 0, then the distance between the progress on the test statistic and critical value is inflated. If no observations remain, rn = 0, the progress is inflated to either +∞ or −∞, depending on whether the test statistic exceeds the critical value or not. As Φ(+∞) = 1 and Φ(−∞) = 0, the function Φ then translates this to a rejection or non-rejection of the hypothesis.
+3.1 The one-sided hypothesis μ ≤ 0
+Up to this point, we have only considered the sequential z-test that is anytime valid for μ = 0. We now explain why this same sequential test is anytime valid for the entire composite hypothesis μ ≤ 0.
+The idea is to construct the one-sided sequential z-test for every μ ≤ 0, and then plug these into Theorem 2 to obtain an anytime valid test for the composite hypothesis that μ ≤ 0. We find that the resulting test coincides with the test for μ = 0. The one-sided z-test for μ at level α > 0 on the [0, 1]-scale equals
+φμ = I 1���
+N
+√
+􏽘N
+i=1
+Xi
+σ > z1−α +
+��� N
+√μ
+σ
+􏼨􏼩
+.
+As μ ≤ 0, we have φ0 = infμ≤0 φμ. Next, using Eμ and Pμ to denote the expectation and probability under N (μ, σ2), we have for n < N,
+φμ
+n = Eμ[φμ ∣ X1 = x1, . . . , Xn = xn] = Pμ N 􏽘
+i=n+1
+Xi
+σ > N1/2z1−α + N μ
+σ−
+n 􏽘
+i=1
+xi σ
+􏼠􏼡
+= P0 N 􏽘
+i=n+1
+Xi + μ
+σ > N1/2z1−α + N μ
+σ−
+n 􏽘
+i=1
+xi σ
+􏼠􏼡
+= P0 N 􏽘
+i=n+1
+Xi
+σ > N1/2z1−α + n μ
+σ−
+􏽘n
+i=1
+xi σ
+􏼠􏼡
+=Φ
+N−1/2 􏽐n
+i=1
+xi
+σ − z1−α − nN−1/2 μ
+σ
+��������
+N−n N
+􏽲
+⎛
+⎜⎜⎝
+⎞
+⎟⎟⎠,
+J R Stat Soc Series B: Statistical Methodology 9
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026
+
+
+which is the same as (6), but with an extra term involving nN−1/2 μ
+σ in the numerator. The argument of Φ is decreasing in μ, and Φ itself is an increasing function. As μ ≤ 0, this implies infμ≤0 φμ
+n = φ0
+n; the sequential z-test for μ = 0. Moreover, as each φμ is valid for N (μ, σ2), the sequential test is valid for the composite hypothesis μ ≤ 0 by Theorem 2.
+4 Application to the t-test
+In this section, we apply the tools developed in Sections 2 and 2.4 in particular, to construct an anytime valid sequential version of the one-sided t-test that is valid for the composite null hypothesis
+H = {Pμ,σ = N (μ, σ2) : μ ≤ 0, σ2 > 0}.
+We also discuss how it can be easily computed, compare it to the sequentialized z-test, explain how this connects to the log-utility-optimal t-test studied by Pérez-Ortiz et al. (2024), Wang and Ramdas (2024), and P. Grünwald et al. (2024), and note how it can be applied beyond Gaussian distributions to general spherical distributions. The sequentialized traditional t-test is also studied by Posch et al. (2004), but they only show its validity for μ = 0. We also derive a much simpler expression by passing to the beta distribution.
+4.1 Inducing a sequential test from the t-test
+Suppose we sequentially observe real-valued data X1, X2, . . ., which we stack into the tuples Xn := (X1, . . . , Xn), n ≥ 1. Based on this data, we compute a sequence of t-statistics, (Tn)n≥1, where
+Tn =
+√1�n� 􏽐n
+i=1 Xi
+������������������������������������ 1 n−1
+􏽐n
+i=1 Xi − 1
+n
+􏽐n
+j=1 Xj
+􏼒 􏼓2
+􏽳,
+for n ≥ 2, and T1 = −∞ if X1 < 0, T1 = 0 if X1 = 0 and T1 = +∞ if X1 > 0. We consider the filtration (F n)n≥0 induced by the t-statistics, F n = σ(T1, . . . , Tn). Although the observations X1, X2, . . . are i.i.d., the induced t-statistics are dependent and not identically distributed. For n > 1 observations, the traditional one-sided t-test for hypothesis H equals
+φN = I TN > cα,N
+􏼈 􏼉,
+where cα,N is the α upper-quantile of the t-distribution with N − 1 degrees of freedom. Given some planned number of observations N, we can induce a sequential test
+φ′
+n = EN (0,1) φN ∣ F n
+􏼂 􏼃,
+for every n ≥ 0. As φN only depends on TN and TN is known at time N by construction, we have
+that at time N this indeed coincides with the traditional t-test: φ′
+N = φN. From Theorem 3 it immediately follows that it is anytime valid for μ = 0 and σ2 = 1, and since the statistics T1, . . . , TN are scale-invariant it is anytime valid for the composite hypothesis μ = 0 and σ2 > 0. In Proposition 5, we show that this same sequential test is in fact also valid for the composite hypothesis H, that μ ≤ 0 and σ2 > 0.
+Proposition 5 The induced sequential t-test (φ′
+n) is anytime valid for H.
+We also highlight Lemma 1, which is a key step in the proof of Proposition 5 that allows us to apply Proposition 4. online supplementary material, Appendix B.8, we even derive a simple expression for the full conditional distribution of TN given Tn.
+10 Koning and van Meer
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026
+
+
+Lemma 1 Under N (0, σ2), for any σ2 > 0, TN is stochastically increasing in Tn, for every N > 1, n ≤ N.
+Remark 8 ((Beyond the traditional t-test)). An inspection of the proof of Proposition 5 shows that it only uses the fact that the traditional t-test is non-decreasing in the t-statistic TN. This means that the result also applies to any other test that is non-decreasing in the t-statistic. This includes utility-optimal versions of the t-test, and the log-utility-optimal t-test derived by Pérez-Ortiz et al. (2024), and recently shown to be valid for the one-sided hypothesis by P. Grünwald and Koolen (2025).
+Remark 9 ((Valid for spherical distributions)). The tests here are actually not just valid for H, but even valid for a location-shift of a spherically invariant distribution. This is not surprising, as the t-test is valid under sphericity (Efron, 1969), and can even be viewed as a test for spherical invariance (Koning & Hemerik, 2024; Lehmann & Stein, 1949). The link to the Gaussian distribution is that the i.i.d. multivariate Gaussian distribution is the only spherically invariant distribution with i.i.d. marginals, by the Herschel-Maxwell Theorem.
+4.2 Computation and comparison to z-test A convenient expression for φ′
+n, which makes it straightforward to compute, is given by
+φ′
+n =∫1
+0FB
+N−1/2 􏽐n
+i=1
+xi ‖xn‖2
+√�w�� − β1−α
+�r�n�
+√ �������
+1−w
+√
+⎛
+⎜⎝
+⎞
+⎟⎠f (w) dw,
+where FB is the CDF of a Beta( N−n−1
+2 , N−n−1
+2 )-distribution on [−1, 1], β1−α is the α upper-quantile of a Beta( N−1
+2 , N−1
+2 )-distribution on [−1, 1], rn = (N − n)/N denotes the proportion of remaining observations, and f is the density of a Beta( n
+2 , N−n
+2 )-distribution on [0, 1]. A derivation is given in online supplementary material, Appendix B.8.1. We have purposely written this expression in a way that makes it easy to compare to the expression we derived for the z-test:
+Φ
+N−1/2 􏽐n
+i=1
+xi
+σ − z1−α
+�r�n�
+√
+⎛
+⎝
+⎞
+⎠.
+There are two key differences. The first is that the t-test relies on the normalized data xi/‖xn‖2 instead of the original data xi, which in turn forces a switch to the Beta CDF and quantile. The second difference is the presence of w, which is due to the fact that, at time n, we do not know the relative length of the observed vector xn to the final vector XN. For small n, the distribution of w is
+more concentrated near 0, so that the √�w��-term ‘shrinks’ the test statistic when n is small. For large
+n, the distribution of w is more concentrated near 1, so that the √�w��-term no longer shrinks the test statistic. At the same time, for large n, the
+�������
+1−w
+√
+-term in the denominator inflates the distance between the test statistic and critical value when n is large.
+5 Test outcomes as conditional significance levels
+In this section, we formally discuss the idea of optional continuation: that one may use a [0, 1]-valued test outcome as a significance level in subsequent testing. Our main claim is Theorem 5, but we first present a simpler version with only two tests in Theorem 4.
+J R Stat Soc Series B: Statistical Methodology 11
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026
+
+
+Theorem 4 shows that a seemingly ‘inconclusive’ test outcome φ1 ∈ (0, 1) may be taken by any other person and used as a starting significance level in a subsequent experiment.
+Theorem 4 ((Two tests)). Suppose that φ1 is valid at level α and φ2 is conditionally valid
+at conditional level φ1: EP[φ2 ∣ φ1] ≤ φ1, for every P ∈ H. Then, φ2 is valid at level α.
+Proof. For every P ∈ H, we have EP[φ2] = EP[EP[φ2 ∣ φ1]] ≤ EP[φ1] ≤ α. □
+Theorem 5 generalizes this to an anytime validity context. Here, we show that we may abort an anytime valid sequential test at an arbitrary stopping time τ, and then continue experimentation given the present information by starting up a new sequential test that is conditionally anytime valid at the conditional significance level φτ. This may be used to switch to a different sequential test, used to redesign the experiment, or even used as a starting point in (unplanned) future experiments (see Remark 11).
+Theorem 5 ((Anytime validity and optional continuation)). Suppose that (φn) is an anytime valid sequential test at level α, and σ is an arbitrary stopping time, both adapted to the filtration (F n). Let φ∗ be an F -measurable test that is valid at the conditional significance level φσ conditional on F σ,
+EP[φ∗ ∣ F σ] ≤ φσ, for every P ∈ H.
+Then, φ∗ is valid. Suppose that the sequential test (φ∗
+n)n≥σ adapted to (F n)n≥σ is conditionally anytime valid at conditional significance level φσ: for every stopping time τ with respect to (F n)n≥σ,
+EP φ∗
+τ ∣ Fσ
+􏼂 􏼃 ≤ φσ, for every P ∈ H.
+Then, the sequential test (φ†
+n) := φ1, . . . , φσ, φ∗
+σ+1, φ∗
+σ+2, . . . is anytime valid.
+Remark 10 ((Increasing power with optional continuation?)). One may wonder whether optional continuation may be used to obtain a more powerful testing procedure. To answer this question, we must be careful about how we define ‘power’: the sequential context forces us to be explicit about the time at which the power is attained. To highlight this, let us consider the most powerful test φN at time N for
+some simple hypothesis P. Now, its induced sequential test (φ′
+n) is implicitly performing optional continuation under the hood at every time n: EP[φ′
+n ∣ F n−1] = φ′
+n−1, since (φ′
+n) is a martingale. As φN is assumed to be most powerful, straying from this implicit optional continuation cannot increase power at time N. However, with optional continuation we can obtain more power at an earlier or later (stopping) time τ ≠ N.
+Remark 11 ((Branching filtrations)). When we redesign the experiment at a stopping time τ, we implicitly branch from the planned filtration (F n) into some new filtra
+tion (F ′
+n) which overlaps with (F n) at every time n ≤ τ, where F n, F ′
+n ⊆ F for all n. Now, one may worry that we would need to generalize sequential tests and anytime validity to such ‘data-dependent branching filtrations’. Fortunately, this branching process implicitly defines a bona fide filtration. To understand this, we may capture the decision to branch by some stopping time τ and an F τ-measurable decision variable D ∈ {0, 1}, where D = 0 indicates we remain in our original filtration (F n) and D = 1 that we branch into
+a new filtration (F ′
+n). This then implicitly defines the filtration (Gn) as
+Gn = F ∈ F : F ∩ {n ≤ τ} ∈ F n, F ∩ {n > τ, D = 0} ∈ F n, F ∩ {n > τ, D = 1} ∈ F ′
+n
+􏼈􏼉
+,
+12 Koning and van Meer
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026
+
+
+for every n, so that we can view our sequential tests as adapted to the bona fide filtration (Gn). This idea may be iteratively applied to generalize it to branching decisions at multiple stopping times, and is easily expanded to more than two branching options.
+Remark 12 ((Binary tests)). Binary ({0, 1}-valued) tests, which are common in practice, are usually not the ideal choice for the first test φ1 in Theorem 4. Indeed, if φ1 = 0, then initializing the second test at conditional significance level 0 will never lead to a subsequent rejection. Moreover, if φ1 = 1, then we have already attained the desired rejection at level α. We suspect this may be the reason why this idea has not been picked up before, as binary tests are highly popular in practice.
+Remark 13 ((Relationship to multiplying e-values)). We may perform this same exercise with e-values; see Section 6 for a primer on e-values. There, we find this is equivalent to multiplying sequentially valid e-values. In the context of Theorem 4, the trick is to shift to the evidence scale by making the substitution ε1 = φ1/α and ε2 = φ2/φ1. After observing the outcome of the level α test ε1, we choose a valid level αε1 test ε2 taking value in [0, 1/(αε1)],
+EP ε2 ∣ ε1
+[ ] ≤ 1, for every P ∈ H.
+The combined evidence then equals the product ε1ε2, which is indeed valid:
+sup
+P∈H
+EP ε1ε2
+[ ] = sup
+P∈H
+EP ε1EP[ε2 ∣ ε1]
+􏼂􏼃
+≤ sup
+P∈H
+EP[ε1] ≤ 1.
+Moreover, it is of level α as ε1ε2 is [0, ε1 × 1/(ε1α)] = [0, 1/α]-valued.
+5.1 Switching significance levels
+A natural question to ask is whether we need to stick to the significance level α that we set out with at the start, or whether we may adaptively replace this with some other significance level α′. It turns out that we may indeed adaptively change it, as long as we are careful with formulating the resulting unconditional Type I error guarantee. For simplicity, we stick to the setting of Theorem 4, where we first perform test φ1 at level α, and
+want to subsequently conduct a test φ2 so that the unconditional significance level of φ2 becomes α′.
+Let us start with the simple case, where the new significance level α′ is chosen independently from the data. Then, we can simply choose φ2 to have conditional level φ1α′/α,
+EP[φ2 ∣ F 1] ≤ φ1
+α′
+α , for every P ∈ H,
+and follow the proof of Theorem 4 to establish for every P ∈ H that
+EP[φ2] = EP[EP[φ2 ∣ F 1]] ≤ EP φ1
+α′
+α
+􏼔􏼕
+≤ α′
+α EP[φ1] ≤ α′.
+However, we would like to allow α′ to depend on the data we have collected so far. Unfortunately, the desire to have the unconditional Type I error guarantee on φ2,
+EP[φ2] ≤ α′, for every P ∈ H,
+J R Stat Soc Series B: Statistical Methodology 13
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026
+
+
+is then a strange requirement, as EP[φ2] is F 0-measurable and α′ is F 1-measurable. Luckily, this can be resolved by shifting to data-dependent Type I error control recently developed in Koning (2024) and P. D. Grünwald (2024),
+EP φ2
+α′
+􏼔􏼕
+≤ 1, for every P ∈ H.
+Under this generalized Type I error control, initializing φ2 to be valid at conditional level φ1α′/α
+indeed makes it unconditionally valid at level α′:
+EP φ2
+α′
+􏼔􏼕
+= EP EP φ2
+α′ |F 1
+􏼔 􏼔 􏼕􏼕
+≤ EP φ1
+α
+􏼔􏼕
+≤1
+α EP[φ1] ≤ 1, for every P ∈ H.
+5.2 Pointwise optional continuation
+In the preceding sections, we use the outcome of a single test φ1 for optional continuation.
+Recall that from Proposition 3 we may represent a test φH
+1 for a composite hypothesis H as
+the infimum ess infP∈HφP
+1 of a family of tests (φP
+1 )P∈H. The insight in this section is that for the pur
+pose of optional continuation it seems generally better to work with such a family (φP
+1 )P∈H than
+working directly with φH
+1. The idea is to use optional continuation for each test separately:
+EP[φP
+2 ∣ F 1] ≤ φP
+1 . (7)
+In Theorem 6, we show that this still results in a valid test φH
+2 := ess infP∈HφP
+2 . Moreover, this approach dominates using φH
+1 ≡ ess infP∈HφP
+1 for H as a conditional significance level for φH
+2 , since (7) implies ess infP∈HEP[φP
+2 ∣ F 1] ≤ ess infP∈HφP
+1 ≡ φH
+1 , which in turn implies that φH
+2 is conditionally valid at conditional level φH
+1 since
+EP[φH
+2 ∣ F 1] ≡ EP[ess inf
+P′ ∈H
+φP′
+2 ∣ F 1] ≤ ess inf
+P∈H EP[φP
+2 ∣ F 1] ≤ φH
+1.
+But conditional validity of φH
+2 at conditional level φH
+1 clearly does not generally imply (7). A consequence is that for optional continuation one should perhaps report the entire family (φP
+1 )P∈H of test outcomes instead of just a single test outcome φH
+1 against H.
+Theorem 6 Let (φP
+1 )P∈H be a family of tests, where each test φP
+1 is valid for P at level α.
+Moreover, let (φP
+2 )P∈H be a family of tests, where each test φP
+2 is conditionally
+valid for P at conditional significance level φP
+1 , given F 1. Then the test φH
+2=
+ess infP∈HφP
+2 is valid for H at level α.
+6 Connection to e-values 6.1 E-values and tests
+A convenient way to introduce the e-value is as a test on a different scale. In particular, without loss of generality, we could choose to define a level α > 0 test as a map ε : X → [0, 1/α], rescaling by a factor 1/α compared to the classical definition φ : X → [0, 1]. Because of the rescaling, the validity guarantee now becomes
+sup
+P∈H
+EP[ε] ≤ 1,
+regardless of the value of α. A test on this different scale is known as a (bounded) e-value. Plugging in α = 0 recovers the usual definition of the e-value ε : X → [0, ∞]. From this perspective, recently
+14 Koning and van Meer
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026
+
+
+proposed in Koning (2025), e-values are just tests in disguise, masked by a cosmetic rescaling. As noted in Remarks 5 and 13, one consequence is that most of our results easily extend to e-values. As the lack of an upper bound is of little practical relevance, Koning (2025) argues that the true innovation of the e-value is an appreciation of the interior of the codomain [0, 1] (now [0, 1/α]). While this interior is classically viewed as a (much disliked) instruction to randomize, the e-value literature (implicitly) directly interprets this as ‘evidence’. Our work delivers a new interpretation, showing that test outcomes in (0, 1) can be used as a conditional significance level. The appreciation of this interior is visible in the power objectives considered in the e-value literature, which will be important for the results in the subsequent sections. To understand this, let us start with classical Neyman–Pearson optimal testing, which concerns maximizing the power EQ[ε] over [0, 1/α]-valued valid e-values against some alternative Q. An optimizer of this problem can also be viewed as optimizing
+EQ[U(ε)]
+over [0, ∞]-valued valid e-values, for the ‘Neyman–Pearson utility function’ U(x) = x ∧ 1/α (Koning, 2025). This problem is optimized by the likelihood ratio test, which is usually {0, 1/α}-valued, offering either no rejection or a rejection at level α. Other concave utility functions U : [0, ∞] → [−∞, +∞], designed to express the utility associated with different outcomes, generally yield e-values that take value in a continuum. One choice of the utility function is the log-utility U = log, which has grown to become the (near-universal) default in the e-value literature (P. Grünwald et al., 2024; Larsson et al., 2025) and will be the primary focus of the following sections. For a simple hypothesis, H = {P} and α = 0, the log-utility-optimal e-value is simply the likelihood ratio dQ/dP. For mutually absolutely continuous P and Q and upper-semicontinuous, concave and non-decreasing utility functions U, Koning (2025) shows that an expected-utility-optimal e-value ε∗ satisfies
+λ dP
+dQ ∈ ∂U(ε∗), (8)
+for some normalization constant λ ≥ 0, where ∂U denotes the super-differential of U. This means that utility-optimal e-values are generally non-decreasing as a function of the likelihood ratio dQ/dP.
+6.2 Inducing from log-utility-optimal e-values
+In Theorem 7, we apply our machinery from Section 2 to log-utility-optimal e-values. This reveals a remarkable invariance property of log-utility-optimality: if ε is log-utility-optimal for P against Q, then the F n-conditional e-value εn = EP[ε ∣ F n] is automatically log-utility-optimal for the same problem restricted to the sub-σ-algebra F n. The resulting log-utility-optimal sequential test (‘e-process’) (εn) = (LRn) can be viewed as the ‘unbounded SPRT’ on the e-value scale for α = 0: LRn ∧ 1/0 = LRn, taking 1/0 = +∞. In the result, we use PFn and QFn to denote the probabilities P and Q restricted to the sub-σalgebra F n. The proof relies on the (well-known) property that the F n-restricted likelihood ratio LRn equals the conditional expectation of the likelihood ratio LR.
+Theorem 7 ((Conditioning-invariance log-utility-optimal e-values)). Let P ≫ Q. If ε is log-utility-optimal for P against Q then εn is log-utility-optimal for PFn against QFn .
+In Proposition 6, we show that the log-utility function is the only utility function that satisfies this property. The main idea behind the proof is to use the representation (8) of Koning (2025) to show that the property requires Jensen’s inequality to hold with equality for the map g : x 7! (U′)−1(c/x), c > 0, so that g must be affine on the support of the distribution. If the class of distributions for which we want the property to hold is sufficiently rich, this implies g must be affine. This subsequently implies that the utility function is of the form
+J R Stat Soc Series B: Statistical Methodology 15
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026
+
+
+U(x) = a log (x − b) + c, for which the optimizer is a mixture of the log-utility-optimal e-value and 1. Applying U′(0) = ∞ forces b = 0.
+Proposition 6 Assume that U is concave, strictly increasing and differentiable with continuous and strictly decreasing derivative U′ with U′(0) = limx→0U′(x) = ∞ and U′(∞) = limx→∞U′(x) = 0. Suppose that for every pair P ≫ Q and underlying measure space, we have that if ε is U-optimal for P against Q then εn is U-optimal for PFn against QFn . Then U = log (up to affine transformations).
+6.3 Inducing the SPRT from a Neyman–Pearson test
+Theorem 8 shows that under an i.i.d. assumption and mild regularity conditions, the unbounded SPRT (log-optimal e-process / test-process) (LRn) is the sequential test induced by the NeymanPearson optimal test based on N observations for small α as N → ∞, on the e-value scale
+εn,α = φn,α/α.
+An interpretation of this result is that using the unbounded SPRT means we are implicitly aiming for a terminal test with high power at large N and small α. The result is illustrated in the Gaussian location setting in Figure 2, where we see the sequential tests indeed nearly overlap, especially for n ≪ N, even though N is not so large here.
+Theorem 8 Consider two distributions P and Q that are mutually absolutely continuous, and assume log dQ
+dP is atomless. We denote the level αN NP-test based on N i.i.d.
+observations with φN,αN , and its conditional expectation given n observations
+with φ′
+n,αN . Choose αN = exp {−N × D(Q‖P)} where D(·‖·) denotes the KL
+divergence. Assume that there exists an ε > 0 such that the (1 + ε)-order Rényi divergence D1+ε(Q‖P) is finite, and that logLR1 is not lattice-valued under P. Then,
+limN→∞ ε′
+n,αN ≡ Nli→m∞
+φ′
+n,αN αN
+= LRn, P-a.s., for all n ∈ N.
+Remark 14 ((Link to Breiman, 1961)). Our Theorem 8 is related to a result by Breiman (1961). In particular, he shows in a binary-data context that the power of the SPRT (αLRn ∧ 1)n∈N at the final time N asymptotically matches the power of the most powerful test at time N, uniformly in α. Our result shows something much stronger: for a particular choice of α the entire test processes themselves coincide as N → ∞, not just their power at time N.
+Figure 2. Illustration of the sequential z-test at N = 100 and the likelihood ratio process over 100 observations
+sampled from N (0.5, 1). The z-test is executed at significance level α = exp {−N μ2
+2σ2 } = exp {−12.5} ≈ .0000037, for
+which Theorem 8 predicts that two sequential tests coincide as N → ∞.
+16 Koning and van Meer
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026
+
+
+7 Discussion
+We begin by emphasizing that we do not advocate for everyone to use sequential tests induced from classical Neyman–Pearson-style tests. Indeed, such tests satisfy two undesirable properties. First, they are measured at some finite time N, so that they do not naturally continue beyond this time. Second, such tests generally hit 0 (not reject) with positive probability at time N, discarding the option to continue beyond this time. This means we can only continue if the tests hits 1 (reject), signifying a rejection at level α, to hope for a rejection at a smaller level α′ < α as in Section 5.1. But if attaining a rejection at level α was our goal, then this may not be of interest. For these reasons, we primarily view the application of our work to such classical tests as establishing the theoretical bridge between classical testing and anytime valid sequential testing, which are often treated as different paradigms in the literature. That said, these sequential tests induced from Neyman–Pearson-style tests also expand classical testing by offering the option to intervene before time N using optional continuation, allowing analysts to adapt their experiment based on the present situation. Given the wide use of classical tests and a general reluctance to move away from established methodology, we believe inducing sequential tests from Neyman–Pearson-style tests is a valuable addition to the statistical toolbox. So what do we advocate for? Our Proposition 2 shows that admissible anytime valid sequential tests (φn) can be fully summarized by their terminal test φ∞ = lim supn→∞φn. This suggests that the development of a ‘good’ sequential tests may perhaps be reduced to the development of a ‘good’ terminal tests, and the subsequent induction of a sequential test from this terminal test. For this reason, we believe an interesting area of future research is the development of appropriate terminal tests, which for the reasons given above will likely not be of the Neyman–Pearson form. A related message in our work is that we believe there should be a broader appreciation of [0, 1]-valued tests over {0, 1}-valued tests, which often seem shunned in the literature due to their classical connection to randomization. Indeed, [0, 1]-valued tests are much more amenable to optional continuation. Here, we personally prefer rescaling to the [0, 1/α] ‘evidence-scale’ that gives rise to the e-value, for reasons listed in Koning (2025). However, our work shows that anytime validity and optional continuation can be used on the traditional [0, 1]-scale, which is more familiar to most statisticians. A final interesting finding is that for the purpose of optional continuation, our Theorem 6 suggests that one should report the entire test family (φP)P∈H instead of the single test outcome
+φH := infP∈H. This connects to calls to report confidence sets over test outcomes: in Koning and van Meer (2025) it is shown that such a collection may be interpreted as a [0, 1]-valued ‘fuzzy’ generalization of a confidence set, and explained how they may be used in subsequent decision making (see also Andrews & Chen, 2025; P. D. Grünwald, 2023; Kiyani et al., 2025).
+Acknowledgments
+We sincerely thank Wouter Koolen for feedback on an early presentation of this work: he confirmed our suspicions that our results were far more general than we were able to show at the time. Moreover, we thank Simon Benhaiem, Lasse Fischer, Peter Grünwald, Jesse Hemerik, Stan Koobs, Aaditya Ramdas and Dante de Roos for their comments. We also thank two anonymous referees for their valuable input, and acknowledge the use of ChatGPT and Claude for proofreading and assistance in finding useful literature.
+Conflicts of interest: The authors have no conflicts of interest to disclose.
+Funding
+Nick Koning is supported by a starter grant from the Dutch government.
+Data availability
+The figures may be replicated by running the R code available at the repository https://github.com/ nickwkoning/free_anytime_validity. This repository also contains separate R functions for the induced sequential z-test and t-test.
+J R Stat Soc Series B: Statistical Methodology 17
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026
+
+
+Supplementary material
+Supplementary material is available online at Journal of the Royal Statistical Society: Series B.
+References
+Andrews I., & Chen J. (2025). ‘Certified decisions’, arXiv, arXiv: 2502.17830, preprint: not peer reviewed. Breiman L. (1961). Optimal gambling systems for favorable games. In Proceedings of the fourth Berkeley symposium on mathematical statistics and probability (pp. 65–78). University of California Press.
+Doucet A., de Freitas N., & Gordon N. J. (Eds.). (2001). Sequential Monte Carlo methods in practice. Springer. Efron B. (1969). Student’s t-test under symmetry conditions. Journal of the American Statistical Association, 64(328), 1278–1302. https://doi.org/10.1080/01621459.1969.10501038 Fischer L., & Ramdas A. (2024). ‘Improving the (approximate) sequential probability ratio test by avoiding overshoot’, arXiv, arXiv: 2410.16076, preprint: not peer reviewed. Grünwald P., de Heide R., & Koolen W. (2024). Safe testing. Journal of the Royal Statistical Society: Series B, Statistical Methodology, 86(5), 1091–1128. https://doi.org/10.1093/jrsssb/qkae011 Grünwald P., & Koolen W. M. (2025). Supermartingales for one-sided tests: Sufficient monotone likelihood ratios are sufficient. Statistics & Probability Letters, 229, Article 110574. https://doi.org/10.1016/j.spl.2025. 110574 Grünwald P. D. (2023). The e-posterior. Philosophical Transactions of the Royal Society A, 381(2247), Article 20220146. https://doi.org/10.1098/rsta.2022.0146 Grünwald P. D. (2024). Beyond Neyman–Pearson: E-values enable hypothesis testing with a data-driven alpha. Proceedings of the National Academy of Sciences, 121(39), Article e2302098121. https://doi.org/10.1073/ pnas.2302098121 Howard S. R., Ramdas A., McAuliffe J., & Sekhon J. (2020). Time-uniform chernoff bounds via nonnegative supermartingales. Probability Surveys, 17(none), 257–317. https://doi.org/10.1214/18-PS321 Howard S. R., Ramdas A., McAuliffe J., & Sekhon J. (2021). Time-uniform, nonparametric, nonasymptotic confidence sequences. Annals of Statistics, 49(2), 1055–1080. https://doi.org/10.1214/20-AOS1991 Kiyani S., Pappas G., Roth A., & Hassani H. (2025). ‘Decision theoretic foundations for conformal prediction: Optimal uncertainty quantification for risk-averse agents’, arXiv, arXiv: 2502.02561, preprint: not peer reviewed. Koning N. W. (2024). ‘Post-hoc alpha hypothesis testing and the post-hoc p-value,’ arXiv preprint arXiv:2312.08040., preprint: not peer reviewed. Koning N. W. (2025). ‘Continuous testing: Unifying tests and e-values’, arXiv preprint arXiv:2409.05654, preprint: not peer reviewed. Koning N. W., & Hemerik J. (2024). More efficient exact group invariance testing: Using a representative subgroup. Biometrika, 111(2), 441–458. https://doi.org/10.1093/biomet/asad050 Koning N. W., & van Meer S. (2025). ‘Fuzzy prediction sets: Conformal prediction with e-values’, arXiv, arXiv: 2509.13130, preprint: not peer reviewed. Lachin J. M. (2005). A review of methods for futility stopping based on conditional power. Statistics in Medicine, 24(18), 2747–2764. https://doi.org/10.1002/(ISSN)1097-0258 Lan K. G., Simon R., & Halperin M. (1982). Stochastically curtailed tests in long–term clinical trials. Communications in Statistics. Part C: Sequential Analysis, 1(3), 207–219. https://doi.org/10.1080/ 07474948208836014 Larsson M., Ramdas A., & Ruf J. (2025). The numeraire e-variable and reverse information projection. Annals of Statistics, 53(3), 1015–1043. https://doi.org/10.1214/24-AOS2487 Lehmann E. L., & Stein C. (1949). On the theory of some non-parametric hypotheses. The Annals of Mathematical Statistics, 20(1), 28–45. https://doi.org/10.1214/aoms/1177730089 Müller H.-H., & Schäfer H. (2004). A general statistical principle for changing a design any time during the course of a trial. Statistics in Medicine, 23(16), 2497–2508. https://doi.org/10.1002/sim.v23:16 Pérez-Ortiz M. F., Lardy T., de Heide R., & Grünwald P. D. (2024). E-statistics, group invariance and anytimevalid testing. Annals of Statistics, 52(4), 1410–1432. https://doi.org/10.1214/24-AOS2394 Posch M., Timmesfeld N., König F., & Müller H.-H. (2004). Conditional rejection probabilities of student’s t-test and design adaptations. Biometrical Journal: Journal of Mathematical Methods in Biosciences, 46(4), 389–403. https://doi.org/10.1002/bimj.v46:4 Ramdas A., Grünwald P., Vovk V., & Shafer G. (2023). Game-theoretic statistics and safe anytime-valid inference. Statistical Science, 38(4), 576–601. https://doi.org/10.1214/23-STS894 Ramdas A., Ruf J., Larsson M., & Koolen W. (2022). ‘Admissible anytime-valid sequential inference must rely on nonnegative martingales’, arXiv, arXiv: 2009.03167, preprint: not peer reviewed. Shafer G. (2021). Testing by betting: A strategy for statistical and scientific communication. Journal of the Royal Statistical Society Series A: Statistics in Society, 184(2), 407–431. https://doi.org/10.1111/rssa.12647
+18 Koning and van Meer
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026
+
+
+Wang H., & Ramdas A. (2024). Anytime-valid t-tests and confidence sequences for gaussian means with unknown variance. Sequential Analysis, 44, 1–55. https://doi.org/10.1080/07474946.2023.2272908 Wasserman L., Ramdas A., & Balakrishnan S. (2020). Universal inference. Proceedings of the National Academy of Sciences, 117(29), 16880–16890. https://doi.org/10.1073/pnas.1922664117
+J R Stat Soc Series B: Statistical Methodology 19
+Downloaded from https://academic.oup.com/jrsssb/advance-article/doi/10.1093/jrsssb/qkag050/8493290 by Centrum Wiskunde & Informatica - Nikhef user on 27 April 2026

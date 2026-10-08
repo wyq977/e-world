@@ -1,0 +1,1057 @@
+Confidence and discoveries with e-values
+Vladimir Vovk∗ Ruodu Wang†
+November 11, 2022
+Abstract
+We discuss systematically two versions of confidence regions: those based on p-values and those based on e-values, a recent alternative to pvalues. Both versions can be applied to multiple hypothesis testing, and in this paper we are interested in procedures that control the number of false discoveries under arbitrary dependence between the base p- or e-values. We introduce a procedure that is based on e-values and show that it is efficient both computationally and statistically using simulated and realworld datasets. Comparison with the corresponding standard procedure based on p-values is not straightforward, but there are indications that the new one performs significantly better in some situations.
+The journal version of this paper is to appear in Statistical Science. This version has been further revised. For the most up-to-date version, see http://alrw.net/e (Working Paper 3).
+1 Introduction
+Starting from the introduction of confidence regions in the work of Jerzy Neyman [1934], confidence estimation and hypothesis testing have been regarded as dual tasks. We start our discussion from hypothesis testing and then extend it to confidence estimation. The usual approaches to hypothesis testing and confidence estimation are based on p-values, but our emphasis will be on alternative approaches based on e-values, as discussed in, e.g.,Shafer[2021] (who uses “betting score” for our “e-value”),Shafer and Vovk[2019, Section 11.5] (who use “Skeptic’s capital”), Gru ̈nwald et al.[2020], andVovk and Wang[2021] (who proposed the term “e -values”). E -values can be defined as values taken by e-variables, and an e-variable is a random variable taking values in [0, ∞] whose expectation is at most 1 under
+∗Department of Computer Science, Royal Holloway, University of London, Egham, Surrey, UK. E-mail:v.vovk@rhul.ac.uk. †Department of Statistics and Actuarial Science, University of Waterloo, Waterloo, Ontario, Canada. E-mail:wang@uwaterloo.ca.
+1
+arXiv:1912.13292v5 [math.ST] 10 Nov 2022
+
+
+the null hypothesis. In many areas of statistics e-variables appear naturally as likelihood ratios: if Q is a simple null hypothesis and Q′ is an alternative probability measure, the Radon–Nikodym derivative dQ′/ dQ is an e-variable. In Bayesian statistics, Q or Q′ or both may be defined as marginal probability measures for Bayesian models, in which case likelihood ratios are known as Bayes factors. The fundamental monograph treating Bayes factors is Jeffreys’s [1961]; see, e.g.,Ly et al.[2016] for a recent appreciation. The notions of e-values and Bayes factors coincide for simple null hypotheses but diverge for composite ones (for e-variables, the expectation should be at most 1 under any probability measure in the null hypothesis). The existing statistical methods are often divided into Bayesian and classical (we will say more about the latter in Section3). While p-values are the standard classical tool of hypothesis testing, Bayes factors are the standard Bayesian tool [Benjamini et al.,2021]. One way of looking at e-values is as a way of modelling Bayes factors inside classical statistics inasmuch as they do not require prior distributions for their definition. This hints at the difficulty of comparisons between results based on p-values and those based on e-values; it is a manifestation of the oft-acknowledged chasm between classical and Bayesian statistics. Roughly, the Bayesian interpretation of an e-variable dQ′/ dQ is that, when deciding between Q′ and Q as possible explanations for the data and observing a very large e-value, the optimal decision is to reject Q unless the prior probability of Q is high or a mistaken rejection of Q is much more costly than a mistaken rejection of Q′ (seeBernardo and Smith[2000, Proposition 6.1] for a precise decision-theoretic statement). Another important and popular source of e-values, especially in the context of sequential observations, is e-processes, which are stochastic processes (Et)t≥0 such that Eτ is an e-variable for any stopping time τ (with respect to a prespecified filtration); see, e.g.,Shafer and Vovk[2019],Gru ̈nwald et al.[2020], Vovk and Wang[2021], andWang and Ramdas[2022]. The use of e-processes ensures validity under optional stopping and allows sequential update of statistical evidence. These advantages are discussed extensively in the existing literature and are not the focus of this paper. If E is an e-variable and α > 1, Markov’s inequality implies that, under the null hypothesis, E ≥ α with probability at most 1/α. Therefore, observing a large value of E provides evidence against the null hypothesis in classical statistics as well. In typical uses of e-values, however, we are not given a threshold α in advance (or ever), and simply regard an e-value as the strength of evidence against the null. The defining property of a p-value is that it is α or less with a probability of at most α. This definition involves a quantifier over thresholds α and sometimes is considered misleading in situations where no threshold α is fixed in advance. There have been proposals to turn (“calibrate”) p-values into Bayes factors [Sellke et al.,2001] to help intuition, andJeffreys[1961, Appendix B] proposes an informal correspondence between p-values and Bayes factors; both can be used for establishing connections between p-values and e-values. Ways of turning p
+2
+
+
+values into e-values and vice versa have been systematically discussed inVovk and Wang[2021, Section 2] and are the topic of Section3. They provide ways of comparing results based on e-values and p-values, albeit crude ones. An area of statistics where we can see both e-values and p-values in action is controlling the number of false discoveries in multiple hypothesis testing. A known procedure of controlling the number of false discoveries [Genovese and Wasserman,2004;Goeman and Solari,2011a;Goeman et al.,2019b], which we call the GWGS procedure, uses p-values, but it can be easily adapted to e-values. In this paper we demonstrate the performance of both versions. Both versions of the GWGS procedure control the number of false discoveries in a stronger sense than the well-known procedure ofBenjamini and Hochberg [1995] controlling the false discovery rate (FDR). Whereas FDR is the expected value of the false discovery proportion, the GWGS procedure provides upper confidence bounds on the number of false discoveries. Procedures that control FDR using e-values are studied byWang and Ramdas[2022]. The GWGS procedure involves, at least implicitly, merging several p-values into a single p-value. Merging p-values is difficult: see, e.g.,Vovk and Wang [2020a];Vovk et al.[2022]. The situation with e-values is radically different: arithmetic averaging is essentially the only symmetric method of merging [Vovk and Wang,2021, Proposition 3.1]. This contrast shows in the observation that the e-version of the GWGS procedure produces seemingly better results than the p-version; we cannot be more categorical since comparison between p-values and e-values is not straightforward. We start the main part of the paper by discussing testing in Sections2and3, defining confidence regions in Section4, and repackaging them as necessity measures in Section5. In Section6we introduce the e-version of the GWGS procedure, postponing the p-version to an appendix. A special case that is easy to visualize is introduced under the name of discovery e-matrices. In Sections7and8we demonstrate the advantages of the e-version in simulation and empirical studies, respectively. In Section9we give its computationally efficient implementation. Section10concludes. The main content of the paper is complemented by five appendixes,A–E. AppendixAcontains some further information on a toy example in the main paper. AppendixBexplores other procedures of controlling false discoveries with e-values, including the one based on a Bonferroni-type procedure of merging e-values. If the goal is family-wise validity, such procedures (including the one inHolm[1979]) usually work very well, but if the goal is to control the number of false discoveries, they work much worse than arithmetic averaging. In this appendix we also discuss a Simes-type procedure based on e-values. AppendixCmakes connections with Goeman and Solari’s [2011a] work explicit. AsHemerik et al.[2019, Supplementary material] explain, the method ofGoeman and Solari[2011a] is equivalent to a method inGenovese and Wasserman [2004]. AppendixDpoints out the importance of generalized Bayes factors. Finally, AppendixEsummarizes results of further biomedical studies related to the dataset that we use in Section8.
+3
+
+
+2 Three approaches to hypothesis testing
+The basic principle of hypothesis testing is sometimes referred to as Cournot’s principle [Shafer,2007]. Augustin Cournot’s bridge between probability theory and the world is that if a given event has a small probability, we do not expect it to happen. It is shown at the top of Figure1and has entered (without its name) countless statistics textbooks: the simplest approach to hypothesis testing consists in selecting a priori a critical region A of a small probability under the null hypothesis and rejecting the null hypothesis when A happens. Cournot’s principle is the basis of the classical approach to statistics; it was known to and used by James Bernoulli [1713], and Cournot’s [1843] contribution was to say that this is the only bridge.
+Figure 1: Cournot’s principle and its two generalizations
+We are mostly interested in two generalizations of Cournot’s principle. To give formal definitions, we fix a measurable space (Ω, A). This is our sample space; to complete it to a probability space we need a probability measure Q ∈ P(Ω), where P(Ω) is the set of all probability measures on (Ω, A). A statistical model is a family (Qθ | θ ∈ Θ) of probability measures on (Ω, A). We do not require measurability, in any sense, of Qθ in θ; in particular, the parameter space Θ is just a set (not a measurable space). We are mostly interested in the case where Θ = P(Ω) and Qθ = θ for all θ ∈ Θ, but in the first few sections our exposition will be general, which may make our definitions more familiar to some of the readers. For a given parameter θ ∈ Θ, we have the notion of expectation Eθ(E) :=
+∫
+E dQθ ∈ [0, ∞] for each extended random variable E taking nonnegative values (we call it “extended” since it may take value ∞) and the notion of probability Pθ(A) := Eθ(1A) = Qθ(A) for each event A ∈ A.
+A simple statistical hypothesis is an element θ of Θ. A statistical hypothesis (or composite statistical hypothesis, or simply hypothesis) is a set H ⊆ Θ of parameters. We embed the simple statistical hypotheses into the composite statistical hypotheses by identifying θ ∈ Θ with the corresponding singleton {θ} ⊆ Θ. We will say “null hypothesis” to emphasize that we are interested in whether the hypothesis should be rejected in view of the data ω ∈ Ω. We already mentioned that the most basic way of testing a simple hypothesis θ ∈ Θ is to choose a critical region A ∈ A with probability Pθ(A) ≤ α, α (the
+4
+
+
+size) being a small positive number, and to reject the hypothesis θ at level α after observing an outcome ω ∈ A. A disadvantage of this way of testing is that it is binary; either we completely reject the null hypothesis or we find no evidence whatsoever against it. We will discuss two ways to graduate the notion of a critical region: the classical one using p-values and a more recent one using e -values. A p-variable for testing a simple hypothesis θ is a nonnegative random variable P such that, for any α ∈ (0, 1), Pθ(P ≤ α) ≤ α. For each threshold α we have a critical region {P ≤ α}, and a p-variable provides a nested family of critical regions. An e-variable for testing a simple hypothesis θ ∈ Θ is a nonnegative extended random variable E such that Eθ(E) ≤ 1. Suppose we are testing a simple null hypothesis θ (it might correspond to a default parameter value). In p-testing, we choose a p-variable P in advance and reject the null hypothesis θ when the observed value P (ω) of P (the p-value) is small, and in e-testing, we choose an e-variable E in advance and reject the null hypothesis θ when the observed value E(ω) of E (the e-value) is large. In both cases, we get a measure of the amount of evidence found against the null hypothesis. We can embed basic testing into both p-testing and e-testing: namely, to each critical region A corresponds the p-variable
+P (ω) :=
+{
+α if ω ∈ A
+1 if not (1)
+and e-variable
+E(ω) :=
+{
+1/α if ω ∈ A
+0 if not, (2)
+where α is the size of the critical region A. These two random variables carry the same information as A. This justifies the two arrows marked “generalization” in Figure1. The special case of basic testing corresponds to concentrating on only one threshold, denoted α in the case of p-values, (1), and 1/α in the case of e-values, (2). It is instructive to see how we could extend the basic p-variable (1) and the basic e-variable (2). It is easy to extend (1); e.g., we can take another critical region A′ ⊃ A of size α′ > α and define a p-variable,
+P (ω) :=
+
+ 
+ 
+α if ω ∈ A
+α′ if ω ∈ A′ \ A
+1 if ω ∈ Ω \ A′,
+that strongly dominates (1). As it were, for each α we have a separate budget of α that can be spent on a critical region. On the other hand, there is no way to improve the e-variable (2) in a non-trivial way (make it larger on a set of positive probability). Now we have a single budget of 1, which has been fully spent in (2).
+5
+
+
+The definitions of critical regions, p-variables, and e-variables extend to the case of composite hypotheses as follows. A critical region of size α for a composite hypothesis H is an event A ∈ A satisfying Pθ(A) ≤ α for all θ ∈ H. A p-variable for testing a composite hypothesis H is a nonnegative random variable P such that, for any α ∈ (0, 1), Pθ(P ≤ α) ≤ α for all θ ∈ H. And an e-variable for testing a composite hypothesis H is an extended nonnegative E satisfying Eθ(E) ≤ 1 for all θ ∈ H. While p-variables (referred to as valid p-values inCasella and Berger[2002, Definition 8.3.26]) are standard, e-variables [Shafer,2021;Vovk and Wang,2021] have not been used widely. Observing a small p-value or a large e-value provide evidence against H. It is convenient to have conventional thresholds for p-values and e-values. For p-values, the standard thresholds are 1% and 5%, and they go back to Fisher. If p ≤ 0.05, we say that the evidence against the null hypothesis is significant, and if p ≤ 0.01, we say that the evidence is highly significant. For e-values, we will use Jeffreys’s [1961, Appendix B] rule of thumb:
+• If the e-value is below 1, the null hypothesis is supported. In our plots (such as in Figure3below) in the experimental sections,7and8, such e-values will be shown in dark green.
+• If the e-value is in the interval (1,
+√
+10) ≈ (1, 3.16), the evidence against the null hypothesis is not worth more than a bare mention. Such e-values will be shown in green.
+• If the e-value is in (
+√
+10, 10) ≈ (3.16, 10), the evidence against the null hypothesis is substantial. Shown in yellow.
+• If it is in (10, 103/2) ≈ (10, 31.6), the evidence against the null hypothesis is strong. Shown in red.
+• If it is in (103/2, 100) ≈ (31.6, 100), the evidence against the null hypothesis is very strong. Shown in dark red.
+• If the e-value exceeds 100, the evidence is decisive. Shown in black.
+Fisher’s and Neyman–Pearson’s views of testing
+A common view is that, in our terminology, Fisher preferred p-testing, whereas Neyman preferred basic testing (with the null hypothesis complemented by an alternative hypothesis). The full story is, however, more complex: see, e.g., Lehmann[2011, Section 4.4]. Fisher’s interpretation of hypothesis testing was in terms of a disjunction [Fisher,1973, Section III.1]. If A is a critical region of a small size α and we observe an outcome in A, then either the null hypothesis is wrong or “a rare chance has occurred”. To avoid any frequentist connotations, we may express it in the equivalent form the null hypothesis is wrong unless the outcome is strange (“unless” being one of the ways to express the idea of disjunction [Kleene,1967,
+6
+
+
+6 4 20 2 4 6 x
+6
+4
+2
+0
+2
+4
+6
+log10 of e-values and p-values
+p-values e-values, d = 2 (M.-B.) e-values, d = 10 e-values, d = 50
+6 4 20 2 4 6 x
+6
+4
+2
+0
+2
+4
+6
+log10 of e-values and p-values
+A1 A2
+B1 B2
+p-values e-values, = 1 e-values, = 3 e-values, = 5
+Figure 2: The p-values (black solid lines) and e-values on the decimal log scale for testing the null hypothesis N (0, 1). Left panel: for the signed χ alternatives. Right panel: for the alternatives in the family N (μ, 1).
+Section 14]). A similar interpretation is applicable to p-values and e-values: e.g., if we observe a large e-value, then the null hypothesis is wrong unless the outcome is strange. In Neyman and Pearson’s approach to hypothesis testing, a big role is played by alternative hypotheses. In e-testing, the notion of an alternative hypothesis plays a less independent role: choosing an e-variable E can often be interpreted as choosing an alternative hypothesis in such a way that E is the likelihood ratio of the alternative hypothesis to the null [Shafer,2021, 2.2].
+A toy example
+Let us see how these definitions work in a simple example. We would like to test the null hypothesis x ∼ N (0, 1) given an observation x ∈ Ω := R. Suppose we believe that |x| reflects the amount of evidence against the null hypothesis. Therefore, we will be interested in p-variables P (x) and e-variables E(x) that depend on x only via |x| and are monotonic functions (increasing for E and decreasing for P ) of |x|. There is a unique p-variable P (uniformly distributed on [0, 1]) satisfying this property, namely P (x) := 2Φ(−|x|), where Φ is the standard Gaussian distribution function. On the other hand, there is a huge variety of e-variables satisfying this property. A natural class of such e-variables is
+E(x) := |x|d
+π−1/22d/2Γ
+( d+1 2
+) , d > 0, (3)
+where the denominator is just the normalizing constant ensuring
+∫
+E dN (0, 1) = 1 (the dth absolute moment of the standard Gaussian distribution, which is well known and easily found by direct integration). Figure2gives the p-values as the black solid line in both panels and gives the e-values for d ∈ {2, 10, 50} in the left panel. On Fisher’s scale, p-values are significant when their decimal logarithms drop below log10 0.05 and highly
+7
+
+
+significant when they drop below −2; these levels are shown as thin black lines. Jeffreys’s levels 0.5, 1, 1.5, and 2 for e-values on the log10 scale are shown as thin orange lines. The e-variables are not comparable, in the sense that none of them dominates any other everywhere. Each of the e-variables in the left panel of Figure2defines an alternative to the null hypothesis, as discussed above, so that the e-variable becomes the likelihood ratio of the alternative to the null hypothesis. The alternative hypothesis corresponding to (3) has the density proportional to |x|d exp(−x2/2). Since x ranges over R, it is not exactly the χ density with d + 1 degrees of freedom, which we will denote χd+1, but it is a slight variation: after generating x from χd+1, we change its sign (i.e., multiply it by −1) with probability 1/2. We will call this alternative distribution the signed χd+1 distribution; for d = 2 this is the signed Maxwell–Boltzmann distribution, which is abbreviated to “M.-B.” in the legend in the left panel of Figure2. The signed χ alternatives, corresponding to E(x) ∝ |x|d, appear to be the simplest unconstrained choice, but a more standard approach is to look for alternatives inside a parametric family of distributions. Let us embed N (0, 1) into the statistical model N (μ, 1), μ ∈ R (there are other natural embeddings, and in AppendixAwe will also discuss the embedding into the statistical model N (0, σ2), σ > 0). The right panel of Figure2shows three more e-variables, which are based on the likelihood ratios
+E(δ)(x) := dN (δ, 1)
+dN (0, 1) (x) = exp(−(x − δ)2/2)
+exp(−x2/2) = exp(δx − δ2/2). (4)
+To obtain an e-variable that depends on x only via |x|, let us average E(δ) and
+E (−δ) :
+E ̄(δ)(x) := E(δ)(x) + E(−δ)(x)
+2 . (5)
+The right panel of Figure2shows E ̄(1), E ̄(3), and E ̄(5). Four points are indicated in the right panel to illustrate the interpretation of our plots. The points A1 and A2 are at the intersection of the graph of the p-variable with the horizontal line at level −2, and the points B1 and B2 are at the intersection of the graph of the e-variable with δ := 3 with the horizontal line at level 2. The x-coordinates of the points A1 and A2 are approximately ±2.58, and the x-coordinates of the points B1 and B2 are approximately ±3.27. The observations x with |x| exceeding (approximately) 3.27 provide decisive evidence against the null hypothesis N (0, 1), and the other observations do not, according to Jeffreys’s scale. Similarly, the observations x with |x| exceeding (approximately) 2.58 provide highly significant evidence against the null hypothesis N (0, 1), while the other observations do not, according to Fisher’s scale. Using similar interpretation for the left panel, we can see, e.g., that the e-variable for d = 2 makes a wider range of observations x provide substantial evidence against the null hypothesis than the e-variable for d = 10 does, whereas for strong evidence we have the opposite situation. Later in the paper we will use methods related to both panels of Figure2. In our simulation studies in Section7, we will generate observations from N (μ, 1)
+8
+
+
+and use again the likelihood ratios (4) that we used in the right panel. In our empirical studies in Section8, where we have no idea of the true distribution of the data, we use the e-variables proportional to |x|d, as in the left panel.
+3 Is it possible to compare e-values and p
+values?
+Starting from the next section we will describe various methods based on pvalues and e-values. In Section1we already alluded to difficulties of comparing such results. There is no overarching testing framework (at least at this time) containing both p-testing and e-testing that could be used for comparing such results. The best we can do rigorously is to convert, albeit imperfectly, p-values to e-values and vice versa. Sometimes the user of statistical procedures has a clear preference for pvalues or e-values. These are some possible categories of users (this is not an exhaustive list, of course):
+1.Some users will find the frequentist interpretation of p-variables P appealing: for any threshold α, the long-run frequency of observing P ≤ α in a sequence of independent identical trials is at most α. This is typical of the frequentist school of classical statistics.
+2.Other users will prefer a direct application of Cournot’s principle: for a small α and pre-specified P , we do not expect to observe P ≤ α under the null hypothesis. This school is referred to as Bernoullian statistics by Glenn Shafer [Shafer,2022], following Francis Edgeworth, Richard von Mises, Arthur Dempster, and Ian Hacking.
+3.Another category, representing Bayesian statistics, will like the Bayesian interpretation of e-variables referred to in Section1.
+4.Our final category will accept the betting interpretation of an e-variable E (see, e.g.,Shafer[2021]): the e-value E(ω) is the pay-off of a lottery that is fair under the null hypothesis, and a large pay-off casts doubt on the null hypothesis. The idea of betting is often regarded as an important ingredient of Bayesian statistics (see, e.g,de Finetti[2017, 3.3.5]), but it is used there in a very different way, in the form of no Dutch book requirement.
+Communication may be easier between the users in the first two categories (classical statistics), or between the users in the last two categories. But otherwise, we need methods of conversion between p- and e-values. Therefore, as a first step we discuss rigorous ways of turning p-values into e-values (known as calibrating p-values) and vice versa. For further details, seeVovk and Wang[2021, Section 2].
+9
+
+
+A decreasing function f : [0, 1] → [0, ∞] is a calibrator if, for any p-variable P , f (P ) is an e-variable. In other words, a calibrator transforms p-values to e-values. A very natural family of calibrators is
+fκ(p) := κpκ−1, (6)
+where κ ∈ (0, 1]. The maximum possible e-value
+VS(p) := max
+κ∈(0,1]
+fκ(p) =
+{
+− exp(−1)/(p ln p) if p ≤ exp(−1)
+1 otherwise , p ∈ (0, 1], (7) attainable by this family will be referred to as the VS bound (abbreviating “Vovk–Sellke bound” [Sellke et al.,2001;Shafer and Vovk,2019, Section 11.5]), but due to the maximum operation, VS(P ) need not be an e-variable even if P is a p-variable. In the opposite direction, a decreasing function f : [0, ∞] → [0, 1] is an eto-p calibrator if, for any e-variable E, f (E) is a p-variable. It is a function transforming e-values to p-values. As explained and formalized inVovk and Wang[2021, Proposition 2.2],
+t ∈ [0, ∞] 7→ min(1, 1/t) (8)
+is the only reasonable e-to-p calibrator. In general, calibrating p-values and e-values are crude processes. A strong evalue of 20 barely attains statistical significance when transformed into a p-value (namely, 5%) using (8). The VS bound for the borderline significant p-value of 5% is approximately 2.456, and so “is not worth more than a bare mention”, according to Jeffreys. The low “round-trip efficiency” in the domain of p-values can be illustrated by 1/ VS(0.005) ≈ 0.072. (9)
+The round trip turns the highly significant p-value of 0.5% into the nonsignificant p-value of 7.2%. And this is despite the VS bound being achievable as e-value only in hindsight. In view of the low round-trip efficiency, it is natural to expect that users of statistical procedures who insist on using p-values will be best served by methods producing directly p-values. A method producing e-values will have to be vastly superior to result in better, or even equally good, p-values after conversion. Interestingly, we will see such an example in Section7(see the discussion of Figure4). Symmetrically, a method producing p-values will have to be vastly superior to a method producing directly e-values in order to result in better or equally good e-values after conversion. The caveat here is that the result of comparison still depends on using the bound (7) (using the e-to-p calibrator (8) is uncontroversial). The user who is uncertain whether to use p-values or e-values usually needs a more accurate comparison than that provided by the crude procedures of calibration and e-to-p calibration. We do not have objective ways of doing
+10
+
+
+that. One subjective way to compare results using e-values to those using pvalues is to appeal to Jeffreys’s [1961, Appendix B] authority: “Users of these tests speak of the 5 per cent. point in much the same way as I should speak of the K = 10−1/2 point, and of the 1 per cent. point as I should speak of the K = 10−1 point.” In our terminology, people doing p-testing speak of a p-value of 5% (resp. 1%) in much the same way as Jeffreys should speak of an e-value of 101/2 (resp. 10). The approximate equivalences are
+p-value of 5% ∼ e-value of 101/2 ≈ 3.16 p-value of 1% ∼ e-value of 10. (10) Another subjective way is to use Good’s [Good,1958, Appendix IV] rule of thumb. According to Good, the e-value corresponding to a p-value of p should lie in the range
+(1
+30p , 3
+10p
+)
+(11)
+when 0.001 < p < 0.2 (which Good felt were the values of p that are usually of most practical interest). In Good’s picture the p-value of p is obtained using the standard recipe from the Bayes factor as test statistic (this condition is always satisfied in this paper). If we take the geometric mean 1/(10p) of the end-points of the interval (11), we will obtain
+p-value of 5% ∼ e-value of 2 p-value of 1% ∼ e-value of 10 (12)
+in place of (10). While (10) and (12) are close, Good acknowledges the significant uncertainty surrounding the correspondence. A slightly more objective way of comparing methods based on p-values and e-values is to consider their mathematical simplicity. A great advantage of evalues is that they are very easy to combine; as we mentioned in Section1, arithmetic averaging is essentially the only symmetric method of combination [Vovk and Wang,2021, Proposition 3.1]. This leads to simple and intuitive algorithms (and inVovk et al.[2022] merging e-values is even used as a technical tool for designing admissible ways of merging p-values).
+4 Confidence regions
+The notion of a confidence region was introduced by Neyman [1934;1937] only in its basic version. (SeeLehmann[2011, Section 6.4] for Neyman’s predecessors; the word “confidence” is a translation of the Polish “ufno ́s ́c” [Neyman,1941], and Neyman’s adjectival use of it was at first made fun of by his English listeners [Neyman,1934, comments by Bowley and Fisher].) The p-version is usually implicit, and the e-version has not been used in mainstream statistics. However, the e-version has been used for a long time, in some form, in the algorithmic theory of randomness [Levin,1976;G ́acs,2005;Vovk and V’yugin,1993], and in this paper we will use the terminology close to that of the algorithmic theory of randomness.
+11
+
+
+Let us fix a statistical model (Qθ | θ ∈ Θ). A basic test of size α is a family of critical regions (Aθ | θ ∈ Θ) of size α. Therefore, for each simple statistical hypothesis θ, a basic test fixes a critical region Aθ for testing θ: Pθ(Aθ) ≤ α. The interpretation of a basic test that is symmetric between the parameter space Θ and sample space Ω is that ω ∈ Aθ means poor agreement between θ and ω. This binary relation of poor agreement and its complementary relation of good agreement have two sides:
+• on the testing side, we start from θ and divide the ωs into those that conform to θ (ω ∈/ Aθ) and those that do not (ω ∈ Aθ);
+• on the estimation side, we start from ω and divide the θs into those that agree with ω (ω ∈/ Aθ) and those that do not (ω ∈ Aθ).
+In particular, on the estimation side we have the notion of a confidence estimator as introduced by Neyman (cf.Neyman[1934, Figure IV]): the confidence estimator corresponding to a basic test (Aθ | θ ∈ Θ) is
+Γ(ω) := {θ ∈ Θ | ω ∈/ Aθ}. (13)
+In the context of a basic test (Aθ | θ ∈ Θ) of a small size α we may say that an outcome ω ∈ Ω is strange for a parameter value θ ∈ Θ if ω ∈ Aθ. According to Cournot’s principle, we do not expect the outcome ω to be strange for the true θ. Our interpretation of the confidence region (13) is that Γ(ω) covers the true θ unless ω is strange. Graduated notions of a confidence estimator are discussed surprisingly rarely in statistics textbooks, especially in full generality (e.g., the popular textbook Cox and Hinkley[1974] is one of the few places where they are discussed, but only in the context of a linearly ordered parameter space Θ). A p-test is a family of p-variables (Pθ | θ ∈ Θ), and the corresponding p-confidence regions are defined as
+Γp,α(ω) := {θ ∈ Θ | Pθ(ω) > α}, α ∈ (0, 1). (14)
+We regard Pθ(ω) as a measure of agreement between θ and ω, with small values indicating poor agreement, and define Γp,α(ω) to be the set of θ that agree with ω at level α. The definition of a p-confidence estimator is only a slight variation on the definition of a basic estimator: namely, (14) can be obtained from (13) by setting Aθ := {ω | Pθ(ω) ≤ α} for each α. Notice that the p-confidence regions Γp,α(ω) are nested : α1 < α2 implies Γp,α2 (ω) ⊆ Γp,α1 (ω); this property is sometimes discussed or at least mentioned in statistics textbooks (e.g., inCox and Hinkley[1974, Section 7.2],Casella and Berger[2002, 9.5.2], andStuart et al.[1999, Section 19.15]). Similarly, an e-test is a family of e-variables (Eθ | θ ∈ Θ). We also regard Eθ(ω) as a measure of agreement between θ and ω, but now large values indicate poor agreement. Analogously to (14), we define the e-confidence regions as
+Γe,α(ω) := {θ ∈ Θ | Eθ(ω) < α}, α ∈ (0, ∞). (15)
+12
+
+
+The definitions (14) and (15) of p-confidence regions and e-confidence regions generalize the basic definition (13), which corresponds to using the p-test and the e-test defined by (1) and (2), respectively, with added subscripts θ. The notions of p-test and e-test provide graduated notions of strangeness. Let α > 0; we will sometimes refer to it as the significance level (the interesting values are α < 1 for p-testing and α > 1 for e-testing). In the context of a p-test (Pθ | θ ∈ Θ), we say that ω ∈ Ω is α-strange for θ ∈ Θ if Pθ(ω) ≤ α (i.e., if we reject θ at level α after observing ω). And in the context of an e-test (Eθ | θ ∈ Θ), we say that ω ∈ Ω is α-strange for θ ∈ Θ if Eθ(ω) ≥ α. If there is any risk of confusion, we will use the fuller expressions “(p, α)-strange” and “(e, α)-strange”. The interpretation of the confidence region (14) in terms of a Fisher-type disjunction is that Γp,α(ω) covers the true θ unless ω is (p, α)-strange. Similarly, we interpret (15) by saying that Γe,α(ω) covers the true θ unless ω is (e, α)strange. Starting from Section7, we will visualize e-confidence regions for a range of thresholds, including 10. Inspired by the terminology ofJeffreys[1961, Appendix B], already discussed in Section2, we will refer to an e-confidence region at level 1 as weak, at level 101/2 as substantial, at level 10 as strong, at level 103/2 as very strong, and at level 100 as extremely strong.
+Simultaneous confidence regions
+Sometimes we are interested not in θ but in some derivative parameter (as in Schervish’s textbook [1995, 5.2.1]). For example, if Ω = R and Θ = P(Ω), we might be interested in the median of θ ∈ Θ. Let g : Θ → Θg be the function mapping the original parameter θ to a new parameter, g(θ). The confidence regions for the derived parameter g(θ) become:
+Γg(ω) := {g(θ) | θ ∈ Θ & ω ∈/ Aθ} (16)
+in place of (13),
+Γg
+p,α(ω) := {g(θ) | θ ∈ Θ & Pθ(ω) > α}, α ∈ (0, 1),
+in place of (14), and
+Γg
+e,α(ω) := {g(θ) | θ ∈ Θ & Eθ(ω) < α}, α ∈ (0, ∞), (17)
+in place of (15). It is important that we can have a family of functions g, and the confidence estimator (16) will be valid simultaneously for all of them, provided the same basic test (Aθ | θ ∈ Θ) is used for all g. The same is true for p-confidence estimators and e-confidence estimators; what is important is that the notion of strangeness should not depend on g. For example, for any family of functions g : Θ → Θg, the confidence region Γg
+e,α(ω) in (17) contains g(θ) for all g simultaneously unless the outcome is α-strange for the true parameter θ.
+13
+
+
+Confidence regions in the toy example
+Here we continue our discussion of the toy example started in the previous section. Now our statistical model (Qθ | θ ∈ Θ) is Θ := R and Qθ := N (θ, 1) for all θ. For a fixed δ, such as δ := 3, let us generalize (5) to
+E ̄ (δ)
+θ (x) := E(δ)
+θ (x) + E(−δ)
+θ (x)
+2 , (18)
+where, generalizing (4),
+E (δ)
+θ (x) := dN (θ + δ, 1)
+dN (θ, 1) (x) = exp(−(x − θ − δ)2/2)
+exp(−(x − θ)2/2) = exp(δ(x − θ) − δ2/2).
+(19) This gives us an e-test. Remember that the x-coordinate of the point B2 in the right panel of Figure2 is approximately 3.27, and let us fix δ := 3. Therefore, the extremely strong e-confidence regions (e-confidence intervals in this case) are
+Γe,100(x) ≈ [x − 3.27, x + 3.27], x ∈ R, (20)
+where “≈” refers to 3.27 being an approximate value. For Jeffreys’s other thresholds the e-confidence intervals are
+Γe,103/2 (x) ≈ [x − 2.88, x + 2.88], Γe,10(x) ≈ [x − 2.50, x + 2.50],
+Γe,101/2 (x) ≈ [x − 2.11, x + 2.11], (21)
+and the p-confidence intervals are, as usual, Γp,0.01(x) ≈ [x − 2.58, x + 2.58]. The e-confidence intervals (20)–(21) will change if the alternative hypotheses θ ± 3 are replaced by other ones, such as θ ± 1 or θ ± 5. It can be considered an advantage of p-confidence intervals, and p-values in general, that for an important (albeit small) set of popular statistical models there is no dependence on the choice of the alternative hypothesis. This is closely related to the existence of uniformly most powerful statistical tests [Lehmann and Romano,2022, Chapter 3].
+5 Necessity and possibility measures
+The notions of a test discussed in the previous sections allow us to associate measures of confidence with subsets of the parameter space in view of an outcome. These are just a different way to package confidence regions. For a p-test (Pθ | θ ∈ Θ), the p-necessity measure of a set B ⊆ Θ in view of an outcome ω ∈ Ω is defined as
+p(B | ω) := sup
+θ∈/B
+Pθ(ω). (22)
+Now the Fisher-type disjunction for the true θ is: θ ∈ B unless ω is p(B | ω)strange for θ. Therefore, we expect θ ∈ B for a small p(B | ω). Of course,
+14
+
+
+this disjunction remains true if we replace “ p(B | ω)-strange” by “c-strange” for any c ≥ p(B | ω), but in statements of this kind we usually choose the c that makes them as strong as possible. Similarly, for an e-test (Eθ | θ ∈ Θ), the e-necessity measure of B ⊆ Θ given ω ∈ Ω is
+e(B | ω) := inf
+θ∈/B
+Eθ(ω), (23)
+with the analogous interpretation: θ ∈ B unless ω is e(B | ω)-strange for θ. If we are interested in a derivative parameter g(θ), where g : Θ → Θg, the p-necessity measure and e-necessity measure of B ⊆ Θg in view of ω ∈ Ω are now defined as
+g
+p(B | ω) := sup
+θ∈Θ:g(θ)∈/B
+Pθ(ω) = p(g−1(B) | ω), (24)
+g
+e(B | ω) := inf
+θ∈Θ:g(θ)∈/B
+Eθ(ω) = e(g−1(B) | ω), (25)
+respectively, with the same interpretations as before. Analogously to (22)–(25) we can define the p-possibility measure and epossibility measure by
+♦p(B | ω) := sup
+θ∈B
+Pθ(ω) = p(Bc | ω),
+♦e(B | ω) := inf
+θ∈B Eθ(ω) = e(Bc | ω),
+♦g
+p(B | ω) := ♦p(g−1(B) | ω) = g
+p(Bc | ω),
+♦g
+e(B | ω) := ♦e(g−1(B) | ω) = g
+e(Bc | ω),
+where Bc := Θ \ B is the complement of B. For example, a large value of ♦e(B | ω) means that θ ∈ B is hardly possible for the true θ in view of the outcome ω.
+Remark 5.1. Our notation is borrowed from modal logic, which has two basic modalities, (necessity) and ♦ (possibility), analogous to the quantifiers ∀ and ∃, respectively. The notions of necessity and possibility measures discussed in this section are closely related to the necessity and possibility measures of possibility theory [Dubois and Prade,1988] (which they include in a wider class of what they call confidence measures), and also somewhat related to the belief and plausibility functions of the Dempster–Shafer theory [Shafer,1976], and to confidence and credibility in conformal prediction [Vovk et al.,2005, (3.66)]. However, unlike their counterparts in those theories, our notions just re-express the idea of confidence regions without adding new information.
+Necessity measures in the toy example
+In the toy example considered at the end of the previous section (with the same p-test and e-tests), we can write the p-necessity measure of a set B ⊆ R of
+15
+
+
+parameter values in view of an observation x ∈ R as
+p(B | x) = 2Φ
+(
+− inf
+θ∈/B
+|x − θ|
+)
+.
+According to the definition, p(B | x) is determined by the parameter value outside B (assuming the inf is attained) that makes the observed x least strange. The main application of necessity measures in this paper (described in the following section) will be “one-sided”, in that the corresponding confidence regions will provide only a lower bound (on the quantity called the number of true discoveries; equivalently, they provide an upper bound on the number of false discoveries). If instead of (18) we use the e-test (19) with δ > 0, we will have prediction regions in the form of rays pointing left, and the necessity measure will be e(B | x) = exp
+(
+δ (x − inf Bc) − δ2/2
+)
+.
+6 Controlling the number of false discoveries
+Starting from this section we specialize our setting. Our sample space (Ω, A) is still arbitrary, but now we take Θ := P(Ω) as our parameter space and Qθ := θ for all θ ∈ Θ as our statistical model; remember that P(Ω) is the set of all probability measures on (Ω, A). Since our statistical model contains all probability measures on Ω, there is no real loss of generality. Suppose that we are given K e-variables E1, . . . , EK for testing hypotheses H1, . . . , HK, which are our base hypotheses; we would like to reject some of them (in fact, as many of them as possible under a validity constraint). The realized values of E1, . . . , EK are denoted by e1, . . . , eK , so that ek := Ek(ω) for the realized outcome ω. If we do not know anything about the nature of the hypotheses H1, . . . , HK , it makes sense to reject a number of them with the largest ek. But in general, we can consider an arbitrary non-empty rejection set R ⊆ {1, . . . , K}; this is the set of base hypotheses, represented by their indices, that the researcher chooses to reject.Goeman and Solari[2011a] argue convincingly that in some practically relevant cases R will not necessarily correspond to the largest ek; e.g., R may include hypotheses connected by a common theme, such as all relevant genes related to the gastrointestinal tract [Goeman and Solari,2011a, 4.1]. In this section we will find functions D providing a measure of confidence in the number of true discoveries (to be formally defined momentarily) in the following sense: a rejection set R contains more than j true discoveries unless the outcome ω is DR(j)-strange. This statement is uniform in R and j, in the sense of the strangeness of outcomes being measured by a fixed e-test. Therefore, a large DR(j) means high confidence in the number of true discoveries exceeding j. For each θ ∈ P(Ω), we define
+Iθ := {k ∈ {1, . . . , K} | θ ∈ Hk}
+16
+
+
+to be the set of indices of hypotheses containing θ. If the researcher rejects Hk, we refer to this decision as a discovery. We say that the discovery is true if θ ∈/ Hk, and it is false if θ ∈ Hk, where θ is the true (unknown) probability measure governing the data generation. For a rejection set R, the number of true discoveries is
+gR(θ) := |R \ Iθ| = |{k ∈ R | θ ∈/ Hk}| , (26)
+and the number of false discoveries is
+|R ∩ Iθ| = |{k ∈ R | θ ∈ Hk}| .
+The sum of these two numbers is |R|, the total number of discoveries, and so controlling the number of false discoveries is the same thing as controlling the number of true discoveries. Our functions DR(j) will provide measures of confidence in lower bounds j + 1 on the number of true discoveries (equivalently, upper bounds |R| − j − 1 on the number of false discoveries). Researchers are sometimes interested in the proportion of true or false discoveries |R \ Iθ| / |R| or |R ∩ Iθ| / |R|, respectively. We can also control those with the bounds (j+1)/ |R| or (|R| − j − 1)/ |R| (lower for true and upper for false discoveries), respectively.
+Remark 6.1. The researcher may be interested in parameters g(θ) that differ from (26) more substantially. For example, g(θ) may be the weighted number of true discoveries in R (e.g., some genes can be more important than other genes). Or, for a partition of R into groups (one of which can be, e.g., the genes related to the gastrointestinal tract), g(θ) may depend on the number of groups containing true discoveries. In this paper we restrict ourselves to the simplest case.
+For e-confidence bounds, we need an e-test (Eθ)θ∈P(Ω). For each k ∈ Iθ, Ek is an e-variable for testing θ. We will obtain Eθ by merging (Ek)k∈Iθ . This can be achieved by using e-merging functions studied inVovk and Wang[2021]. An e-merging function is a Borel function F : ∪∞
+n=0[0, ∞]n → [0, ∞] that is increasing in each of its arguments and maps any finite sequence of e-variables to an e-variable: if E1, . . . , En are e-variables, F (E1, . . . , En) is required to be an e-variable as well. We always set F := 0 if the input sequence is empty. An example (of paramount importance, as discussed earlier) is the arithmetic mean
+(e1, . . . , en) 7→ 1
+n
+n
+∑
+i=1
+ei. (27)
+An e-merging function is symmetric if it does not depend on the order of its arguments, like the arithmetic mean. Let F be a symmetric e-merging function; we define for each θ ∈ Θ the e -variable Eθ := F (Ek : k ∈ Iθ). (28)
+Our main object of interest is ♦egR ({j} | ω) for this e-test, which we will abbre
+viate to ♦egR (j | ω) dropping the curly braces.
+17
+
+
+Algorithm 1 Discovery e-vector for a given rejection set Input: A symmetric e-merging function F , the rejected hypotheses R ⊆ {1, . . . , K}, and an increasing sequence of e-values e1 ≤ · · · ≤ eK . 1: for j = 0, . . . , |R| − 1 do
+2: let Rj be R without its j largest elements 3: DR(j) := Fe(Rj)
+4: for i = 1, . . . , |Rc| do 5: let Rc
+i consist of the i smallest elements of Rc
+6: e := Fe(Rj ∪ Rc
+i })
+7: if e < DR(j) then 8: DR(j) := e
+Remark 6.2. Technically, the choice of F in (28) may even depend on θ, but we will ignore this possibility in this paper. Moreover, we will be mainly interested in one specific e-merging function (arithmetic mean).
+Let us replace ♦egR (j | ω) by a more explicit and easily computable expression. Set, for a rejection set R,
+♦egR (j | ω) = min
+θ∈P(Ω):gR (θ)=j
+Eθ
+= min
+θ∈P(Ω):|R\Iθ |=j
+F (Ek : k ∈ Iθ)
+≥ min
+I ⊆{1,...,K }:|R\I |=j
+F (Ek : k ∈ I) =: DR
+e,F (j), (29)
+where min ∅ := ∞ (as usual), the argument ω is implicit after the first “=”, and the equality =: in (29) signifies DR
+e,F (j) being defined, with the subscripts (e, F ) dropped if clear from the context. Intuitively, in (29) we go over all I for which there are exactly j true discoveries and evaluate their strangeness; if all of them are strange, we are entitled to reject there being exactly j true discoveries. The values DR(j) are informative for j = 0, . . . , |R| − 1, and we will sometimes refer to DR(j), j = 0, . . . , |R| − 1, as discovery e-vector. (Notice that we always have DR(|R|) = F (∅) = 0, and so this value is not informative.) Let us say (followingHolm[1979, Section 1]) that H1, . . . , HK satisfy the free combinations condition for R if the sets Iθ, θ ∈ Θ, include all subsets of R:
+∀S ⊆ R ∃θ ∈ Θ : Iθ = S. (30)
+The “≥” in (29) becomes “=” under the free combinations condition, but this condition is not required for the validity of our methods. An algorithm for computing the discovery vector DR is given as Algorithm1; it is polynomial-time if the underlying e-merging function F , assumed symmetric, is polynomial-time. It uses the notation Rc := {1, . . . , K} \ R and
+Fe(I) := F (ei : i ∈ I), I ⊆ {1, . . . , K}, I 6= ∅, (31)
+18
+
+
+where e := (e1, . . . , eK). Without loss of generality we assume that the e-values are sorted in the ascending order,
+e1 ≤ · · · ≤ eK . (32)
+A special and important choice of F is the arithmetic average (27). Using this e-merging function in (29), the arithmetic-mean discovery e-vector is defined as
+AVR(j) := min
+I ⊆{1,...,K }:|R\I |=j
+1 |I |
+∑
+i∈I
+Ei, j ∈ {0, . . . , |R| − 1}.
+As we said earlier, arithmetic averaging is the only useful symmetric e-merging function [Vovk and Wang,2021, Proposition 3.1]. The vector AV R is computed by Algorithm1with
+Fe(I) := 1
+|I |
+∑
+i∈I
+ei, I ⊆ {1, . . . , K}, I 6= ∅.
+In general, a discover e-vector DR
+e,F (j) is not guaranteed to be monotonic
+in j (not even AVR(j) is). Therefore, we also consider the regularized discovery
+e -vector
+D ̄ R
+e,F (j) := min
+j′≤j DR
+e,F (j′).
+Regularized discovery e-vectors automatically satisfy two other properties of monotonicity.
+Proposition 6.3. For any nonempty sets R and R′ in {1, . . . , K}, any j ∈ {0, . . . , |R| − 1}, any j′ ∈ {0, . . . , |R′| − 1}, and any e-merging function F :
+(1) D ̄ R
+e,F (j′) ≤ D ̄ R
+e,F (j) if j ≤ j′ < |R|;
+(2) D ̄ R′
+e,F (j) ≥ D ̄ R
+e,F (j) if R ⊆ R′;
+(3) D ̄ R′
+e,F (j + |R′ \ R|) ≤ D ̄ R
+e,F (j).
+Proof. Item (1) holds by definition.
+For item (2), we can rewrite the inequality D ̄ R′
+e,F (j) ≥ D ̄ R
+e,F (j) as
+min
+I :|R′ \I |≤j
+F (Ei : i ∈ I) ≥ min
+I :|R\I |≤j
+F (Ei : i ∈ I),
+and it suffices to notice that any I satisfying |R′ \ I| ≤ j satisfies |R \ I| ≤ j. (Item (2) is also a special case of item (3), which will be proved independently.) Item (3) can be rewritten as
+min
+I :|R′ \I |≤j +|R′ \R|
+F (Ei : i ∈ I) ≤ min
+I :|R\I |≤j
+F (Ei : i ∈ I),
+which follows from
+|R \ I| ≤ j =⇒ |R′ \ I| ≤ j + |R′ \ R| ,
+which in turn follows from the obvious
+|R′ \ I| ≤ |R \ I| + |R′ \ R| .
+19
+
+
+Algorithm 2 Discovery e-matrix D Input: A symmetric e-merging function F and an increasing sequence of evalues e1 ≤ · · · ≤ eK . 1: for r = 1, . . . , K do 2: for j = 0, . . . , r − 1 do 3: Sr,j := {K − r + 1, . . . , K − j} 4: Dr,j := Fe(Sr,j )
+5: for i = 1, . . . , K − r do 6: e := Fe(Sr,j ∪ {1, . . . , i}) 7: if e < Dr,j then 8: Dr,j := e
+Algorithm1can by adapted to produce the regularized discovery vector by replacing |Rc| with K in line4, replacing line6with e := Fe(Rj ∪ {1, . . . , i}), and ignoring line5. According to our definition of D ̄ ,
+egR ({j + 1, j + 2, . . . } | ω) = ♦egR ({0, . . . , j} | ω) ≥ D ̄ R(j).
+In agreement with Section5, D ̄ R(j) gives a confidence bound on the number of true discoveries: the rejection set R contains more than j true discoveries unless the outcome ω is D ̄ R(j)-strange. Therefore, we can count on there being more than j true discoveries in R for a large observed D ̄ R(j). Our definitions so far are essentially translations of Goeman and Solari’s [2011a, Section 2] definitions into the language of e-values. We will explain the connection in detail in AppendixC. As the procedure for p-values was first proposed inGenovese and Wasserman[2004, Theorem 6.3], we refer to it as the GWGS procedure. In AppendixCwe will also comment on the recent result by Goeman et al.[2021] about the GWGS procedure being the only admissible one for controlling true discoveries (under a property of validity based on p-values).
+Discovery e-matrices
+Next we will discuss a less flexible method in which we consider a family of rejection sets R that are chosen in an optimal way, in some sense. For each r ∈ {1, . . . , K}, the set
+Rr := {K − r + 1, . . . , K} (33)
+is the optimal rejection set of size r (assuming (32)), meaning that DRr
+e,F ≥ DR
+e,F
+for any other set R ⊆ {1, . . . , K} of size r. In the terminology of statistical decision theory [Wald,1950, Section 1.3], Rr is a complete class of rejection sets. Let us call Dr,j := DRr
+e,F (j) the discovery e-matrix. Its interpretation is that the outcome ω is Dr,j-strange if there are exactly j true discoveries among the r
+20
+
+
+hypotheses with the largest e-values. An algorithm for computing the discovery e-matrix D is given as Algorithm2. We are particularly interested in the arithmetic-mean discovery matrix AM, i.e., the discovery e-matrix
+AMr,j(e1, . . . , eK ) := min
+I :|Rr \I |=j
+1 |I |
+∑
+i∈I
+ei = min
+I :|Rr \I |≤j
+1 |I |
+∑
+i∈I
+ei
+(the last equality will follow from Proposition6.4(1) below). In AppendixBwe illustrate discovery e-matrices with some other choices of the e-merging function F , which, according toVovk and Wang[2021, Proposition 3.1], are essentially dominated by the arithmetic mean. Using the arithmetic mean e-merging function leads to convenient properties of monotonicity for the discovery e-matrix described in the next proposition (established in Proposition6.3above for the regularized version). The first of these properties will allow us to interpret Dr,j in terms of necessity , and the other two properties will help us to visualize D in our plots in the experimental sections.
+Proposition 6.4. For any R, R′ of the form (33) (with r > 0), j ∈ {0, . . . , |R|− 1}, j′ ∈ {0, . . . , |R′| − 1}, and the arithmetic-mean e-merging function F :
+(1) DR
+e,F (j′) ≤ DR
+e,F (j) if j ≤ j′ < |R|;
+(2) DR′
+e,F (j) ≥ DR
+e,F (j) if R ⊆ R′;
+(3) DR′
+e,F (j + |R′ \ R|) ≤ DR
+e,F (j) if R ⊆ R′.
+Proof. The only property of F that we will need is
+e ≥ max(e) =⇒ F (e, e) ≥ F (e), (34)
+where e ∈ [0, ∞]∗ and e ∈ [0, ∞]. The arithmetic mean e-merging function clearly satisfies it. It is also clear that (34) implies
+min(e′) ≥ max(e) =⇒ F (e, e′) ≥ F (e),
+for any e, e′ ∈ [0, ∞]∗. Item (1) can be rewritten as
+min
+I′:|R\I′|=j′ F (Ei : i ∈ I′) ≤ min
+I :|R\I |=j
+F (Ei : i ∈ I). (35)
+Let I = Rj ∪Rc
+i be a set where the min on the right-hand side of (35) is attained
+as Algorithm1is run. It suffices to consider I′ := Rj′ ∪ Rc
+i.
+Items (2) and (3) follow from item (1) of this proposition in combination with items (2) and (3) of Proposition6.3. Properties (1)–(3) are not independent; namely, (1) follows from (2) and (3). Indeed, given R, j, and j′ as in (1) and choosing any R′ ⊇ R satisfying |R′ \ R| = j′ − j, we can deduce from (2) and (3):
+DR(j′) = DR(j + |R′ \ R|) ≤ DR′ (j + |R′ \ R|) ≤ DR(j).
+21
+
+
+Proposition6.4(1) gives us an interpretation of the discovery e-matrix in terms of the Fisher-type disjunction: there are more than j true discoveries among the r hypotheses with the largest e-values unless the outcome ω is Dr,jstrange. In symbols,
+egRr ({j + 1, j + 2, . . . } | ω) ≥ Dr,j(ω).
+Proposition6.4also shows that discovery matrices Dr,j are monotonic functions along the rows r = const, along the columns j = const, and along the diagonals r − j = const. Notice that the monotonicity along the rows follows immediately from the monotonicity along the columns and the monotonicity along the diagonals.
+Remark 6.5. It is true that arithmetic averaging is the only useful symmetric e-merging function when no assumptions are made about the dependence structure of the base e-values. On the other hand, if the base e-values are supposed to be independent, it is clear that the product of e-variables is always an e-variable. Therefore, when defining the e-test (28), we have plenty of alternatives to the arithmetic mean in the role of F ; F can be the product, or a combination of the arithmetic mean and the product. The product does not work well for problems of the type considered in this paper, since small base e-values then have disproportionate effect. However, the combination
+Eθ :=
+∑
+{i,j }⊆Iθ :i6=j
+EiEj /
+(|Iθ | 2
+)
+(with {i, j} ranging over the 2-element subsets of Iθ) of the product and arithmetic averaging gives excellent results, much better than what we can get without the assumption of independence. SeeVovk and Wang[2020b] for details.
+7 Simulation studies
+In our simulation studies we will visualize the arithmetic-mean discovery matrix in some simple cases and compare Algorithm2with a method based on p-values. Our setting will be similar to that ofVovk and Wang[2021, Section 5], where family-wise validity is studied. The observations are generated from the Gaussian model N (μ, 1). The null hypotheses are N (0, 1) and the alternatives are N (δ, 1), where we take δ := −3 throughout the section. We generate K/2 observations from N (δ, 1) (the alternative distribution) and then K/2 observations from N (0, 1) (the null distribution), where K (the overall number of hypotheses) is an even number. In this paper, we colour-code the entries (e-values) of discovery e-matrices according to Jeffreys’s rule of thumb discussed in Section2. The full colour map is shown on the right of Figure3with the thresholds between different colours given in terms of the decimal logarithm of e-values. The most interesting parts of our plots of discovery e-matrices are those in yellow and red; green and dark
+22
+
+
+0 5 10 15
+1
+5
+10
+15
+20
+0.0
+0.5
+1.0
+1.5
+2.0
+Figure 3: The arithmetic-mean discovery matrix for 10 false and 10 true null hypotheses, as described in text. The colour map on the right gives Jeffreys’s thresholds, the boundaries between different colours in most of our plots, on the decimal log scale. Row 10 is highlighted in blue.
+green parts carry little or no evidence and so are useless for us, and dark red and black parts carry so much evidence that they are rare in a wide range of practical applications (cf. Section8). In all our discussions below we will ignore the boundaries between the green and dark green parts. Figure3shows the arithmetic-mean discovery matrix that Algorithm2gives for K = 20: we generate 10 observations from N (δ, 1) and then 10 from N (0, 1). The base e-values are the likelihood ratios
+E(x) := dN (δ, 1)
+dN (0, 1) (x) = exp(δx − δ2/2) (36)
+(cf. (4)) of the alternative to the null density, where x ∼ N (μ, 1) is the corresponding observation. For example, row 10 (highlighted in blue) of the matrix in Figure3shows that there is decisive evidence that the number of true discoveries among the 10 hypotheses with the largest e-values is at least 3. Similarly, there is very strong evidence that the number of true discoveries is at least 5, there is strong evidence that the number of true discoveries is at least 6, etc. In this and following sections we will see many representations of discovery e-matrices resembling Figure3. They are also convenient representations of confidence regions for the numbers of true discoveries at various significance levels. For example, the non-black part of each such figure is formed by the extremely strong confidence regions in each row. In the case of Figure3, row 10 shows that the extremely strong confidence region for the number of true discoveries among the 10 hypotheses with the largest e-values is {3, . . . , 10}. The red/yellow/green part (not including dark red) is formed by the very strong
+23
+
+
+0 20 40 60 80 100 120 140 160 180
+20 40 60 80 100 120 140 160 180
+0 20 40 60 80 100 120 140 160 180
+20 40 60 80 100 120 140 160 180
+0 20 40 60 80 100 120 140 160 180
+20 40 60 80 100 120 140 160 180
+0 20 40 60 80 100 120 140 160 180
+20 40 60 80 100 120 140 160 180
+0 20 40 60 80 100 120 140 160 180
+20 40 60 80 100 120 140 160 180
+0 20 40 60 80 100 120 140 160 180
+20 40 60 80 100 120 140 160 180
+Figure 4: Upper left panel: the arithmetic-mean discovery matrix for 100 false and 100 true null hypotheses. Upper middle panel: the GWGS discovery pmatrix in the same situation for Fisher’s thresholds 1% and 5% (with values below 1% shown in red and between 1% and 5% in yellow) under arbitrary dependence. Upper right panel: as the upper middle panel but assuming independence. Lower left panel: the e-to-p calibrated arithmetic-mean discovery matrix in the upper left panel using Fisher’s thresholds. Lower middle panel: the VStransformed GWGS discovery p-matrix in the upper middle panel of Figure4 (under arbitrary dependence) using Jeffreys’s thresholds. Lower right panel: the VS-transformed GWGS discovery p-matrix in the upper right panel (under independence) using Jeffreys’s thresholds.
+confidence regions, so that the very strong confidence region for the number of true discoveries among the 10 hypotheses with the largest e-values is {5, . . . , 10}. Similarly, the yellow/green and green parts are formed by strong and substantial confidence regions, respectively. The upper left panel of Figure4is the counterpart of Figure3for a larger number of hypotheses, K = 200: we generate 100 observations from N (δ, 1) and then 100 from N (0, 1). We will refer to this set of observations as the simulation data.
+In practice, a discovery e-matrix, such as that shown in the upper left panel of Figure4, can be used in different ways, for example:
+• The researcher may have budget for a limited number of follow-up studies of the hypotheses. For example, if in the situation of that panel her
+24
+
+
+Table 1: The values Dr,j of the discovery matrix shown in Figure4for several rows r and columns j.
+r
+j 10 11 26 27 28 39 40 41 42 45 46
+31 95.6 87.5 14.1 10.8 7.63 32 96.5 88.5 16.0 12.7 9.63
+50 103 96.0 33.2 30.6 28.2 11.2 9.94 8.73 7.52 4.04 3.11 51 103 96.0 33.4 30.9 28.5 11.6 10.4 9.21 8.01 4.61 3.69 52 103 96.0 33.6 31.1 28.7 12.0 10.8 9.61 8.43 5.10 4.19
+budget is 50 hypotheses, she just concentrates on row 50 (studying the 50 hypotheses Hk with the largest e-values). For the first 11 entries (namely, those with indices 0 to 10 inclusive) in this row the e-value exceeds 100, and so she has decisive evidence that there are at least 11 true discoveries among those 50 hypotheses. Similarly,
+– she has very strong evidence that there are at least 27 true discoveries,
+– she has strong evidence that there are at least 40 true discoveries,
+– she has substantial evidence that there are at least 46 true discoveries.
+For the relevant e-values, see the bold entries in the row r = 50 of Table1. In terms of confidence regions, we can say, e.g., that our method gives the substantial e-confidence region {46, 47, . . . }, so that 46 may be called the substantial lower e-confidence bound on the number of true discoveries among the 50 hypotheses.
+• The researcher might have some idea of what proportion of false discoveries she is willing to tolerate (in the spirit of choosing the false discovery rate a priori [Benjamini and Hochberg,1995]). For example, if she is willing to tolerate 10% of false discoveries and willing to use Jeffreys’s standard (evalue greater than 10) of strong evidence, she should concentrate on row 31 (i.e., study the 31 hypotheses with the largest e-values), which is the lowest row with at most 10% of entries below 10. See the bold entries in the rows r ∈ {31, 32} of Table1(we have strong evidence that there are at most 3/31 ≈ 9.7% of false discoveries in row 31 and at most 4/32 = 12.5% of false discoveries in row 32).
+• Alternatively, the researcher might have some idea of how many false discoveries she is willing to tolerate (in the spirit of k-FWER [Romano and Wolf,2007]). If she is willing to tolerate at most 10 false discoveries and still willing to use Jeffreys’s standard of strong evidence, she should concentrate on row 51, which is the lowest row with at most 10 entries (in fact, exactly 10 entries) below 10. See the bold entries in the rows r ∈ {51, 52} of Table1(we have strong evidence that there are at most 10 false discoveries in row 51 and at most 11 false discoveries in row 52).
+25
+
+
+Of course, the researcher may know her hypotheses and relations between them very well, and after looking at the discovery e-matrix she may come up with her own rejection set R, as discussed in Section6. In this case she should also use Algorithm1. All discovery e-matrices in this and following sections, as noticed above (after Proposition6.4), satisfy three (non-independent) properties of monotonicity. Namely, the entries AMr,j are decreasing in j (for a fixed r), increasing in r (for a fixed j), and decreasing in r and j along the lines parallel to the main diagonal.
+Comparisons
+This paper concentrates on multiple hypothesis testing using e-values, but in scientific practice p-values are more popular, despite recent criticism. In this subsection we will report results of our simulation studies in terms of p-values and compare them to our results, as best we can in view of the difficulties discussed in Section3. For comparison with methods based on p-values, we use the GWGS procedure applied to standard procedures for combining p-values and to the same nested rejection sets (initial subsets of {1, . . . , 200} assuming the p-values are given in ascending order). These procedures admit computationally efficient shortcuts [Goeman et al.,2019b, Theorem 1] and are implemented in the R package hommel [Goeman et al.,2019a]. As the base p-values we take P (x) := Φ(x), where Φ is, as before, the standard Gaussian distribution function; these are the p-values found using the most powerful test given by the Neyman–Pearson lemma. The GWGS procedure can be interpreted as producing an analogue of a discovery e-matrix, which we call a discovery p-matrix, with e-values replaced by p-values. For details, see AppendixC. In particular, a version of the notion of a discovery p-vector was introduced inGoeman and Solari[2011b, Section 3]. The package hommel has an option (simes) that controls the choice of the procedure for combining p-values, and the resulting discovery p-matrix is valid either under arbitrary dependence, in which case Hommel’s [1986] procedure is used for combining p-values, or under certain assumptions on the dependence structure for the input p-values, in which case Simes’s [1986] procedure is used. In particular, Simes’s procedure is valid under the assumption of independence; it is also valid under relaxations of independence such as positive dependence [Sarkar,2011], but not under arbitrary dependence. For brevity we will talk about p-values that are either arbitrarily dependent or independent, but it should be remembered that the assumption of independence may be relaxed. We never make such assumptions about base e-values (but cf. Remark6.5). The upper middle panel of Figure4shows the discovery p-matrix found using hommel applied to the simulation data under arbitrary dependence. The upper right panel of Figure4is analogous but assumes independent base p-values. Both panels use Fisher’s thresholds 1% and 5%; the values below 1% are shown in red, between 1% and 5% in yellow, and above 5% in green (so that red means “highly significant” and yellow means “significant but not highly significant”).
+26
+
+
+Table 2: The Benjamini–Hochberg and Benjamini–Yekutieli procedures applied to the simulation data for FDR (false discovery rate) 5% and 1%.
+assumption 5% 1% independence 87 61 arbitrary dependence 55 28
+According to Jeffreys as quoted in Section3(p.11), the red and yellow areas are somewhat comparable between p-values and e-values, but we can draw some conclusions even without such cross-comparisons. Remember that our method does not require any assumptions about the dependence structure of the e-values. It is true that our simulated data are independent, but this information is typically unavailable, and the performance of methods that do not depend on independence or similar assumptions is still interesting. Comparing the upper left and upper middle panels of Figure4, we can see that our method produces better confidence bounds if we are willing to use Jeffreys’s informal correspondence between e-values and p-values. The upper left panel is even better, in this sense, than the upper right panel, which makes an assumption on the dependence structure of the base p-values. The three lower panels of Figure4are the transformed versions of the corresponding upper panels. In the lower left panel, we transform the arithmeticmean discovery matrix (upper left panel) by applying the canonical e-to-p calibrator e 7→ 1/e. In the other two lower panels, we transform the corresponding upper panels by applying the VS transformation (7). Therefore, the lower left panel contains valid p-values, whereas the other two lower panels contain upper bounds on e-values. It is interesting that even after the crude step of e-to-p calibration (remember the woeful round-trip efficiency illustrated by (9)), the lower left panel of Figure4still looks slightly better than the upper middle panel. In this comparison there is no uncertainty in the choice of the e-to-p calibrator, since (8) is the only reasonable one (namely, it dominates any other e-to-p calibrator). And even the optimistic VS transformation (the lower middle panel) looks much worse than the arithmetic-mean discovery matrix in the upper left panel. We can see, even without using Jeffreys’s informal correspondence, that the method based on e-values produces better results in this case, despite the crude calibration steps. Not surprisingly, assuming independence makes direct treatment of p-values more efficient: compare the upper right panel and the lower left panel. What is more surprising is that, even assuming independence and using the optimistic VS transformation, the lower right panel still look worse than the upper left panel. Table2gives the numbers of null hypotheses rejected by the BenjaminiHochberg procedure [Benjamini and Hochberg,1995] and its version for arbi
+27
+
+
+trary dependence [Benjamini and Yekutieli,2001]. (The relationship between the Benjamini–Yekutieli procedure and the hommel package without the simes option is the same as that between the Benjamini–Hochberg procedure and the hommel package with the simes option; this is made explicit inGoeman et al. [2019b, Section 5].) Here the results are more difficult to interpret, since the kind of guarantees provided by those procedures is so different from the guarantees provided by the GWGS methods. Roughly, we get comparable results between the row “arbitrary dependence” in Table2and the confidence bounds for the number of true discoveries in, say, row 50 of the discovery matrix in the upper left of Figure4: as discussed earlier (cf. Table1), the strong and substantial confidence bounds are 40 and 46, respectively. (Remember that, following Jeffreys, “strong” refers to the threshold of 10 for e-values and regarded as roughly corresponding to “highly significant”, and “substantial” refers to the threshold of 101/2 for e-values and regarded as roughly corresponding to “significant”.)
+8 Empirical studies
+In this section we will demonstrate how the methods of this paper can, in principle, be used in practice. It is important that we will make no assumptions of independence. We will use the classical dataset first described inHedenfalk et al.[2001] and then carefully studied inStorey and Tibshirani[2003]. Essentially, we will adapt Storey and Tibshirani’s analysis to using e-values in place of p-values (see the end of the section for a discussion of differences). In our experiments we use the version of the dataset made available as part of the R package qvalue [Storey et al.,2019]. The main content of the dataset is the expression levels of 3226 genes in 15 samples of tissues. Seven samples are coming from carriers of mutations in the BRCA1 gene, and the remaining eight from carriers of mutations in the BRCA2 gene. We will say that each sample is labelled with its BRCA status: seven are labelled BRCA1, and eight are labelled BRCA2. The core of the dataset is the 3226 × 15 matrix of gene expressions in the samples; all entries are positive numbers. FollowingStorey and Tibshirani[2003, Appendix, Remark C], we remove all rows containing at least one entry exceeding 20, which leaves us with a 3170 × 15 data matrix. Each row of the data matrix corresponds to a gene and each column to a sample, and the entry in row k and column j is the expression level of gene k in sample j. For each gene we are interested in the scientific hypothesis that the gene expression does not depend on the BRCA status of the sample. Storey and Tibshirani’s version of the dataset also contains some further information, such as the p-value for each gene. For further information about this dataset, which we will refer to as the BRCA dataset, see, e.g.,Storey et al. [2007, Section 5] andGuindani et al.[2009, 5.2]. For this dataset methods ensuring family-wise validity do not work well. For example, the ten smallest p-values in Storey and Tibshirani’s list multiplied by
+28
+
+
+the number of genes 3170 are
+0, 0.040, 0.050, 0.060, 0.060, 0.100, 0.140, 0.160, 0.240, 0.240 (37)
+and so the Bonferroni correction leads to only three statistically significant pvalues. Moreover, one of the p-values is exactly zero, and so cannot be a valid p-value (for details, see p.31). Hedenfalk et al. conclude that 9–11 genes are differentially expressed. Storey and Tibshirani’s informal analysis suggests that many more, at least 33%, of the examined genes are differentially expressed. However, their informal analysis assumes what they call “weak independence”: they rely on the law of large numbers when inspecting histograms of p-values, assuming that the probabilities of the p-values lying in various ranges will manifest themselves as empirical frequencies seen in the histograms. Their formal analysis is asymptotic and also assumes weak independence: see their Appendix, Remark D. We formalize the scientific theory of interest as the following statistical hypothesis about each gene k: given the multiset of expression levels in row k of the data matrix, each ordering of the row has the same probability. In our current context, a nonconformity measure is a measurable function of two multisets; we will use it by applying, for a given gene, to the multiset (of size 7) of the expression levels for the samples labelled BRCA1 and the multiset (of size 8) of the expression levels for the samples labelled BRCA2; the resulting value will be called the nonconformity score. For computing base e-values, we use the formula
+ek := Tk
+1 B+1
+(
+∑B
+b=1 T 0b
+k + Tk
+) , k = 1, . . . , 3170, (38)
+where Tk is the nonconformity score computed from the kth row of the data matrix with the true labels (BRCA1 or BRCA2) for each sample, T 0b
+k is the nonconformity score computed from the same row with randomly permuted labels, and B is the number of permutations. In our experiments, the case 0/0 of the right-hand side of (38) never occurs. We will call (38) the Monte Carlo e-value. We are justified in calling it an e-value since, under the null hypothesis, the expected value of the right-hand side of (38) is 1 if we set 0/0 := 1. (Moreover, the conditional expectation of the right-hand side of (38) is 1 given the multiset of nonconformity scores {T 01
+k , . . . , T 0B
+k , Tk}, the expectation being over all choices of the position of the true nonconformity score in the multiset.) Our nonconformity measure will be defined in terms of the t-statistic. Let xkj be the base two logarithm of the value in row k and column j of the data matrix (although the base does not matter in our empirical studies). The twosample t-statistic for the kth gene is
+tk := x ̄k2 − x ̄k1
+√
+s2
+k1/n1 + s2
+k2/n2
+, (39)
+where n1 = 7 is the number of BRCA1 columns, n2 = 8 is the number of BRCA2
+29
+
+
+columns, and
+x ̄k1 := 1
+n1
+∑
+j∈BRCA1
+xkj , s2
+k1 := 1
+n1 − 1
+∑
+j∈BRCA1
+(xkj − x ̄k1)2
+are the sample mean and variance for the BRCA1 entries, with the analogous expressions for BRCA2. The variances of the two groups (BRCA1 and BRCA2) are not assumed to be equal (followingStorey and Tibshirani[2003]), but using equal-variance two-sample t-statistics would lead to similar results. We define the nonconformity score as Tk := f (tk) for some function f of the t-statistic tk (see (39)). A natural nonconformity score is |tk|, but we generalize it to |tk|d for some d > 0. This choice of f is motivated by the Bayesian twosample t-test widely discussed in recent literature starting fromG ̈onen et al. [2005] and briefly reviewed inG ̈onen et al.[2019, Section 3]. A standard expression for the Bayes factor produced by such a test via the t-statistic t is
+f (t) := c
+(
+1 + at2)d/2 (40)
+for positive constants a, c, and d involving the number of degrees of freedom and effective sample size; see, e.g.,Wang and Liu[2016, (14)] andRouder et al.[2009, (1)]; the form (40) goes back to Jeffreys [Ly et al.,2016, (12)]. However, different constants are used in different papers. We set, without loss of generality, c := 1, since c cancels out when using (38). We further simplify (40) by ignoring the “1 + ”; this makes a and any constant factors in the definition of the t-statistic t (there is a non-trivial factor under the assumption of equal variances for the two groups) irrelevant, as they also cancel out when applying (38). Of course, this step does not affect the validity of our methods. The left panel of Figure5gives a key part of the arithmetic-mean discovery matrix for the BRCA dataset with f (t) := |t|d for d := 10, with B := 10000, and with base Monte Carlo e-values (38). We can see that there is strong evidence that the number of differentially expressed genes is at least as large as Hedenfalk at al.’s number. If we settle for substantial evidence, the number is much larger. Arguably, it is not as large as in Storey and Tibshirani’s study, but we are not using any exchangeability or independence assumptions. Dependence on the initial state of the random numbers generator (always set to 1 in our experiments) is fairly significant but does not affect our conclusions. Dependence on the value of d is also significant; the values below 10 tend to lead to higher numbers of true discoveries for Jeffrey’s standard of substantial evidence, and the values above 10 to higher numbers of true discoveries for strong evidence (up to a limit; see Table3). The literature on the Bayesian two-sample t-test quoted above seems to suggest that d should have the same order of magnitude as the number of degrees of freedom.
+Comparisons
+We start by comparing our methodology with that ofStorey and Tibshirani [2003], which was our main source of data and ideas in this section. The main differences are:
+30
+
+
+0 20 40 60 80 100 120 140 160 180
+20
+40
+60
+80
+100
+120
+140
+160
+180
+0 20 40 60 80 100 120 140 160 180
+20
+40
+60
+80
+100
+120
+140
+160
+180
+Figure 5: Left panel: the top-left 200 × 200 corner of the arithmetic-mean discovery matrix for the BRCA dataset for B := 10000, using Jeffreys’s thresholds. Right panel: its version (based on (43)) that is only approximately valid.
+Table 3: Summaries of the last row of the arithmetic-mean discovery matrix for different values of d. Column “strong” contains the number of entries that are greater than 10 (all of them are below 103/2, and so they provide strong evidence, i.e., red in our pictures). Column “at least substantial” contains the number of entries that are greater than 101/2 (providing at least substantial evidence).
+d strong at least substantial 4 0 62 6 0 82 8 4 70 10 7 56 12 8 46 20 9 29 50 8 17 100 7 14
+• Storey and Tibshirani use p-values whereas we use e-values.
+• Storey and Tibshirani implicitly assume that the genes are exchangeable under the null hypothesis.
+• Moreover, Storey and Tibshirani assume that the p-values are weakly independent.
+31
+
+
+Strictly speaking, Storey and Tibshirani’s method does not produce valid p-values, even under their null hypothesis implicitly involving gene exchangeability. This can be seen from their formula for computing the p-values,
+pk :=
+∑B b=1
+∣
+∣{j :
+∣
+∣t0b
+j
+∣
+∣ ≥ |tk| , j = 1, . . . , 3170}
+∣ ∣
+3170 · B (41)
+(the last displayed equation in their Appendix, Remark C), where tk is the tstatistic for gene k and t0b
+j is the t-statistic for gene j with the labels BRCA1 and BRCA2 randomly permuted (for the bth random permutation, b = 1, . . . , B and B := 100). The numerator of (41) can well be zero (and it is in one case: see (37)). To turn the expression (41) into a valid p-value (under the null hypothesis of gene exchangeability and label uninformativeness), it suffices to add 1 to the numerator and denominator of (41); cf.Lehmann and Romano[2022, (17.7)], Hemerik and Goeman[2018], and the method of conformal prediction [Vovk et al.,2005]. Namely,
+∑B b=1
+∣
+∣{j :
+∣
+∣t0b
+j
+∣
+∣ ≥ |tk| , j = 1, . . . , 3170}
+∣
+∣+1
+3170 · B + 1 (42)
+is a valid p-value. The intuition behind the expression (42) is that, to see how well tk conforms to the multiset of size 3170 · B consisting of t0b
+j , we add tk to the multiset before computing the rank p-value. Since we are comparing the t-statistic for gene k with t-statistics for other genes in (41) and (42), we are implicitly assuming gene exchangeability. Under gene exchangeability, for computing base e-values, we can use the formula
+ek := Tk
+1
+3170·B+1
+(
+∑B b=1
+∑3170
+j=1 T 0b
+j + Tk
+),
+in analogy with (42). This gives an e-variable under the assumption that the labels are uninformative and the genes are exchangeable. To avoid the assumption of gene exchangeability, we use the expression (38) thus avoiding comparing the statistic pertaining to gene k to statistics pertaining to other genes. Our value of B, B = 10000, is much larger than Storey and Tibshirani’s B = 100. We can also introduce a simplified version of (38):
+ek := Tk
+1 B
+∑B
+b=1 T 0b
+k
+, (43)
+in analogy with (41). This version may be more intuitive, but it is only approximately valid for large B and ceases to be valid for small B. The difference shows, e.g., in the fact that ek defined via (38) is bounded above by B + 1 whereas ek defined via (43) is potentially unbounded; such a difference can be significant if B is small. When B = 10000, there is not much difference between using (38) and using (43): see the right panel of Figure5, which uses (43).
+32
+
+
+0 20 40 60 80 100 120 140 160 180
+20
+40
+60
+80
+100
+120
+140
+160
+180
+0 20 40 60 80 100 120 140 160 180
+20
+40
+60
+80
+100
+120
+140
+160
+180
+Figure 6: Left panel: the top-left 200 × 200 corner of the arithmetic-mean discovery matrix for the BRCA dataset for B := 100. Right panel: its simplified version whose lack of validity is visible.
+0 20 40 60 80 100 120 140 160 180
+20
+40
+60
+80
+100
+120
+140
+160
+180
+0 20 40 60 80 100 120 140 160 180
+20
+40
+60
+80
+100
+120
+140
+160
+180
+Figure 7: Left panel: the top-left corner of the GWGS discovery p-matrix for the BRCA dataset for Fisher’s thresholds 1% and 5%, assuming independence. Right panel: analogous picture for Jeffreys’s thresholds applied to the VS bounds for the entries of this matrix.
+A useful role of the version (43) may be to check whether the value of B in (38) is sufficiently large. In the case of Figure5, the approximation is good, which suggests that B is sufficiently large. However, in the case of Figure6, where B = 100 (as inStorey and Tibshirani[2003]), the right-hand panel, which uses (43), looks far too good to be valid. On the other hand, the left-hand panel, which uses (38), is valid but extremely conservative.
+33
+
+
+Table 4: The Benjamini–Hochberg and Benjamini–Yekutieli procedures applied to the BRCA dataset (the three entries of “1” are unreliable as they are based on a zero p-value).
+assumption 5% 1% independence 88 1 arbitrary dependence 1 1
+Results given by hommel are either poor (when independence is assumed) or extremely poor (under arbitrary dependence). The former are given in Figure7 and the latter are given in AppendixC(Figure11). The Benjamini–Hochberg procedure [Benjamini and Hochberg,1995] rejects 88 null hypotheses at FDR q := 0.05 and 1 null hypothesis at FDR q := 0.01 for Storey and Tibshirani’s list of p-values (of course, we will always reject at least 1 null hypothesis because of the zero p-value on their list). However, this procedure assumes independence. Under arbitrary dependence, we can control FDR by replacing q by q/ ∑K
+k=1 k−1 [Benjamini and Yekutieli,2001, Theorem 1.3]. This leads to rejecting 1 null hypothesis even at FDR 0.05, which is both poor and unwarranted. These results are summarized in Table4.
+9 Efficient implementation of Algorithm2for
+the arithmetic mean
+Algorithm2is a generic algorithm that works for any symmetric e-merging function F . In general, computing one row of the discovery e-matrix takes time O(K3) if we assume that the base e-merging function F can be computed in time linear in the number of arguments. This assumption is correct for the arithmetic mean and, provided the arguments are sorted, the Simes e-merging function (see AppendixB). The overall computational complexity for the full discovery e-matrix is very high, O(K4). A more efficient implementation of Algorithm2for the arithmetic mean is given as Algorithm3, which uses arrays sk (the sum of the first k base e-values) and σr,j (the sum of the base e-values with indices in Sr,j in the notation of Algorithm2). There is a preprocessing stage (lines1–3) taking time O(K) and another preprocessing stage (lines4–7) taking time O(K2); the loop in lines 6–7is executed in the decreasing order of j, and in particular it is not executed when r = 1 (this also applies to two similar loops in Algorithm4). After that computing each row of the arithmetic mean discovery matrix takes time O(K2). The overall time is O(K3). An even more efficient implementation of Algorithm2is given as Algorithm4. This algorithm computes one row of the arithmetic mean discovery matrix in time O(K), which gives the overall time O(K2). Both O(K) and
+34
+
+
+Algorithm 3 Arithmetic-mean discovery matrix AM Input: An increasing sequence of e-values e1 ≤ · · · ≤ eK . 1: s1 := e1
+2: for k = 2, . . . , K do 3: sk := sk−1 + ek
+4: for r = 1, . . . , K do
+5: σr,r−1 := eK−r+1
+6: for j = r − 2, . . . , 0 do
+7: σr,j := σr,j+1 + eK−j
+8: for r = 1, . . . , K do 9: for j = 0, . . . , r − 1 do 10: AMr,j := σr,j /(r − j) 11: for i = 1, . . . , K − r do 12: e := (σr,j + si)/(r − j + i) 13: if e < AMr,j then 14: AMr,j := e
+Algorithm 4 One row of the arithmetic-mean discovery matrix in time O(K)
+Input: Increasing sequence of e-values e1 ≤ · · · ≤ eK and row number r ∈ {1, . . . , K} of the discovery matrix. 1: s0 := 0
+2: for k = 1, . . . , K − r do 3: sk := sk−1 + ek
+4: σr−1 := eK−r+1
+5: for j = r − 2, . . . , 0 do 6: σj := σj+1 + eK−j
+7: k := K − r
+8: for j = 0, . . . , r − 1 do 9: slope := sk+σj
+k+r−j
+10: for i = k − 1, . . . , 0 do 11: new slope := si+σj
+i+r−j
+12: if new slope > slope then break
+13: k := i
+14: slope := new slope
+15: AMr,j := slope
+O(K2) are clearly optimal in this context. The ability to compute efficiently individual rows is useful when the discovery matrix is big; e.g., it can be too big to fit in computer memory. We are using essentially the same array s as in Algorithm3(now we extend it by adding s0 := 0), and the array σ in Algorithm4is one row of the array σ
+35
+
+
+3 2 10 1 2 3 4
+3
+2
+1
+0
+1
+2
+P0 P1
+P2
+P3
+P4
+Qj
+Qj + 1
+Figure 8: Geometry behind Algorithm4.
+in Algorithm3;
+sk = e1 + · · · + ek, k = 0, . . . , K − r,
+σj := eK−r+1 + · · · + eK−j, j = 0, . . . , r − 1.
+Of course, there is no need to recompute the array s for each row r of the discovery matrix. The geometry behind Algorithm4is shown in Figure8. The coordinates of each of the points Pk, k = 0, . . . , K − r, are (k, sk), and the coordinates of the point Qj, where j ∈ {0, . . . , r − 1}, are −(r − j, σj). Since the sequence e1, . . . , eK−r is increasing, connecting the points P0, P1, . . . in this order (see the red line in Figure8) gives us the graph of a convex function. The command break in line12means leaving the loop, as in Python or R; in this context, it is equivalent to “go to line15”. The variable k in line13is the index of the “current vertex” Pk; we start from the rightmost Pk in line7 and then keep moving left. Figure8illustrates the execution of Algorithm4 when k = 3, so that the current vertex is P3. For each j = 1, . . . , r, the iteration of the loop in lines9–15of Algorithm4 computes the slope of the straight line (shown in blue) passing through Qj and touching the red line from below. The validity of the algorithm follows from the point Qj+1 lying at or above the blue line, for each j = 0, . . . , r − 2. Let us check the last statement. If k < K − r, the slope of the blue line is at most ek+1 ≤ eK−r. On the other hand, the slope of the line going from Qj to Qj+1 is eK−j ≥ eK−r. It remains to consider the case k = K − r. In this case, it suffices to notice that the slope eK−j of the line going from Qj to Qj+1 is greater than or equal to the average of e1, . . . , eK−j, which is the slope of the line going from Qj to PK−r.
+If we are only interested in the positions where discovery vectors or matrices exceed a given threshold, we can also use algorithms described inTian et al. [2021].
+36
+
+
+10 Conclusion
+The main technical tool of this paper, e-values, has important advantages over p-values. The advantage that we have found most useful here is the easiness of merging e-values: the arithmetic average of e-values is an e-value, and this is the only useful symmetric method of merging e-values. Other advantages were mentioned in Section1, such as the open nature of e-values allowing their sequential updating. We have described methods for multiple hypothesis testing using e-values and demonstrated their use in simulation and empirical studies. We believe that these methods, being simpler and more powerful, are preferred to methods using p-values unless the final result must be stated in terms of p-values. Besides, our methods do not depend on the base e-values being independent, and under arbitrary dependence, they are sometimes competitive with results based on p-values even when the final result is to be stated in terms of p-values. One of the obvious directions of further research is to extend our methods to non-symmetric problems of multiple hypothesis testing (cf.Genovese et al. [2006]), in which different e-values may be assigned different weights. Our procedure for multiple hypothesis testing is generic and does not have to rely on unweighted arithmetic averaging.
+Acknowledgments
+We are grateful to Peter Westfall for his advice about the literature on Bayesian two-sample t-tests. We thank Glenn Shafer, Aaditya Ramdas, and participants in the course “Game-theoretic statistics” (January–April 2021) for helpful comments. The presentation was greatly improved as result of the comments by two referees, an Associate Editor, and the Editor (Sonia Petrone). For most of our simulation and empirical studies in Sections7–8we used Python. We also used the R package hommel [Goeman et al.,2019a] and a dataset available in the R package qvalue [Storey et al.,2019]. V. Vovk’s research has been partially supported by Amazon, Astra Zeneca, and Stena Line. R. Wang is supported by the Natural Sciences and Engineering Research Council of Canada (RGPIN-2018-03823, RGPAS-2018-522590).
+References
+Yoav Benjamini and Yosef Hochberg. Controlling the false discovery rate: a practical and powerful approach to multiple testing. Journal of the Royal Statistical Society B, 57:289–300, 1995.
+Yoav Benjamini and Daniel Yekutieli. The control of the false discovery rate in multiple testing under dependency. Annals of Statistics, 29:1165–1188, 2001.
+Yoav Benjamini, Richard D. De Veaux, Bradley Efron, Scott Evans, Mark Glickman, Barry I. Graubard, Xuming He, Xiao-Li Meng, Nancy Reid,
+37
+
+
+Stephen M. Stigler, Stephen B. Vardeman, Christopher K. Wikle, Tommy Wright, Linda J. Young, and Karen Kafadar. The ASA president’s task force statement on statistical significance and replicability. Annals of Applied Statistics, 15:1084–1085, 2021.
+Jos ́e M. Bernardo and Adrian F. M. Smith. Bayesian Theory. Wiley, Chichester, 2000.
+Jacob Bernoulli. Ars Conjectandi. Thurnisius, Basel, 1713.
+George Casella and Roger L. Berger. Statistical Inference. Duxbury, Pacific Grove, CA, second edition, 2002.
+Antoine-Augustin Cournot. Exposition de la the ́orie des chances et des probabilit ́es. Hachette, Paris, 1843.
+David R. Cox and David V. Hinkley. Theoretical Statistics. Chapman and Hall, London, 1974.
+Bruno de Finetti. Theory of Probability. Wiley, Chichester, 2017.
+Didier Dubois and Henri Prade. Possibility Theory. Plenum Press, New York, 1988.
+Ronald A. Fisher. Statistical Methods and Scientific Inference. Hafner, New York, third edition, 1973.
+Peter G ́acs. Uniform test of algorithmic randomness over a general space. Theoretical Computer Science, 341:91–137, 2005.
+Christopher R. Genovese and Larry Wasserman. A stochastic process approach to false discovery control. Annals of Statistics, 32:1035–1061, 2004.
+Christopher R. Genovese, Kathryn Roeder, and Larry Wasserman. False discovery control with p-value weighting. Biometrika, 93:509–524, 2006.
+Jelle J. Goeman and Aldo Solari. Multiple testing for exploratory research. Statistical Science, 26:584–597, 2011a. Correction: 28 464.
+Jelle J. Goeman and Aldo Solari. Multiple testing for exploratory research: Rejoinder. Statistical Science, 26:608–612, 2011b.
+Jelle J. Goeman, Rosa Meijer, and Thijmen Krebs. hommel: Methods for closed testing with Simes inequality, in particular Hommel’s method, 2019a. R package version 1.5, available on CRAN.
+Jelle J. Goeman, Rosa J. Meijer, Thijmen J. P. Krebs, and Aldo Solari. Simultaneous control of all false discovery proportions in large-scale multiple hypothesis testing. Biometrika, 106:841–856, 2019b.
+38
+
+
+Jelle J. Goeman, Jonathan D. Rosenblatt, and Thomas E. Nichols. The harmonic mean p-value: Strong versus weak control, and the assumption of independence. Proceedings of the National Academy of Sciences, 116:23382–23383, 2019c.
+Jelle J. Goeman, Jesse Hemerik, and Aldo Solari. Only closed testing procedures are admissible for controlling false discovery proportions. Annals of Statistics, 49:1218–1238, 2021.
+Mithat G ̈onen, Wesley O. Johnson, Yonggang Lu, and Peter H. Westfall. The Bayesian two-sample t test. American Statistician, 59:252–257, 2005.
+Mithat G ̈onen, Wesley O. Johnson, Yonggang Lu, and Peter H. Westfall. Comparing objective and subjective Bayes factors for the two-sample comparison: the classification theorem in action. American Statistician, 73:22–31, 2019.
+I. J. Good. Significance tests in parallel and in series. Journal of the American Statistical Association, 53:799–813, 1958.
+Peter Gr ̈unwald and Thijs van Ommen. Inconsistency of Bayesian inference for misspecified linear models, and a proposal for repairing it. Bayesian Analysis, 12:1069–1103, 2017.
+Peter Gru ̈nwald, Rianne de Heide, and Wouter M. Koolen. Safe testing. Technical ReportarXiv:1906.07801 [math.ST],arXiv.orge-Print archive, June 2020.
+Michele Guindani, Peter Mu ̈ller, and Song Zhang. A Bayesian discovery procedure. Journal of the Royal Statistical Society B, 71:905–925, 2009.
+Ingrid Hedenfalk, David Duggan, Yidong Chen, Michael Radmacher, Michael Bittner, Richard Simon, Paul Meltzer, Barry Gusterson, Manel Esteller, OlliP. Kallioniemi, Benjamin Wilfond,  ̊Ake Borg, and Jeffrey Trent. Geneexpression profiles in hereditary breast cancer. New England Journal of Medicine, 344:539–548, 2001.
+Leonhard Held. On the Bayesian interpretation of the harmonic mean p-value. Proceedings of the National Academy of Sciences, 116:5855–5856, 2019.
+Jesse Hemerik and Jelle J. Goeman. Exact testing with random permutations. Test, 27:811–825, 2018.
+Jesse Hemerik, Aldo Solari, and Jelle J. Goeman. Permutation-based simultaneous confidence bounds for the false discovery proportion. Biometrika, 106: 635–649, 2019.
+Sture Holm. A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics, 6:65–70, 1979.
+Gerhard Hommel. Multiple test procedures for arbitrary dependence structures. Metrika, 33:321–336, 1986.
+39
+
+
+Harold Jeffreys. Theory of Probability. Oxford University Press, Oxford, third edition, 1961.
+Stephen Cole Kleene. Mathematical Logic. Wiley, New York, 1967.
+Erich L. Lehmann. Fisher, Neyman, and the Creation of Classical Statistics. Springer, New York, 2011.
+Erich L. Lehmann and Joseph P. Romano. Testing Statistical Hypotheses. Springer, Cham, fourth edition, 2022.
+Leonid A. Levin. Uniform tests of randomness. Soviet Mathematics Doklady, 17:337–340, 1976.
+Alexander Ly, Josine Verhagen, and Eric-Jan Wagenmakers. Harold Jeffreys’s default Bayes factor hypothesis tests: Explanation, extension, and application in psychology. Journal of Mathematical Psychology, 72:19–32, 2016.
+Jerzy Neyman. On the two different aspects of the representative method: the method of stratified sampling and the method of purposive selection (with discussion). Journal of the Royal Statistical Society, 97:558–625, 1934.
+Jerzy Neyman. Outline of a theory of statistical estimation based on the classical theory of probability. Philosophical Transactions of the Royal Society of London A, 236:333–380, 1937.
+Jerzy Neyman. Fiducial argument and the theory of confidence intervals. Biometrika, 32:128–150, 1941.
+Joseph P. Romano and Michael Wolf. Control of generalized error rates in multiple testing. Annals of Statistics, 35:1378–1408, 2007.
+Jeffrey N. Rouder, Paul L. Speckman, Dongchu Sun, and Richard D. Morey. Bayesian t tests for accepting and rejecting the null hypothesis. Psychonomic Bulletin and Review, 16:225–237, 2009.
+Sanat K. Sarkar. Simes’ test in multiple testing. In Miodrag Lovric, editor, International Encyclopedia of Statistical Science, pages 1325–1327. Springer, Berlin, 2011.
+Mark J. Schervish. Theory of Statistics. Springer, New York, 1995.
+Thomas Sellke, M. J. Bayarri, and James Berger. Calibration of p-values for testing precise null hypotheses. American Statistician, 55:62–71, 2001.
+Glenn Shafer. A Mathematical Theory of Evidence. Princeton University Press, Princeton, NJ, 1976.
+Glenn Shafer. From Cournot’s principle to market efficiency. In Jean-Philippe Touffut, editor, Augustin Cournot: Modelling Economics, pages 55–95. Edward Elgar, Cheltenham, 2007.
+40
+
+
+Glenn Shafer. The language of betting as a strategy for statistical and scientific communication (with discussion). Journal of the Royal Statistical Society A, 184:407–478, 2021.
+Glenn Shafer. Bayesian, fiducial, frequentist. In James Berger, Xiao-Li Meng, Nancy Reid, and Minge Xie, editors, Handbook on Bayesian, Fiducial and Frequentist (BFF) Inferences. Chapman and Hall, 2022. (to appear).
+Glenn Shafer and Vladimir Vovk. Game-Theoretic Foundations for Probability and Finance. Wiley, Hoboken, NJ, 2019.
+R. John Simes. An improved Bonferroni procedure for multiple tests of significance. Biometrika, 73:751–754, 1986.
+John D. Storey and Robert Tibshirani. Statistical significance for genomewide studies. Proceedings of the National Academy of Sciences of the USA, 100: 9440–9445, 2003.
+John D. Storey, James Y. Dai, and Jeffrey T. Leek. The optimal discovery procedure for large-scale significance testing, with applications to comparative microarray experiments. Biostatistics, 8:414–432, 2007.
+John D. Storey, Andrew J. Bass, Alan Dabney, and David Robinson. qvalue: Q-value estimation for false discovery rate control, 2019. R package version 2.18.0, available on Bioconductor.
+Alan Stuart, Keith J. Ord, and Steven Arnold. Kendall’s Advanced Theory of Statistics, volume 2a: Classical inference and the linear model. Arnold, London, sixth edition, 1999.
+Jinjin Tian, Xu Chen, Eugene Katsevich, Jelle Goeman, and Aaditya Ramdas. Large-scale simultaneous inference under dependence. Technical Report arXiv:2102.11253 [math.ST],arXiv.orge-Print archive, February 2021. To appear in the Scandinavian Journal of Statistics.
+Vladimir Vovk and Vladimir V. V’yugin. On the empirical validity of the Bayesian method. Journal of the Royal Statistical Society B, 55:253–266, 1993.
+Vladimir Vovk and Ruodu Wang. Combining p-values via averaging. Biometrika, 107:791–808, 2020a.
+Vladimir Vovk and Ruodu Wang. True and false discoveries with independent e-values. Technical ReportarXiv:2003.00593 [stat.ME],arXiv.orge-Print archive, March 2020b.
+Vladimir Vovk and Ruodu Wang. E-values: Calibration, combination, and applications. Annals of Statistics, 49:1736–1754, 2021.
+Vladimir Vovk, Alex Gammerman, and Glenn Shafer. Algorithmic Learning in a Random World. Springer, New York, 2005.
+41
+
+
+Vladimir Vovk, Bin Wang, and Ruodu Wang. Admissible ways of merging pvalues under arbitrary dependence. Annals of Statistics, 50:351–375, 2022.
+Abraham Wald. Statistical Decision Functions. Wiley, New York, 1950.
+Min Wang and Guangying Liu. A simple two-sample Bayesian t-test for hypothesis testing. American Statistician, 70:195–201, 2016.
+Ruodu Wang and Aaditya Ramdas. False discovery rate control with e-values. Journal of the Royal Statistical Society B, 84:822–852, 2022.
+George A. R. Wiggins, Logan C. Walker, and John F. Pearson. Genome-wide gene expression analyses of BRCA1- and BRCA2-associated breast and ovarian tumours. Cancers, 12:3015, 2020.
+Daniel J. Wilson. The harmonic mean p-value for combining dependent tests. Proceedings of the National Academy of Sciences, 116:1195–1200, 2019.
+A More e-variables for testing N (0, 1)
+Embedding the null hypothesis N (0, 1) into the family N (μ, 1), as in the right panel of Figure2, is not the only option, and Figure9gives results for the family N (0, σ2), σ > 0 being the standard deviation. The figure shows the likelihood ratios dN (0, σ2)/dN (0, 1) as e-variables for a range of σ, and it shows P<(x) := χ2(x2) and P>(x) := 1 − χ2(x2) as p-variables, where χ2 is the distribution function of χ2 with 1 degree of freedom (with P< based on σ < 1 as the alternative hypothesis, and P> based on σ > 1). To get a non-trivial two-sided confidence interval for σ, we need to merge the two p-variables (by, say, using the Bonferroni merging function B(P<, P>) := 2 min(P<, P>)) or merge two of the e-variables, one for σ > 1 and the other for σ < 1 (which can be done more efficiently, simply by averaging them).
+3 2 10 1 2 3 x
+3
+2
+1
+0
+1
+2
+3
+4
+5
+log10 of e-values and p-values
+p-values (alternative of small ) p-values (alternative of large ) e-values, = 0.1 e-values, = 0.5 e-values, = 2 e-values, = 10
+Figure 9: Some p-values and e-values for testing N (0, 1) embedded into the family N (0, σ2). This complements the right panel of Figure2.
+42
+
+
+B Using other e-merging functions
+In this appendix, we briefly explore discovery e-matrices using e-merging functions F other than the arithmetic mean. For general e-merging functions F (not necessarily satisfying (34)), we consider regularized discovery e-matrices
+D ̄ r,j := min
+j′≤j Dr,j′ .
+They are lower bounds on ♦egR ({1, . . . , j} | ω). Algorithm2can be adapted to produce the regularized discovery matrix by replacing K − r with K in line5. The Bonferroni e-merging function is the following lower bound for (27):
+B(e1, . . . , en) := 1
+n max
+i∈{1,...,n}
+ei. (44)
+A better lower bound for (27) is given by the Simes e-merging function
+S(e1, . . . , en) := max
+i∈{1,...,n}
+ie[i]
+n , (45)
+where e[i] is the ith largest e-value among ei, i ∈ {1, . . . , n} [Vovk and Wang, 2021, end of Section 6]: e[1], . . . , e[n] is the permutation of e1, . . . , en satisfying e[1] ≥ · · · ≥ e[n]. While (44) sometimes violates (34) (consider, e.g., the case e = (e, . . . , e) in (34)), (45) is guaranteed to satisfy it.
+Proposition B.1. For all e ∈ [0, ∞]∗ and e ≥ max(e),
+S(e, e) ≥ S(e). (46)
+Proof. Without loss of generality, suppose e = (e1, . . . , en) with en ≤ · · · ≤ e1 ≤ e. Let i be such that S(e) = iei/n. By the definition of S(e, e),
+S(e, e) ≥ i + 1
+n + 1 ei ≥ i
+n ei = S(e).
+Therefore, regularization is never needed for the discovery e-matrices based on the Simes e-merging function. Our discussion of e-values and p-values in Section3suggests that the function t 7→ 1/t transforms e-values into p-values (cf. (8)) and transforms p-values into approximate e-values (cf. (6) for a small κ ∈ (0, 1)); of course, the word “approximate” is used here in a crude sense (in the spirit of the algorithmic theory of randomness). Under this correspondence, the Bonferroni e-merging function (44) turns into the Bonferroni merging function for p-values, and the Simes emerging function (45) turns into the Simes merging function for p-values. The dominating arithmetic-mean e-merging function (27) corresponds to using the harmonic mean for merging p-values, and indeed the harmonic mean has been discussed recently in this role [Wilson,2019], sometimes with a similar justification based on the VS bound [Held,2019]. However, the harmonic mean is not a
+43
+
+
+0 20 40 60 80 100 120 140 160 180
+20
+40
+60
+80
+100
+120
+140
+160
+180
+0 20 40 60 80 100 120 140 160 180
+20
+40
+60
+80
+100
+120
+140
+160
+180
+Figure 10: Left panel: the regularized Bonferroni discovery e-matrix (given by Algorithm5) in the situation of Figure4, using Jeffreys’s thresholds. Right panel: the corresponding Simes discovery e-matrix.
+valid function for merging p-values [Goeman et al.,2019c] unless multiplied by, say, 2.5 ln K for K ≥ 3 [Vovk and Wang,2020a]. With Fe(I) of (31) specialized to the Bonferroni lower bound
+Fe(I) = Be(I) := 1
+|I| max
+i∈I ei, I ⊆ {1, . . . , K}, I 6= ∅,
+Algorithms1and2have the same interpretation as before (although the results are not as good since they are based on more conservative e-values). However, they simplify, especially Algorithm2, whose regularized Bonferroni implementation is given as Algorithm5. In line1of Algorithm5we initialize the adjusted Bonferroni e-value, in line3we compute the raw Bonferroni e-value, and in line4 we adjust it. The algorithm produces a matrix BM with constant columns and takes time O(K) per column; this time is spent simply by writing one value repeatedly. The resulting computational complexity O(K2) is clearly the optimal one.
+Algorithm 5 Regularized Bonferroni discovery e-matrix BM Input: An increasing sequence of e-values e1 ≤ · · · ≤ eK . 1: a := ∞
+2: for j = 0, . . . , K − 1 do 3: B := eK−j/(K − j)
+4: if a > B then a := B 5: for r = j + 1, . . . , K do 6: BMr,j := a
+44
+
+
+Whereas Bonferroni-type procedures often perform well when the goal is family-wise validity (see, e.g.,Vovk and Wang[2021, Figures 3 and 4]), their performance tends to deteriorate for less demanding notions of validity. (In terms of p-values, this phenomenon is discussed in, e.g.,Goeman and Solari [2011b, Section 1].) Comparing the left panel of Figure10with the upper left panel of Figure4we can see that the e-Bonferroni method is much worse than arithmetic averaging when the goal is to control the number of false discoveries. The poor performance of the e-Bonferroni method is clear already from the upper left panel of Figure4: the areas of different colours are far from been vertical at the top, where they curve left. It is clear that every discovery e-matrix that is dominated by this one and has vertical boundaries between different colours (such as e-Bonferroni) is going to be much worse. The Bonferroni discovery e-matrix (unregularized) can be obtained by replacing a with B in line6of Algorithm5(and optionally ignoring all other lines containing a). The left panel of Figure10does not change if we remove the regularization. The right panel of Figure10shows the Simes e-matrix, based on (45), in the situation of Figure4. It is intermediate between AM and Bonferroni and, remarkably, it looks better than the GWGS discovery p-matrix transformed by applying the VS bound to its elements (the lower right panel of Figure4).
+Remark B.2. We can quantify the quality of the lower bounds (44) and (45) of the arithmetic mean F by the inequalities
+B(e1, . . . , en) ≤ S(e1, . . . , en) ≤ F (e1, . . . , en),
+1 ≤ F (e1, . . . , en)
+S(e1, . . . , en) ≤
+n
+∑
+k=1
+1
+k ≤ ln n + 1,
+1 ≤ F (e1, . . . , en)
+B(e1, . . . , en) ≤ n, 1 ≤ S(e1, . . . , en)
+B(e1, . . . , en) ≤ n,
+all of which are tight (achievable as equality for any n), apart from ≤ ln n + 1 (which is tight only for n = 1). Since n := |I| ≤ K in (29), this gives bounds for the ratios of the corresponding elements of the discovery e-matrices built on top of B, S, and F .
+C Comparison with the GWGS procedure
+First we discuss the GWGS multiple testing procedure in the form described inGoeman and Solari[2011a, Section 2] and in terms of our definitions. Let F : ∪∞
+n=1[0, 1]n → [0, 1] be a p-merging function, i.e., a monotonic function transforming p-variables into a p-variable: whenever P1, . . . , Pn are p-variables for some n ∈ {1, 2, . . . }, F (P1, . . . , Pn) is a p-variable. Suppose that F is symmetric. With such an F we can associate the following regularized analogue of (29) in terms of p-values:
+D ̄ R
+p,F (j) := max
+I :|R\I |≤j
+F (pi, i ∈ I) ≥ gpR ({j + 1, j + 2, . . . } | ω), (47)
+45
+
+
+where the p-test P is defined by Pθ := F (Pk : k ∈ Iθ) (analogously to (28)); we leave the dependence on p1, . . . , pK implicit, following Goeman and Solari and similarly to the case of e-values. Goeman and Solari prefer a kind of inverse to the function (47), which they denote fα(R), suppressing the dependence on p1, . . . , pK ; we consider it as function of α ∈ [0, 1], which is interpreted as significance level. We will see that this function satisfies
+fα(R) > j ⇐⇒ D ̄ R
+p,F (j) ≤ α (48)
+(and this equivalence can serve as definition of f ). Therefore, it gives us the same lower p-confidence bound on the number of true discoveries at significance level α. For the reader familiar withGoeman and Solari[2011a], we will check that their definition indeed satisfies (48). They first define their bound
+tα(R) := max{|I| | I ⊆ R, I ∈/ X }
+on the number of false discoveries, where
+X := {I | ∀J ⊇ I : J ∈ U}
+are the subsets of {1, . . . , K} rejected by the closed testing procedure, and
+U := {I | F (pi, i ∈ I) ≤ α}
+are the subsets of {1, . . . , K} rejected by F ; in general, I and J will run over the subsets of {1, . . . , K}. Then they define their bound on the number of true discoveries as fα(R) := |R| − tα(R). (49)
+(And they refer to the true discoveries as false hypotheses and to the false discoveries as true hypotheses.) The equivalence (48) can be checked as follows:
+fα(R) > j ⇐⇒ tα(R) < |R| − j
+⇐⇒ max{|I| | I ⊆ R, I ∈/ X } < |R| − j
+⇐⇒ (∀I ⊆ R : I ∈/ X ⇒ |I| < |R| − j)
+⇐⇒ (∀I ⊆ R : |I| ≥ |R| − j ⇒ I ∈ X )
+⇐⇒ (∀I ⊆ R : |I| ≥ |R| − j ⇒ (∀J ⊇ I : J ∈ U))
+⇐⇒ (∀J : |J ∩ R| ≥ |R| − j ⇒ J ∈ U)
+⇐⇒ (∀J : |R \ J| ≤ j ⇒ J ∈ U)
+⇐⇒ max
+J :|R\J |≤j
+F (pi, i ∈ J) ≤ α ⇐⇒ D ̄ R
+p,F (j) ≤ α.
+In Section7we mentioned thatGoeman and Solari[2011b, Section 3] introduced a version of the notion of a discovery p-vector. Namely they introduced the confidence distribution whose quantile function is α 7→ tα(R). We can in
+terpret (48) as D ̄ R
+p,F being the distribution function whose quantile function is α 7→ fα(R). Since f and t are so closely connected (see (49)), the discovery p-vector is closely connected to Goeman and Solari’s confidence distribution function.
+46
+
+
+0 20 40 60 80 100 120 140 160 180
+20
+40
+60
+80
+100
+120
+140
+160
+180
+0 20 40 60 80 100 120 140 160 180
+20
+40
+60
+80
+100
+120
+140
+160
+180
+Figure 11: Left panel: the top-left corner of the GWGS discovery p-matrix for the BRCA dataset for Fisher’s thresholds 1% and 5%, under arbitrary dependence. Right panel: analogous picture with each entry replaced by the corresponding VS bound and using Jeffreys’s thresholds.
+A property of completeness for the GWGS procedure
+Goeman et al.[2021] have shown that the GWGS procedure is the only admissible one for controlling true discoveries. Doesn’t this mean that the e-version of this procedure, Algorithm1, is inadmissible? Similarly to (29), the interpretation of the property of validity (47) in terms of a Fisher-type disjunction is: the rejection set R contains more than j true discoveries unless the outcome ω is D ̄ R
+p,F (j)-strange. We can indeed obtain a property of validity of the same kind (i.e., in terms of p-values) for the procedure of Algorithm1. Our interpretation of (29) (under the monotonicity in j, as in Proposition6.4(1)) was that the rejection set R contains more than j true discoveries unless ω has an e-value of D ̄ R
+e,F (j) or more. Applying the canonical e-to-p calibrator (8), we can see that R contains more than j true discoveries unless ω has a p-value of 1/D ̄ R
+e,F (j) or less. We have the same property of validity, but with 1/D ̄ R
+e,F (j) in place of D ̄ R
+p,F (j). By Goeman et al.’s result, the procedure with 1/D ̄ R
+e,F (j) is either a GWGS procedure or inadmissible. Since the operation of e-to-p calibration is so crude, there is no doubt that this procedure is inadmissible in non-degenerate cases. The source of its inadmissibility is the inefficiency of converting e-values into p-values, and it can be shown that Algorithm1itself is admissible when F is arithmetic averaging.
+More results for the hommel package
+In conclusion, we give one more figure demonstrating the work of the hommel package. Figure11shows results (very poor) for the BRCA dataset without
+47
+
+
+assuming independence. In particular, the right panel is much worse than the left panel of Figure5, which also does not assume independence.
+D Generalized Bayes and boosting a weak signal
+When defining the base e-values for use in our simulation studies we just used the likelihood ratio E(x) defined by (36). This is the simplest version of a Bayes factor. It usually works very well, but in some cases can be improved. Later in this appendix we will see an example where a weak signal needs to be boosted, but we start from developing tools that will allow us to do so. Let us choose a constant η > 0 (the learning rate) and refer to
+Eη(x) := 1
+c E(x)η = 1
+c exp(ηδx − ηδ2/2) (50)
+as the generalized Bayes factor (see, e.g.,Gru ̈nwald and van Ommen[2017, 2.4] and references therein). Here c > 0 is the normalizing constant ensuring
+∫
+Eη dN (0, 1) = 1; a simple calculation gives
+c = exp
+(
+η(η − 1)δ2/2
+)
+.
+Plugging this into (50) we obtain
+Eη(x) = exp(ηδx − η2δ2/2).
+This gives a useful interpretation of the generalized Bayes factor: it is still the likelihood ratio, but we replace the true alternative N (δ, 1) by a false one, N (ηδ, 1). For η > 1 we are boosting the difference between the null and alternative hypotheses. One situation in which the likelihood ratio (36) does not work well is where we have a large number of false null hypotheses, but the true data-generating distributions are fairly close to the null hypotheses (as it were, we have a weak signal). Figures12–13illustrate the case of 10,000 null hypotheses N (0, 1) of which 1000 are false, the true alternatives being N (−2, 1) (which makes the signal much weaker than in Section7). In the left panel of Figure12we use the Bayes factor (36), whereas in its right panel we use the generalized Bayes factor (50) for η = 2. Using the generalized Bayes factor greatly improves the discovery e-matrix. The results for the GWGS procedure are given in Figure13; they look poor, particularly so for arbitrary dependence. Table5gives the numbers of rejections for the Benjamini–Hochberg and Benjamini–Yekutieli procedures. In view of Figure12(right panel), the results for arbitrary dependence are poor.
+Remark D.1. The likelihood ratio of the true alternative to the null has wellknown optimality properties as an e-variable: see, e.g.,Shafer[2021, §2.2.1]. Figure12suggests that in multiple hypothesis testing the likelihood ratio may be far from being optimal. It would be interesting to explore this phenomenon theoretically.
+48
+
+
+0 20 40 60 80 100 120 140 160 180
+20
+40
+60
+80
+100
+120
+140
+160
+180
+0 20 40 60 80 100 120 140 160 180
+20
+40
+60
+80
+100
+120
+140
+160
+180
+Figure 12: Left panel: the top-left 200 × 200 corner of the arithmetic-mean discovery matrix for the simulation data with 10,000 observations, 10% of false hypotheses, and weak signal, using Bayes factors as base e-values, as described in text. Right panel: using generalized Bayes factors with learning rate η = 2. Both panels use Jeffreys’s thresholds.
+Table 5: The Benjamini–Hochberg and Benjamini–Yekutieli procedures applied to the simulation data with 10,000 observations, 10% of false hypotheses, and weak signal for FDR 5% and 1%.
+assumption 5% 1% independence 84 18 arbitrary dependence 10 0
+E Empirical study: ground truth
+In Section8we discussed a pioneering biomedical study whose results were published a long time ago [Hedenfalk et al.,2001]. To evaluate the performance of various statistical techniques and their assumptions, it is natural to analyze the developments in this area of biomedicine since 2001. The main goal ofHedenfalk et al.[2001] was to test the hypothesis that different genes are expressed by hereditary malignant breast tumours that are due to mutations in the BRCA1 and BRCA2 genes and to identify differentially expressed genes. A recent review [Wiggins et al.,2020, Sections 2 and 5] compares results of nine studies, starting fromHedenfalk et al.[2001], pursuing this goal and mostly using different biological samples (therefore, not includingStorey and Tibshirani[2003]). The overlap between the lists of differentially expressed genes produced by different studies is poor. In particular, only one gene has been identified as associated with BRCA1 by more than two studies. This gene,
+49
+
+
+0 20 40 60 80 100 120 140 160 180
+20
+40
+60
+80
+100
+120
+140
+160
+180
+0 20 40 60 80 100 120 140 160 180
+20
+40
+60
+80
+100
+120
+140
+160
+180
+Figure 13: Left panel: the top-left 200 × 200 corner of the GWGS discovery p-matrix for the simulation data with 10,000 observations, 10% of false hypotheses, and weak signal, under general dependence. Right panel: assuming independence. The colour code is based on Fisher’s thresholds.
+TOB1, was among the genes identified inHedenfalk et al.[2001, Figure 2A]. In Storey and Tibshirani’s list of p-values used in Figure7the TOB1 gene has rank 77; in our list of e-values used in Figure5TOB1 has a slightly better rank of 51. One reason [Wiggins et al.,2020, Section 2] for the poor overlap between different studies is the genuine difficulty of the problem of differentiating mutations in the two BRCA genes while controlling for potential confounders, first of all the estrogen- and progesterone-receptor status and the subtype, which are known to affect gene expression greatly. For the dataset used in this paper, differentiation between mutations in the two genes is facilitated, e.g., by all BRCA1 samples being negative for both estrogen and progesterone receptors and majority of the BRCA2 samples being positive for both [Hedenfalk et al., 2001, Table 1]. Other studies reported inWiggins et al.[2020] tried to control for these confounders. We can draw only limited conclusions from these follow-up studies. There is often a big difference between the statistical null hypothesis and the scientific hypothesis of interest. Whereas there are genuine significant differences between the BRCA1 and BRCA2 samples in the dataset, the differences are not necessarily due to their different BRCA status. A possible lesson is that in our assumptions we should err on the side of caution avoiding assuming independence or weak independence, which lead us to expect very large numbers of discoveries.
+50

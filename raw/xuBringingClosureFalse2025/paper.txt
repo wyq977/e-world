@@ -1,0 +1,1482 @@
+Bringing Closure to False Discovery Rate Control: A General
+Principle for Multiple Testing
+Ziyu Xu * Aldo Solari † Lasse Fischer ‡ Rianne de Heide § Aaditya Ramdas ¶ Jelle Goeman ||
+July 31, 2026
+Abstract
+We present a novel principle that is necessary and sufficient for multiple testing methods controlling an expected loss. This principle asserts that every such method is a special case of a general closed testing procedure based on e-values. It generalizes the Closure Principle, known to underlie all methods controlling familywise error and tail probabilities of false discovery proportions, to a large class of error rates — in particular to the false discovery rate (FDR). By writing existing methods as special cases of this procedure, we can achieve uniform improvements, as we demonstrate for the e-Benjamini-Hochberg and BenjaminiYekutieli procedures and the self-consistent method of Su (2018). We also show that methods derived using our novel e-Closure Principle generally control their error rate not just for one rejection set but simultaneously over many, allowing researchers post hoc flexibility. Moreover, because all multiple testing methods for the expected loss error metrics covered by our framework are derived from the same procedure, researchers may even choose the error metric post hoc. Under certain conditions, this flexibility even extends to post hoc choice of the nominal error rate.
+Contents
+1 Introduction 3
+2 Contributions 4
+3 A general definition of multiple testing methods 6
+4 The e-Closure Principle 7 4.1 Recovering the classical Closure Principle for FWER control . . . . . . . . . . . . . . . . . 10 4.2 A novel Closure Principle for FDR control . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+This paper merges and subsumes the two parallel works of Xu et al. (2025) and Goeman et al. (2025).
+*Department of Statistics and Data Science, Carnegie Mellon University, USA. xzy@cmu.edu. †Department of Economics, Ca’ Foscari University of Venice, Italy. aldo.solari@unive.it. ‡Competence Center for Clinical Trials Bremen, University of Bremen, Germany. fischer1@uni-bremen.de. §Department of Applied Mathematics, University of Twente, and Centrum Wiskunde & Informatica, Amsterdam, The Netherlands r.deheide@utwente.nl.
+¶Departments of Statistics and Data Science, and Machine Learning, Carnegie Mellon University, USA. aramdas@cmu.edu. ||Department of Biomedical Data Sciences, Leiden University Medical Center, the Netherlands. j.j.goeman@lumc.nl.
+1
+arXiv:2509.02517v3 [stat.ME] 30 Jul 2026
+
+
+5 Improving eBH through merging e-values 11 5.1 The closed eBH procedure . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12 5.2 When does eBH improve over eBH? . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14 5.3 Compound e-values and the universality of eBH . . . . . . . . . . . . . . . . . . . . . . . . 15
+6 FDR control via merging p-values 16 6.1 BY: FDR control under general dependence . . . . . . . . . . . . . . . . . . . . . . . . . . 17 6.2 Su: FDR control under the PRDN assumption . . . . . . . . . . . . . . . . . . . . . . . . . 19
+7 Benjamini-Hochberg and its adaptive variants 20
+8 Post hoc control in multiple testing 24 8.1 Post hoc choice of discovery set . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 24 8.2 Post hoc choice of loss . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25 8.3 Post hoc choice of nominal level . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28
+9 Restricted combinations 29
+10 Computation 30
+11 Additional real data applications 31
+12 Discussion 31
+A Extensions to eBH 38
+B Admissibility under arbitrary dependence 40
+C Ordering symmetric local e-values 41
+D Related work 42
+E More general multiple testing metrics 43
+F eBH uniformly improves minimally adaptive eBH 44
+G Example where eBH with calibrated p-values is more powerful than BY 45
+H Deferred proofs 45 H.1 Proof of Lemma 4 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 45 H.2 Proof of Example 20 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 46 H.3 Proof of Theorem 25 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 46 H.4 Proof of Proposition 26 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 46 H.5 Proof of Example 29 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 46 H.6 Proof of Lemma 32 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 47 H.7 Proof of Theorem 34 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 47 H.8 Proof of Theorem 38 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 47 H.9 Proof of Theorem 39 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 48 H.10 Proof of Theorem 41 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 48 H.11 Proof of Theorem 44 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 48
+2
+
+
+H.12 Proof of Proposition 36 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 48
+1 Introduction
+For family-wise error rate (FWER) control, it has long been known (Sonnemann, 1982, 2008) that there is a single universal principle that is necessary and sufficient for the construction of valid methods. This Closure Principle says that any method that controls FWER is a special case of a closed testing procedure (Marcus et al., 1976). The Closure Principle was later challenged by the seemingly more powerful Partitioning Principle (Finner and Strassburger, 2002), but Goeman et al. (2021) have shown that the two principles are equivalent. Genovese and Wasserman (2006) and Goeman and Solari (2011) have extended closed testing to control of false discovery proportions (FDPs), and Goeman et al. (2021) showed that all methods controlling a quantile of the distribution of FDP are either equivalent to a closed testing procedure or are dominated by one, extending the Closure Principle to all methods controlling FDP. The Closure Principle is useful for method development in FWER and FDP in several ways. In the first place, it reduces the complex task of constructing a multiple testing method to the simpler task of choosing hypothesis tests for intersection hypotheses. After making this choice, method construction reduces to a discrete optimization problem. Moreover, the Closure Principle helps to handle complex situations such as restricted combinations, i.e., logical implications between hypotheses (Shaffer, 1986; Goeman et al., 2021). Finally, methods constructed using closed testing often allow for some user flexibility, permitting researchers to modify some aspects of the multiple testing procedure post hoc without compromising error control (Goeman and Solari, 2011). However, the known universality of the Closure Principle only covers methods controlling a tail probability of a function of the number or proportion of errors made (Goeman et al., 2021). Methods controlling expectations of such functions, such as per-family error rate (PFER) and, most importantly, false discovery rate (FDR; Benjamini and Hochberg, 1995) are outside the scope of the Closure Principle. We fill this gap by extending the Closure Principle to all expectation-based error rates, including FDR control. For the construction of FDR control methods, Blanchard and Roquain (2008) have formulated two quite general sufficient conditions, self-consistency and dependence control, under which, if both hold, FDR control is guaranteed. The self-consistency condition simplifies the proof of well-known FDR controlling procedures such as BH (Benjamini and Hochberg, 1995) and BY (Benjamini and Yekutieli, 2001) and has been seminal for the creation of many others. An important recent example is the eBH procedure (Wang and Ramdas, 2022), which controls FDR on the basis of per-hypothesis e-values rather than p-values. The concept of the e-value, a random variable with expectation at most 1 under the null hypothesis, works well with FDR since both concepts are expectation-based. Several other authors (Ignatiadis et al., 2024; Lee and Ren, 2024; Ren and Barber, 2024; Ignatiadis et al., 2025; Li and Zhang, 2025) have pointed out useful connections between FDR and e-values, and we elaborate on the connections of this work with recent progress in this area in Appendix D. However, self-consistency is sufficient but not necessary for FDR control, and there is some indication that it is not optimal. When symmetric, self-consistent methods control FDR at the more stringent level π0α rather than at α, but Solari and Goeman (2017) have shown that any method controlling FDR at π0α can be uniformly improved by a method that controls FDR at α, and which itself is not self-consistent. Some methods constructed using self-consistency, e.g., eBH and BY, have a reputation for low power (Lee and Ren, 2024; Xu and Ramdas, 2023). Furthermore, methods based on self-consistency (Lei and Fithian, 2018; Lei et al., 2021; Katsevich and Ramdas, 2020; Katsevich et al., 2023) generally lack the full post hoc user flexibility offered by closed testing (Goeman and Solari, 2011). However, Fischer et al. (2024), using earlier results by Su (2018), showed how post hoc selection can be achieved with FDR control using
+3
+
+
+self-consistency, although at a cost to power. In this paper, we present a generalization of the Closure Principle, the e-Closure Principle, that covers all expectation-based error rates as well as tail-probability-based ones. In particular, we show that the e-Closure Principle is both necessary and sufficient for FDR control. Like the Closure Principle, its generalization facilitates the task of constructing a multiple testing procedure by reducing it to the simpler task of choosing appropriate local e-values for all intersection hypotheses. Once these e-values are chosen, the multiple testing procedure reduces to a discrete optimization problem. Like the Closure Principle for FWER and FDP, the generalized e-Closure Principle offers some post hoc user flexibility for FDR control methods in a natural way. It can be used to formulate uniform improvements of existing methods, including the eBH and BY procedures and the self-consistent procedure of Su (2018). We show the power increase on a suite of real datasets that results from our improvement of the BY procedure, which we call the BY (closed BY) procedure, in Table 1. Our improvements are strict in the sense that they will always make as many discoveries as the original procedure, and often more, as is the case in the aforementioned table. We also provide a comprehensive table with results on other methods (such as BH) in Section 11. Finally, because the e-Closure Principle is a single principle underlying all error rates, researchers may even choose the error rate post hoc, switching, for example, from FDR control to FWER control if the signal is larger than expected. In earlier versions of this paper, we highlighted as an important open problem whether and how BH, by far the most popular FDR control method, can be uniformly improved using the e-Closure Principle. This has now been answered by Goeman (2026), who proposes a closed BH procedure that uniformly improves BH under PRDS and under a weaker sufficient condition. Thus, we are optimistic that many more improvements to existing procedures and new procedures remain to be developed using the frameworks formulated in this work. The outline of the paper is as follows. We present a general definition of multiple testing procedures that control an expected loss in Section 3. Our definition explicitly allows for simultaneity and we make the link between simultaneity and post hoc control explicit. Next, we present the general e-Closure Principle and several of its properties in Section 4, including how it recovers the classical Closure Principle. We then apply the e-Closure Principle to several well-known multiple testing methods for e-values (Section 5) and p-values (Section 6) to show improvements in both power and simultaneity. Section 7 presents the e-Closure formulation for the Benjamini-Hochberg procedure and its adaptive variants, showing that the particular ecollections considered there do not improve their power and provide no nontrivial simultaneity except when BH rejects all hypotheses. In Section 8 we explore the various types of post hoc flexibility enabled by e-Closure including generalizations of existing multiple testing procedures to their simultaneous versions. We discuss how logical relationships between hypotheses can be used to increase power (Shaffer, 1986) in Section 9. We describe computational shortcuts for the methods we have formulated throughout the paper in Section 10 and highlight some real data applications of our new methods in Section 11. The novel methods have been implemented in the eClosure and eclosure packages in R and Python, respectively.
+2 Contributions
+The novel contributions of this paper are the following.
+1. We formulate and prove the e-Closure Principle for the general multiple testing problem with an error rate introduced in Section 3. As a result, we prove that a method controls an expected error loss, such as FDR or FWER, if and only if it is a special case of the e-Closure procedure (Section 4). Further, we
+Code accompanying this paper can be found at https://github.com/neilzxu/eclosure.
+4
+
+
+Table 1: Number of discoveries made by the Benjamini and Yekutieli (2001) procedure and our new procedure BY (closed BY) across multiple simulated and real datasets and FDR thresholds α. A bold number indicates that BY makes more discoveries than BY.
+Dataset # of hypotheses α = 0.05 α = 0.1 Reference
+BY BY BY BY
+APSAC 15 3 3 3 5 Benjamini and Hochberg (1995) NAEP 34 6 8 8 11 Benjamini and Hochberg (2000) PADJUST 50 12 15 17 20 Ex. in p.adjust R function PVALUES 4,289 129 145 225 275 Data in fdrtool R package VANDEVIJVER 4,919 614 677 779 866 Goeman and Solari (2014) GOLUB 7,128 617 648 743 799 Efron and Hastie (2016)
+show that the classical Closure Principle (Marcus et al., 1976; Sonnemann, 2008) is a special case of the e-Closure Principle in Section 4.1.
+2. We apply the e-Closure Principle to FDR control and use it to construct substantial uniform improvements of the eBH, BY, and Su methods. Our improvements allow greater flexibility in the rejection sets and often permit rejection of larger sets than the original methods at the same nominal FDR level (Sections 5 and 6). Polynomial time algorithms for these methods are given in Section 10. We summarize the methods we improve in Table 2. Further, we analyze the BH procedure and its minimally adaptive variant (Solari and Goeman, 2017) through the lens of e-Closure in this paper. The e-collections we study do not add power and, apart from BH rejects all hypotheses, do not add nontrivial simultaneity; a different construction developed by Goeman (2026) uniformly improves BH using the e-Closure Principle.
+Previous Method Our Procedure Power Simultaneity eBH (Wang and Ramdas, 2022) eBH (Section 5) ✓ ✓ Benjamini and Yekutieli (2001) BY (Section 6) ✓ ✓ Su (2018) Su (Section 6) ✓ ✓ Benjamini and Hochberg (1995) BH (Section 7) = = Storey et al. (2004) adaptive BH (Section 7) = = Knockoffs (Barber and Cande`s, 2015a) Knockoffs (Section 8.1) = ✓
+Table 2: A summary of the improvements on existing methods we make through the e-Closure Principle in this paper. The ✓refers to an improvement, and = refers to the new procedure being no worse than the original. Simultaneity refers to having a larger set of discovery sets simultaneously available for post hoc selection, and power refers to additionally making more discoveries (see Definition 16).
+3. We generalize the concept of multiple testing to include simultaneous discovery sets (Section 3), and show that such simultaneity comes for free (without reducing α-levels) as a consequence of the eClosure Principle.
+4. We show that the e-Closure Principle also characterizes procedures that allow researchers post hoc flexibility in the choice of discovery sets, error rates, and nominal levels in Section 8. As an example of choosing error rates, researchers can switch to FWER control if they reject a sufficiently small set
+5
+
+
+(Section 8.2), instead of FDR control. Second, we show that, for some FDR controlling methods, researchers may choose post hoc the α-level at which FDR is controlled (Section 8.3).
+5. We extend the possibility of exploiting restricted combinations, i.e., logical relationships between hypotheses (Shaffer, 1986) from only FWER control to general error rates, in particular FDR.
+6. We also demonstrate clear improvements of our methods over their non-closure versions on a suite of real datasets of p-values and e-values in Section 11.
+3 A general definition of multiple testing methods
+We will first give a general definition of a multiple testing method that encompasses all methods controlling an expected loss. This general definition will define the scope of the generalized e-Closure Principle that we will present in Section 4. Our definition encompasses many well-known error rates, including FWER, FDR, and per-family error rate. Moreover, we will emphasize simultaneity in our general definition, introducing this notion for error rates for which simultaneous control was not yet known, such as FDR. We use set-centered notation throughout the paper. We denote all sets by capital letters (e.g., R), collections of sets by calligraphic letters (e.g., R), and scalars by lowercase letters (e.g., r). We use the shorthand [i] := {1, 2, . . . , i}. The power set of R is 2R. Random variables and random sets are shown in boldface (e.g., e, R). Direct inequalities between random variables should always be understood to hold almost surely, unless stated otherwise. We denote min(a, b) and max(a, b) as a ∧ b and a ∨ b, respectively. Further, any omitted proofs of results will be deferred to Appendix H. Suppose our data is given by a random variable X : Ω → S, where (Ω, F) and (S, A) are measurable spaces. Let the statistical model M be a set of probability measures on (Ω, F), e.g., M = {Pθ : θ ∈ Θ} in a parametric model, and denote EP as the expectation under P. Hypotheses are restrictions to the model M , and therefore subsets of M . Suppose that we have m hypotheses, H1, . . . , Hm, of interest, where each is a subset of the model M . For every P ∈ M , some hypotheses are true and others false; let NP = {i : P ∈ Hi} be the index set of the true (null) hypotheses for P. If we choose to reject the hypotheses with indices in R ⊆ [m], i.e., to claim them as discoveries, then the discoveries in R ∩ NP are false. Generally, we want to choose R in such a way that the occurrence of such false discoveries is limited. We do this by bounding, in expectation, some nonnegative error function fN (R) of N and R. We assume that fN (∅) = 0 for all N ∈ 2[m], and f∅(R) = 0 for all R ∈ 2[m], i.e., no error is incurred if there are no nulls or we make no discoveries. Both conditions are satisfied by all error metrics in Table 3. A multiple testing method for error rate ERf is a procedure that produces a random set R. Such a method controls an error rate defined by fN (R) at level α if its construction guarantees that fN (R) is bounded in expectation by α. This is formally stated in Definition 1.
+Definition 1 (Multiple testing method). R ⊆ [m] controls ERf at level α > 0 if, for every P ∈ M ,
+EP fNP (R) ≤ α.
+Our results cover the error rates cataloged in Table 3, such as false discovery rate (FDR) and familywise error rate (FWER), and more general families considered in the multiple testing literature (Malek et al., 2017; Maurer et al., 2023). We also discuss in Appendix E how our results apply to other error metrics (e.g., mFDR), which are not explicitly the expectation of an error function. Furthermore, in Definition 2 below, we allow the multiple testing method to return not just a single set R ⊆ [m], but a collection R ⊆ 2[m] of such sets. Since fN (∅) = 0, we may assume that R is never empty: if R controls ERf, then so does R ∪ {∅}.
+6
+
+
+Error Rate (ERf) Loss Function (fN (R))
+False discovery rate (FDR) FDPN (R) := |R ∩ N |/(|R| ∨ 1) k-Familywise error rate (k-FWER), w/ k = 1 giving FWER 1{|N ∩ R| ≥ k} Per-family error rate (PFER) |N ∩ R| False discovery exceedance (FDX-γ) for some γ ∈ [0, 1) 1{FDPN (R) > γ} Average error rate (AER) |N ∩ R|/(|N | ∨ 1)
+Table 3: Examples of multiple testing error rates (ERf) and their corresponding loss functions fN (R) for different error rates.
+Definition 2 (Simultaneous multiple testing method). A random collection of rejection sets R ⊆ 2[m] con
+trols ERf simultaneously at level α if, for every P ∈ M , EP maxR∈R fNP (R) ≤ α.
+We note that simultaneous ERf control implies standard ERf control. Hence, we focus on proving validity for simultaneous procedures. Furthermore, for each procedure introduced, we also define its classical version, which outputs the largest discovery set from the simultaneous procedure.
+Lemma 3. If a random rejection set R controls ERf at α, then so does the random collection R = {R}; if a random collection R controls ERf at α, then so does any random rejection set R satisfying R ∈ R almost surely.
+Furthermore, we note that simultaneous control is equivalent to post hoc control, which allows the user to choose any rejection set R ∈ R in an arbitrarily data-dependent way. We provide a deeper discussion on the use of procedures with post hoc control in Section 8.1. For the following lemma, suppose that R = R(X), where R : S → 22[m] is A-measurable and X includes any auxiliary randomization used by the procedure.
+Lemma 4. We have for all P ∈ M ,
+EP max
+R∈R fNP (R) = sup
+R:R(X)∈R a.s.
+EP [fNP (R(X))] , (1)
+where the supremum is over A-measurable selectors R : S → 2[m] satisfying R(X) ∈ R almost surely.
+Though our general definition includes many error rates that have been considered in the literature, it excludes some error rates that are not expectations of some loss fNP (R), such as positive FDR (Storey, 2002) and local false discovery rate (Efron, 2010). However, it does cover procedures performing multiple testing on a data-driven subset of the hypotheses conditionally on the selected set: the final error rate to be controlled, conditional or unconditional, can be written in the form of Definition 1 (Goeman and Solari, 2024).
+4 The e-Closure Principle
+The central result of this paper is a generalized Closure Principle, the e-Closure Principle, that provides control for any general loss function of the form discussed in Section 3. Analogous to the Closure Principle (Marcus et al., 1976; Sonnemann and Finner, 1988; Sonnemann, 2008), this novel principle gives a general recipe for designing multiple testing methods, and recovers the classical Closure Principle (along with all FWER controlling methods) as a special case. After formulating the e-Closure Principle, we will first demonstrate how it recovers the classic Closure Principle, and then proceed with novel results applying the e-Closure Principle to FDR control.
+7
+
+
+A nonnegative random variable e is an e-value for a hypothesis H if EP(e) ≤ 1 for all P ∈ H. A suite of literature has investigated hypothesis testing based on e-values (Shafer, 2021; Gru ̈nwald et al., 2024) rather than on p-values, and an overview of this area can be found in Ramdas and Wang (2025). For a single hypothesis H, we may reject H when e ≥ α−1, while controlling Type I error at level α, since for every P ∈ H, the following holds by Markov’s inequality:
+P(e ≥ α−1) ≤ α · EP(e) ≤ α.
+The e-Closure Principle requires an e-value to be defined for every subset of [m].
+Definition 5. We define an e-collection E := (eS)S∈2[m] (Shafer, 2021; Vovk and Wang, 2023; Xu et al., 2024; Gr ̈unwald, 2023, 2024) to be a collection of nonnegative random variables where EP(eNP ) ≤ 1 for all P ∈ M , i.e., eNP is an e-value for each P ∈ M .
+A sufficient but not necessary way to construct an e-collection is to let each eS be an e-value for the corresponding HS := ∩i∈SHi (see Remark 50). We set e∅ = 0. Its value is immaterial for the e-Closure Principle since the error rate satisfies f∅(R) = 0, but this convention makes expressions quantified over all S ∈ 2[m] well-defined. Define the set of candidate discovery sets for the error metric ERf at level α as
+REαRf (E) := R ∈ 2[m] : eS ≥ fS(R)
+α ∀S ∈ 2[m] . (2)
+To understand why REαRf (E) would control ERf at α, note that by construction, fS(R) ≤ αeS for all S, so in particular fNP (R) ≤ αeNP . Therefore ERf is bounded by α, the expectation of αeNP . However, we claim not just that (2) controls its error rate ER, but also that every procedure controlling ER is of the form (2). This is our first main result, the e-Closure Principle, formulated as Theorem 6. It says that the class of all procedures of the form (2) is complete (Lehmann and Romano, 2005b, Section 1.8) for the control of error rates of the form ERf.
+Theorem 6 (The e-Closure Principle). R is a simultaneous ERf controlling procedure at level α if and only if there exists an e-collection E such that R ⊆ REαRf (E).
+Proof. For any e-collection E and distribution P, we see that
+EP max
+R∈REαRf (E)
+fNP (R)
+!
+≤ EP (α · eNP ) ≤ α.
+The first inequality is by definition of REαRf (E), and the last inequality is from eNP being an e-value for P.
+Suppose R simultaneously controls ERf over its elements. One can set
+eS = maxR∈R fS(R)
+α (3)
+for each S ∈ 2[m]. For each P ∈ M , we have that
+EP(eNP ) = EP (maxR∈R fNP (R))
+α ≤ 1.
+The inequality is by R being a simultaneous ERf controlling procedure. For each R ∈ R, we have that:
+fS (R)
+α ≤ maxR∈R fS(R)
+α = eS
+for all S ∈ 2[m], which implies that R ∈ REαRf (E). Thus, we have shown that R ⊆ REαRf (E).
+8
+
+
+One way to view the e-Closure Principle (2) is that it divides the model M into parts, designs an errorbound for each part, and combines the results into an overall ERf control procedure. When constructing each of the partial bounds, the method designer may assume that NP is known, which gives access to powerful oracle-like information. In FDR control, knowledge of π0,P = |NP|/m is often already extremely valuable (Storey et al., 2004; Benjamini et al., 2006; Blanchard and Roquain, 2009). The e-Closure Principle reduces the task of constructing an error control procedure to the much simpler task of constructing e-values for intersection hypotheses. When constructing these e-values, the researcher should take into account any knowledge, or lack of it, on the joint distribution of the data. After choosing e-values, the remaining task, implementing (2), is purely computational. This computation may have exponential complexity, since 2m − 1 e-values must be taken into account. However, computation can be done in polynomial time in important cases, as we shall see in Section 10. Note that Theorem 6 is not tied to our Definition 2 of simultaneous error control; it also characterizes classical procedures that output a single discovery set (i.e., those that follow Definition 1). We make this clear in the following Corollary 7, which combines Theorem 6 and Lemma 3. In fact, writing an ER controlling set R as an e-collection is a way of obtaining simultaneous FDR control for a classical FDR control method in a less trivial way than was done by Lemma 3 — we explore this further in Section 8.
+Corollary 7. R controls ERf at level α if and only if R ∈ REαRf (E) for an e-collection E.
+Following Corollary 7 we will generally think of e-Closure methods in two different ways: as a method returning a full collection REαRf (E) of rejected sets, and as a method returning a single set R ∈ REαRf (E), which is often one of the sets with the largest cardinality in REαRf (E). Further, once a procedure has been passed through the e-Closure construction, applying the e-Closure construction again will result in the same procedure. This is formally defined as follows.
+Proposition 8. Let E be defined from an arbitrary level α ERf controlling procedure R as in (3). Then, if we construct the e-collection E′ := (e′
+S)S∈2[m] by applying (3) to REαRf (E), we have that E′ = E.
+The proof follows directly from the definition of e-values in (3) and the definition of REαRf in (2). Proposition 8 shows that the reconstruction in Theorem 6 recovers a given procedure but should not be expected to improve its power directly. To obtain a power improvement, one must instead construct stronger or better adapted local e-values, as we do later for eBH, BY, and Su. The reconstruction can nevertheless enlarge a classical procedure’s collection of simultaneously valid discovery sets, as discussed in Section 8.
+Remark 9. Control of ERf in Theorem 6 hinges on the validity of the single e-value eNP . This implies that relevant properties of eNP translate directly to properties of the multiple testing procedure. For example, if eNP is an e-value under one of the asymptotic notions considered by Ignatiadis et al. (2025), control of ERf in the resulting procedure converges to α at the rate at which E(eNP ) converges to 1.
+Remark 10. The definition of the e-collection immediately allows exploitation of restricted combinations (Shaffer, 1986), since it imposes no conditions on eS for sets S that do not equal NP for any P ∈ M . We return to this point in Section 9.
+Remark 11. The general multiple testing problem in Section 3 can be viewed as a composite generalized Neyman-Pearson (GNP) problem (Gr ̈unwald, 2024), and hence the e-Closure Principle as an instance of a maximally compatible decision rule in the language of Gr ̈unwald (2024). We elaborate on this in more detail in Appendix D.
+9
+
+
+4.1 Recovering the classical Closure Principle for FWER control
+Now we will see how e-Closure recovers the standard Closure Principle for FWER. Define the following collection of discovery sets:
+RFWER
+α (E) := R ∈ 2[m] : eS ≥ 1{|R ∩ S| > 0}
+α for all S ∈ 2[m] .
+Let RFWER
+α (E) be the largest set in RFWER
+α (E) — we refer to this as the e-closed procedure for FWER control. Such a largest set exists and equals the union of all sets in RFWER
+α (E), since the defining condition is preserved under unions: if each set in a collection has empty intersection with every S satisfying eS < α−1, then so does their union. Note that RFWER
+α (E) is unique and all members of RFWER
+α (E) are subsets of
+RFWER
+α (E).
+Theorem 12 (The e-Closure Principle for FWER control). R is a (simultaneous) FWER controlling procedure at level α if and only if there exists an e-collection E s.t. R ⊆ RFWER
+α (E). Moreover, the e-collection can be chosen so that every eS lies in {0, α−1}.
+Proof. The completeness result follows from applying Theorem 6 to the loss function
+fN (R) = 1{|N ∩ R| > 0}.
+To prove the result on the support, start from any e-collection E and define
+e′
+S = α−11{eS ≥ α−1}.
+Then e′
+S ≤ eS and e′
+S is also an e-value. Thus E′ is an e-collection. Because the FWER formulation of the e-Closure Principle compares local e-values only with 0 and α−1, E′ yields exactly the same rejection set as E.
+Corollary 13. Let Φ := (φS)S∈2[m] be a family of level α local intersection tests, and define the closed testing rejection set via the classical Closure Principle (Marcus et al., 1976; Sonnemann, 1982; Sonnemann and Finner, 1988; Sonnemann, 2008) as
+Rα(Φ) := {i ∈ [m] : φS = 1 for all S ∋ i}.
+If we set eS = α−1 · φS for each S ∈ 2[m], then we have a valid e-collection by virtue of Φ being a family of valid local intersection tests and that
+Rα(Φ) = RFWER
+α (E).
+Conversely, suppose that E is an e-collection for which each eS is an e-value for the intersection hypothesis HS. If we let φS = 1{eS ≥ α−1}, then Φ is a family of valid level α local intersection tests, and the standard Closure Principle applied to Φ yields Rα(Φ) = RFWER
+α (E).
+Thus, the e-Closure Principle recovers the standard Closure Principle for FWER through the thresholding correspondence between local e-values and local tests. In Section 8.2, we will show how the generalization by Genovese and Wasserman (2006) and Goeman and Solari (2011) of closed testing to simultaneous FDP control is also covered by the e-Closure principle.
+10
+
+
+4.2 A novel Closure Principle for FDR control
+Where e-Closure merely recovers known results for FWER, it can achieve uniform improvements of methods in the case of FDR. In the remainder of the paper, we will therefore focus on FDR control and define the following e-Closure procedure for FDR control.
+RFDR
+α (E) =
+n
+R ∈ 2[m] : eS ≥ FDPS(R)
+α for all S ∈ 2[m]o
+. (4)
+Equation (4) bounds the FDP for all S = NP by αeS, which has expectation at most α.
+Theorem 14 (The e-Closure Principle for FDR control). R simultaneously controls FDR at level α if and only if R ⊆ RFαDR(E) for an e-collection E.
+The e-Closure Principle is helpful for constructing novel methods but also for improving existing methods. The “only if” part of Theorem 6 asserts that every existing method controlling FDR has an implicit e-collection that can be used to reconstruct the method as a special case of (4). These e-values may be inefficient, e.g. because they have an expectation strictly smaller than 1; in such cases, Theorem 14 can sometimes be used to propose a superior method based on a suite of stochastically larger e-values. We will give several examples of such improvements in Sections 5 and 6. However, Proposition 8 implies that the e-collection constructed in the proof of Theorem 6 cannot be directly used for finding improvements. It is better to reverse engineer the proof and improve the implicit (or explicit) e-values directly.
+Remark 15. Similar to the restriction of support in Theorem 12, one can restrict the support of eS in any e-collection applicable to Theorem 14 to be in {k/(αr) : r ∈ [m], k ∈ {0} ∪ [r ∧ |S|]} for each S ∈ 2[m]. We expand on the utility of this property for boosting and randomization in Appendix A.
+The e-Closure Principle is not the only characterization of all FDR controlling procedures. Ignatiadis et al. (2025, Theorem 6.5) prove that every FDR controlling procedure can be recovered by eBH applied to compound e-values. We will derive direct connections between the e-Closure Principle and its compound e-value construction in Section 5. Further, the compound e-value formulation of Ignatiadis et al. (2025) is restricted to FDR with a fixed set of base hypotheses, while the e-Closure Principle in Theorem 6 can be applied to problems with richer spaces of discovery sets and risk metrics. Many FDR control methods, originally formulated in terms of p-values, have recently been reformulated in terms of e-values, generally as a special case of eBH on (compound) e-values. We summarize in Table 4 how each of the methods we improve upon in this paper has been interpreted as a form of compound evalues and eBH, and give the local e-value that can be used with the e-Closure Principle to derive new procedures or recover the existing procedure, possibly with some added simultaneity. Such simultaneity is often appreciable, as we shall see in Section 6.1, but should not be expected to be complete: Finner and Roters (2001) showed that any FDR controlling procedure that controls FDR simultaneously for R = 2R, must control FWER for R (see also Theorem 39 below).
+5 Improving eBH through merging e-values
+As a first application of the e-Closure Principle, we will look at the important special case that we have e-values available for the hypotheses H1, . . . , Hm, and that the FDR controlling Rα should be a function of these e-values. Let e(i) denote the ith largest e-value for i ∈ [m]. We make no assumptions on the joint distribution of the e-values. For this situation, Wang and Ramdas (2022) proposed the eBH procedure. It is equivalent to the BH procedure (Benjamini and Hochberg, 1995) applied to p1 = 1/e1, . . . , pm = 1/em. Of course, unlike
+11
+
+
+Table 4: E-value based procedures for which we can derive a novel local e-value to either recover or improve. Each original method is equivalent to eBH applied to compound e-values (Ignatiadis et al., 2025) and can be improved or recovered via the local e-value for each intersection hypothesis applied to the e-Closure Principle. The local e-values for eBH, BY, and Su are derived in Sections 5, 6.1, and 6.2, respectively. Here,
+RBαH and RadaBH
+α are the sets of rejections of the Benjamini-Hochberg and adaptive Benjamini-Hochberg procedures, respectively, at level α. For each i ∈ [m], wi is the coin-flip knockoff sign that results from the knockoff procedure (Barber and Cande`s, 2015a; Cande`s et al., 2018) and cα is the critical value for the knockoff procedure at level α.
+Method Implicit (compound) e-value Local e-value
+eBH ei
+(Wang and Ramdas, 2022)
+1 |S|
+X
+i∈S
+ei (6)
+Benjamini-Yekutieli em(pi)
+(Xu et al., 2024)
+1 |S|
+X
+i∈S
+e|S|(pi) (13)
+Su (lαpi ∨ α)−1
+(this paper — eq. 15) (lαpS ∨ α)−1(15)
+Benjamini-Hochberg
+m
+α|RBαH| 1
+n
+pi ≤ α|RBαH|
+m
+o
+(Li and Zhang, 2025)
+m |S|
+X
+i∈S
+1
+α|RBαH| 1
+n
+pi ≤ α|RBαH|
+m
+o
+(16)
+Adaptive BH (e.g., Storey)
+m
+α|RadaBH
+α |1
+n
+pi ≤ α|RadaBH
+α| πˆ 0m
+o
+(Li and Zhang, 2025)
+X
+i∈S
+1
+α|RadaBH
+α |1
+n
+pi ≤ α|RadaBH
+α| πˆ 0m
+o
+(19)
+Knockoffs
+m1{wi ≥ cKαn} 1+P
+i∈[m] 1{wi ≤ −cKαn}
+(Ren and Barber, 2024)
+P
+i∈S 1{wi ≥ cKαn}
+1+P
+i∈S 1{wi ≤ −cKαn} (20)
+eBH, BH does not provide FDR control under arbitrary dependence; its classical finite-sample validity result holds under PRDS (Benjamini and Yekutieli, 2001). In contrast, the eBH procedure is valid for any joint distribution of the e-values. Let R(i) denote the indices corresponding to the i largest e-values (or smallest p-values), breaking ties by the smallest hypothesis index, and let R(0) := ∅. Then eBH rejects:
+ReBH
+α = R(reBH
+α ), where reBH
+α := max{1 ≤ r ≤ m : re(r) ≥ m/α} (5)
+where reαBH is taken as 0 if the maximum does not exist. We will show in the next section that eBH, though admissible for compound e-values (Ignatiadis et al., 2025), is not admissible for regular ones.
+5.1 The closed eBH procedure
+We will now use the e-Closure Principle to propose an alternative method for controlling FDR based on e-values under arbitrary dependence. A natural way to merge e-values is to take their arithmetic average. Furthermore, Vovk and Wang (2021) showed that the arithmetic average, possibly mixed with the trivial evalue of 1, is the only admissible symmetric e-merging function for arbitrarily dependent e-values. We will use the unmixed average
+eS = 1
+|S|
+X
+i∈S
+ei (6)
+12
+
+
+as an e-value for HS, for each nonempty S ∈ 2[m], together with the convention e∅ = 0. We can now apply (2) using E = (eS)S∈2[m] as the e-collection, to obtain the simultaneous eBH procedure:
+ReBH
+α := RFDR
+α (E) =
+(
+R ∈ 2[m] : 1
+|S|
+X
+i∈S
+ei ≥ FDPS(R)
+α for all S ∈ 2[m]
+)
+. (7)
+We will refer to any discovery set that belongs in the simultaneous eBH procedure as being mean-consistent, as an analog of the self-consistency condition of Blanchard and Roquain (2008). Often we are most interested in the largest set. When one uses symmetric local e-values that are coordinatewise increasing in the input e-values (or coordinatewise decreasing in the input p-values), at least one of the largest discovery sets within the FDR controlling e-Closure collection can always be taken to be ordered, i.e., it consists of the largest e-values or smallest p-values. Lemma 52 formalizes this exchange argument for a general symmetric loss. Thus, we define
+ReBH
+α := R(reBH
+α)
+α , where reBH
+α := max{r ∈ [m] : R(r) ∈ ReBH
+α }.
+This is one of the sets with the largest possible size in ReBH
+α , i.e., ReαBH ∈ argmaxR∈ReαBH
+|R|. However, the largest set does not have to be unique (see Example 23). This procedure controls FDR under any joint distribution of the e-values by Theorem 14 and the arithmetic mean being a valid e-merging function under arbitrary dependence. Moreover, the procedure uniformly improves upon eBH in both the choice of discoveries that are simultaneously available and in the maximum number of discoveries, as Theorem 17 asserts. To make this terminology precise, let R(x) ⊆ 2[m] be the collection returned by a simultaneous procedure and let S(x) be the set returned by a classical procedure at data realization x.
+Definition 16 (Simultaneity and power improvements). The simultaneous procedure R is a uniform simultaneity improvement over S if S(x) ∈ R(x) for every data realization x and, for at least one realization x, the collection R(x) also contains a nonempty set R ̸= S(x). It is a uniform power improvement if, for every realization of x, there is an R ∈ R(x) with R ⊇ S(x) and, for at least one realization x, the collection R(x) also contains a nonempty set R ⊋ S(x).
+This definition is deterministic as “uniform” refers to the pointwise containment for every possible sample realization in some sense, while improvement requires that the relevant improvement region is nonempty. If that region has positive probability under some P ∈ M , the corresponding random procedures also differ with positive probability under P. That additional probabilistic conclusion depends on the joint distribution; for example, some discrete distributions may assign the displayed improvement regions probability zero. In Section 11, we observe the improvements empirically.
+Theorem 17. When m > 1, ReBH
+α is a uniform improvement in both simultaneity and power over ReαBH.
+Proof. Let R be any self-consistent discovery set (Wang and Ramdas, 2022), which means that ei ≥ m/(α|R|) for all i ∈ R. Note that ReαBH is the largest self-consistent set. If R ∩ S = ∅, the e-Closure inequality for S is immediate; otherwise,
+1 |S|
+X
+i∈S
+ei ≥ |R ∩ S|
+|S| · min
+i∈R∩S ei ≥ |R ∩ S|
+|S| · im∈iRn ei ≥ |R ∩ S|
+m · im∈iRn ei ≥ |R ∩ S|
+m ·m
+α|R| = FDPS(R)
+α
+which shows that R ∈ ReBH
+α . The same is trivially true if R = ∅. To show a power improvement, let m > 1 and consider the event that e1 = (m − 1/2)/α, e2 = 1/(2α), e3 = . . . = em = 0. Then ReαBH = ∅, but {1} ∈ ReαBH, because |S|−1 P
+i∈S ei ≥ α−1 whenever {1} ∈ S.
+13
+
+
+Remark 18. Ignatiadis et al. (2024) formulated a slight uniform improvement on the eBH procedure, called minimally adaptive eBH. For m > 4, a result analogous to Theorem 17 holds about this procedure. We prove in Appendix F that eBH also improves it in both simultaneity and power, subject to the same positive probability qualification.
+Remark 19. It is not immediate that the eBH procedure is admissible, despite it utilizing an admissible e-merging function for each intersection hypothesis. We present a necessary condition for admissibility in Appendix B via a characterization of generalized e-merging functions Vovk et al. (2022); Wang (2025); Clerico (2026), and eBH does satisfy such a condition. In an earlier draft, we posed a complete characterization of admissible e-value based procedures FDR controlling procedures as an open problem. Recently, Sun and Wang (2026) provided such a characterization and showed that every constant-free eBH procedure derived from weighted mean local e-values is an admissible procedure at every α, and within the class of symmetric procedures, eBH is not the largest element when α is sufficiently large. We also elaborate on some extensions of eBH in Appendix A that can improve or modify the procedure further.
+5.2 When does eBH improve over eBH?
+The improvement from eBH to eBH can be substantial, as can be gauged from the proof of Theorem 17, in which each of the four inequalities leaves a substantial amount of room, and each has a different worst case in which it is an equality. The eBH procedure often rejects more hypotheses than eBH, and may reject some hypotheses in the event that eBH does not reject any. An extreme example of this is given in Example 20, in which eBH rejects all hypotheses, but eBH none. It is illustrated in Figure 1.
+Example 20. Suppose m > 1, and (2m − 2i + 1)/(mα) ≤ ei < m/(iα) for i = 1, . . . , m. Then eBH rejects nothing, but eBH rejects [m].
+We defer a proof of this to Appendix H.2. The eBH procedure and mean-consistency are qualitatively different from the eBH procedure and selfconsistency. We will enumerate some unique properties of discovery sets satisfying mean-consistency and the discoveries made by the eBH procedure. First, rejection of a particular set R depends not only on the e-values corresponding to hypotheses in R, but also on the e-values corresponding to other hypotheses.
+Example 21 (Dependence of non-rejected e-values). Consider a case where m = 2, and e1 = 9/(5α) and
+e2 = 0. In this case, nothing is rejected. However, if we increase e2 to 1/(5α), we obtain ReBH
+α = {∅, {1}}. Increasing e2, apparently, facilitates the rejection of a set of hypotheses that does not include H2.
+Secondly, ReBH
+α may reject hypotheses for which the corresponding e-value is less than α−1.
+Example 22 (Rejecting e-values less than 1/α). To see an example, consider m = 2, e1 = 3/(2α) and
+e2 = 1/(2α). It is easily checked that {1, 2} ∈ ReBH
+α , implying that H2 can be rejected with FDR control at α, although e2 < α−1.
+Translated to p-values, these properties of the procedure of (7) are shared by adaptive FDR control procedures that plug in an estimate πˆ0 of π0,P = |NP|/m into a procedure controlling FDR at π0,Pα (Storey et al., 2004; Benjamini et al., 2006; Blanchard and Roquain, 2009). For such procedures, rejection of a hypothesis may also depend on p-values of other hypotheses through πˆ0, and the procedure may reject hypotheses with p-values up to α/πˆ0 > α. The eBH procedure can therefore be seen as an adaptive procedure, even though it was not explicitly constructed using an estimate of π0,P. Lastly, eBH does not necessarily output a single mean-consistent discovery set that has the largest cardinality (containing all other mean-consistent sets as a subset), a property which holds for self-consistent sets. There can be multiple discovery sets of the largest cardinality in ReBH
+α.
+14
+
+
+5 10 15 20
+0
+50
+100
+150
+200
+250
+300
+350
+400
+rank
+e-value
+k=7 k = 20
+5 10 15 20
+0
+50
+100
+150
+200
+250
+300
+350
+400
+rank
+Figure 1: Regions of ordered e-value sequences, for m = 20 and α = 0.05. The x-axis gives the rank and the y-axis gives the ordered e-values e(1) ≥ · · · ≥ e(m). The black curve is the eBH rejection boundary, i.e., an ordered sequence that lies entirely below the black curve leads eBH to reject no hypotheses. The colored regions show ordered sequences for which eBH rejects at least k hypotheses while eBH rejects none; the case k = 20 corresponds to Example 20. These regions were constructed by greedily choosing the smallest e(m), . . . , e(1), in that order, to achieve the desired mean-consistency.
+Example 23 (Multiple largest mean-consistent discovery sets). Let m = 3 and e1 = 2/α, and e2 = 1/(2α),
+and e3 = 1/(2α). Then, both ReαBH = {1, 2} and {1, 3} are in ReBH
+α , but {1, 2, 3} is not since e{2,3} = 1/(2α) < 2/(3α).
+5.3 Compound e-values and the universality of eBH
+Ignatiadis et al. (2025) showed that eBH, when applied to compound e-values, is a universal procedure for FDR control. They showed that every FDR controlling procedure can be written as the eBH procedure applied to some set of compound e-values. Compound e-values (ee1, . . . , eem) are nonnegative random variables that satisfy the following condition
+X
+i∈NP
+EP[eei] ≤ m for all P ∈ M. (8)
+In words, no matter which hypotheses constitute the true set of null hypotheses NP for a distribution P, the expected sum of the corresponding compound e-values cannot exceed m. Our results are complementary to the above universality result on eBH. Instead of reducing every FDR procedure to using eBH with compound e-values, we reduce it to the eBH procedure with an e-value for each intersection hypothesis. In this section we describe two different conversions, and we keep the direction of each conversion explicit. First, starting from compound e-values, we construct an e-collection for all intersection hypotheses. Second, starting from an e-collection and a rejected set produced by e-Closure, we construct compound e-values. We first start with compound e-values (ee1, . . . , eem) satisfying (8). From these given compound e-values, define for any S ⊆ [m]
+eS = 1
+m
+X
+i∈S
+eei (9)
+15
+
+
+Proposition 24. Let (ee1, . . . , eem) be compound e-values. Then eS, as defined in (9), is a valid e-value for HS for each S ⊆ [m].
+This is true via the definition of compound e-values in (8). The factor 1/m is important: this is not the ordinary average over S, which would use 1/|S|, but the scaling required by the compound-e-value condition. Thus, (9) constructs an e-collection E = (eS)S⊆[m] from the compound e-values. Consequently,
+we can define a corresponding compound mean-consistent set Re eBH
+α := RFαDR(E). Define the compound
+eBH procedure w.r.t. Re eBH
+α as
+Re eBH
+α := R(ereBH
+α ), reeBH
+α := max {r ∈ [m] : R(r) ∈ Re eBH
+α },
+where R(r) here refers to the set of the r largest compound e-values. Similarly, we can define the compound
+self-consistent set as Re SC
+α := {R ∈ 2[m] : eei ≥ m/(α|R|) for all i ∈ R} and the compound eBH procedure
+as outputting Re eαBH, the largest set in Re SC
+α.
+Theorem 25. We have that Re SC
+α = Re eBH
+α and consequently Re eαBH = Re eαBH.
+Thus, when we start from compound e-values and construct the e-collection by (9), eBH and eBH are equivalent. We now switch directions. Suppose instead that we start from an e-collection E = (eS)S⊆[m] and the corresponding discovery set R ∈ RFαDR(E) produced by the e-Closure Principle. From this given e-collection and rejected set, we can construct compound e-values. For each i ∈ [m], the universal compound e-value derived from R (Ignatiadis et al., 2025) is
+eei = m
+α(|R| ∨ 1) · 1{i ∈ R}. (10)
+More generally, a sufficient condition for constructing compound e-values from an e-collection is that the constructed variables satisfy the following inequality with respect to the given e-collection:
+X
+i∈S
+eei ≤ m · eS for all S ∈ 2[m] (11)
+Proposition 26. Let E = (eS)S⊆[m] be an e-collection. Any nonnegative random variables (ee1, . . . , eem) that satisfy (11) almost surely are compound e-values. Further, if R ∈ RFαDR(E), then the universal compound e-values in (10) satisfy (11).
+6 FDR control via merging p-values
+Many FDR control procedures start from p-values p1, . . . , pm for hypotheses H1, . . . , Hm. Let p(i) denote the ith smallest p-value for i ∈ [m], with ties being broken by choosing the hypothesis with the smallest index. There are several famous procedures, the choice of which depends on the assumptions that we are willing to make on the joint distribution of the p-values. Here, we will explore three such procedures. The first is BY (Benjamini and Yekutieli, 2001), which is valid for any distribution of the p-values. The second is the procedure of Su (2018) based on the FDR Linking Theorem. The Su method is valid under the PRDN assumption, a weaker variant of the PRDS assumption underlying BH. The third is BH itself. We will place these three methods in the context of the e-Closure Principle and show that the first two can be uniformly improved. Since the e-Closure Principle depends on e-values, we will need to convert the input p-values to e-values. We use p-to-e calibrators for this (Shafer et al., 2011). A function e(p) is a p-to-e calibrator if e(p) is an
+16
+
+
+e-value whenever p is a p-value, i.e., EP[e(p)] ≤ 1 whenever P(p ≤ t) ≤ t for all 0 ≤ t ≤ 1. One straightforward way to construct an FDR control procedure would be to calibrate p1, . . . , pm to e-values and apply eBH. However, in general, this does not turn out to be the most powerful approach.
+6.1 BY: FDR control under general dependence
+When working with p-values, let R(i) denote the set of indices corresponding to the i smallest p-values and let R(0) := ∅. Benjamini and Yekutieli (2001) proved that under general dependence, the following random set controls FDR.
+RBY
+α := R(rBY
+α ), where rBY
+α := max{r ∈ [m] : p(r) ≤ αr/(mhm)},
+where rBαY is taken as 0 if the maximum does not exist. Here, hm = Pm
+i=1 1/i is the mth harmonic number. Xu et al. (2024, Proposition 3) formulated the following p-to-e calibrator for every k ∈ N and α ∈ (0, 1].
+ek(p) := k1{hkp ≤ α}
+α(⌈khkp/α⌉ ∨ 1) (12)
+is a p-to-e calibrator for all α ∈ (0, 1] and all k ∈ N. They showed that the eBH procedure applied to em(p1), . . . , em(pm) is equivalent to the BY procedure. We will use this same calibrator, though in a different way, to define an e-collection. For every nonempty S, eS is the average of the e-values obtained by applying e to the p-values of hypotheses in S; however, the choice of p-to-e calibrator will now depend on |S| (instead of m) as well as on α.
+Lemma 27. Under HS, the following is an e-value:
+eS =
+X
+i∈S
+1{h|S|pi ≤ α}
+α(⌈|S|h|S|pi/α⌉ ∨ 1) (13)
+Proof. We take k = |S|, apply the p-to-e calibrator to pi for each i ∈ S, and note that the average of the resulting e-values is again an e-value.
+Next, we can build an FDR control method by plugging in E = (eS)S∈2[m] , for the e-values we have just defined in (13), into the general e-Closure Procedure (2). Formally, we can define the simultaneous BY (closed BY) procedure as the simultaneous discovery set resulting from the e-Closure Principle applied to (13), i.e., RBY
+α := RFαDR(E). The BY procedure is then one of the largest discovery sets in RBY
+α , i.e.,
+RBY
+α := R(rBY
+α ), where rBY
+α := max {r ∈ [m] : R(r) ∈ RBY
+α } ∪ {0} .
+The simultaneous BY procedure controls FDR under arbitrary dependence among the p-values as a result of Theorem 14, and uniformly improves BY in both simultaneity and power, as stated in the following theorem.
+Theorem 28. Under arbitrary dependence among the p-values, RBY
+α controls FDR at level α. If m > 1,
+RBY
+α is a uniform improvement in simultaneity and power over RBαY.
+First, we define the notion of a self-consistent discovery set at level α for p-values (Blanchard and Roquain, 2008; Su, 2018). R is a self-consistent discovery set at level α if pi ≤ α|R|/m for all i ∈ R.
+17
+
+
+Proof. Let R be a non-empty self-consistent discovery set at level α/hm. Note that RBαY is the largest self-consistent discovery set at level α/hm.
+αeS ≥
+X
+i∈S∩R
+1{h|S|pi ≤ α}
+⌈|S|h|S|pi/α⌉ ∨ 1 =
+X
+i∈S∩R
+1
+⌈|S|h|S|pi/α⌉ ∨ 1 ≥
+X
+i∈S∩R
+1
+⌈|S|h|S||R|/mhm⌉ ∨ 1 ≥ |S ∩ R|
+|R| .
+This shows that R ∈ RBY
+α . The first inequality follows from the definition eS from (13) and the second inequality is by |S|h|S| ≤ mhm as S ⊆ [m]. The same is trivially true if RBαY = ∅. For strictness for every m > 1, take ordered p-values satisfying
+p(1) = · · · = p(m−1) = 0, α
+hm
+< p(m) ≤ α.
+Then BY rejects the first m − 1 hypotheses, and BY rejects all m hypotheses: for every nonempty S, each zero p-value in S contributes 1 to αeS, while if S contains only the final index, its contribution is also 1 because p(m) ≤ α. Hence αeS ≥ |S|/m = FDPS([m]) for every S. The following example demonstrates the power improvement of BY.
+We now construct an example where BY fails to reject any hypothesis, while BY rejects all.
+Example 29. Let m ≥ 4, and relabel hypotheses in increasing p-value order. Then RBαY is empty, but RBαY = [m] when the following event holds
+iα mhm
+< p(i) ≤ (i + 1)α
+mhm
+for i = 1, . . . , m − 1, and α
+hm−1
+≥ p(m) > α
+hm
+.
+We defer a proof of this to Appendix H.5. The improvement of BY upon BY is similar in spirit to the improvement of eBH relative to eBH. However, BY will never reject hypotheses Hi with pi > α. We illustrate the aforementioned example for m = 20 in Figure 2.
+Remark 30. Blanchard and Roquain (2008) introduced a reshaped BH procedure (we call it BR in the following) for FDR control under arbitrary dependence that generalizes the BY procedure. Wang and Ramdas (2022) showed that BR is a particular instance of eBH. While they used a slightly different proof technique, their claim can be shown using the p-to-e calibrator
+e(p) :=
+m
+X
+i=1
+m
+αi 1 αβ(i − 1)
+m < p ≤ αβ(i)
+m,
+where β is a so-called shape function, meaning β(i) = R i
+0 x dν(x), i ∈ [m], β(0) = 0, for some probability measure ν. Therefore, calibrating p-values into e-values with this calibrator and plugging the calibrated e-values into eBH leads to a uniform improvement in simultaneity and power over the BR procedure. One could also adjust the calibrator for each S ⊆ [m] according to |S|, as we have done for the BY procedure in (13). By this adaptation, we mean using |S| instead of m when applying the reshaping construction to define the local e-value eS, since |S| is the number of hypotheses relevant to HS.
+Remark 31. We can also uniformly improve the BY procedure in simultaneity and power via applying eBH to the e-values (em(p1), . . . , em(pm)) constructed through the p-to-e calibrator (12) with k = m. This procedure is different from BY, and neither procedure dominates the other in general. We provide an explicit example where eBH applied to the calibrated p-values is more powerful than BY in Appendix G. However, in practice, we note that BY is more powerful, as we shall see in the results of Table 5.
+18
+
+
+5 10 15 20
+0
+0.01
+0.02
+0.03
+0.04
+0.05
+rank
+p-value
+k=7 k = 19
+5 10 15 20
+0
+0.01
+0.02
+0.03
+0.04
+0.05
+rank
+Figure 2: Regions of ordered p-value sequences, for m = 20 and α = 0.05. The x-axis gives the rank and the y-axis gives the ordered p-values p(1) ≤ · · · ≤ p(m). The black curve is the BY rejection boundary, i.e., an ordered sequence that lies entirely above the black curve leads BY to reject no hypotheses. The colored regions show ordered sequences for which BY rejects at least k = 2, 3, . . . , 13, 15, 19 hypotheses while BY rejects none. These regions were constructed by greedily choosing the largest p(m), . . . , p(1), in that order, to achieve the minimal desired local e-values.
+6.2 Su: FDR control under the PRDN assumption
+Su (2018) investigated FDR control by BH under the PRDN assumption. PRDN is a weaker variant of the PRDS assumption that is sufficient for BH to be valid (Benjamini and Yekutieli, 2001). The p-values p1 . . . , pm satisfy PRDS in M if, for every increasing set A ⊆ Rm, for every P ∈ M , and for every i ∈ NP, we have that P((p1, . . . , pm) ∈ A | pi ≤ t) is weakly increasing in t. (14)
+PRDS, therefore, is an assumption both on the p-values of true and false hypotheses. PRDN, in contrast, is an analogous assumption only on the p-values of true hypotheses. The p-values p1 . . . , pm satisfy PRDN in M if, for every P ∈ M , for every increasing set A ⊆ R|NP|, and for every i ∈ NP, we have that P((pj)j∈NP ∈ A | pi ≤ t) is weakly increasing in t. As argued by Su (2018), PRDN is a more attractive assumption than PRDS, since generally we do not want to assume anything about the distribution of p-values of false hypotheses. Where PRDS is the assumption under which BH was proven (Benjamini and Yekutieli, 2001), PRDN is the sufficient assumption of the Simes test (Simes, 1986; Su, 2018):
+pS = min
+1≤i≤|S|
+|S|pi:S
+i,
+is a bona-fide p-value for testing HS, where pi:S is the ith smallest p-value among pi, i ∈ S. Su (2018) showed that there is a close connection between the BH procedure and the Simes test. Moreover, Su (2018) proved that when BH is applied at level α′ under the assumption of PRDN, rather than PRDS, it achieves an FDR of at most α′(1 + log(1/α′)) rather than α′. Solving
+α = α′(1 + log(1/α′)),
+19
+
+
+we obtain α′ = −α/w(−α/e), where w is the −1 branch of the Lambert W function. We let lα := −w(−α/e). This, in turn, implies that the BH procedure applied at the more conservative level α/lα, rather than α, controls FDR under PRDN. We call this the Su procedure; let RSαu denote this specific discovery set. Numerically, for α = 0.01, 0.05, 0.1, we have 1/lα = 0.131, 0.174, 0.205, respectively. In this section we will improve the Su procedure uniformly using the e-Closure Principle. First, we will define a useful p-to-e calibrator, which will allow us to calibrate the Simes p-value.
+Lemma 32. e(x) := (lαx ∨ α)−1 is a p-to-e calibrator for all α ∈ (0, 1].
+Corollary 33. For all P ∈ HS, the following is an e-value under PRDN.
+eS = (pSlα ∨ α)−1 (15)
+We can apply the e-Closure procedure from the e-collection formed through (15) to get the simultaneous discovery set RSu
+α := RFαDR(E). One of the largest discovery sets in Su is
+RSu
+α := R(rSu
+α ), where rSu
+α := max {r ∈ [m] : R(r) ∈ RSu
+α } ∪ {0} .
+Theorem 34. Under PRDN, RSu
+α controls FDR at level α. For α ∈ (0, 1) and m > 1, RSu
+α uniformly improves RSαu in both power and simultenaity.
+We provide an example where the Su procedure makes multiple discoveries but the Su procedure only makes a single one, and illustrate it in Figure 3.
+Example 35. Let m ≥ 3. Then, we will have RSαu = [1], but RSαu = [m] under the following event:
+p1 = α
+mlα
+, p2 = · · · = pm = α
+lα
++ δ, 0 < δ ≤ min α
+(m − 1)lα
+,1− α
+lα
+.
+Proof. That Su rejects [1] only is immediate from the definition: pi > αi/(mlα) for i = 2, . . . , m. Su rejects [m], since we have eS = α−1 if 1 ∈ S. If 1 ̸∈ S, the constraint on δ ensures αeS = α/(α + lαδ) ≥ (m − 1)/m ≥ |S|/m.
+7 Benjamini-Hochberg and its adaptive variants
+The seminal FDR control method by Benjamini and Hochberg (1995) remains the most popular by far. It rejects the following discovery set:
+RBH
+α := R(rBH
+α ), where rBH
+α := max{r ∈ [m] : p(r) ≤ αr/m},
+where rBαH is taken as 0 if the maximum does not exist. However, it has some puzzling aspects. First, BH is not guaranteed under arbitrary dependence. Its classical finite-sample validity result holds under PRDS (14), which constrains the joint distribution of the p-values of true and false hypotheses, although other sufficient conditions are known (Goeman, 2026). Such an assumption is unusual among multiple testing procedures, which generally make assumptions only on the distribution of true hypotheses, and Su (2018) made a forceful argument against it. Second, BH is known to be inadmissible under PRDS. The minimally adaptive BH (MABH) procedure constructed by Solari and Goeman (2017) gives a small uniform improvement; more
+Though we use e both for p-to-e calibrators (as a function) and for exp(1) (as a constant), this should lead to no confusion.
+20
+
+
+5 10 15 20
+0
+0.02
+0.04
+0.06
+0.08
+0.1
+rank
+p-value
+k=7 k = 19 BH
+5 10 15 20
+0
+0.02
+0.04
+0.06
+0.08
+0.1
+rank
+Figure 3: Regions of ordered p-value sequences, for m = 20 and α = 0.05. The x-axis gives the rank and the y-axis gives the ordered p-values p(1) ≤ · · · ≤ p(m). The colored regions show ordered sequences for which Su rejects at least k = 3, 5, . . . , 19 hypotheses while Su rejects none. These regions were constructed by greedily choosing the largest p(m), . . . , p(1), in that order, to achieve the minimal desired local e-values. The black dashed line is the rejection threshold of the BH procedure, i.e., the BH procedure rejects the r smallest p-values if r is the largest rank such that p(r) is below this line. The upper bound on the region of p-value sequences where the Su procedure contains p-value sequences that make 19 or more rejections is higher than the BH threshold, which means that the BH procedure makes strictly fewer rejections for those sequences of p-values.
+recently, Goeman (2026) constructed a closed BH procedure that uniformly improves BH under PRDS and a weaker sufficient condition. MABH rejects
+rMABH
+α := max i ∈ [m] : i−1 · p(i) ≤ α
+m − 1 , RMABH
+α :=
+(
+∅ if RBαH = ∅;
+R(rMABH
+α ) otherwise.
+For the BH procedure, we can define the following local e-value
+eS = 1
+|S|
+X
+i∈S
+eei where eei = m
+α|RBαH| 1
+n
+pi ≤ α|RBαH|
+m
+o
+. (16)
+Li and Zhang (2025) showed that eei is a compound e-value under PRDS and that eBH applied to these compound e-values reconstructs BH, but they did not directly show it is an e-value as well. The validity of eei, and hence of eS, can also be seen directly from the dependency control condition of Blanchard and Roquain (2008). For each null i, take U = pi, V = |RBαH|, and the linear shape function β(v) = v. Proposition 3.6 of Blanchard and Roquain (2008) gives
+EP
+1{pi ≤ α|RBαH|/m}
+|RBαH| ≤ α
+m
+under PRDS, with the ratio defined as zero when |RBαH| = 0. Multiplying by m/α proves that eei is an e
+value. Averaging over i ∈ S then proves that eS is an e-value for HS. We then define RBH
+α as the e-Closure procedure resulting from this e-collection.
+21
+
+
+The e-collection derived from (16) depends on all m p-values through |RBαH| instead of only on p-values pertaining to hypotheses S (as is the case for the e-collections of BY and Su). Thus, it is clear that an assumption on the joint distribution of p-values of true and false hypotheses is needed. We can also define the corresponding local e-values for the minimally adaptive BH procedure as follows.
+e[m] = 1{RBH
+α ̸= ∅}/α, eS = m − 1
+|S|
+X
+i∈S
+1
+α|RMABH
+α |1
+n
+pi ≤ α|RMABH
+α| m−1
+o
+for S ⊂ [m] (17)
+Proposition 36. Under PRDS, E = (eS)S∈2[m] with e-values defined in (17) is a valid e-collection.
+We define RMABH
+α as the e-Closure procedure resulting from the e-collection comprising these local e-values. This approach generalizes to other adaptive versions of the BH procedure. Unlike MABH, the validity claim below assumes that the p-values (p1, . . . , pm) are independent and that the estimator satisfies the stated monotonicity and moment conditions. For any i ∈ NP, define
+πˆ i
+0 := πˆ(p1, . . . , pi−1, 0, pi+1, . . . , pm), EP
+1
+πˆ i
+0
+≤m
+|NP| , (18)
+where πˆ is an estimator of the null proportion and is also required to be coordinatewise nondecreasing. Let πˆ 0 := maxi∈[m] πˆ i
+0. Now, we define the adaptive BH discovery set as
+radaBH
+α := max i ∈ [m] : i−1 · p(i) ≤ α
+πˆ 0m ∪ {0} , RadaBH
+α := R(radaBH
+α ).
+Storey’s procedure (Storey, 2002; Storey et al., 2004; Benjamini et al., 2006), which sets πˆ(p1, . . . , pm) = (1 + Pm
+i=1 1{pi > λ})/((1 − λ)m) for a fixed tuning parameter λ ∈ (0, 1), is an instance of this adaptive BH procedure. Methods of this type have been well studied because they can estimate the null proportion and increase power when the number of non-null hypotheses is substantial (Benjamini et al., 2006; Sarkar, 2008; Blanchard and Roquain, 2009; Do ̈hler and Meah, 2023; Gao, 2025). We can define the e-collection for improving the adaptive BH procedure. We now formulate the compound e-values and resulting local e-values that correspond to an adaptive procedure.
+eS = 1
+m
+X
+i∈S
+eei where eei = m
+α(|RadaBH
+α | ∨ 1) 1
+n
+pi ≤ α(|RadaBH
+α | ∨ 1) mπˆ 0
+o
+, (19)
+The validity of these compound e-values follows directly from the argument used to prove Theorem 11 of Blanchard and Roquain (2009). Write G(p) = 1/πˆ 0(p). For each null i, condition on the other pvalues and apply their Lemma 27 with U = pi, g(U ) = |RadaBH
+α (p1, . . . , pi−1, U, pi+1, . . . , pm)| ∨ 1, and c = αG(p0,i)/m, where p0,i replaces pi by zero. Monotonicity of G in each of its arguments yields
+EP[eei] ≤ EP[G(p0,i)] ≤ m
+|NP| .
+Consequently, under HS, EP[eS] ≤ |S|/|NP| ≤ 1, proving that the local e-values are valid. Equivalently, Theorem 11 establishes FDR control for this adaptive BH procedure, after which (10) gives the same compound e-values. The adaptive closed BH procedure, adaBH, is then defined as RadaBH
+α := RFαDR(E) for the e-collection based on (19). The theorem below shows that this e-collection exactly reconstructs adaptive BH, with no additional nonempty discovery sets. Unfortunately, the closed BH procedure BH resulting from (16) never gives a larger rejected set. Moreover, it gives no nontrivial simultaneity unless RBαH = [m]. On that full-rejection branch, the simultaneous collection contains every singleton; by Theorem 39, the global
+22
+
+
+selector formed by taking the union of all available singletons controls FWER. This is an unconditional guarantee for that selector, not a claim that BH conditionally controls FWER given the event RBαH = [m]. In contrast, the corresponding closed MABH and adaptive BH procedures have no such exception: they exactly reconstruct their original procedures even when all hypotheses are rejected.
+Theorem 37. Assume PRDS for the BH and MABH claims. For the adaptive BH claim, assume independent p-values and that πˆ 0 satisfies (18) and is coordinatewise nondecreasing. For the BH procedure, if RBαH ̸=
+[m], then RBH
+α = {∅, RBαH}. Otherwise, if RBαH = [m], then RBH
+α = 2[m]. For minimally adaptive BH and
+adaptive BH, we always have RMABH
+α = {∅, RMABH
+α } and RadaBH
+α = {∅, RadaBH
+α }.
+Proof. First, consider the case where R = RBαH and R = RBH
+α . We can rewrite each local e-value as follows:
+eS = m|R ∩ S|
+α|S|(|R| ∨ 1) .
+If R = [m], then for all S, eS = 1/α, which is always greater than or equal to FDPS(R)/α for every R and S, thus R = 2[m]. If R = ∅, all the local e-values are zero and the conclusion is immediate. Suppose R ̸= ∅ and R ̸= [m]. We show that for every non-empty R ̸= R, there exists an S such that
+m|R ∩ S|
+|S||R| < |R ∩ S|
+|R| .
+Let R ⊂ R. Then
+0 < (m − |R|)(|R| − |R|).
+This implies that
+m|R| + |R||R| − |R|2 = (|R| + m − |R|)|R| > m|R|.
+Now, we take S = R ∪ ([m] \ R).
+m|R ∩ S|
+|S||R| = m|R|
+(|R| + m − |R|)|R| < 1 = |R ∩ S|
+|R| .
+Let R ̸⊆ R, that is, R contains some i ∈/ R, and take S = [m] \ R. Then,
+m|R ∩ S|
+|S||R| = 0 < |{i}|
+|R| ≤ |R ∩ ([m] \ R)|
+|R| .
+Thus, we have shown the desired result for RBαH and RBH
+α. Now let R = RMABH
+α and R = RMABH
+α . The case R = ∅ is immediate, so suppose R ̸= ∅. The original set R belongs to R: for S = [m] this follows from e[m] = 1/α, while for every proper S it follows from (m − 1)/|S| ≥ 1. Consider any nonempty R ̸= R. If |R| > |R|, choose j ∈ R and set S = [m] \ {j}. Then
+αeS = |R| − 1
+|R| < 1 − 1
+|R| ≤ |R ∩ S|
+|R| .
+If instead |R| ≤ |R|, choose i ∈ R \ R and again set S = [m] \ {i}. In this case,
+αeS = |R| − 1
+|R| < 1 = |R ∩ S|
+|R| .
+23
+
+
+Thus, for every nonempty R ̸= R there exists some S s.t. αeS < FDPS(R), including when R = [m], and
+hence RMABH
+α = {∅, RMABH
+α }. Finally, let R = RadaBH
+α . The indicator in (19) equals one precisely for the hypotheses in R.
+αeS = |R ∩ S|
+|R| ∨ 1 .
+Otherwise, consider a nonempty R ̸= R. If R ̸⊆ R, choose i ∈ R \ R and S = {i}, yielding αeS = 0 < |R ∩ S|/|R|. If R ⊊ R, take S = R, yielding αeS = |R|/|R| < 1 = |R ∩ S|/|R|. Therefore
+RadaBH
+α = {∅, RadaBH
+α }, including when RadaBH
+α = [m].
+The particular e-collections considered in this section therefore do not substantially improve BH or its adaptive variants. Goeman (2026), however, develops a different e-Closure construction that does uniformly improve over BH in ways that are different from minimally adaptive BH.
+8 Post hoc control in multiple testing
+Classical multiple testing requires the researcher to prespecify the error rate to be controlled and the nominal level at which to control this error rate. The procedure then returns a single random set that has such control. This set-up is rigorous but highly inflexible. Goeman and Solari (2011) argued that there are many situations in which the researcher might want to deviate from this set-up. For example, the rejected set may be too large for planned follow-up experiments, and the researcher may prefer to have a smaller rejection set that guarantees the same error rate or possibly a more stringent one. In other cases, the rejected set may be too small, or a subset of the rejected set may be of interest. Error control according to Definition 1, however, does not allow any deviation from the rejected set. This has been noted in the context of FDR control by Finner and Roters (2001), who showed how researchers can, intentionally or not, “cheat with FDR.” Reducing the set R while retaining its prespecified form, e.g., rejecting a set of the s < r smallest p-values in BH, compromises FDR control if s is chosen post hoc (Katsevich and Ramdas, 2020). Deviations from the set R of the r smallest p-values have been investigated in prior work, but such methods usually require the researcher to commit to an algorithm for reducing or changing R before seeing the data (Lei and Fithian, 2018; Katsevich et al., 2023). Some methods allow interactive post hoc amendments to this prespecified algorithm based on progressively revealing parts of the data (Lei et al., 2021; Katsevich and Ramdas, 2020). As far as we are aware, no FDR controlling methods have so far been proposed that allow researchers to reduce or amend R after looking at all of the data. Notably, methods controlling tail probabilities of the FDP, rather than the FDR, obtain some post hoc flexibility directly from the Closure Principle (Goeman and Solari, 2011; Goeman et al., 2021). The e-Closure Principle extends the possibilities for post hoc flexibility in the rejected set to general error rates including FDR. Here, post hoc flexibility is the operational interpretation of simultaneity: simultaneous control gives a collection of valid choices, and the researcher may choose from that collection after seeing the data. It also allows post hoc flexibility in error loss, and in some cases even the nominal level. We will explore these properties of e-Closure in this section.
+8.1 Post hoc choice of discovery set
+Simultaneous control of error rates over several candidate sets as offered by Definition 2 is useful whenever information external to the p-values may influence the conclusions of an experiment. In such cases it is often difficult for researchers to specify exactly, before seeing the data, how such external information will be
+24
+
+
+used, and post hoc flexibility is desirable. Such post hoc flexibility, argued for by Goeman and Solari (2011), was thus far only available with FDP control. The e-Closure Principle extends this to other error rates, most importantly FDR. We give two brief use cases from the literature for such flexibility. In bioinformatics, a larger rejected set is not always preferable, since there is limited budget for follow-up experiments. Moreover, significance is not the only consideration for rejection, and researchers prefer less significant results with larger effect size estimates. A popular methodology, called the ‘Volcano Plot’, reduces the initial FDR-significant set by discarding findings with low effect size. Done naively, such discarding may compromise FDR control (Ebrahimpoor and Goeman, 2021), and such a reduction retains FDR control as long as the reduced set is one of the candidate discovery sets via the e-Closure Principle. In neuroimaging, hypotheses correspond to voxels (3d generalizations of pixels) in the brain, and the significant set R often splits naturally into several brain areas (“clusters”). In such situations, FDR control on the total set R is not very informative, since researchers will interpret their results in terms of the clusters (Rosenblatt et al., 2018). Simultaneous FDR control using the e-Closure Principle allows researchers to claim that these clusters have FDR at most α if and only if these clusters are among the candidate discovery sets. Similar considerations apply in bioinformatics, where hypotheses correspond to molecular markers, which can be meaningfully grouped into sets called pathways (Ebrahimpoor et al., 2020).
+A simultaneous discovery version of the knockoff filter. We show that simultaneity can be achieved in the knockoff filter (Barber and Cande`s, 2015a; Cande`s et al., 2018). A key component of knockoff procedures is that the procedure forms a test statistic wi for each i ∈ [m] such that the sign of wi is independent of all other statistics and has an equal chance of being in {±1} if i ∈ NP. The knockoff filter is defined by:
+cKn
+α := min
+(
+c ∈ {|wi| : |wi| > 0} : 1 + P
+i∈[m] 1{wi ≤ −c}
+P
+i∈[m] 1{wi ≥ c} ≤ α
+)
+, RKn
+α := {i ∈ [m] : wi ≥ cKn
+α },
+with the convention that the minimum of the empty set is +∞. Assume the knockoff statistics satisfy the usual null sign-flip property. Using the coin-flip argument underlying Lemma 1 of Barber and Cande`s (2015b) and eq. (8) of Ren and Barber (2024), we define the following local e-values:
+eS =
+P
+i∈S 1{wi ≥ cKαn}
+1+P
+j∈S 1{wj ≤ −cKαn} . (20)
+We refer to the resulting simultaneous discovery procedure as Knockoffs, i.e., RKn
+α := RFαDR(E).
+Theorem 38. Under the knockoff null sign-flip property, the set RKn
+α is given by
+RKn
+α=
+(
+R ⊆ [m] : wi ≥ cKn
+α for all i ∈ R and |R|
+1+P
+j∈[m] 1{wj ≤ −cKαn} ≥ 1/α
+)
+∪ {∅}. (21)
+Hence, RKn
+α is a uniform improvement in simultaneity over RKαn, although it contains no strict superset
+of RKαn. To illustrate a concrete example where simultaneity is improved by RKn
+α , consider the following instance: let m = 6 and α = 0.4. Now, let w = (6, 5, 4, 3, −2, −1). Then cKαn = 3 and the knockoffs
+discovery set is RKαn = [4]. In addition, RKn
+α also includes all subsets of size 3 of [4]. Thus, closed knockoffs can provide simultaneity improvements in such settings.
+8.2 Post hoc choice of loss
+In the classical setting of multiple testing, researchers have to choose the error rate to be controlled before seeing the data. This may lead to disappointment if the number or strength of the signals differs from
+25
+
+
+what was expected. For example, a researcher may set out to control FWER but obtain no discoveries and, in hindsight, prefer FDR control. Conversely, a researcher who controls FDR and obtains hundreds of discoveries might prefer a smaller number of discoveries with an FWER guarantee. In other situations, researchers may want two tiers of discoveries simultaneously: an inner, more certain set of FWER discoveries and an outer, more tentative FDR significant set. Such situations call for simultaneity or post hoc flexibility in the choice of error rate. Simultaneous control of FDR (for some outer set) and FWER (for some inner set) is actually allowed as a direct consequence of Definition 2 of simultaneous FDR control, and the relationship between the two error rates. To see this, let R control FDR, and consider the singleton sets in R. Since singleton sets have an FDP of either 0 or 1, there is no distinction between FDR and FWER for such sets. The researcher may now choose to reject the union of all these singleton sets and control FWER for this set, in addition to FDR. This switch from FDR control to FWER control may be made fully post hoc, after observing all the data and the resulting rejected collection R. It is made explicit in Theorem 39.
+Theorem 39. Suppose R has simultaneous control of the FDR at level α. Define R = {i ∈ [m] : {i} ∈ R}. Then R controls FWER at level α, that is, for every P ∈ M , P(R ∩ NP = ∅) ≥ 1 − α.
+Theorem 39 is a special case of the more general result that the e-Closure Principle allows post hoc choice of the error metric. Let F be the set of all error functions under consideration.
+Definition 40. A collection of discovery sets (REαRf )f∈F provides simultaneous error rate control over F if
+EP
+"
+sup
+f∈F
+max
+R∈REαRf
+fNP (R)
+#
+≤ α for all P ∈ M (22)
+A collection of discovery sets with simultaneous error rate control over F allows one to choose any f ∈ F and a corresponding rejection set REαRf ∈ REαRf post hoc, while ensuring valid error rate control. This is an unconditional post hoc guarantee over the data-dependent choice of f and REαRf ; it should not be interpreted as error control conditional on the realized choice of loss. It turns out that the e-Closure Principle is necessary and sufficient for such simultaneous error rate control.
+Theorem 41 (The e-Closure Principle for simultaneous error rate control). For any collection of nonnegative losses F and collection of discovery sets (RERf
+α )f∈F with simultaneous error rate control over F , there exists an e-collection E and resulting collection of simultaneous discovery sets (REαRf (E))f∈F such that REαRf ⊆ REαRf (E) for all f ∈ F . Further, (REαRf (E))f∈F provides simultaneous error rate control over F for every e-collection E.
+Example 42 (Post hoc choice of the FDX threshold). False discovery exceedance control at level γ, also called γ-FDX control, has been a well studied problem in the multiple testing literature, with early contributions by Korn et al. (2004) and Van der Laan et al. (2004) more recent developments including Lehmann and Romano (2005a); Romano and Shaikh (2006); Guo and Romano (2007); Romano and Wolf (2007); Guo et al. (2014); Delattre and Roquain (2015). While such methods have generally been constructed via FWER controlling procedures, Katsevich and Ramdas (2020) showed that γ-FDX guarantees could also be produced through pathwise FDR controlling procedures. Here, we show that simultaneous (over γ) γ-FDX control is a special case of simultaneous error control. For a fixed γ ∈ [0, 1), define the loss fγ
+N (R) = 1{FDPN (R) > γ}.
+In particular, the usual fixed γ-FDX guarantee is recovered by taking F to contain a single value of γ; taking α = 1/2 yields the corresponding median-FDP interpretation (e.g., as is studied by Hemerik et al. (2024)), connecting this example to quantile-FDP control (Genovese and Wasserman, 2006).
+26
+
+
+Otherwise, setting F = {fγ : γ ∈ (0, 1)} permits simultaneous error rate control over F and enables the researcher to choose γ post hoc while retaining the aggregate guarantee in (22), which recovers the simultaneous control of (Goeman and Solari, 2011; Goeman et al., 2021). Formally, if we have a family of discovery sets (Rγ )γ∈(0,1) such that Rγ ∈ RERfγ
+α for all γ ∈ (0, 1), then (22) implies the following uniform guarantee:
+P(exists γ ∈ (0, 1) s.t. FDPNP (Rγ) > γ) ≤ α.
+Example 43 (Deciding between e-Holm and eBH post hoc). Let eS be defined as the mean e-value in Section 5. Let our collection of losses be F = {FDP, f} where we define fS(R) = 1{|S ∩ R| > 0} as the loss for FWER control. Note that Re-Holm
+α := RFWER
+α (E) is precisely the e-Holm procedure (Vovk and Wang, 2021; Hartog and Lei, 2025). Consequently, we could decide based on the data to control the FDR with the eBH procedure or to control the FWER with the e-Holm procedure. An example of such a rule is to choose a fixed threshold r∗ ∈ [m], and we choose to only use the eBH discovery set if |ReαBH| ≥ r∗, and the e-Holm discovery set otherwise. The guarantee we would get is as follows:
+EP
+h
+FDPNP (ReBH
+α ) · 1{|ReBH
+α | ≥ r∗} + fNP (ReHolm
+α ) · 1{|ReBH
+α | < r∗}
+i
+≤ α.
+A practitioner may want post hoc control under this decision rule because FDR may not be meaningful for small discovery sets, yet the size of the data driven discovery set is not known in advance. Here, the practitioner controls FWER for small discovery sets and FDR for large discovery sets. This provides a meaningful guarantee for distributions that yield only discovery sets smaller than r∗ (e.g., in a strong, sparse regime): in this case, the procedure guarantees FWER control. In every case, FDR is controlled because FWER control implies FDR control. Thus, a post hoc choice of loss allows the practitioner to adapt the error guarantee to the unknown underlying distribution. A related multi-resolution procedure appears in Hemerik (2025) for FWER and γ-FDX control that generalizes the well-known maxT procedure (Westfall and Young, 1993) for FWER control. For a fixed γ, when the maxT procedure rejects fewer than γ−1 hypotheses, it coincides with the multi-resolution procedure and this multi-resolution procedure retains the same FWER control. When at least γ−1 hypotheses are rejected by maxT, the multi-resolution procedure can make additional rejections while retaining γ-FDX control. Indeed, a promising direction for future work is to investigate what e-Closure based procedures can be derived for hybrid γ-FDX and FWER control as well.
+We can also utilize our result attaining control for multiple error rates to recover the Closure Principle for simultaneous FDP control (Genovese and Wasserman, 2006; Goeman and Solari, 2011; Goeman et al., 2021). A random function q : 2[m] → [0, 1] is said to provide simultaneous FDP control, if for all P ∈ M ,
+P(q(R) ≥ FDPNP (R) for all R ∈ 2[m]) ≥ 1 − α.
+Similar to Goeman et al. (2021), we will focus on simultaneous true discovery guarantee in the following, which is equivalent to simultaneous FDP control but easier to handle. In contrast to q, a simultaneous true discovery procedure d : 2[m] → N0 provides a simultaneous lower bound for the number of true discoveries in R, |R \ NP|, over all R ∈ 2[m]. Let Φ be a family of local intersection tests. Genovese and Wasserman (2006) and Goeman and Solari (2011) showed that the closed procedure dΦ : 2[m] → N0 defined by
+dΦ(R) := min{|R \ S| : S ∈ 2[m], φS = 0} (23)
+provides simultaneous true discovery guarantee. We now show how this procedure can be reconstructed by our e-Closure Principle. Let E = (eS)S∈2[m] be an e-collection and fd, d ∈ [m]0 := {0} ∪ [m], be the error
+27
+
+
+function defined by fd
+N (R) := 1{|R \ N | < d}. For a fixed R ∈ 2[m], we define dE as the largest d ∈ [m]0
+such that R is contained in RERfd
+α (E);
+dE(R) := max
+(
+d ∈ [m]0 : eS ≥ fd
+S (R)
+α ∀S ∈ 2[m]
+)
+. (24)
+Theorem 44. The procedure dE defined by (24) provides simultaneous true discovery guarantee,
+P(dE(R) ≤ |R \ NP| for all R ∈ 2[m]) ≥ 1 − α ∀P ∈ M.
+Furthermore, if eS = φS/α, S ∈ 2[m], for some family of level α local tests Φ, then dE(R) = dΦ(R) for all R ∈ 2[m], where dΦ is given by (23).
+Since Goeman et al. (2021) proved that every admissible procedure with simultaneous true discovery guarantee can be constructed by (23), Theorem 44 immediately implies that the same also holds for our procedure (24) based on the e-Closure Principle.
+Remark 45. For particular choices of uncountable F, the expectation in (22) might not be well-defined. One could avoid this by modifying the definition of simultaneous error rate control to require that
+sup
+f∈F
+max
+R∈RERf (x)
+fS(R) ≤ US(x) for all possible data x and for each S ⊆ [m],
+where U S = US(X), S ⊆ [m], are nonnegative random variables with EP [U NP ] ≤ α. Alternatively, one could make weak measure-theoretic assumptions on the error functions and data (see, e.g., Chugg et al. (2025)). With this, it is also possible to extend the equivalence of simultaneous and post hoc control (Lemma 4) to error functions. However, such technical subtleties are beyond the scope of this work.
+8.3 Post hoc choice of nominal level
+Theorem 39 gives researchers the exciting option of switching from one error rate to another after seeing the data. In this section, we shall see that, for certain e-Closure procedures, there is the additional option of adapting the nominal error rate α to the data. To achieve this, we will extend Definition 2 for simultaneous error rate control further, building on the post hoc validity definitions of Gru ̈nwald (2024) and Koning (2023). This lets us select the nominal level α > 0 in a post hoc fashion and retain a validity guarantee.
+Definition 46 (Simultaneous ERf and α control). Let F be a family of loss functions. For every α > 0 and f ∈ F , let REαRf ⊆ 2[m] be a simultaneous discovery set. Then RF := (REαRf )f∈F,α>0, ensures simultaneous control over the family of error functions F and nominal levels α > 0 if, for every P ∈ M ,
+EP sup
+α>0
+sup
+f∈F
+max
+R∈REαRf
+fNP (R)
+α ≤ 1.
+where we let 0/0 = 0 and x/0 = ∞ for any positive x.
+For uncountable loss families or level sets, we assume the displayed supremum is measurable (for example through joint measurability and separability). Where ERf control in the simultaneous sense according to Definition 2 allows the researcher to choose R ∈ Rα freely for a pre-chosen α, ERf control according to Definition 46 implies that the researcher may choose freely a post hoc R ∈ REαRf for each value of α (and for each choice of f). Note that we do not directly bound the expectation of the loss by α anymore in the post hoc definition — however, when α is fixed to be a single value, the standard error control of Definition 2 is equivalent to the post hoc definition in Definition 46. Furthermore, FDR control with post hoc α implies FDR control with data-dependent α.
+28
+
+
+Corollary 47. Say we have a collection of simultaneous discovery sets (REαRf )f∈F,α>0. Let f be a datadependent loss function in F, let α > 0 be a data-dependent nominal level, and let R be a measurable selector satisfying R ∈ RERf
+α almost surely. These objects can be arbitrarily dependent with each other and with (REαRf )f∈F,α>0. If (REαRf )f∈F,α>0 has simultaneous control in the sense of Definition 46, then, for all P ∈ M,
+EP
+fNP (R)
+α ≤ 1.
+FDR control with post hoc α, though seemingly more complicated, follows more or less directly from the e-Closure Principle. It only adds the additional requirement that the e-collection E does not depend on α, since the resulting objects would no longer be valid e-values. For example, for our BY calibrator in (12), one must fix a single α level in the calibrator, separate from the post hoc nominal level α. We cannot allow the calibrator’s α level to vary in a data-dependent fashion, since the resulting random variable would no longer be a valid e-value. The proof is similar to that of Theorem 6. Theorem 48 extends the corresponding result of Ramdas and Wang (2025, Theorem 9.10) that α can be chosen post hoc in eBH to general e-Closure procedures and simultaneous FDR control.
+Theorem 48 (The e-Closure Principle for general simultaneous error control). Suppose E does not depend on α. Then (Rfα(E))f∈F,α>0 guarantees simultaneous control over F and α > 0 (Definition 46). Furthermore for every collection (Rf
+α)f∈F,α>0 with simultaneous control, there exists an e-collection E (that does not depend on α) such that REαRf ⊆ REαRf (E) for all f ∈ F and α > 0.
+Proof. Choose any P ∈ M . Then,
+EP sup
+α>0
+sup
+f∈F
+max
+R∈REαRf (E)
+fNP (R) α
+!
+≤ EP(eNP ) ≤ 1.
+This shows the validity of the post hoc controlling collection defined from an e-collection. Now, we can define the following e-values for each S ⊆ [m] from any RF :
+eS = sup
+α>0
+sup
+f∈F
+max
+R∈REαRf
+fS (R)
+α . (25)
+We can then use these e-values to define a post hoc valid procedure again as the following application of the e-Closure procedure: RF (E) := (REαRf (E))f∈F,α>0. The e-collection with e-values defined in (25) is valid via the fact that RF is post hoc valid as defined in Definition 46. Then by definition of REαRf (E), we know for any R ∈ REαRf , we have R ∈ REαRf (E) as well, and we get our desired dominance result.
+Remark 49. Theorem 48 could still be used with methods such as BY whose calibrator depends on a fixed level: denote that calibration level by α0, and keep it fixed while the nominal error-control level α is chosen post hoc.
+Thus, in this section, we have shown that the e-Closure Principle not only increases power but also allows greater variety in the choice of discovery set and error control guarantees.
+9 Restricted combinations
+Thus far, we have always constructed an e-collection simply by constructing e-values for intersection hypotheses HS. This is sufficient for making an e-collection, but not necessary (see Remark 50). We can
+29
+
+
+instead make e-values for all partitioning hypotheses H ̄S := {P ∈ M : NP = S} (Finner and Strassburger, 2002). If each eS is an e-value for H ̄S, then in particular eNP is a valid e-value, since H ̄NP is true for every P. Since H ̄S ⊆ HS, there is a potential power gain in switching from HS to H ̄S. One situation in which this power gain might materialize is in the context of restricted combinations (Shaffer, 1986). For example, suppose we have m = 3 and H1 : θA = θB, H2 : θA = θC and H3 : θB = θC . Then we have H{1,3} : θA = θB = θC , but H ̄{1,3} = {P ∈ M : θA = θB = θC and θA ̸= θC } = ∅. Consequently, validity imposes no constraint on e{1,3}: its e-Closure constraint may be omitted, or one may use an arbitrarily large constant. Another way to look at this is that there is no P for which NP = {1, 3}. Taking restricted combinations into account can therefore lead to substantial gains in power. For example, if we test the m = 6 pairwise comparisons among four parameters θA, θB, θC , θD, attainable true null patterns correspond to the B4 = 15 equivalence relations on four labels. Thus, among all 26 = 64 subsets, 15 partitioning hypotheses are nonempty and 49 are empty; excluding the empty true null set leaves 14 attainable and 49 impossible subsets among the 63 nonempty subsets. Suppose that the hypothesis H1 : θA = θB has e-value 4α−1, H2 : θA = θC and H3 : θA = θD both have e-values of α−1, while the other three hypotheses have e-values of 0. Then eBH would only reject R = {1} if restricted combinations were ignored, but could additionally reject R = {1, 2, 3} (and all its subsets) when they are used.
+Remark 50. When fN (R) is nondecreasing in N under set inclusion, every simultaneously valid procedure admits a reconstructing e-collection whose eS is valid for the intersection hypothesis HS. Thus intersection valid local e-values suffice for completeness. Partition valid local e-values can nevertheless be strictly more powerful when some null configurations are impossible. Without monotonicity of the loss, validity of eNP is the necessary and sufficient condition.
+10 Computation
+For an arbitrary e-collection E, checking whether R ∈ RFαDR(E) involves computing and using exponentially many e-values. However, in special cases, most notably for eBH, BY and Su methods proposed above, computation reduces to polynomial time. It is easy to check that the local e-values of BY and Su have the property that they are weakly decreasing in the per-hypothesis p-values. We can exploit this in the spirit of the shortcuts for closed testing by Dobriban (2020). To check for a set R whether αeS ≥ |R ∩ S|/|R|, it suffices to check, for each 1 ≤ a ≤ |R| and each 0 ≤ b ≤ m − |R|, whether the condition holds for the set S consisting of the indices of a largest p-values in R and of the b largest p-values in [m] \ R. This takes O(m2) evaluations of eS. Then, finding the largest set [r] that is rejected by the method takes O(m3) such evaluations, or O(m4) time. Precalculation of sums of e-values can reduce this to O(m3) for BY. For eBH we can do the calculations even faster. We will illustrate this for sets R of the form [r]. Define
+sk :=
+k
+X
+i=1
+ei, and g(a, r, b) := sm − sb + sr − sa − (m − b + r − a)(r − a)
+rα .
+We have αeS ≥ |R ∩ S|/|R|, for all S ∈ 2[m], if and only if, for all a ∈ {0, . . . , r − 1} and b ∈ {r, . . . , m}, g(a, r, b) ≥ 0. It is easily checked that g(a, r, b) is convex in b. Therefore, for fixed r and a, the minimum of g can be found in O(log m) time. We can therefore check whether R ∈ RFαDR(E) in O(m log m) time, and find the largest such R in O(m2 log m) time by trying all values of r from m downward. In practice, if r is substantially larger than the size of the largest rejected R, one quickly finds a, b for which g(a, r, b) < 0, so that computation time for finding the largest rejected R is often closer to m log m in practice. Checking
+30
+
+
+whether R ∈ RFαDR(E) for sets R not of the form [r] can also be done in O(m log m) time following essentially the same reasoning as for sets of the form [r], adapting the definition of g as appropriate. The eBH, BY and Su methods have been efficiently implemented in the eClosure R package, available on CRAN, and the eclosure Python package on PyPI.
+11 Additional real data applications
+To better understand the relationship between BY and other possible FDR controlling procedures, we produce in Table 5 a more comprehensive version of Table 1 that also includes the number of discoveries made by the standard BH procedure and the eBH procedure applied to p-values calibrated via (12), which we denote by “’eBH + cal.”. We can see that the BH procedure still makes many more discoveries than all other procedures. Further, we do see that BY practically is more powerful than eBH with calibration.
+Table 5: Number of discoveries made by existing procedures, Benjamini and Yekutieli (2001) (BY) and Benjamini and Hochberg (1995) (BH), and by the e-Closure-derived procedures BY and eBH applied to pvalues calibrated via (12), for the same datasets as Table 1. The BH procedure is used as a benchmark here, as it is invalid under arbitrary dependence (unlike the 3 other procedures), and requires strong assumptions on positive dependence among the p-values.
+Dataset m α = 0.05 α = 0.1
+BY eBH + cal. BY BH BY eBH + cal. BY BH
+APSAC 15 3 3 3 4 3 4 5 9 NAEP 34 6 7 8 11 8 11 11 12 PADJUST 50 12 14 15 20 17 20 20 21 PVALUES 4,289 129 144 145 767 225 270 275 1,139 VANDEVIJVER 4,919 614 672 677 1,340 779 859 866 1,728 GOLUB 7,128 617 640 648 1,249 743 791 799 1,605
+In addition to the results for BY and BY in Table 1, we also compare the eBH procedure and the eBH procedure on a real cryptocurrency dataset. To evaluate the efficacy of eBH, Wang and Ramdas (2022) introduced a cryptocurrency dataset and e-values for monthly coin returns. The return data ranged from 2015 to 2021, and the e-values were constructed to test whether each coin’s return over the period was positive. Three scenarios are considered, corresponding to the coins with the 426 (all coins), 200, and 100 highest market capitalizations. Three strategies are also considered for generating the e-values, corresponding to three investment strategies: (1) Buy and Hold, (2) Rebalance 30%, and (3) Rebalance 50%. The resulting number of discoveries for each procedure is shown in Table 6. Thus, we can see that eBH always makes at least as many discoveries as eBH (as guaranteed), and often substantially more, especially at higher values of α. Our results on real datasets empirically confirm the theoretical improvements of these closed procedures over their respective standard counterparts.
+12 Discussion
+The e-Closure Principle resolves the disparity between FWER and FDP tail probability methods on one side and FDR control methods on the other. It translates the Closure Principle for these methods directly to the
+31
+
+
+Table 6: Number of discoveries for eBH and eBH made on monthly return data of cryptocurrency coins introduced in Wang and Ramdas (2022).
+Strategy m α = 0.05 α = 0.2
+eBH eBH eBH eBH
+Buy and Hold 100 0 1 19 34 200 4 7 21 52 426 3 9 18 68 Rebalance 30% 100 6 11 21 64 200 12 28 44 105 426 21 34 55 124 Rebalance 50% 100 13 29 40 65 200 28 55 65 108 426 42 62 83 140
+FDR context, bringing many of its benefits into the realm of FDR. The e-Closure Principle can be used to propose new methods and improve existing ones. In this paper, we have mostly focused on improving existing methods, in order to showcase the power of the principle. However, we believe that its greatest strength is in the development of novel methods. To develop an FDR control method, a researcher only needs to decide how to aggregate the evidence against a partitioning or intersection hypothesis into an e-value. After making that choice, the only remaining problem to be solved is computational. Designing how to aggregate such evidence into an e-value can require extra work. For example, when one already has access to an e-value for each hypothesis, the e-Closure Principle immediately provides a method for multiple testing that is robust to arbitrary dependence by taking the average of the evalues in each intersection hypothesis. On the other hand, when one has per-hypothesis p-values, it may seem an attractive option to convert such p-values to per-hypothesis e-values and apply the e-Closure Principle. However, for the p-value based methods BY and Su, we have seen further improvement by deriving more powerful local e-values directly for the intersection hypotheses. The e-Closure Principle also brings post hoc flexibility to FDR control on a scale that was previously only known in FDP control. Rather than only a single rejection set, researchers have many rejection sets to choose from, and they may use all the data to decide which one to report, while still retaining FDR control. If signal is very strong, an attractive option is to switch to FWER control post hoc, or for methods in which the e-values do not depend on α, to adjust the target FDR level to match the amount of signal in the data. Finally, e-Closure is not restricted to the classical error rate, but allows methods to be formulated for novel error rates, as long as they can be written as expected loss. There are several ways in which this work may be extended. We assumed a finite number of hypotheses, and the e-Closure Principle could also be used to derive procedures for infinite hypotheses (i.e., in online multiple testing).There are also many more FDR controlling methods than we have considered in this paper, but we believe that some of them can be improved, or at least made simultaneous, using e-Closure. Finding polynomial time algorithms for some such improvements will be challenging, but the literature on advanced shortcuts in closed testing may help. For example, the branch and bound algorithm may be as useful in e-Closure as it is in closed testing (Vesely et al., 2023).
+Acknowledgments We thank Aure`le Mingam for pointing out an error with our theorem relating to appyling e-Closure to BH variants and correcting our proof.
+32
+
+
+Declaration of funding Rianne de Heide’s work was supported by funding from NWO Veni grant number VI.Veni.222.018. Lasse Fischer acknowledges funding by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) – Project number 281474342/GRK2224/2. Aaditya Ramdas acknowledges funding from NSF grant DMS-2310718.
+References
+Rina Foygel Barber and Emmanuel J. Cande`s. Controlling the false discovery rate via knockoffs. The Annals of Statistics, 43(5):2055–2085, 2015a. 5, 12, 25
+Rina Foygel Barber and Emmanuel J. Cande`s. Supplement to “controlling the false discovery rate via knockoffs”. Supplementary material for The Annals of Statistics, 2015b. 25
+Yoav Benjamini and Yosef Hochberg. Controlling the false discovery rate: A practical and powerful approach to multiple testing. Journal of the Royal Statistical Society. Series B (Methodological), 57(1):289–300, 1995. 3, 5, 11, 20, 31
+Yoav Benjamini and Yosef Hochberg. On the adaptive control of the false discovery rate in multiple testing with independent statistics. Journal of Educational and Behavioral Statistics, 25(1):60–83, 2000. 5
+Yoav Benjamini and Daniel Yekutieli. The control of the false discovery rate in multiple testing under dependency. The Annals of Statistics, 29(4):1165–1188, 2001. 3, 5, 12, 16, 17, 19, 31
+Yoav Benjamini, Abba M Krieger, and Daniel Yekutieli. Adaptive linear step-up procedures that control the false discovery rate. Biometrika, 93(3):491–507, 2006. 9, 14, 22
+Gilles Blanchard and Etienne Roquain. Two simple sufficient conditions for FDR control. Electronic Journal of Statistics, 2:963–992, 2008. 3, 13, 17, 18, 21
+Gilles Blanchard and Etienne Roquain. Adaptive false discovery rate control under independence and dependence. Journal of Machine Learning Research, 10(12), 2009. 9, 14, 22
+Christopher Blier-Wong and Ruodu Wang. Improved thresholds for e-values. arXiv:2408.11307, 2024. 43
+Frank Bretz, Willi Maurer, Werner Brannath, and Martin Posch. A graphical approach to sequentially rejective multiple test procedures. Statistics in Medicine, 28(4):586–604, 2009. 43
+Emmanuel Cande`s, Yingying Fan, Lucas Janson, and Jinchi Lv. Panning for gold: ‘Model-X’ knockoffs for high dimensional controlled variable selection. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 80(3):551–577, 2018. 12, 25
+Ben Chugg, Tyron Lardy, Aaditya Ramdas, and Peter Gru ̈nwald. On admissibility in post-hoc hypothesis testing. arXiv:2508.00770, 2025. 28
+Eugenio Clerico. A simple geometric proof for the characterisation of E-merging functions. Statistics & Probability Letters, 236:110750, 2026. doi: 10.1016/j.spl.2026.110750. 14, 41
+Xinping Cui, Thorsten Dickhaus, Ying Ding, and Jason C. Hsu. Handbook of Multiple Comparisons. CRC Press, 2021. 42
+Sanjit Dandapanthula and Aaditya Ramdas. Multiple testing in multi-stream sequential change detection. arXiv:2501.04130, 2025. 44
+33
+
+
+Sylvain Delattre and Etienne Roquain. New procedures controlling the false discovery proportion via Romano–Wolf’s heuristic. The Annals of Statistics, 43(3):1141–1177, 2015. 26
+Edgar Dobriban. Fast closed testing for exchangeable local tests. Biometrika, 107(3):761–768, 2020. 30
+Sebastian Do ̈hler and Iqraa Meah. A unified class of null proportion estimators with plug-in FDR control. arXiv:2307.13557, 2023. 22
+Mitra Ebrahimpoor and Jelle J Goeman. Inflated false discovery rate due to volcano plots: problem and solutions. Briefings in Bioinformatics, 22(5), 2021. 25
+Mitra Ebrahimpoor, Pietro Spitali, Kristina Hettne, Roula Tsonaka, and Jelle Goeman. Simultaneous enrichment analysis of all possible gene-sets: unifying self-contained and competitive methods. Briefings in Bioinformatics, 21(4), 2020. 25
+Bradley Efron. Large-Scale Inference: Empirical Bayes Methods for Estimation, Testing, and Prediction. Institute of Mathematical Statistics Monographs. Cambridge University Press, Cambridge, 2010. 7
+Bradley Efron and Trevor Hastie. Computer Age Statistical Inference: Algorithms, Evidence, and Data Science. Cambridge University Press, 2016. 5
+H Finner and K Strassburger. The partitioning principle: a powerful tool in multiple decision theory. The Annals of Statistics, 30(4):1194–1213, 2002. 3, 30
+Helmut Finner and Markus Roters. On the false discovery rate and expected type I errors. Biometrical Journal, 43(8):985–1005, 2001. 11, 24
+Lasse Fischer and Aaditya Ramdas. Admissible online closed testing must employ e-values. arXiv:2407.15733, 2024. 43
+Lasse Fischer, Ziyu Xu, and Aaditya Ramdas. An online generalization of the (e-)Benjamini-Hochberg procedure. arXiv:2407.20683, 2024. 3
+Dean P. Foster and Robert A. Stine. α-investing: A procedure for sequential control of expected false discoveries. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 70(2):429–444, 2008. 44
+Zijun Gao. An adaptive null proportion estimator for false discovery rate control. Biometrika, 112(1), 2025. 22
+Christopher R Genovese and Larry Wasserman. Exceedance control of the false discovery proportion. Journal of the American Statistical Association, 101(476):1408–1417, 2006. 3, 10, 26, 27
+Jelle Goeman. A uniform improvement of the Benjamini-Hochberg procedure via e-closure. arXiv:2606.01854, 2026. 4, 5, 20, 21, 24
+Jelle Goeman, Rianne de Heide, and Aldo Solari. The e-partitioning principle of false discovery rate control. arXiv:2504.15946, 2025. 1
+Jelle J Goeman and Aldo Solari. Multiple testing for exploratory research. Statistical Science, 26(4):584597, 2011. 3, 10, 24, 25, 27
+Jelle J Goeman and Aldo Solari. Multiple hypothesis testing in genomics. Statistics in Medicine, 33(11): 1946–1978, 2014. 5
+34
+
+
+Jelle J Goeman and Aldo Solari. On selection and conditioning in multiple testing and selective inference. Biometrika, 111(2):393–416, 2024. 7
+Jelle J Goeman, Jesse Hemerik, and Aldo Solari. Only closed testing procedures are admissible for controlling false discovery proportions. The Annals of Statistics, 49(2):1218–1238, 2021. 3, 24, 27, 28
+Peter Gru ̈nwald, Rianne de Heide, and Wouter M. Koolen. Safe testing. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 86:1163–1171, 2024. 8
+Peter D. Gru ̈nwald. The e-posterior. Philosophical Transactions of the Royal Society A: Mathematical, Physical and Engineering Sciences, 381(2247), 2023. 8
+Peter D. Gru ̈nwald. Beyond Neyman–Pearson: E-values enable hypothesis testing with a data-driven alpha. Proceedings of the National Academy of Sciences, 121(39), 2024. 8, 9, 28, 42
+Wenge Guo and Joseph P. Romano. A generalized sidak–holm procedure and control of generalized error rates under independence. Statistical Applications in Genetics and Molecular Biology, 6(1):Article 3, 2007. 26
+Wenge Guo, Li He, and Sanat K. Sarkar. Further results on controlling the false discovery proportion. arXiv:1406.0266, 2014. 26
+Will Hartog and Lihua Lei. Family-wise error rate control with e-values. arXiv:2501.09015, 2025. 27, 43
+Jesse Hemerik. Resampling-based multi-resolution false discovery exceedance control. arXiv:2509.02376, 2025. 27
+Jesse Hemerik, Aldo Solari, and Jelle J. Goeman. Flexible control of the median of the false discovery proportion. Biometrika, 111(4):1129–1150, 2024. 26
+Kevin S. S. Henning and Peter H. Westfall. Closed testing in pharmaceutical research: Historical and recent developments. Statistics in Biopharmaceutical Research, 7(2):126–147, 2015. 42
+Sture Holm. A Simple Sequentially Rejective Multiple Test Procedure. Scandinavian Journal of Statistics, 6(2):65–70, 1979. 43
+Nikolaos Ignatiadis, Ruodu Wang, and Aaditya Ramdas. E-values as unnormalized weights in multiple testing. Biometrika, 111(2):417–439, 2024. 3, 14, 44
+Nikolaos Ignatiadis, Ruodu Wang, and Aaditya Ramdas. Asymptotic and compound e-values: Multiple testing and empirical Bayes. arXiv:2409.19812, 2025. 3, 9, 11, 12, 15, 16
+Eugene Katsevich and Aaditya Ramdas. Simultaneous high-probability bounds on the false discovery proportion in structured, regression and online settings. The Annals of Statistics, 48(6):3465–3487, 2020. 3, 24, 26
+Eugene Katsevich, Chiara Sabatti, and Marina Bogomolov. Filtering the rejection set while preserving false discovery rate control. Journal of the American Statistical Association, 118(541):165–176, 2023. 3, 24
+Alexander S. Kechris. Classical Descriptive Set Theory, volume 156 of Graduate Texts in Mathematics. Springer-Verlag, New York, 1995. 40
+Nick W Koning. Post-hoc α hypothesis testing and the post-hoc p-value. arXiv:2312.08040, 2023. 28
+35
+
+
+Edward L. Korn, James F. Troendle, Lisa M. McShane, and Richard Simon. Controlling the number of false discoveries: Application to high-dimensional genomic data. Journal of Statistical Planning and Inference, 124(2):379–398, 2004. 26
+Junu Lee and Zhimei Ren. Boosting e-BH via conditional calibration. arXiv:2404.17562, 2024. 3, 43
+Junu Lee, Ilia Popov, and Zhimei Ren. Full-conformal novelty detection: A powerful and non-random approach. arXiv:2501.02703, 2025. 43
+Yonghoon Lee and Zhimei Ren. Selection from Hierarchical Data with Conformal E-values. arXiv:2501.02514, 2025. 43
+E. L. Lehmann and Joseph P. Romano. Generalizations of the familywise error rate. The Annals of Statistics, 33(3):1138–1154, 2005a. 26
+Erich Leo Lehmann and Joseph P. Romano. Testing Statistical Hypotheses. Springer, 2005b. 8
+Lihua Lei and William Fithian. AdaPT: an interactive procedure for multiple testing with side information. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 80(4):649–679, 2018. 3, 24
+Lihua Lei, Aaditya Ramdas, and William Fithian. A general interactive framework for false discovery rate control under structural constraints. Biometrika, 108(2):253–267, 2021. 3, 24
+Guanxun Li and Xianyang Zhang. A note on e-values and multiple testing. Biometrika, 112(1), 2025. 3, 12, 21
+Alan Malek, Sumeet Katariya, Yinlam Chow, and Mohammad Ghavamzadeh. Sequential multiple hypothesis testing with type I error control. In International Conference on Artificial Intelligence and Statistics, 2017. 6
+Ruth Marcus, Eric Peritz, and K. R. Gabriel. On closed testing procedures with special reference to ordered analysis of variance. Biometrika, 63(3):655–660, 1976. 3, 5, 7, 10
+Willi Maurer, Frank Bretz, and Xiaolei Xun. Optimal test procedures for multiple hypotheses controlling the familywise expected loss. Biometrics, 79(4):2781–2793, 2023. 6
+Aaditya Ramdas and Ruodu Wang. Hypothesis testing with e-values. Foundation and Trends® in Statistics, 2025. 8, 29, 42
+Aaditya K. Ramdas, Rina F. Barber, Martin J. Wainwright, and Michael I. Jordan. A unified treatment of multiple testing with prior knowledge using the p-filter. The Annals of Statistics, 47(5):2790–2821, 2019. 49
+Zhimei Ren and Rina Foygel Barber. Derandomised knockoffs: leveraging e-values for false discovery rate control. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 86(1):122–154, 2024. 3, 12, 25
+Joseph P. Romano and Azeem M. Shaikh. On stepdown control of the false discovery proportion. The Annals of Statistics, 34(4):1850–1873, 2006. 26
+Joseph P. Romano and Michael Wolf. Control of generalized error rates in multiple testing. The Annals of Statistics, 35(4):1378–1408, 2007. 26
+36
+
+
+Jonathan D Rosenblatt, Livio Finos, Wouter D Weeda, Aldo Solari, and Jelle J Goeman. All-resolutions inference for brain imaging. NeuroImage, 181:786–796, 2018. 25
+Sanat K. Sarkar. On methods controlling the false discovery rate. Sankhya ̄: The Indian Journal of Statistics, Series A, 70(2):135–168, 2008. 22
+Glenn Shafer. Testing by betting: A strategy for statistical and scientific communication. Journal of the Royal Statistical Society: Series A (Statistics in Society), 184(2):407–431, 2021. 8
+Glenn Shafer, Alexander Shen, Nikolai Vereshchagin, and Vladimir Vovk. Test martingales, Bayes factors and p-values. Statistical Science, 26(1):84–101, 2011. 16
+Juliet Popper Shaffer. Modified sequentially rejective multiple test procedures. Journal of the American Statistical Association, 81(395):826–831, 1986. 3, 4, 6, 9, 30
+R John Simes. An improved Bonferroni procedure for multiple tests of significance. Biometrika, 73(3): 751–754, 1986. 19
+Aldo Solari and Jelle J Goeman. Minimally adaptive BH: A tiny but uniform improvement of the procedure of Benjamini and Hochberg. Biometrical Journal, 59(4):776–780, 2017. 3, 5, 20
+E. Sonnemann and H. Finner. Vollsta ̈ndigkeitssa ̈tze fu ̈r multiple testprobleme. In Multiple Hypothesenpr ̈ufung / Multiple Hypotheses Testing, volume 70, pages 121–135. Springer, 1988. 7, 10
+Eckart Sonnemann. Allgemeine L ̈osungen multipler Testprobleme. Universita ̈t Bern. Institut fu ̈r Mathematische Statistik und Versicherungslehre, 1982. 3, 10
+Eckart Sonnemann. General solutions to multiple testing problems. Biometrical Journal, 50(5):641–656, 2008. 3, 5, 7, 10
+John D. Storey. A direct approach to false discovery rates. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 64(3):479–498, 2002. 7, 22
+John D Storey, Jonathan E Taylor, and David Siegmund. Strong control, conservative point estimation and simultaneous conservative consistency of false discovery rates: a unified approach. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 66(1):187–205, 2004. 5, 9, 14, 22
+Weijie J Su. The FDR-linking theorem. arXiv:1812.08965, 2018. 3, 4, 5, 16, 17, 19, 20
+Liulei Sun and Ruodu Wang. Admissibility and complete classes for false discovery rate control with E
+values, 2026. URL https://arxiv.org/abs/2607.14380. 14, 41
+Mark J Van der Laan, Sandrine Dudoit, and Katherine S Pollard. Augmentation procedures for control of the generalized family-wise error rate and tail probabilities for the proportion of false positives. Statistical Applications in Genetics & Molecular Biology, 3(1), 2004. 26
+Anna Vesely, Livio Finos, and Jelle J Goeman. Permutation-based true discovery guarantee by sum tests. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 85(3):664–683, 2023. 32
+Vladimir Vovk and Ruodu Wang. E-values: Calibration, combination and applications. The Annals of Statistics, 49(3):1736–1754, 2021. 12, 27
+Vladimir Vovk and Ruodu Wang. Confidence and discoveries with e-values. Statistical Science, 38(2): 329–354, 2023. 8, 42
+37
+
+
+Vladimir Vovk, Bin Wang, and Ruodu Wang. Admissible ways of merging p-values under arbitrary dependence. The Annals of Statistics, 50(1):351–375, 2022. 14
+Ruodu Wang. The only admissible way of merging arbitrary e-values. Biometrika, 2025. 14
+Ruodu Wang and Aaditya Ramdas. False discovery rate control with e-values. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 84(3):822–852, 2022. 3, 5, 11, 12, 13, 18, 31, 32, 39, 43
+Peter H. Westfall and S. Stanley Young. Resampling-Based Multiple Testing: Examples and Methods for P-Value Adjustment. Wiley, New York, 1993. 27
+Brian L. Wiens and Alexei Dmitrienko. The fallback procedure for evaluating a single family of hypotheses. Journal of Biopharmaceutical Statistics, 15(6):929–942, 2005. 43
+Ziyu Xu and Aaditya Ramdas. More powerful multiple testing under dependence via randomization. arXiv:2305.11126, 2023. 3, 38, 43
+Ziyu Xu, Ruodu Wang, and Aaditya Ramdas. Post-selection inference for e-value based confidence intervals. Electronic Journal of Statistics, 18(1):2292–2338, 2024. 8, 12, 17
+Ziyu Xu, Lasse Fischer, and Aaditya Ramdas. Bringing closure to FDR control: Beating the e-BenjaminiHochberg procedure. arXiv:2504.11759, 2025. 1
+Appendix
+We organize the appendix as follows. In Appendix A, we discuss several extensions to the eBH procedure based on modern developments in e-value based multiple testing, including randomization, boosting, and alternative e-merging functions. We include a regularity-qualified representation result for admissible multiple testing procedures on e-values in Appendix B and, in the separate Appendix C, formalize the ordering principle for symmetric local e-values. Appendix D covers related work on closed testing with e-values and boosting the power of the eBH procedure. In Appendix E, we show how our framework can be used to control more general multiple testing metrics such as mFDR and pFDR. Appendix F shows, for m > 4, that eBH is a uniform improvement in both simultaneity and power over minimally adaptive eBH. Appendix G provides a concrete example where eBH with calibration is more powerful than BY. Lastly, in Appendix H, we provide deferred proofs for results stated in the main text.
+A Extensions to eBH
+We discuss some extensions to the eBH procedure. These extensions primarily highlight the fact that our procedure retains the advantages of e-value procedures. Notably, two of the improvements we discuss, randomization and boosting, apply to any method based on the e-Closure Principle, not just the methods in this section that directly use input e-values.
+Randomization. Xu and Ramdas (2023) introduced stochastic rounding of e-values to improve e-value based hypothesis tests and the eBH procedure through randomization. We can apply stochastic rounding individually to each intersection e-value eS for S ⊆ [m], as follows. This technique can improve any
+38
+
+
+ERf-controlling procedure through its formulation as an e-Closure procedure; here, we illustrate a simple application to the eBH procedure. Define data-dependent lower support points
+aS := max
+R∈ReαBH
+FDPS (R)
+α , b := α−1, e⋆
+S := eS ∧ b
+for each S ∈ 2[m]. Thus 0 ≤ aS ≤ b. For aS < b, define the stochastically rounded e-value
+e ̄S = aS + (b − aS) · 1 U ≤ e⋆
+S − aS b − aS
+,
+and set e ̄S = b when aS = b. Here U is uniform on [0, 1] and independent of everything else. Since membership of the original e-Closure collection gives aS ≤ eS, the displayed probability lies in [0, 1], and
+E[e ̄S | E] = e⋆
+S ≤ eS .
+Hence e ̄NP is an e-value for every P ∈ M .
+Note that e ̄S ≥ aS almost surely, which means that RFαDR(  ̄E) ⊇ ReBH
+α , where  ̄E := ( ̄eS)S⊆[m]; that is, stochastic rounding can only increase the collection of valid discovery sets. Strict enlargement occurs on any event where the rounded local e-values make an additional e-Closure inequality hold, and whether such an event has positive probability depends on the true distribution.
+Boosting. Wang and Ramdas (2022) observed that one can increase the power of an e-value when testing against a finite set of rejection thresholds. In the most general setting of assuming arbitrary dependence, if one knows the marginal distribution of an e-value under the null, one can calculate a boosting factor b for an e-value E as follows
+b := max {b′ ∈ [1, ∞) : EP[T (b′E)] ≤ 1},
+where the expectation is taken under the known null distribution P ∈ M . Here, T is a truncation function that takes the largest element in a predetermined set that is less than or equal to the input. In our setting, one simple way to boost e-values is to define a different truncation function TA for each A ⊆ [m] as follows:
+TA(x) := max ({r/(αk) : r/(αk) ≤ x, k ∈ [m], r ∈ [k ∧ |A|]} ∪ {0}) .
+This truncation function differs from those used to boost the eBH procedure and is derived by restricting the support of eS to the values that FDPS(R)/α can take. For an intersection null, define
+bS := sup b ≥ 1 : sup
+P∈HS
+EP[TS(beS)] ≤ 1 .
+Then TS(bSeS) is a valid e-value (provided the supremum is attained; otherwise use any feasible b < bS) and is at least as powerful as eS in the sense that FDPS(R)/α ≤ eS implies FDPS(R)/α ≤ TS(bSeS) for all R ⊆ [m]. When a simple null distribution is completely known, the inner supremum reduces to expectation under that single distribution. Using the above boosted e-values immediately yields that the boosted eBH procedure dominates the original. Other boosting techniques may be possible given more dependence assumptions or knowledge about the joint distribution of the entire e-collection (eS)S⊆[m].
+39
+
+
+Alternative e-merging functions. While we used the average e-merging function in our formulation of the eBH procedure, one can use other e-merging functions when stronger dependence assumptions, i.e., independence or sequential dependence, are made about the e-values. For example, if we assume all null e-values are independent, one can let the e-values for each intersection hypothesis be the product of the base hypothesis e-values, i.e.,
+eS =
+Y
+i∈S
+ei.
+One can then proceed to define an alternative eBH procedure for the product e-merging function in a similar fashion as we did in Section 5, along with the corresponding algorithm of Section 10, by using the logarithm to turn the products into sums when computing e-values for the intersection hypotheses.
+B Admissibility under arbitrary dependence
+For this section, call a deterministic simultaneous procedure R(x) admissible if there is no other valid procedure R′(x) with R(x) ⊆ R′(x) for every input x and strict inclusion for at least one input.
+Proposition 51. Let M be the class of all probability distributions on [0, ∞)m, and, for each S ⊆ [m], let H ̄S be the set of distributions under which EP[ei] ≤ 1 for i ∈ S and EP[ej] > 1 for j ∈/ S. Suppose an admissible deterministic ERf-controlling procedure is represented by the e-Closure discovery set (2) from Borel local e-values
+eS = FS ((ei)i∈S , (ej )j∈/S ).
+Assume, for every nonempty S, that the envelope
+ψS((xi)i∈S) := sup
+(xj )j∈/S
+FS ((xi)i∈S , (xj )j∈/S )
+is Borel measurable. Then the procedure can be represented by an e-collection (with e′
+∅ = 0) where for every nonempty S,
+e′
+S=
+X
+i∈S
+wi,S ei + cS ,
+where wi,S, cS ≥ 0 and P
+i∈S wi,S + cS ≤ 1.
+Proof. Fix a nonempty S. Because eS is an e-value under every distribution in H ̄S, we first show that ψS is finite. If ψS(xS) = ∞ at some finite xS, choose q ∈ (0, 1) such that qxi ≤ 1 for every i ∈ S, and choose x−S with FS(xS, x−S) > 1/q. Put probability q on (xS, x−S) and probability 1 − q on (0, z−S), where the coordinates of z−S are sufficiently large that their expectations exceed one. This distribution belongs to H ̄S, but
+EP[FS((ei)i∈S, (ej )j∈/S)] ≥ qFS(xS, x−S) > 1,
+a contradiction. (When S = [m], the second atom may simply be placed at the origin.) It remains to show that ψS is a generalized e-merging function. Let Q be any distribution of (ei)i∈S satisfying EQ[ei] ≤ 1 for every i ∈ S. For ε ∈ (0, 1), the Borel set
+Aε := {(xS, x−S) : FS(xS, x−S) > ψS(xS) − ε}
+has a nonempty section at every xS. A standard measurable-selection theorem (the Jankov–von Neumann theorem; see Kechris (1995, Theorem 18.1)) therefore lets us choose an ε-near-maximizer gε(xS) such that
+40
+
+
+(xS, gε(xS)) ∈ Aε, with gε universally measurable. Since Q is arbitrary, this choice is measurable under the completion of Q, which is sufficient for the expectation argument below. If S ̸= [m], set
+δε(xS) := ε
+1 + ψS(xS) , Lε(xS) := 2
+δε(xS) .
+Construct a distribution Pε by drawing xS ∼ Q and, conditionally on xS, setting x−S = gε(xS) with probability 1 − δε(xS) and setting every coordinate of x−S equal to Lε(xS) otherwise. The marginal distribution of xS remains Q, while each outside coordinate has expectation at least EQ[δεLε] = 2; hence Pε ∈ H ̄S. Nonnegativity and the selector property give
+1 ≥ EPε FS ((ei)i∈S , (ej )j∈/S )
+≥ EQ[(1 − δε((ei)i∈S)) (ψS((ei)i∈S) − ε)]
+≥ EQ[ψS((ei)i∈S)] − 2ε.
+For S = [m], the same conclusion follows directly because ψS = FS. Letting ε ↓ 0 shows that ψS((ei)i∈S) is an e-value for every arbitrarily dependent collection of e-values indexed by S. Thus ψS is a Borelmeasurable generalized e-merging function. By construction, FS(x) ≤ ψS(xS). Crucially, no monotonicity of ψS is required: Clerico (2026, Theorem 1) proves that every Borel-measurable generalized e-merging function is dominated by a weighted affine e-merging function. Hence there are weights wi,S ≥ 0 with P
+i∈S wi,S ≤ 1; setting cS = 1 − P
+i∈S wi,S
+gives
+FS(x) ≤ ψS(xS) ≤
+X
+i∈S
+wi,S xi + cS .
+The upper bound is a valid e-value under the corresponding partitioning null and therefore defines an ecollection whose e-Closure contains the original procedure pointwise. Admissibility rules out strict containment, so the e-Closure procedure derived from the e-collection represents the same procedure.
+For FDR specifically, Sun and Wang (2026, Theorem 5.1) prove the stronger complete-class result that every simultaneous FDR-controlling procedure based on arbitrary input e-values is strongly dominated by an admissible weighted-mean closed eBH procedure. Their FDR-specific theorem complements the generalloss representation above.
+C Ordering symmetric local e-values
+Call a loss function permutation-invariant if
+fπ(N)(π(R)) = fN (R)
+for every permutation π of [m]. Equivalently, there is a function φ such that
+fN (R) = φ |N |, |R|, |N ∩ R| .
+For the ordering result, we additionally assume that φ(n, r, k) is nondecreasing in k for fixed n, r: with the numbers of nulls and rejections fixed, declaring more null hypotheses to be discoveries cannot reduce the loss. Separately, suppose the local e-values are generated symmetrically from base e-values,
+eS = g|S| (ei)i∈S ,
+41
+
+
+where each gs is symmetric and coordinatewise nondecreasing. The p-value analogue takes
+eS = g|S| (pi)i∈S
+with each gs symmetric and coordinatewise nonincreasing.
+Lemma 52. Let f satisfy the permutation-invariance and monotonicity conditions above. If a set R of size r belongs to REαRf (E), then the set of the r largest base e-values also belongs to REαRf (E) under the e-value condition above. Under the analogous p-value condition, the same holds for the set of the r smallest p-values. Ties may be resolved by any fixed deterministic rule.
+Proof. We give the e-value argument; the p-value argument is identical with the inequalities reversed. Suppose i ∈ R, j ∈/ R, and ej ≥ ei, and define R′ = (R \ {i}) ∪ {j}. We show that R′ ∈ REαRf (E). For a set S containing both i, j or neither, its e-Closure inequality is unchanged. If i ∈ S and j ∈/ S, then |S ∩ R′| ≤ |S ∩ R|, so monotonicity of φ gives fS(R′) ≤ fS(R) and the inequality remains valid. Finally, if j ∈ S and i ∈/ S, let S′ = (S \ {j}) ∪ {i}. Permutation invariance gives
+fS(R′) = fS′ (R), while eS ≥ eS′
+by symmetry and coordinatewise monotonicity of the local e-values. Hence the closure inequality for (S, R′) follows from that for (S′, R). Repeating such exchanges produces the set of the r largest e-values without losing closure consistency.
+D Related work
+We first note the connection of the e-Closure Principle to Gru ̈nwald (2024), and then briefly describe the two lines of research and prior art that are most relevant to our current work. Aside from these, there is a substantial literature using e-values and the eBH procedure for FDR control — Ramdas and Wang (2025) performs a thorough overview of such developments.
+Multiple testing as a generalized Neyman-Pearson problem. To see that the general multiple testing problem in Section 3 can be viewed as a composite generalized Neyman-Pearson (GNP) problem (Gru ̈nwald, 2024), we observe that we can let f be our loss function, and 2[m] is both the parameter and the action space for our GNP problem. Then, we can view the e-Closure Procedure as an application of Gru ̈nwald (2024, Proposition 3), and outputting the largest discovery set in REαRf (E) akin to being the maximally compatible decision rule for the multiple testing problem w.r.t. the e-collection derived in Theorem 6 for FDR control. However, admissibility results for maximally compatible decision rules from Gru ̈nwald (2024) do not directly apply to our setting since their assumption on action “richness” (continuity of loss — for FDP or other discrete multiple testing error metrics — w.r.t. the action space) is violated in multiple testing, as there is only a finite set of values that the FDP can take. Moreover, we are also concerned with simultaneity to enable flexibility against multiple utility functions rather than optimization w.r.t. a single predetermined utility function in the multiple testing setting.
+Closed testing and e-values. There is a vast amount of literature for FWER control and simultaneous (over all potential discovery sets) FDP bounds using closed testing — see overviews presented in Cui et al. (2021, Chapters 9 and 14) and Henning and Westfall (2015). We will point out three specific works that are particularly relevant to ours since they also utilize e-values in the context of closed testing. The first is Vovk and Wang (2023), who formulate a method for FWER control via the arithmetic mean e-merging
+42
+
+
+function, and consequently also simultaneous FDP bounds. Fischer and Ramdas (2024) show that e-values and their validity under optional continuation are essential for constructing simultaneous FDP bounds in online multiple testing, where a stream of hypotheses is tested sequentially. Hartog and Lei (2025) extend the benefit of using arithmetic mean e-merging functions to graphical approaches for FWER control (Bretz et al., 2009), and derive computationally efficient algorithms for e-value versions of the Fallback (Wiens and Dmitrienko, 2005) and Holm (1979) procedures. Our work proposes new procedures for the FDR metric which has not been connected to intersection hypothesis testing or e-merging functions before, and we show existing procedures (such as e-Holm) for FWER or tail bounds on the FDP can be formulated using the generalized Closure Principle we develop in Section 4.
+Boosting the power of eBH. Another pertinent line of work develops approaches to boosting the eBH procedure so that it makes more discoveries. This work generally falls into two areas: (1) boosting with no assumptions on the e-value distributions and (2) boosting e-values using explicit knowledge of the underlying marginal or joint distribution. For the first area, we have already discussed the connection between our work and the stochastic rounding framework of Xu and Ramdas (2023) in Appendix A.The second area includes two general types of assumptions.
+• Marginal assumptions: Along with introducing the eBH procedure, Wang and Ramdas (2022) also outlined how one can boost e-values if one knows the explicit marginal distribution of each e-value, and we discuss a simple variant for boosting the eBH procedure in Appendix A. Blier-Wong and Wang (2024) relaxed the necessary knowledge on marginal distributions for boosting by deriving boosting thresholds for certain nonparametric classes of e-values.
+• Conditional assumptions: Lee and Ren (2024); Lee et al. (2025) improve the power of eBH in the setting where one knows the distribution of all m e-values when conditioned on a sufficient statistic calculated from the data under a singular null (i.e., a specific hypothesis is null, and all other hypotheses may be either null or non-null). This can also be viewed as a framework for deriving compound evalues from e-values when their joint distribution is known. Boosting factors can be calculated for each e-value via exact knowledge of these conditional distributions.
+Further, conformal e-values provide a concrete application of e-value-based FDR control. Lee et al. (2025) construct full-conformal e-values for novelty detection and combine them with conditionally calibrated eBH, while Lee and Ren (2025) construct subsampling and hierarchical conformal e-values for selection from hierarchical data and apply eBH to control the FDR. These constructions provide natural settings in which eClosure may yield additional simultaneity guarantees. Developments in this second area are orthogonal to our contribution. These boosting methods all require additional knowledge about the underlying distributions. On the other hand, the eBH procedure requires no assumptions on the e-values, and can be applied with valid FDR control in all situations where the eBH procedure can be applied. Potentially, these boosting methods can be used in conjunction with eBH to further improve its power.
+E More general multiple testing metrics
+Ratio metrics can be brought into the framework by a nonnegative reduction, after relaxing the convenient convention fN (∅) = 0. We say that a discovery set R controls the ratio metric RERf,g,η at level α if
+EP(fNP (R))
+EP(gNP (R)) + η ≤ α
+43
+
+
+for all P ∈ M , where fN and gN are nonnegative, 0 ≤ gN (R) ≤ G < ∞, and η ≥ 0; when η = 0, the claim is restricted to distributions for which the denominator is positive. Note that mFDR is a ratio metric: mFDRη for η > 0 (Foster and Stine, 2008) has fN (R) = |N ∩ R| and gN (R) = |R| (with G = m). More recently, Dandapanthula and Ramdas (2025) proposed the notion of error-over-patience (EOP) risk metrics of the form
+EP(fNP (Rτ )) EP(τ )
+for a user-chosen stopping time τ and sequence of discovery sets (Rt)t∈N. On a bounded horizon τ ≤ T , one may let gN (R, t) = t − 1, G = T − 1, and η = 1. Extending the reduction to an unbounded stopping time is outside the bounded formulation used here and is left to future work. We now give the nonnegative reduction.
+Proposition 53. For any random discovery set R, define the nonnegative, α-dependent loss
+fRER,α
+N (R) := fN (R) + α{G − gN (R)}
+G+η .
+Then EP[fNP (R)]
+EP[gNP (R)] + η ≤ α ⇐⇒ EP[fRER,α
+NP (R)] ≤ α.
+The proof is immediate after multiplying both inequalities by their nonnegative denominators. The reduction may give fRER,α
+N (∅) > 0 (as is the case for mFDR), so this application uses the e-Closure proof without the simplifying empty-set convention; none of the inequalities in Theorem 6 require that convention for validity. For ordinary pFDR, take fN (R) = FDPN (R), gN (R) = 1{R ̸= ∅}, G = 1, and η = 0. The transformed loss is
+FDPN (R) + α1{R = ∅}.
+Thus pFDR is covered by this explicitly stated extension whenever P(R ̸= ∅) > 0; it is not a member of the η > 0 ratio class.
+F eBH uniformly improves minimally adaptive eBH
+The minimally adaptive eBH procedure of Ignatiadis et al. (2024) makes the following discoveries:
+rma-eBH := max {r ∈ [m] : e(r) ≥ (m − 1)/(αr)} ∪ {0} ,
+Rma-eBH
+α :=
+(
+R(rma-eBH) if m−1 P
+i∈[m] ei ≥ α−1
+∅ otherwise
+Note that this uniformly dominates the eBH procedure since the rejection thresholds are lower, and the global null test of average e-values also dominates the Simes e-value that is implicitly used in the eBH procedure. However, we will show that this procedure is also dominated by eBH procedure.
+Theorem 54. When m > 4, ReBH
+α is a uniform improvement in both simultaneity and power over Rma-eBH
+α.
+Proof. Abbreviate R = Rma-eBH
+α . If R ̸= ∅, then when S = [m], we have e[m] ≥ α−1 = FDP[m](R)/α by the global gate. If S ∩ R = ∅, the e-Closure inequality is immediate. For all remaining S ⊊ [m], we have
+1 |S|
+X
+i∈S
+ei ≥ |R ∩ S|
+|S| · min
+i∈R∩S ei ≥ |R ∩ S|
+|S| · min
+i∈R ei ≥ |R ∩ S|
+|S| · m − 1
+α|R| ≥ FDPS(R)
+α
+44
+
+
+which shows that R ∈ ReBH
+α . The last inequality is because we are only considering S s.t. |S| ≤ m − 1. Showing this bound is trivially true if R = ∅. To show actual improvement, let m > 4 and consider the event that e1 = (m − 2)/α, e2 = e3 = 1/α, e4 = . . . = em = 0. Then Rma-eBH
+α = ∅, but 1 ∈ ReαBH, because |S|−1 P
+i∈S ei ≥ α−1 whenever 1 ∈ S.
+G Example where eBH with calibrated p-values is more powerful than
+BY
+We now show that neither BY nor eBH applied to calibrated p-values dominates the other in terms of power. It is clear from Table 1 that BY can dominate eBH with calibrated p-values in practice. Here, we give an example where eBH with calibrated p-values dominates BY. We compare the local e-values used in the BY procedure
+eS = 1
+|S|
+X
+i∈S
+|S| · 1{h|S|pi ≤ α}
+α⌈|S|h|S|pi/α⌉ ,
+with the local e-values used in the eBH procedure with calibrated p-values
+e′
+S= 1
+|S|
+X
+i∈S
+m · 1{hmpi ≤ α}
+α⌈mhmpi/α⌉ .
+Let m = 5 and |S| = m − 1:
+0 < p1 < α
+mhm
+, 2α
+|S|h|S|
+< p2 < 3α
+mhm
+, 3α
+|S|h|S|
+< p3 < α
+hm
+, α < p4 < p5 < 1.
+Then the largest rejection set for eBH with calibrated p-values (using e′
+S) is [3], while the largest rejection set for BY (using eS) is [2]. To see this, take S = [m] \ {1}. We have:
+αeS = 1
+⌈|S|h|S|p2/α⌉ + 1
+⌈|S|h|S|p3/α⌉ = 1
+3+1
+4= 7
+12 < |[3] ∩ S|
+|[3]| = 2
+3,
+αe′
+S= m
+|S|
+1
+⌈mhmp2/α⌉ + 1
+⌈mhmp3/α⌉ = 5
+4
+1
+3+1
+5 =2
+3 ≥ |[3] ∩ S|
+|[3]| = 2
+3.
+It is tedious but straightforward to verify that for all other subsets S ̸= [m] \ {1} we have αe′
+S larger or equal than |[3] ∩ S|/|[3]|.
+H Deferred proofs
+H.1 Proof of Lemma 4
+Order 2[m] lexicographically and let R∗(x) be the lexicographically first maximizer of fNP (R) over R ∈ R(x). Because the action space is finite and R and the finitely many losses are measurable, R∗ : S → 2[m] is an A-measurable selector. It attains the pointwise maximum, proving the “≤” direction of (1); the reverse direction holds because every admissible selector takes values in R(X) almost surely.
+45
+
+
+H.2 Proof of Example 20
+It is tedious but straightforward to show that (2m − 2i + 1)/m < m/i for i = 1, . . . , m, so that the example is not void. It follows immediately from (5) that eBH rejects nothing. Choose R = [m] and any non-empty S ⊆ [m] with s = |S|. Then
+X
+i∈S
+e(i)
+s≥
+m
+X
+i=m−s+1
+e(i)
+s≥
+m
+X
+i=m−s+1
+2m − 2i + 1
+msα = 2m − 2 m+(m−s+1)
+2 +1
+mα = s
+mα = |R ∩ S|
+|R|α .
+H.3 Proof of Theorem 25
+To show Re SC
+α ⊆ Re eBH
+α , consider any R ∈ Re SC
+α . The closure inequality is immediate when S ∩ R = ∅; otherwise,
+eS = 1
+m
+X
+i∈S
+eei ≥ |S ∩ R|
+m min
+i∈S∩R eei ≥ |S ∩ R|
+m im∈iRn eei ≥ |S ∩ R|
+m ·m
+α|R| ≥ FDPS(R)
+α.
+Further, for any R ∈ Re eBH
+α and any i ∈ R, we have the following:
+eei
+m = e{i} ≥ FDP{i}(R)
+α =1
+α|R| .
+Hence, we get that eei ≥ m/(α|R|) for all i ∈ R, which implies R ∈ Re SC
+α and Re eBH
+α ⊆ Re SC
+α . Thus, we have shown our desired result.
+H.4 Proof of Proposition 26
+The validity of the compound e-values follows from the definition of an e-collection. We note that the above compound e-values in (10) satisfy (11). This is because, for any S ∈ 2[m] where |S ∩ R| > 0, we see that
+X
+i∈S
+eei = m|S ∩ R|
+α|R| · 1{αeS ≥ FDPS(R)} ≤ m|S ∩ R|
+|R| · eS
+FDPS(R) = meS.
+The inequalities follow from the definition of the e-Closure Principle and by the fact that 1{x ≥ 1} ≤ x for any x ≥ 0. The case where |S ∩ R| = 0 is also satisfied trivially.
+H.5 Proof of Example 29
+It is immediate from the definition that the BY rejection set is empty. Now, choose any non-empty S ⊆ [m]. We have 1{h|S|p(i) ≤ α} = 1 for all i ∈ [m] when S ̸= [m]. For i ≤ m − 1 this follows from the displayed bounds in the example; for i = m, it follows separately from p(m) ≤ α/hm−1 ≤ α/h|S|. Thus, for S ̸= [m],
+|S|h|S|p(i)
+α ≤ m for all i ∈ [m].
+Hence, for all S ̸= [m], we obtain
+αeS ≥
+X
+i∈S
+|S|h|S|p(i)
+α
+−1
+≥ |S|
+m = |S ∩ [m]|
+|[m]| .
+46
+
+
+In case S = [m], we have
+αe[m] =
+m−1
+X
+i=1
+mhmp(i)
+α
+−1
+≥
+m
+X
+i=2
+1
+i ≥ 1.
+Thus, this establishes that RBαY = [m].
+H.6 Proof of Lemma 32
+The Lambert W function has the property that exp(w(x)) = x/w(x). Therefore,
+log elα
+α = log − e
+αw −α
+e = log w (−α/e)
+−α/e = −w − α
+e = lα.
+Equivalently, lα = 1 + log(lα/α). Let p be a p-value and e = e(p). We can see that the integral of e over [0, 1] is
+Z1
+0
+e(p) dp =
+Z α/lα
+0
+1
+α dp +
+Z1
+α/lα
+1 plα
+dp = 1 + log(lα/α)
+lα
+= 1.
+Because e is decreasing, the usual superuniformity argument gives E[e(p)] ≤ R 1
+0 e(p) dp = 1 for every p-value p. Thus, e is a calibrator and e is an e-value.
+H.7 Proof of Theorem 34
+Let R be a self-consistent discovery set at level α/lα, for which RSαu is the largest such set. If S ∩ R = ∅, the closure inequality is immediate. Otherwise, we have pi ≤ |R|α/(mlα) for all i ∈ R. Choose any S ∈ 2[m] such that S ∩ R ̸= ∅. Then
+pS ≤ p|R∩S|:S
+|S|
+|R ∩ S| ≤ |R|α
+mlα
+|S|
+|R ∩ S| ≤ |R|α
+|R ∩ S|lα
+.
+It follows that αeS ≥ |R∩S|/|R| if S ∩R ̸= ∅ and pS ≥ α/lα. The same is trivially true if either S ∩R = ∅
+or pS < α/lα. Therefore, we have R ∈ RSu
+α.
+To show that the improvement region is nonempty for every m > 1, write q = α/lα ∈ (0, 1) and take ordered p-values
+p(1) = q
+m , 2q
+m < p(2) ≤ min 2q
+m − 1 , 1 , p(3) = · · · = p(m) = 1.
+The Su procedure rejects only the first hypothesis. For R = {1, 2}, the closure inequality is trivial when S ∩ R = ∅; if 1 ∈ S, the Simes p-value is at most q|S|/m, giving eS ≥ α−1; and if S ∩ R = {2}, the bound on p(2) gives eS ≥ (2α)−1. Hence {1, 2} ∈ RFαDR(E).
+H.8 Proof of Theorem 38
+Let eS be given as in (20) and R ̸= ∅ be any set given by (21). Then,
+eS ≥ |S ∩ R|
+1+P
+j∈S 1{wj ≤ −cKαn} ≥ |S ∩ R|
+|R|α ,
+where the first inequality follows from the first property in (21) and the second inequality follows from the second property. It remains to show that for any R ⊆ [m] that does not satisfy the properties spec
+ified in (21) it holds that R ∈/ RKn
+α . Let such an R be given. We have wi < cKαn for some i ∈ R or
+47
+
+
+|R| 1+P
+j∈[m] 1{wj≤−cKαn} < 1/α. In the former case, we have e{i} = 0 < 1/(α|R|). In the latter case, consider
+S = {i ∈ [m] : wi ≤ −cKαn or i ∈ R}. Then, we have that eS ≤ |R|
+1+P
+j∈[m] 1{wj ≤−cKαn} < 1/α.
+H.9 Proof of Theorem 39
+Let S = {S ∈ R : |S| = 1}. Then, for every P ∈ M ,
+P(R ∩ NP ̸= ∅) = EP max
+i∈R 1{i ∈ NP} = EP max
+R∈S
+|R ∩ NP|
+|R| ∨ 1 ≤ EP max
+R∈R
+|R ∩ NP|
+|R| ∨ 1 ≤ α.
+This gets us our desired result.
+H.10 Proof of Theorem 41
+The validity of (REαRf (E))f∈F is due to
+EP
+"
+sup
+f∈F
+max
+R∈REαRf (E)
+fNP (R)
+#
+≤ EP [αeNP ] ≤ α.
+Given a collection of discovery set collections (RERf )f∈F , we can define
+eS = supf∈F maxR∈RERf fS (R)
+α.
+As a result, (eS)S∈2[m] is an e-collection by virtue of (RERf )f∈F satisfying (22).
+H.11 Proof of Theorem 44
+The simultaneous true discovery guarantee of dE follows by the simultaneous control of the e-Closure Principle over multiple error functions and rejection sets (Theorem 41), since
+EP
+"
+sup
+d∈[m]0
+max
+R∈Rfd
+fd
+NP (R)
+#
+= P (∃d ∈ [m]0, R ∈ Rfd : d > |R \ NP|) .
+Furthermore, if eS = φS/α for S ∈ 2[m] and some family of local tests Φ, then, for an arbitrary R ∈ 2[m],
+dE(R) = max
+n
+d ∈ [m]0 : φS ≥ 1{|R \ S| < d} ∀S ∈ 2[m]o
+= max
+n
+d ∈ [m]0 : |R \ S| ≥ d for all S ∈ 2[m] with φS = 0
+o
+= min{|R \ S| : S ∈ 2[m], φS = 0}
+= dΦ(R).
+Thus, we have our desired result.
+H.12 Proof of Proposition 36
+If RBαH = ∅, then also RMABH
+α = ∅ ∈ RFDR
+α (E), since the empty set is always part of any RFDR
+α (E). Suppose RBαH ̸= ∅. Then e[m] = 1/α ≥ FDP[m](RMABH
+α )/α, and for any non-empty S ̸= [m], we have
+eS = (m − 1)|RMABH
+α ∩ S| α|S|(|RMABH
+α | ∨ 1) ≥ FDPS(RMABH
+α)
+α.
+48
+
+
+Thus, we have shown that RMABH
+α ∈ RFDR
+α (E).
+e[m] is a valid e-value for H[m] since RBαH is a FDR controlling procedure at level α. The other eS are valid by the superuniformity lemma of Ramdas et al. (2019). Thus, we have shown our desired result.
+49

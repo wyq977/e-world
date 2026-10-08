@@ -10,7 +10,7 @@ list, `e-world.md` → `index.html`, not the wiki itself.
 
 | Path | Owner | Agent may |
 |---|---|---|
-| `e-world.bib` | human | read only |
+| `e-world.bib` | human | read; append new entries via `scripts/bib_add.py` only when the human says so in chat |
 | `raw/<citekey>/` | human (populated via `make approve` on the human's go) | read only afterwards |
 | `inbox/` | human reviews | write (downloads on request), never read as a source |
 | `wiki/` | agent | read, write |
@@ -20,6 +20,13 @@ list, `e-world.md` → `index.html`, not the wiki itself.
 Write and Edit calls into `raw/` or `e-world.bib` are blocked by a hook
 (`.claude/hooks/protect-sources.sh`). Do not route around it with shell
 commands. If something there is wrong, say so and let the human fix it.
+One sanctioned exception: when the human asks in chat to add specific papers
+to the bib, run `scripts/bib_add.py` with entries built from Zotero metadata.
+It appends only, refuses duplicate keys and DOIs, and never edits existing
+entries. Use Better-BibTeX-style keys (surname + three title words + year)
+and tell the human that their next Zotero export may rename the keys, in
+which case `raw/<citekey>/` and `wiki/sources/<citekey>.md` must be renamed
+by hand to match.
 
 ## Zotero is read-only. Always.
 
