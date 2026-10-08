@@ -100,7 +100,7 @@ def page_block(kind, path):
         if fm.get("note"): meta += f'<p class="note">{inline(str(fm["note"]))}</p>'
     elif kind == "concepts":
         meta = f'<div class="meta"><span class="key">{slug}</span> sources: {html.escape(str(fm.get("sources","?")))} · updated {html.escape(str(fm.get("updated","")))}</div>'
-    return slug, title, f'<article id="{kind}-{slug}" class="page {kind}"><h2>{inline(str(title))}</h2>{meta}{md_to_html(body, 3)}</article>'
+    return slug, title, f'<article id="{kind}-{slug}" class="page {kind}"><h2>{inline(str(title))}</h2>{meta}{md_to_html(body, 3)}<p class="back"><a href="#toc">↑ Contents</a></p></article>'
 
 sources = [page_block("sources", p) for p in sorted((W / "sources").glob("*.md"))]
 concepts = [page_block("concepts", p) for p in sorted((W / "concepts").glob("*.md"))]
@@ -110,10 +110,10 @@ log_md = (W / "log.md").read_text()
 log_entries = re.findall(r"^## \[(\d{4}-\d{2}-\d{2})\] (\w+) \| (.*)$", log_md, re.M)
 log_html = "".join(f'<li><span class="date">{d}</span> <span class="chip {k}">{k}</span> {inline(t)}</li>' for d, k, t in reversed(log_entries))
 
-nav = ('<nav><h3>Index</h3><a href="#index">Overview</a>'
+nav = ('<details id="toc" open><summary><span>Contents</span><span class="count">' + str(len(sources)) + ' sources · ' + str(len(concepts)) + ' concepts</span></summary><nav><h3>Index</h3><a href="#index">Overview</a>'
        + '<h3>Sources</h3>' + "".join(f'<a href="#sources-{s}">{inline(str(t))}</a>' for s, t, _ in sources)
        + '<h3>Concepts</h3>' + "".join(f'<a href="#concepts-{s}">{inline(str(t))}</a>' for s, t, _ in concepts)
-       + '<h3>Housekeeping</h3><a href="#gaps">Gaps</a><a href="#log">Log</a></nav>')
+       + '<h3>Housekeeping</h3><a href="#gaps">Gaps</a><a href="#log">Log</a></nav></details>')
 
 page = f"""<title>E-world Wiki</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Source+Sans+3:wght@400;600&family=Source+Code+Pro:wght@400&display=swap">
@@ -130,14 +130,24 @@ page = f"""<title>E-world Wiki</title>
   --bg:#171b1d; --fg:#e6e4dc; --muted:#a3aba8; --rule:#333a3c; --card:#1f2527; --accent:#6fc2ad; --accent-soft:#1e3330; --ingest:#1e3330; --query:#2a2740; --lint:#3a2f14; color-scheme:dark }}
 body {{ background:var(--bg); color:var(--fg); font-family:var(--body); font-size:16px; line-height:1.5; padding-inline:16px; padding-block:24px 64px; }}
 .shell {{ max-width:1100px; margin:0 auto; display:grid; grid-template-columns:230px minmax(0,1fr); gap:32px; }}
-@media (max-width:760px) {{ .shell {{ grid-template-columns:1fr; }} nav {{ position:static; max-height:none; }} }}
-nav {{ position:sticky; top:env(safe-area-inset-top,0px); align-self:start; max-height:calc(100vh - 24px); overflow:auto; font-size:.9rem; padding-right:8px; }}
+#toc {{ position:sticky; top:env(safe-area-inset-top,0px); align-self:start; max-height:calc(100vh - 24px); overflow:auto; font-size:.9rem; padding-right:8px; min-width:0; }}
+#toc summary {{ list-style:none; cursor:pointer; display:flex; justify-content:space-between; align-items:baseline; gap:8px; font-family:var(--display); font-weight:500; font-size:1.05rem; padding:6px 0; border-bottom:1px solid var(--rule); }}
+#toc summary::-webkit-details-marker {{ display:none; }}
+#toc summary .count {{ font-family:var(--body); font-size:.78rem; color:var(--muted); font-weight:400; }}
+#toc summary::after {{ content:"▾"; color:var(--muted); font-size:.9rem; margin-left:auto; }}
+#toc:not([open]) summary::after {{ content:"▸"; }}
+@media (min-width:761px) {{ #toc summary {{ pointer-events:none; }} #toc summary::after {{ display:none; }} }}
+@media (max-width:760px) {{ .shell {{ grid-template-columns:1fr; gap:16px; }} #toc {{ position:sticky; z-index:3; background:var(--bg); max-height:60vh; padding-right:0; border-bottom:1px solid var(--rule); }} #toc summary {{ border-bottom:0; }} article.page {{ padding:16px 14px; }} }}
+.back {{ margin:1.2rem 0 0; font-size:.85rem; }} .back a {{ text-decoration:none; color:var(--muted); }}
+@media (min-width:761px) {{ .back {{ display:none; }} }}
 nav h3 {{ font-size:.72rem; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin:1rem 0 .3rem; }}
 nav a {{ display:block; color:var(--fg); text-decoration:none; padding:3px 0; border-left:2px solid transparent; padding-left:8px; }}
 nav a:hover {{ border-left-color:var(--accent); color:var(--accent); }}
 header h1 {{ font-family:var(--display); font-weight:600; font-size:clamp(1.8rem,4vw,2.5rem); margin:0 0 .2rem; }}
 header p {{ color:var(--muted); max-width:65ch; margin:0 0 1rem; }}
-article.page {{ background:var(--card); border:1px solid var(--rule); border-radius:6px; padding:20px 22px; margin-bottom:28px; min-width:0; }}
+main {{ min-width:0; }}
+article.page {{ background:var(--card); border:1px solid var(--rule); border-radius:6px; padding:20px 22px; margin-bottom:28px; min-width:0; overflow-wrap:anywhere; }}
+header, nav {{ min-width:0; overflow-wrap:anywhere; }}
 article h2 {{ font-family:var(--display); font-weight:500; font-size:1.45rem; margin:0 0 .3rem; text-wrap:balance; }}
 article h3 {{ font-size:1rem; text-transform:uppercase; letter-spacing:.05em; color:var(--accent); margin:1.3rem 0 .4rem; }}
 article h4 {{ font-size:1rem; margin:1rem 0 .3rem; }}
@@ -172,6 +182,14 @@ th {{ font-size:.75rem; text-transform:uppercase; letter-spacing:.06em; color:va
 <article id="log" class="page"><h2>Log</h2><ul>{log_html}</ul></article>
 </main>
 </div>
+<script>
+(function(){{
+  var toc=document.getElementById('toc'); var mq=window.matchMedia('(max-width: 760px)');
+  function sync(){{ if(mq.matches){{ toc.removeAttribute('open'); }} else {{ toc.setAttribute('open',''); }} }}
+  sync(); mq.addEventListener ? mq.addEventListener('change', sync) : mq.addListener(sync);
+  toc.querySelectorAll('nav a').forEach(function(a){{ a.addEventListener('click', function(){{ if(mq.matches) toc.removeAttribute('open'); }}); }});
+}})();
+</script>
 """
 Path(sys.argv[1]).write_text(page)
 print(f"wrote {sys.argv[1]}: {len(sources)} sources, {len(concepts)} concepts")

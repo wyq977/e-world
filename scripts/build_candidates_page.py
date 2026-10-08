@@ -66,7 +66,7 @@ page = f"""<title>E-world Reading Queue</title>
   --bg:#171b1d; --fg:#e6e4dc; --muted:#a3aba8; --rule:#333a3c; --card:#1f2527;
   --accent:#6fc2ad; --accent-soft:#1e3330; --ok:#6fc2ad; --ok-bg:#1e3330; --mid:#e0b25a; --mid-bg:#3a2f14; --no:#e08a8a; --no-bg:#3b2222; color-scheme:dark }}
 body {{ background:var(--bg); color:var(--fg); font-family:var(--body); font-size:16px; line-height:1.45; padding-inline:16px; padding-block:24px 64px; }}
-main {{ max-width:900px; margin:0 auto; }}
+main {{ max-width:900px; margin:0 auto; min-width:0; overflow-wrap:anywhere; }}
 h1 {{ font-family:var(--display); font-weight:600; font-size:clamp(1.8rem,4vw,2.6rem); line-height:1.1; margin:0 0 .3rem; text-wrap:balance; }}
 .sub {{ color:var(--muted); max-width:65ch; margin:0 0 1.2rem; }}
 .sub code {{ font-size:.9em; }}

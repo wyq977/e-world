@@ -55,3 +55,9 @@ larssonNumeraireEvariableReverse2025, ramdasAdmissibleAnytimevalidSequential2022
 
 ## [2026-10-08] lint | concept layer after batch 3
 Four new concept pages: e-closure-principle, e-posterior, group-invariance-e-statistics, test-induction. Folded: true-discovery-guarantees→e-closure-principle; admissibility and p-process→e-process; effective-null and reverse-renyi-projection→numeraire; change-detection-delay-bounds→e-detector; e-closure (Goeman)→e-closure-principle. Twenty-five existing pages updated; numeraire page now cites the paper's own numbering; stale "not in bib" notes removed. Eight gap rows retired, ten added. Metadata for the human: raw/vovkConfidenceDiscoveriesEvalues2023/meta.yaml says publisher-oa but the text is arXiv 1912.13292v5; raw/grunwaldEposterior2023 text carries the arXiv v2 stamp (author says identical to the journal version).
+
+## [2026-10-08] lint | mobile layout of the wiki page
+The main column had no minimum width, so long citekeys pushed it to 489 px on a 375 px phone, and the 62-link contents sat above the text. Fixed: min-width 0 and overflow-wrap on both pages; contents now a collapsible block, closed on narrow screens, with a jump-back link per page. Verified in the desktop app's browser at 375 px.
+
+## [2026-10-08] ingest | batch 4 staged: 28 arXiv downloads on the human's instruction
+The human allowed downloading papers absent from Zotero. 28 queue rows fetched from arXiv (metadata via API, PDF, ghostscript text), bib entries appended via scripts/bib_add.py, approved into raw/. Not fetched: Shafer–Vovk 2019 (book) and Vovk 2021 "Testing randomness online" (arXiv id not found; a wrong guess fetched an unrelated paper and was discarded). Candidates deduplicated (rows 44, 59, 62, 69). AGENTS.md now records the web-download route.

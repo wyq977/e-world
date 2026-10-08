@@ -96,8 +96,15 @@ runs `make approve KEY=<citekey>` itself and proceeds to ingest. Without
 such an instruction in the current conversation, staged folders stay in
 `inbox/`. The agent never creates `raw/<citekey>/` by any other route, and
 the Zotero library is never written to. If the paper is not in Zotero, or
-the only copy there is not an acceptable version, say so; the human
-downloads it into `inbox/` by hand.
+the only copy there is not an acceptable version, say so. When the human
+has said in chat that the agent may download missing papers, the agent may
+fetch the open arXiv version (metadata from the arXiv API, PDF from
+arxiv.org, text via ghostscript) into `inbox/<citekey>/`, append a bib
+entry with `scripts/bib_add.py`, and proceed as for a Zotero-staged paper;
+`meta.yaml` records `added_by: agent (web download, human-instructed)`.
+Nothing is ever written to Zotero; the human may later file the paper
+there and re-export. Publisher-only works (books, paywalled articles) are
+reported, not fetched.
 
 ### Ingest — `ingest <citekey>`
 

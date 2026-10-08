@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "artifact-preview",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8765", "--directory", "/private/tmp/claude-502/-Users-yongqi-projects-e-world/ee4f0d08-a1fe-4d53-96c1-402b52ec0ae2/scratchpad/artifact"],
+      "port": 8765
+    }
+  ]
+}
