@@ -38,6 +38,14 @@ Only the human adds to the bib or raw/. Tick a row by staging it.
 | 19 | Online multiple testing with e-values | Xu, Ramdas 2024 | missing | book:3 |
 | 20 | Derandomised knockoffs: leveraging e-values for false discovery rate control | Ren, Barber 2024 | missing | book:3 |
 | 21 | Asymptotic and compound e-values: multiple testing and empirical Bayes | Ignatiadis, Wang, Ramdas 2024 | missing | book:3 |
+| 50 | Bringing closure to FDR control: beating the e-Benjamini–Hochberg procedure | Xu, Fischer, Ramdas 2025 | missing | book:1, web; closed eBH |
+| 51 | Bringing closure to false discovery rate control: a general principle for multiple testing | Xu, Solari, Fischer, de Heide, Ramdas, Goeman 2025 | missing | web; the e-Closure principle, arXiv 2509.02517 |
+| 52 | Admissible online closed testing must employ e-values | Fischer, Ramdas 2025 | missing | web; arXiv 2407.15733 |
+| 53 | Online e-BH (horizon-aware online BH and eBH) | Fischer, Xu, Ramdas 2024 | missing | web; arXiv 2407.20683 |
+| 54 | Family-wise error rate control with e-values | Hartog, Lei 2025 | missing | book:2 |
+| 55 | A uniform improvement of the Benjamini–Hochberg procedure via e-closure | 2026 | missing | web; arXiv 2606.01854, preprint |
+| 56 | Improving online FDR procedures via online analogs of e-closure and compound e-values | Xu, Fischer, Ramdas 2026 | missing | web; arXiv 2603.24792, preprint |
+| 57 | Dynamic e-closure for online hypotheses with anytime-valid evidence | 2026 | missing | web; arXiv 2608.09927, preprint |
 
 ## Tier 3 — optimality and construction
 
@@ -82,8 +90,29 @@ Only the human adds to the bib or raw/. Tick a row by staging it.
 | 48 | Anytime-valid inference for multinomial count data | Lindon, Malek 2022 | missing | SAVI |
 | 49 | E-values for adaptive clinical trials: anytime-valid monitoring in practice | Sokolova, Sokolov 2026 | missing | web, preprint |
 
+## Tier 6 — e-posteriors, post-hoc decisions and evidence
+
+| # | Title | Authors, year | Status | Evidence |
+|---|---|---|---|---|
+| 58 | The e-posterior | Grünwald 2023 | missing | web; Phil. Trans. R. Soc. A, arXiv 2301.01335 |
+| 59 | Beyond Neyman–Pearson: e-values enable hypothesis testing with a data-driven alpha | Grünwald 2024 | missing | PNAS; also row 29 |
+| 60 | On admissibility in post-hoc hypothesis testing | 2025 | missing | web; arXiv 2508.00770 |
+| 61 | The E-measure | 2026 | missing | web; arXiv 2604.20788, preprint; defines e-posterior over a parameter space |
+| 62 | Post-hoc α hypothesis testing and the post-hoc p-value | Koning 2023 | missing | book:2; also row 30 |
+
+## Tier 7 — sequential change detection
+
+| # | Title | Authors, year | Status | Evidence |
+|---|---|---|---|---|
+| 63 | E-detectors: a nonparametric framework for sequential change detection | Shin, Ramdas, Rinaldo 2024 | missing | SAVI; also row 44; NEJSDS |
+| 64 | Sequential change detection via backward confidence sequences | Shekhar, Ramdas 2023 | missing | web; arXiv 2302.02544 |
+| 65 | Multiple testing in multi-stream sequential change detection | Dandapanthula, Ramdas 2025 | missing | web; arXiv 2501.04130 |
+| 66 | Asymptotically optimal sequential change detection for bounded means | Ram, Ramdas 2026 | missing | web; arXiv 2602.05272, preprint |
+| 67 | Non-partitioned e-detectors for nonparametric sequential change detection | Saha, Ramdas 2026 | missing | web; arXiv 2607.28322, preprint |
+| 68 | A complete characterization of sequential testability and change detectability in i.i.d. models | 2026 | missing | web; arXiv 2609.05752, preprint |
+
 ## Sources for this list
 
 - Bibliography of *Hypothesis testing with e-values* (163 entries parsed from the staged text; citation counts approximate).
 - SAVI 2022 contributed reading list, https://web.stanford.edu/~aramdas/SAVI/savi20.html (Google sheet linked there).
-- Web check, 2026-10-08: arXiv listings and alphaXiv page for the book; Martin (2024–25) and Dixit and Martin (2025) surfaced there.
+- Web check, 2026-10-08 (closure, e-posterior, change detection added on request; author lists of 2026 preprints not all verified): arXiv listings and alphaXiv page for the book; Martin (2024–25) and Dixit and Martin (2025) surfaced there.
