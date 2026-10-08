@@ -1,0 +1,1883 @@
+Testing maximum entropy models with e-values
+Francesca Giuffrida,1, 2, 3, ∗ Diego Garlaschelli,1, 2 and Peter Gr ̈unwald4, 5
+1IMT School for Advanced Studies, Lucca (Italy) 2Lorentz Institute for Theoretical Physics (LION), Leiden University, Leiden (The Netherlands) 3Dipartimento di Fisica e Chimica, University of Palermo, Palermo (Italy) 4Centrum Wiskunde & Informatica, Amsterdam (The Netherlands) 5Mathematical Institute, Leiden University, Leiden (The Netherlands)
+E-values have recently emerged as a robust and flexible alternative to p-values for hypothesis testing, especially under optional continuation, i.e., when additional data from further experiments are collected. In this work, we define optimal e-values for testing between maximum entropy models, both in the microcanonical (hard constraints) and canonical (soft constraints) settings. We show that, when testing between two hypotheses that are both microcanonical, the so-called growth-rate optimal e-variable admits an exact analytical expression, which also serves as a valid e-variable in the canonical case. For canonical tests, where exact solutions are typically unavailable, we introduce a microcanonical approximation and verify its excellent performance via both theoretical arguments and numerical simulations. We then consider constrained binary models, focusing on 2 × k contingency tables — an essential framework in statistics and a natural representation for various models of complex systems. Our microcanonical optimal e-variable performs well in both settings, constituting a new tool that remains effective even in the challenging case when the number k of groups grows with the sample size, as in models with growing features used for the analysis of real-world heterogeneous networks and time-series.
+I. INTRODUCTION
+In recent years, scientific interest in complex data modeling has surged, due to the increasing availability of both global-scale structured data and computational power. At the same time, rising concerns about the misuse of p-values and significance testing [1–3] underscore the need for reliable statistical methods to extract knowledge from data. As a robust and flexible alternative to p-values for hypothesis testing, e-values [4, 5] have recently gained considerable attention. Having been independently (re)discovered several times in different contexts (including by physicists [6] — see [4] for early history) over the past decades, interest suddenly exploded in 2019 when the first versions of several breakthrough papers [7–10] appeared on arXiv. An e-variable is simply a nonnegative random variable whose expected value under the null hypothesis is at most one. The value it takes on the given sample is called the e-value. This simple definition yields several desirable properties: e-values provide rigorous control of the Type I error, retain it under optional continuation (i.e., when data from additional experiments become available), and can be interpreted as a measure of evidence against the null hypothesis. However, not all e-variables are equally useful as test statistics. To address this, a notion of optimality is introduced. An optimal e-variable is one that grows quickly under the alternative hypothesis, accumulating strong evidence against the null when the latter is false. In this paper, we focus specifically on growth-rate optimal (GRO) e-variables [7]. The results in [7], later
+∗ francesca.giuffrida@imtlucca.it
+extended in [11, 12], provide a general theoretical framework for constructing GRO e-variables in broad testing scenarios. The aim of this work is to develop optimal e-variables for hypothesis testing between maximum entropy models (MEMs). These models are derived by considering each possible realization x ∈ X of the data (where X is the set of allowed realizations) and looking for the probability distribution P (x) that maximizes Shannon entropy
+S[P ] = −
+X
+x∈X
+P (x) log P (x) (1)
+under a set of constraints, typically defined through a vector of observables c(x) over the data. This approach, due to Gibbs [13] and Jaynes [14], outputs ensembles of data reproducing the constrained quantities and randomizing everything else maximally. Two main formulations of MEMs exist, depending on how the constraints are enforced. If the constraints are imposed as exact values, i.e., c(x) = c∗ on each realizable x, one obtains a microcanonical model, where only configurations satisfying the constraints are assigned nonzero probability. If, instead, the constraints are satisfied only on average, i.e., EP [c(x)] = c∗, one obtains a canonical model, where fluctuations are allowed and the probability distribution has exponential form. In statistical terminology, by varying c∗ one obtains an exponential family with discrete outcome space and uniform carrier [15]. In both cases, the probability of x is entirely determined by the value of c(x), which plays the role of sufficient statistic. MEMs are commonly used to model complex systems that give rise to structured data, e.g., in network science [16–18] and time-series analysis [19, 20], where they capture structural properties such as (heterogeneous) node degrees in networks or empirical trends in (non
+arXiv:2509.01064v1 [stat.ME] 1 Sep 2025
+
+
+2
+stationary) temporal data, respectively. However, while statistical tests for exponential family models are well established, testing procedures specifically tailored to maximum entropy models remain far less developed, especially when applied in the microcanonical setting. In fact, e-variables for testing between general MEMs have so far not been developed at all: the only related works we are aware of are [21, 22] and [23, 24]. The former concentrates on the very specific sub-case of 2 × 2 tables (to re-appear as Example A–C in our paper later on), but uses e-variables which are designed for purely sequential purposes, and are therefore not optimal in the sense we define below, neither in the canonical nor in the microcanonical setting. The latter works, [23, 24], studied e-variables for testing between two exponential families with the same sufficient statistic but different carriers. By contrast, testing between MEMs amounts to testing exponential families with different sufficient statistics but the same (uniform) carrier. This is exactly the aim of this work. This paper is organized as follows. In section II, we introduce e-variables and growth-rate optimality. In section III, we address the problem of finding optimal evariables for testing between two maximum entropy models, either microcanonical (III A) or canonical (III B), that differ in their sufficient statistics. We introduce a method to construct optimal e-variables in both Bayesian and non-Bayesian settings. We show that the microcanonical GRO e-variable is also a valid canonical e-variable, and that in some cases, it asymptotically coincides with the optimal one. This is particularly relevant: while canonical models are way more commonly used in the literature, calculating the optimal canonical evariable is usually analytically impossible and computationally infeasible. Here, we provide a method to explicitly compute the optimal microcanonical e-variable and to further verify how well it approximates the optimal canonical e-variable. In section IV, we explicitly apply these results to contingency tables, underlying connections with important problems in network science. We first analyze the case of 2 × 2 contingency tables (IV A) and then generalize to 2×k (IV B). We show that, in these cases and for both Bayesian and non-Bayesian examples, the GRO microcanonical e-variable is not only a valid canonical e-variable but also an excellent approximation of the optimal canonical one.
+II. INTRODUCTION TO E-VARIABLES
+Consider the typical hypothesis testing scenario, where the goal is to test a null hypothesis M0 against an alternative hypothesis M1. Both M0 and M1 are assumed to be parametric statistical models, i.e., families of distributions sharing the same functional form:
+Mj = {Pj(x; θ)}θ∈Θj , j ∈ {0, 1}, (2)
+where θ represents the vector of model parameters and Θj the corresponding parameter space for model Mj. An e-variable E is a non-negative random variable that satisfies the following condition under all distributions in the null hypothesis:
+E0[ E ] ≤ 1 ∀P0 ∈ M0. (3)
+The realized value of E evaluated on data x is called an e-value. Unlike p-values, larger e-values indicate stronger evidence against the null. This follows directly from their defining property that, under the null, their expectation is bounded by one. This simple yet powerful definition has several important implications [4, 5]:
+• Type I error control: The condition E0[ E ] ≤ 1 ensures that a test based on e-values controls the Type I error, that is, the probability of rejecting the null hypothesis when it is actually true. Given a significance level 0 ≤ α ≤ 1, by Markov’s inequality, we have
+P0(E ≥ 1/α) ≤ α, (4)
+for all P0 ∈ M0. This guarantees that the probability of wrongly rejecting the null hypothesis does not exceed the significance level α, regardless of the true parameter value within the null model.
+• Post-hoc error control: E-values allow a variation of valid Type-I error control even when the significance level is chosen after observing the data [25]. Specifically, if e is the observed e-value, then rejecting the null hypothesis at level 1/e preserves a Type I risk bound despite this level being data-dependent. This contrasts with traditional pvalues, which only guarantee valid inference when the significance level is fixed in advance.
+• Optional continuation: E-values support valid testing under optional continuation, making them well-suited for sequential analyses and metaanalyses across independent studies. If e(1), e(2), . . . are e-values computed on independent data batches (e.g., studies), their product remains a valid e-value — even if the decision to analyze further batches, to perform tests on them, or to incorporate specific prior knowledge into the e-values is guided by the outcomes of earlier batches. In this way, Type I error control is preserved, enabling flexible and robust hypothesis testing across repeated or cumulative experimental settings.
+While all random variables satisfying condition (3) qualify as e-variables, not all of them are informative. For instance, the constant random variable E(x) ≡ 1 satisfies the definition but provides no information. To address this, a notion of optimal e-variables was introduced in [7]. In particular, the authors define the Growth Rate Optimal (GRO) e-variable as the unique solution to a specific
+
+
+3
+optimization problem based on a growth criterion, which we present below. As a first step toward understanding GRO e-variables, we introduce the concept of Bayesian evidence (also known as the Bayesian marginal likelihood ) of model j with prior density wj, defined as:
+P wj
+j (x) =
+Z
+Θj
+Pj(x; θ)wj(θ)dθ. (5)
+This quantity reflects the overall support the data provide for model j, by averaging the likelihood over the prior; it is widely used in Bayesian model selection, where models with higher evidence are preferred. We shall mostly work with prior densities wj defined on convex parameter spaces Θj ⊂ Rd (d > 0), assuming they are continuous and strictly positive for all θ ∈ Θj. We refer to such priors as regular priors. Given a fixed prior w1 (regular or not) on the alternative hypothesis, the GRO e-variable SGRO is the unique solution to the following optimization problem:
+SGRO = arg max
+E∈E0
+EP w1
+1 [ log E ], (6)
+where E0 denotes the set of all e-variables relative to the null model M0, i.e., the set of all random variables satisfying (3). This optimization can be interpreted as a growth criterion: while the expected value of any e-variable is bounded under the null, a well-designed e-variable should grow rapidly assuming the alternative is true, when the prior w1 is correctly specified. The use of the logarithmic growth in this criterion is motivated and discussed in more detail in [7]. The quantity EP w1
+1 [log E], known as the e-power [26–28] of E, has become a standard measure for evaluating the performance of an e-variable. In the most common case, a GRO e-variable solving the aforementioned optimization problem takes the form of a Bayes factor [29], i.e., the ratio between two Bayesian evidences:
+S(x) = P w1
+1 (x)
+P w0
+0 (x) . (7)
+Equation (7) represents the Bayes factor comparing models M1 and M0. It measures the relative support that the data provide for one model over the other. However, not all Bayes factors qualify as e-variables; to ensure the e-variable property (3), while w1 may be chosen freely, a specific prior w∗
+0, depending on w1, must then be chosen
+for the null hypothesis. Specifically, w∗
+0 is the solution to the following optimization problem:
+w∗
+0 = arg min
+w∈Wθ0
+DKL(P w1
+1 ∥P w0
+0 ) (8)
+where Wθ0 is the space of all priors on θ0, and
+DKL(P w1
+1 ∥P w0
+0 ) denotes the Kullback-Leibler divergence:
+DKL(P w1
+1 ∥P w0
+0 )=
+X
+x∈X
+P w1
+1 (x) log P w1
+1 (x)
+P w0
+0 (x)
+= EP w1
+1 [ log S(x) ]. (9)
+Theorem 1 in [7] proves that given w1, among all Bayes factors of the form (7), the random variable
+SGRO(x) = P w1
+1 (x)
+P w∗
+0
+0 (x)
+, (10)
+is the only e-variable, assuming that a w∗
+0 achieving the
+minimum in (8) exists 1. To sum up, the GRO e-variable is the unique solution of two different optimization problems, defined on two different sets: for a given P w1
+1 and null model M0, SGRO is the only e-variable among Bayes factors of the form 7; at the same time it is the only e-variable maximizing the e-power (see Figure 1).
+FIG. 1. The GRO e-variable SGRO is the unique intersection between the set Bw0|w1 of all Bayes factors for a given P w1
+1 and
+varying P w0
+0 , and the set E0 of all e-variables relative to model M0. At the same time, it is the unique e-variable maximizing
+the e-power relative to P w1
+1 . This schematic representation considers two possible alternative priors, w1 and w ̄1.
+The reader may have noticed a seeming asymmetry: while e-values are defined in a frequentist sense — requiring Type I error control for all P0 ∈ M0 — our optimality criterion for GRO relies on a prior w1 over the alternative model M1, and thus relies on a Bayesian formulation. It would be conceptually appealing to define an optimality criterion that, like the e-variable condition, provides performance guarantees over all P1 ∈ M1 rather than on average according to a prior w1. As it turns out, this is indeed possible by drawing on ideas from information theory. To move in that direction, we first note that the result of [7] is not limited to Bayes factors. It applies to more
+1 As shown in [7], multiple distinct minimizers w∗
+0 may exist, but
+they yield the same P w∗
+0
+0 . Even when a minimizer does not exist,
+P w∗
+0
+0 can be defined as a limit along a minimizing sequence wj , ensuring that (10) remains a valid e-variable.
+
+
+4
+general e-variables of the form
+S(x) =
+P ̄1(x)
+P w∗
+0
+0 (x)
+, (11)
+where P ̄1 is any probability distribution over the data space. For such constructions to be useful, however, the choice of P ̄1 must be guided by an appropriate extension of the GRO criterion. This leads us to the concept of regret, also referred to as relative growth (regrow ) in [7], which we adopt here using more common terminology. Regret quantifies the power loss incurred when using a candidate e-variable instead of the ideal one, which is designed for the true data-generating distribution. To define it precisely, suppose that the data are generated according to a fixed but unknown distribution P1(x; θ1) ∈ M1. If we knew θ1, we could construct the GRO e-variable SGRO(θ1) optimal for that specific alternative:
+SGRO(θ1) = P1(x; θ1)
+P w ̃∗
+0
+0 (x)
+(12)
+where
+w ̃∗
+0 = arg min
+w0 ∈Wθ0
+Eθ1 log P1(x; θ1)
+P w0
+0
+(13)
+and Eθj denotes the expected value under Pj( · , θj). Here, the alternative hypothesis reduces to a singleton — a statistical model containing only one distribution and in some cases, such as the 2 × k contingency tables considered later in this paper, SGRO(θ1) can be computed exactly. The regret of a candidate e-variable Scand is then given by:
+REG1(θ1; Scand) := Eθ1
+h
+log SGRO(θ1) − log Scand
+i
+,
+(14) which quantifies the expected loss in log-growth due to not knowing the true parameter. Since θ1 is unknown, a natural robustness criterion is to consider the worst-case regret across the entire alternative:
+REG1(Θ1; Scand) := max
+θ1 ∈Θ1
+REG1(θ1; Scand). (15)
+This leads to a new optimality principle: among all evariables, one would seek the minimax optimal e-variable — i.e., the e-variable that minimizes REG1(Θ1; Scand) over all valid choices of Scand. However, computing this minimax-optimal e-variable is generally infeasible in practice, as we currently lack efficient algorithms for solving the corresponding optimization problem. Nevertheless, when the models M0 and M1 exhibit sufficient regularity — as is the case for Maximum Entropy models, discussed in the next section — GRO e-variables constructed from (11) with appropriately chosen P ̄1 can closely approximate the minimax optimal solution. In particular, one can consider e-variables of the
+form (11), where the numerator P ̄1 is set to a universal distribution relative to the alternative model M1. Universal distributions, which include Bayesian mixtures
+P w1
+1 as special cases, arise naturally in the theory of the Minimum Description Length (MDL) Principle [30–32]. Such choices of P ̄1 lead to e-variables that, while not exactly minimax-optimal, are typically close to optimal in terms of regret minimization, and therefore provide a practical and principled strategy for robust hypothesis testing. To clarify this connection, we take a brief detour to explain how e-value-based methods relate to the MDL Principle and its central concept, the universal distribution.
+A. GRO e-values and description lengths
+The Minimum Description Length Principle provides a general framework for model selection: from a set of candidate models, it chooses the one that yields the shortest encoding of the observed data. In this approach, each model is represented by a single probability distribution, and models are compared via their description length. The preferred model is the one with the smallest description length. When comparing two models M0 and M1, the difference in description lengths is
+∆DL(x) = DL1(x) − DL0(x)
+= − log P ̄1(x) + log P ̄0(x), (16)
+where P ̄1 and P ̄0 are the representative distributions for M1 and M0. By Kraft’s inequality [30, 33], the code length to describe x, using a code that compresses optimally in expectation under Q, is (up to rounding) − log Q(x) bits; thus, − log P ̄j(x) is the code length im
+plied by P ̄j.
+Universal distributions and worst-case redundancy
+The key point is how to determine a single probability distribution P ̄j representing Mj: it should perform well regardless of which specific distribution within Mj generated the data. In other words, if a distribution P ∈ Mj achieves a short expected code length EP [− log P (x)],
+then P ̄j should yield a similarly short one. Such P ̄j are called universal distributions for the model Mj [30].
+To be more precise, we can define the redundancy of P ̄j relative to a parameter θj as
+REDj(θj; P ̄j) := Eθj − log P ̄j(x) + log Pj(x; θj) (17)
+This quantity measures the expected extra bits needed when using P ̄j instead of the expected optimal code for Pj(·; θj). The latter is not available in practice, since the true θj is typically unknown. Thus, it is useful defining the worst-case redundancy:
+REDj(Θj; P ̄j) := max
+θj ∈Θj
+REDj(θj; P ̄j). (18)
+
+
+5
+A distribution is universal if this quantity is small. Ideally, one would like to find a P ̄j that minimizes the worst-case redundancy, but this is generally infeasible. However, for a dj-dimensional parametric model under standard regularity conditions (satisfied by the Maximum Entropy models considered later), the Bayesian
+choice P ̄j = P wj
+j with a regular prior wj attains nearoptimal performance: its redundancy is within a constant of the optimal value as the sample size grows. This is formalized in the following result.
+Definition 1 (INECCSI sets [30]) Let
+Mj = {Pj(x; θ)}θ∈Θj , j ∈ {0, 1}.
+A subset Θ′
+j ⊂ Θj is an INECCSI subset if its interior is a non-empty, convex, compact subset of the interior of Θj .
+INECCSI subsets exclude boundary effects and ensure regular asymptotics. For instance, in the Bernoulli model with Θ = [0, 1], any [ε, 1 − ε] with 0 < ε < 1/2 is INECCSI.
+Let M(m)
+j be the i.i.d. extension of Mj to m observations, i.e., a model over ym = (x1, . . . , xm) where each
+xi ∈ X is independently sampled from Pj(·; θ). Let P (m)
+j
+be the i.i.d. extension of Pj and P ̄(m)
+j be a distribution
+on ym. Let REDm(Θj; P ̄(m)
+j ) be the worst-case redun
+dancy attained by P ̄(m)
+j . Since Eθj [− log P (m)
+j (ym; θj )]
+grows linearly in m, universality of P ̄(m)
+j requires REDm to grow sub-linearly in m. A standard result [30] states that for every INECCSI subset Θ′
+j and regular prior wj, there exists C > 0 such that for all m:
+dj
+2 log m − C ≤ inf
+P ̄ (m)
+j
+REDm(Θ′
+j ; P ̄(m)
+j)
+≤ REDm(Θ′
+j ; P wj (m)
+j ) ≤ dj
+2 log m + C, (19)
+where the infimum is over all distributions on X (m). The key implications of these results are:
+• the minimum achievable worst-case redundancy grows as (dj/2) log m;
+• Bayesian marginal likelihoods are universal distributions, and their redundancy exceeds the minimum attainable by at most a constant — in this sense, they are asymptotically almost optimal.
+In a variation of the definition of universality, we may search for P ̄j such that − log P ̄j(x) − log Pθˆj (x) is small, in the worst-case over all possible data realizations x; here θˆj(x) is the maximum likelihood estimator of θj
+relative to x. This leads to comparing P ̄j(x) to the bestfitting model a posteriori, that is, the model that, with
+hindsight, would give the shortest code for the observed data. Within the MDL literature, this more stringent criterion is often viewed as the ideal one. The distribution that achieves this is called the Normalized Maximum Likelihood (NML) distribution [30–32]. It assigns probabilities by maximizing the likelihood of the observed data while normalizing over all possible datasets of the same size:
+P ̄NML
+j (x) = Pj(x; θˆj(x))
+P
+y∈X Pj (y; θˆj (y))
+. (20)
+Importantly, the NML distribution does not require any prior, and achieves universality both in worst-case data and in worst-case expected regret. In fact, for the MEM models we introduce below, inequality (19) also holds
+when P wj(m)
+j is replaced by P ̄NML(m)
+j.
+Universal distributions guarantee low-regret e-variables
+We can now formalize the connection between e-values and MDL: we show that using a universal distribution P ̄1 as the numerator in the e-variable construction (11) leads to small regret. This provides a principled justification for the use of Bayesian mixtures and NML in e-value methods. To see this, notice that (minus) the log-ratio of any variable of the form
+S(x) =
+P ̄1(x)
+P w0
+0 (x)
+induces a difference in description lengths between models M1 and M0:
+− log S(x) = − log P ̄1(x) − [log P w0
+0 (x)]. (21)
+This mirrors expression (16), but with one crucial difference: in order for S to be an e-variable, the denominator P w0
+0 cannot be chosen freely, as it must be the prior
+w∗
+0 that ensures that S qualifies as a GRO e-variable (i.e., satisfies the e-variable condition). This formulation, however, brings a clear interpretative advantage: the description length difference expressed in (21) now has a direct statistical interpretation. Indeed, if S is an e-variable, the corresponding code-length difference can be mapped to a statistical significance measure, since Type I error control is guaranteed. This grounds the MDL code-length difference in a frequentist hypothesis testing framework. In particular, smaller values of − log S(x) correspond to larger e-values and hence stronger evidence against the null model M0. This observation addresses a longstanding issue in MDL: although it provides a principled model comparison method, it lacks explicit statistical guarantees such as Type I error control [30, Open Problem No.
+
+
+6
+9, page 413]. Restricting attention to code-length differences that admit an e-value interpretation not only provides such guarantees but also makes it possible to assign a well-defined evidential value to differences in description lengths. This can be seen as the natural solution to the problem — at least for the two-model comparison case [31]. Extending this insight to multiple models remains an important open challenge.
+The connection between e-values and MDL becomes even more compelling when considering the regret of evariables. Indeed, we now show that the worst-case regret of an e-variable using numerator P ̄1 is never larger
+than the worst-case redundancy of P ̄1. Let us restrict attention to an INECCSI subset Θ′
+1 ⊂ Θ1. Moreover, for clarity, let’s denote the regret relative to the GRO e-variable associated to P ̄1, i.e. the regret obtained
+by putting Scand = P ̄1(x)/P w∗
+0
+0 (x) in definition 15, as
+REG1(Θ′
+1; P ̄1). Then, for any distribution P ̄1, according to definitions (15) and (12) (see section S1) it holds:
+REG1(Θ′
+1; P ̄1) ≤ RED1(Θ′
+1; P ̄1). (22)
+This shows that, in the worst-case over θ1, the regret of
+an e-variable built with numerator P ̄1 is upper bounded
+by the redundancy of P ̄1. Consequently, choosing a uni
+versal distribution P ̄1, which by definition provides small redundancy, guarantees small regret. This motivates our choices in the next sections: we will construct e-variables by setting P ̄1 either to the Bayesian
+mixture P w1
+1 (with a regular prior), or to the Normalized
+Maximum Likelihood P ̄NML
+1 . Both yield small regret of order (d1/2) log m+O(1). These choices are also common in the literature. The NML distribution was used (implicitly) in [34] as an e-variable numerator, and Bayesian mixtures are widely adopted in the construction of evariables [4].
+III. APPLICATION TO MAXIMUM ENTROPY MODELS
+Here, we provide explicit formulas for hypothesis tests that involve either microcanonical or canonical maximum entropy models. We focus on the case of discrete data. For a given choice of sufficient statistics c(x), we denote by C the discrete set of values of c(x) that are realizable by at least one x ∈ X ; for mathematical convenience, we assume that C is a (finite or countable) subset of Rd for some d ∈ N. Moreover, for any given value c ∈ C, let Ω(c) represent the number of configurations satisfying the constraint c(x) = c, formally defined as:
+Ω(c) :=
+X
+x : c(x)=c
+1. (23)
+Entropy maximization, when the hard constraints c(x) = c are enforced on each realizable configuration x,
+yields a microcanonical model whose functional form is a uniform distribution over data satisfying the constraints:
+Pmic(x; c) =
+(1
+Ω(c) , if c(x) = c;
+0, else. (24)
+The parameters of a microcanonical model correspond to the sufficient statistics themselves, with values in the discrete parameter space Θmic = C. When soft constraints E[c(x)] = c are enforced (that is, the value c of the sufficient statistic is to be met only as an ensemble average), the maximization of the entropy returns a canonical model where the resulting functional form of the probability distribution is, instead, exponential, with positive probability for all possible data:
+Pcan(x; θ) = e−θ·c(x)
+Z(θ) (25)
+where Z(θ) ≡ P
+x∈X e−θ·c(x) is a normalization term known as partition function. Canonical models coincide with what is called exponential families with uniform carrier function in the statistics literature [15], and the formula above is generally referred to as canonical parametrization, where the parameters θ ∈ Θcan may be viewed as the Lagrange multipliers resulting from the entropy maximization. For each value c defining the microcanonical model in Eq. (24), there is a corresponding value θ such that Eθ[c(x)] = c under the canonical distribution in Eq. (25). The above ‘duality’ between canonical and microcanonical models implies that, alternatively, canonical models can also be parameterized using the expected value of the sufficient statistics. Given parameters θ, define the mean value vector:
+μ(θ) := Eθ[c(x)]. (26)
+This defines a smooth, one-to-one mapping between the canonical parameter space Θcan and the set of realizable mean values, which we denote by M. In exponential family theory, μ is known as the mean value parameter. For future reference, we refer to Pμ = Pcan(·; θ(μ)) as the canonical distribution defined in its mean value parametrization, where θ(μ) is the mapping from meanvalue parameters to corresponding canonical parameters, i.e. the inverse of μ(θ). A well-known result in this setting is that, if the set of possible constraint values C is finite, then:
+• the canonical parameter space is the full space Θcan = Rd;
+• the corresponding space of mean values M coincides with the interior of the convex hull of C.
+This result ensures that the mapping θ 7→ μ is not only bijective but also covers all “physically meaningful” ex
+
+
+7
+pected constraint values2. In the rest of the paper, we will make use of this bijection and employ whichever parameterization is most convenient. In particular, when dealing with Bayesian marginal likelihoods and their priors, we will typically work in the mean-value space, bearing in mind that all results can be equivalently expressed in the canonical parameter space via the mapping θ 7→ μ(θ). In what follows, we define GRO e-variables for tests where both the null and the alternative hypotheses are two microcanonical or two canonical MEMs that differ in the choice of constraints. Our main theoretical results are presented in a general form, but to guide the reader through the derivations, we will use a running example throughout (Examples A, B, and C): a simple 2 × 2 contingency table, representing two groups of binary data.
+A. Microcanonical test
+Consider a test where the null Mmic,0 is a microcanonical model with sufficient statistics c0 taking values in set C0 and the alternative Mmic,1 is a microcanonical model with sufficient statistics c1 taking values in set C1 ̸= C0. The parameters of microcanonical models are discrete and correspond to their sufficient statistics. As shown in [36], the NML microcanonical distribution is equivalent to a Bayesian distribution with a uniform prior over the sufficient statistics. Therefore, in this section, we restrict our analysis to the case of microcanonical Bayesian universal distributions for the alternative hypothesis, denoted by P W1
+mic,1, where W1 is a probability mass function defined on C1. Thus, the microcanonical GRO e-variable reads
+S GRO
+mic =
+P W1
+mic,1(x) PW∗
+0
+mic,0(x)
+(27)
+and it solves the discrete version of the GRO optimization problem:
+W∗
+0 = arg min
+W ∈Wc0
+DKL(P W1
+mic,1∥P W0
+mic,0) (28)
+where instead of prior densities w0, we need to consider prior probability mass functions W0, and WC0 is the set of all such distributions on the parameter space C0. We solve the microcanonical GRO optimization problem explicitly and exactly (full derivation in SM; here we report only the main results) and find the optimal prior distribution on the null:
+W∗
+0 (c0) =
+X
+x : c0(x)=c0
+P W1
+mic,1(x), (29)
+2 It follows from the general theory of exponential families with finite support [35, Theorem 9.2], under a technical condition known as steepness, which holds when C is finite.
+i.e., W ∗
+0 (c0) is the marginal distribution of the null suf
+ficient statistic c0(x) induced by P W1
+mic,1. In the special case where the alternative sufficient statistics completely determine the value of the null, we say that Condition A holds:
+Condition A: (30)
+there exists a function f : C1 → C0 s.t. c0(x) = f (c1(x)).
+Under Condition A, one can write:
+W∗
+0 (c0) =
+X
+c1 : f (c1)=c0
+W1(c1), (31)
+i.e., the GRO-optimal prior on the null is the distribution induced on the null sufficient statistics by the alternative prior, or equivalently, the marginal distribution of c0 induced by W1. Once that W ∗
+0 is computed, the microcanonical GROoptimal e-variable can always be expressed as
+S GRO
+mic (x) = Ω0(c0(x))
+Ω1(c1(x))
+W1(c1(x)) W∗
+0 (c0(x)) . (32)
+Finally, although the fact that SGRO
+mic is an e-variable follows from a general theorem (Theorem 1 in [7], as mentioned above Equation (10)), we additionally provide a further, direct proof showing that its expected value under the null is exactly one:
+E0[SGRO
+mic ] = 1 ∀Pmic,0 ∈ Mmic,0. (33)
+This direct proof, as well as the section’s other detailed calculations and proofs, can be found in section S2. For clarity, we now provide a first example application.
+Example A
+Let us consider the dataset x = (xa, xb) consisting of two groups of binary data, represented as xa = (xa
+1, ..., xa
+na ) and xb = (xb
+1, ..., xb
+nb ), with na and nb the re
+spective group sizes. The total sample size is n = na +nb. We denote by na
+1 = Pna
+i=1 xa
+i and nb
+1 = Pnb
+i=1 xb
+i the total
+number of 1s in xa and xb, and by n1 = na
+1 + nb
+1 the total number of 1s in x. The aim is to build a microcanonical test to check whether the probability of observing x = 1 changes according to the different groups. To do so, we set the alternative sufficient statistics equal to the number of 1s in each group, c1 = (na
+1 , nb
+1), and the null sufficient statistic equal to the total number of 1s, c0 = n1. In the microcanonical formulation, these quantities are treated as fixed in the respective models. To find the microcanonical GRO e-variable, we apply formula (32), where:
+• Ω0(n1) = n
+n1 is the number of permutations of x
+preserving the total number of 1s;
+
+
+8
+• Ω1(na
+1 , nb
+1) = na
+na
+1
+nb
+nb
+1
+is the number of permuta
+tions of x preserving the total number of 1s in each group.
+For the sake of this example, we put independent, discrete uniform priors on the alternative parameters na
+1 and
+nb
+1:
+W1(na
+1 , nb
+1) = Ua(na
+1) Ub(nb
+1) = 1
+na + 1
+1
+nb + 1 . (34)
+In this case, Condition A (30) holds, as the null sufficient statistics can be written as a function of the alternative one: n1 = na
+1 + nb
+1. Thus, the optimal prior on the null
+W∗
+0 is the distribution of n1 induced by W1. In this case, that is simply the convolution of Ua and Ub, which is a triangular discrete function:
+W∗
+0 (n1) =
+
+     
+     
+n1 +1
+(na+1)(nb+1) , if 0≤n1≤min(na,nb),
+min(na ,nb )+1
+(na+1)(nb+1) , if min(na,nb)<n1≤max(na,nb),
+na +nb +1−n1
+(na+1)(nb+1) , if max(na,nb)<n1≤na+nb,
+0, if otherwise.
+(35) as shown in Figure 2.
+FIG. 2. In the microcanonical Example A, when the prior on the alternative sufficient statistics na
+1 and nb
+1 are uniform distributions (on the left), the resulting GRO-optimal prior on the null sufficient statistic n1 is the convolution of the two uniform distributions, which results in a triangular distribution (on the right). In this example, na = 8 and nb = 10.
+B. Canonical test
+Consider a test where the null Mcan,0 is a canonical model with sufficient statistics c0 taking values in set C0, and the alternative Mcan,1 is a canonical model with sufficient statistics c1 taking values in set C1 ̸= C0. The goal is to find the canonical GRO e-variable:
+S GRO
+can =
+P ̄can,1(x) P w∗
+0
+can,0(x)
+(36)
+where w∗
+0 is a prior density on the mean-value parameter space M0 and solves the optimization problem
+w∗
+0 = arg min
+w∈Wμ0
+DKL(P ̄1∥P w0
+0 ). (37)
+No exact general solution is currently available for this problem. While in some cases it can be solved analytically or numerically, in the majority of cases, there is neither a known analytic solution nor a feasible numerical approach. Here, we propose two candidate approximations, the microcanonical approximation and the pseudo approximation. The first will serve as an actual approximation, and the second as a tool to assess whether the former approximation is good. The definition of the microcanonical approximation is based on two facts, proven in section S3:
+• A canonical universal distribution P ̄can,1 with sufficient statistics c1 can always be expressed as a microcanonical Bayesian marginal likelihood, i.e., there always exists a prior probability mass function Wcan,1(c) such that
+P ̄can,1 = P Wcan,1
+mic,1 (38)
+with Wcan,1 obtained by setting (for j = 1):
+Wcan,j (cj ) =
+X
+x : cj (x)=cj
+P ̄can,j (x), (39)
+i.e., Wcan,j(cj) is equal to the distribution of cj(x)
+induced by P ̄can,j(x).
+• Given the canonical and microcanonical models Mcan and Mmic built upon the same sufficient statistic c(x), a microcanonical e-variable E is always a canonical e-variable:
+EP [ E ] ≤ 1 ∀ P ∈ Mmic
+⇒ EP [ E ] ≤ 1 ∀P ∈ Mcan. (40)
+Following the first fact, given P ̄can,1 and using the results of the previous section, we can build the approximating microcanonical GRO e-variable SGRO
+mic for the microcanonical test based on the corresponding
+P Wcan,1
+mic,1 = P ̄can,1. Thus (27) becomes
+S GRO
+mic =
+P ̄can,1(x) PW∗
+0
+mic,0(x)
+(41)
+where, readapting (29)
+W∗
+0 (c0) =
+X
+x : c0(x)=c0
+P ̄can,1(x). (42)
+Given the second fact (40), the resulting microcanonical GRO e-variable is a valid canonical e-variable, i.e., it is an e-variable for the test between two canonical models, even if, for this test, it is not the GRO-optimal one. As such, from (6), it will have a smaller e-power than the canonical GRO one unless the two coincide:
+EP ̄can,1 log SGRO
+mic ≤ EP ̄can,1 log SGRO
+can (43)
+
+
+9
+The pseudo approximation is further built over the microcanonical one. The prior W ∗
+0 (used to build SGRO
+mic ),
+defined on C0, is transformed into a smooth density wpseudo,0 over the corresponding (continuous) mean-value parameter space M0. This is obtained through a high resolution limit, by computing W ∗
+0 (c0) for a much higher dimension and by properly rescaling and normalizing it such that it is interpreted as a Riemann approximation of a continuous density on μ0. A practical example of this procedure, which might seem abstract at this stage, is given in Examples B and C. Moreover, a pseudo-code is provided in section S5. Given that, in general, wpseudo,0 is different from the GRO-optimal prior w∗
+0, which in most cases remains unknown, the resulting variable
+Spseudo =
+P ̄can,1(x)
+P wpseudo,0
+can,0 (x) (44)
+is not an e-variable, unless wpseudo,0 = w∗
+0. Indeed, from
+Theorem 1 of [7], SGRO
+can is the only e-variable of that form. Moreover, from (8), it holds:
+DKL(P ̄can,1∥P w∗
+0
+can,0) ≤ DKL(P ̄can,1∥P wpseudo,0
+can,0 ) (45)
+or, equivalently:
+EP ̄can,1 log SGRO
+can ≤ EP ̄can,1 [log Spseudo] (46)
+Consequently, one has
+EP ̄can,1 log SGRO
+mic ≤ EP ̄can,1 log SGRO
+can
+≤ EP ̄can,1 [log Spseudo] , (47)
+i.e., the two approximations provide an upper and a lower bound for the e-power of the canonical GRO e-variable. In summary, when the canonical GRO e-variable is not available, we can follow a two-step procedure:
+1.We build the corresponding microcanonical approximation, knowing that it is a valid candidate e-variable. To build it, we first transform the canonical universal distribution into a microcanonical one, by finding Wcan,1 as in (39). Then, we compute SGRO
+mic according to the formulas expressed in the previous section (Equations (29) and (32)).
+2.The goodness of the microcanonical approximation can be evaluated by looking at the width of the interval
+r = EP ̄can,1 [log Spseudo] − EP ̄can,1 log SGRO
+mic ≥ 0 (48)
+where, for future reference, it is useful to note that, using definitions (44) and (41) and sufficiency, we can rewrite
+r = EP ̄can,1
+h
+log P W ∗
+0
+mic,0(x) − log P wpseudo,0
+can,0 (x)
+i
+= EP ̄can,1 [log W ∗
+0 (c0(x)) − log Wpseudo,0(c0(x))] . (49)
+where Wpseudo,0(c0(x)) is defined as in (39).
+The evaluation above is under P ̄can,1-expectation; this makes sense if we use a Bayesian universal distribution P ̄can,1 = P w1
+can,1 and the prior w1 is a reasonable expression of our uncertainty. If we are not so sure about our priors, or if P ̄can,1 is non-Bayesian, we may be interested in a more stringent, worst-case measure for evaluating the performance of the microcanonical approximation. In analogy with the worst-case REG defined in 15, we define an alternative version of r, denoted by r′, which can be defined both relatively to a single parameter θ1 (equivalently and more conveniently relative to μ1 = μ(θ1):
+r′(μ1) = Eμ1 log Spseudo − log SGRO
+mic (50)
+= Eμ1 [log W ∗
+0 (c0(x)) − log Wpseudo,0(c0(x))] ,
+where Eμ denotes the expected value under Pμ, and in its worst-case version, which for clarity will be simply denoted by r′:
+r′ := max
+μ1 ∈M1
+r′(μ1). (51)
+It can be easily argued that
+r ≥ 0 ⇒ r′ ≥ 0. (52)
+In case r (or r′) is small, we know that our easily computable microcanonical e-variable SGRO
+mic is close to optimal according to the GRO criterion for the canonical problem, and hence can be used instead of the canonical
+S GRO
+can . In the following example, which is a continuation of Example A, we show a practical case where this turns out to be true.
+Example B (continued from Example A)
+We consider the same setting as in Example A, but in this case, we are interested in constructing a canonical test. In a canonical formulation, the observed number of 1s is fixed only in expectation. As a result, the null model is a collection of n i.i.d. Bernoulli variables, where the parameter is the probability p0 ∈ [0, 1] of observing x = 1, which is the same regardless of the group. The alternative model, instead, assumes that data in the two groups are independent Bernoulli variables, where the parameters are the probabilities (pa, pb) ∈ [0, 1]2 of observing x = 1, which depend on the group. The aim of the tests is to assess whether pa and pb are the same or whether they are different. Again, for the sake of this example, we put independent, continuous uniform priors on the alternative parameters pa and pb, w1(pa, pb) = u(pa)u(pb) where u(p) = 1 if p ∈ [0, 1] and u(p) = 0 else. In this simple case, the Bayesian marginal likelihood can be computed analytically, and it reads:
+P w1
+can,1 =
+Z1
+0
+pna
+a1 (1 − pa)na−na
+1 dpa
+Z1
+0
+pnb
+1
+b (1 − pb)nb−nb
+1 dpb
+= na
+na
+1
+−1 1
+na + 1
+nb
+nb
+1
+−1 1
+nb + 1 (53)
+
+
+10
+Following the procedure described in this section, we first build the microcanonical approximation. To do so, we need to compute the probability Wcan,1 induced by
+P w1
+1 on the alternative sufficient statistics, such that
+P w1
+can,1 = P Wcan,1
+mic,1 . By inspecting Eq. (53), it is easy to observe that Wcan,1 is the uniform distribution: Wcan,1 = (na + 1)−1(nb + 1)−1 = Ua(na
+1) Ub(nb
+1). Thus, we can
+compute the microcanonical approximation SGRO
+mic by using the results of Example A. As a second step, we check whether this microcanonical e-variable is a good approximation by studying the behavior of the interval width r as the total size n increases. To evaluate Spseudo, we compute the prior wpseudo,0 as described above (denoted by w1
+pseudo,0 in Figure 4 to be distinct from w2
+pseudo,0 of the following Example C). A schematic representation of how SGRO
+mic and Spseudo are built is shown in Figure 4. Once SGRO
+mic and Spseudo are computed, we can compute r and show that the microcanonical approximation works very well in our simple example (see Figure 3).
+FIG. 3. Convergence of the interval width r for a canonical test between two streams of binary data (as in Example B), for na = nb = m, as the sample size n = 2m grows.
+C. Asymptotic justification for the microcanonical approximation
+We now provide a theoretical result that explains why the microcanonical approximation tends to perform very well in practice, even when the canonical GRO e-variable is not available. Specifically, it suggests that in many cases the gap r defined in Equation (48) converges very fast to 0 as the sample size increases. First, let M be a canonical maximum entropy model with sufficient statistic c(x) taking values in a finite set C ⊂ Rd. The canonical distribution has an exponential form
+Pcan(x; θ) = e−θ·c(x)
+Z(θ) , (54)
+FIG. 4. Procedures to compute the microcanonical approximation SGRO
+mic and the pseudo approximation Spseudo for testing between two binary data streams, under uniform priors (as in Examples A, B, and C). Starting from two independent continuous uniform priors on the alternative (top left), we construct discrete microcanonical priors (top right) satisfying P w1
+can,1 = P Wcan,1
+mic,1 . The optimal discrete prior W ∗
+0, used in SGRO
+mic , is obtained by convolving the alternative priors. The continuous prior wpseudo,0 for Spseudo is derived either from W ∗
+0 through a high resolution limit (w1
+pseudo,0), or by
+directly convolving the original continuous priors (w2
+pseudo,0 ).
+and induces the mean-value mapping
+μ(θ) := Eθ[c(x)], (55)
+with μ taking values in the mean-value parameter space M.
+Next, consider the i.i.d. extension M(m) in which y(m) = (x1, . . . , xm) are m i.i.d. samples from Pcan(·; θ). The sufficient statistic of y(m) is the sum
+s(m)(y(m)) =
+m
+X
+j=1
+c(xj). (56)
+Let w be a prior density over M, and let Qw be the induced probability for any measurable M′ ⊆ M:
+Qw(μ ∈ M′) :=
+Z
+M′
+w(μ) dμ, (57)
+
+
+11
+The following theorem shows that the normalized sufficient statistic converges in distribution to Qw. Convergence is quantified in terms of probabilities of subsets, with error decaying at rate O(log m/m).
+Theorem 1 Let w be any regular prior density on the mean value parameter space M ⊂ Rd. Then, for any INECCSI (Definition 1) subset M′ of M, we have
+P w(m)
+can
+s(m)(y(m))
+m ∈ M′ − Qw {μ ∈ M′}
+= O log m
+m . (58)
+In words: under the Bayesian marginal likelihood
+P w(m)
+can , the normalized sufficient statistic s(m)/m becomes increasingly close to being distributed according to the prior over mean-value parameters.
+Assume we can extend both canonical models M0 and M1 to i.i.d. models M(m)
+0 and M(m)
+1 as above, where (56) holds for both c = c0 (sum denoted by s0) and c = c1 (sum denoted by s1). In such settings, Theorem 1 supports the claim that the gap r between the microcanonical and pseudo approximations vanishes for large m. This is best explained in terms of our running example.
+Example C (continued from Examples A and B)
+Suppose na = nb = m, so that data can be grouped into m i.i.d. blocks, each consisting of one binary outcome from group a and one from b. For each m the sufficient statistics are:
+• s(m)
+1 = (na (m)
+1 , nb (m)
+1 ): number of ones in each group under the alternative,
+• s(m)
+0 =1
+2 na (m)
+1 + nb (m)
+1 : average number of ones across both groups under the null. The division by 2 is required to ensure that, for a single outcome, M0 = [0, 1], and can be interpreted, intuitively, as a set of probabilities.
+After normalization by m, s(m)
+1 /m ∈ M1 = [0, 1]2 and
+s(m)
+0 /m ∈ M0 = [0, 1]. Notice that every discrete
+distribution W (m)
+j on the sufficient statistics of M(m)
+j
+induces a discrete distribution V (m)
+j on the normalized
+sufficient statistics: P w1(m)
+can,1 induces a probability W (m)
+can,1
+on the alternative sufficient statistics s1, and a corresponding one, denoted here by V (m)
+1 , on the normalized alternative sufficient statistics s1/m. Similarly, the
+microcanonical optimal prior W ∗(m)
+0 on the null sufficient
+statistic s0 induces a distribution V ∗
+0 on s0/m. In Example B, we used a prior w1 under which pa and pb were independently and uniformly distributed, i.e.,
+w1(pa, pb) = wa
+1 (pa)·wb
+1(pb) with wa
+1 = wb
+1 = u. The inde
+pendent uniform prior has a remarkable property: V (m)
+1
+coincides exactly with the product of two independent discrete uniforms, each defined on {0, 1/m, . . . , 1}, cor
+responding to the components of s(m)
+1 /m. Consequently,
+the distribution V ∗(m)
+0 is exactly equal to a triangular discrete distribution, which is the convolution of these two discrete uniforms (Figure 2). Theorem 1 indicates that something analogous, but now in an asymptotic sense, will happen for every regular prior w1(pa, pb) = wa
+1 (pa)wb
+1(pb), as long as pa and pb are still independent
+under w1. More in detail, even if wa
+1 and/or wb
+1 are not
+uniform, V (m)
+1 will converge to a distribution on M1 that
+is a discretized version of w1, and V ∗(m)
+0 will still be the
+exact convolution of the two components of V (m)
+1 , which are the (approximate) discretized versions of the components of w1. To illustrate, in Example 3 below, wa
+1 and
+wb
+1 will be taken to be of general beta form rather than restricted to uniform, and then we will see Theorem 1 in action, the correspondence becoming asymptotic rather than precise at each m. Still, V ∗(m)
+0 will converge, as m grows, to a continuous, strictly positive density on M0, denoted by w1
+pseudo,0. This distribution can be approximated by considering a very large m and ”smoothening” the corresponding V ∗(m)
+0 to w1
+pseudo,0. This limiting procedure is precisely what we referred to earlier as the high
+resolution limit. Once w1
+pseudo,0 is obtained, P w1
+pseudo,0 (m)
+can
+induces a probability distribution W 1(m)
+pseudo,0 on the null sufficient statistics. As above, we can define
+V 1(m)
+pseudo,0
+s(m)
+0
+m
+!
+:= W 1(m)
+pseudo,0 s(m)
+0 . (59)
+Now we invoke Theorem 1 again: it indicates that
+V 1(m)
+pseudo,0 converges to w1
+pseudo,0. Thus, one may ex
+pect V ∗(m)
+0 and V 1(m)
+pseudo,0, and consequently W ∗(m)
+0 and
+W 1(m)
+pseudo,0, to be close and r to be small, according to Eq. (49). The microcanonical e-variable becomes thus an excellent approximation of the canonical one — which is what we set out to argue. In the current example, we can go further: let w2
+pseudo,0
+be the continuous convolution of the independent priors wa
+1 and wb
+1. Applying Theorem 1 to M0 with this density
+shows that the induced distribution V 2(m)
+pseudo,0 on s(m)
+0 /m converges to a discretized version of w2
+pseudo,0. At the
+same time, V ∗(m)
+0 , being the convolution of a discretized w1, converges to the discretized convolution of w1. Thus, for large m, w1
+pseudo,0 and w2
+pseudo,0 become indistinguishable. In practice, one can compute Spseudo either by directly convolving the continuous components of w1, or by taking the discrete convolution W ∗(m)
+0 and then its highresolution limit: both approaches yield the same result (Figure 4).
+
+
+12
+How precise and general is this? In the reasoning above, we invoked Theorem 1 several times to go back and forth between prior distributions on meanvalue parameters and marginal distributions on sufficient statistics. Specifically: (a) at the level of M1 (blue and yellow arrows in Figure 4); and (b) at the level of M0,
+for relating W ∗(m)
+0 to P w1
+pseudo,0
+can (b1, bottom right arrow
+in Figure 4) and P w2
+pseudo,0
+can (b2, bottom left arrow).
+In step (a), the theorem is not really needed when wa
+1
+and wb
+1 are uniform (as in the figure). Nevertheless, as long as the priors remain independent and regular, Theorem 1 suggests that step (a) holds even if they are not uniform. More generally, moving from the binary 2-group case to a general MEM M1, Theorem 1 still suggests that step (a) is valid whenever w1 factorizes into independent regular priors, making the mean-value parameters independent. We write “suggest” rather than “prove” because the convergence in (58) is too weak to formally imply r → 0 (it concerns probabilities of sets, whereas (49) involves expectations of log densities). Nevertheless, it provides strong heuristic evidence, and we do observe convergence numerically (see Figure 3). All reasoning based on Theorem 1 should thus be understood as heuristic rather than fully formal.
+Turning now to step (b) for general M0 and M1: as
+long as s(m)
+0 is a linear function of s(m)
+1 , the use of Theorem 1 in steps (b1) and (b2) remains heuristically justified, provided w1 factorizes into regular independent priors as above. This linearity condition holds in all our examples (e.g. in Example C, s(m)
+0 is the average of the
+components of s(m)
+1 ). It guarantees that the limiting den
+sity w1
+pseudo,0 exists, and Theorem 1 then suggests that it coincides with w2
+pseudo,0.
+In the more general case where s(m)
+0 is a function (not
+necessarily linear) of s(m)
+1 — i.e. Condition A holds 
+then it may still be true that V ∗(m)
+0 converges to a high
+resolution limiting density w1
+pseudo,0. In that case, Theorem 1 still suggests that step (b1) remains valid, so that r becomes small with growing sample size, making the microcanonical approximation effective. However, in such settings, it is less clear whether the approach based on w2
+pseudo,0 still makes sense.
+We stress that this asymptotic justification does not rely on P ̄1 being a Bayesian mixture with prior w1. The construction leading to w1
+pseudo,0 applies to any uni
+versal distribution P ̄1 on the alternative (including the
+NML), since P ̄1 always induces a discrete distribution on the alternative sufficient statistic; from this, one can derive V ∗(m)
+0 and then obtain w1
+pseudo,0 via the highresolution limit. By contrast, the alternative route based on w2
+pseudo,0 explicitly requires a factorized regular prior on the alternative, and is therefore not directly available in the non-Bayesian case.
+IV. APPLICATION TO CONTINGENCY TABLES AND RELATED MODELS
+Contingency tables are a fundamental tool in statistical analysis for examining the relationship between categorical variables. Given a dataset where observations are classified according to categorical factors, a contingency table provides a structured way to summarize the frequencies of different category combinations.
+Formally, a contingency table is an l × k matrix where each entry represents the count of occurrences for a particular combination of row and column categories. Such tables are widely used in fields where categorical data naturally arise, such as biostatistics, social sciences, and market analysis.
+In network science, this approach plays a crucial role in link analysis, where the presence or absence of an edge (x = 1 or x = 0) in a network is studied across different subsets of nodes. For instance, in community detection, one may ask whether the probability of forming a link differs within and between predefined groups of nodes. This idea is closely related to the Stochastic Block Model (SBM), a generative model in which nodes are assigned to latent groups, and connection probabilities are determined by group memberships. Contingency tables provide a natural way to summarize and test the differences in connection probabilities across groups, helping to assess whether observed patterns deviate from a null model where edges are formed independently of group structure. See e.g., [37, 38] for connections between network modeling, and contingency tables and the discussion in IV C of this paper.
+In this work, we focus on binary categorical data, which corresponds to l = 2 in the general l × k contingency tables setting. We first apply our results to the simple case of two groups, i.e., 2 × 2 contingency tables. We consider microcanonical and canonical tests. For canonical tests, our main focus will be that of finding the microcanonical approximation in practical cases; this translates into finding the induced prior on the alternative (38) and then applying formula (41). We will finally verify the approximation validity by evaluating the interval width r, and show results on the regret. Later, we extend these results to the more general case of 2 × k contingency tables.
+A. 2 × 2 contingency tables
+A 2 × 2 contingency table is a fundamental tool to assess whether the distribution of a binary outcome differs between two groups. Given a dataset where each observation consists of a binary variable x ∈ {0, 1} and a categorical label indicating group membership, the data can be summarized in the following 2 × 2 table:
+
+
+13
+Group A Group B Total
+x = 1 na
+1 nb
+1 n1
+x = 0 na
+0 nb
+0 n0
+Total na nb n
+The dataset x consists of two groups, represented as xa = (xa
+1, ..., xa
+na ) and xb = (xb
+1, ..., xb
+nb ), where na and
+nb are the respective group sizes. The table reports the number of ones (na
+1 and nb
+1) and zeros (na
+0 and nb
+0) in each group, along with their totals, n1 and n0. The key question is whether the probability of observing x = 1 differs between the two groups. This problem translates into a hypothesis testing problem, where:
+• In the alternative hypothesis, the two groups are distinct, meaning the number of ones is constrained separately in each group:
+c1 = (na
+1 , nb
+1). (60)
+• In the null hypothesis, the groups are indistinguishable, so only the total number of ones is constrained:
+c0 = n1. (61)
+These constraints define the sufficient statistics under each hypothesis and form the basis for the microcanonical and canonical tests discussed next. The reader may have noticed that this is exactly the setting of Examples A, B, and C in section III. Nevertheless, for the sake of clarity, in this section all quantities will be defined again and in more detail, at the cost of repeating ourselves.
+2 × 2 microcanonical test
+In the microcanonical formulation, we enforce hard constraints on the observed counts, treating them as fixed quantities. The null model with sufficient statistics n1 reads
+Pmic, 0(x; n1) =
+(1
+Ω0(n1) , if n1(x) = n1;
+0, else; (62)
+where
+Ω0(n1) = n
+n1
+(63)
+is the number of permutations of x preserving the total number of 1s. The alternative model with sufficient statistics (na
+1 , nb
+1) reads
+Pmic, 1(x; na
+1 , nb
+1) =
+
+ 
+ 
+1 Ω1 (na
+1 ,nb
+1) , if (na
+1(x), nb
+1(x))
+= (na
+1 , nb
+1);
+0, else, (64) where
+Ω1(na
+1 , nb
+1) = na
+na
+1
+nb
+nb
+1
+(65)
+is the number of permutations of x preserving the total number of 1s in each group. For any given prior W1 on the alternative sufficient statistics, SGRO
+mic is found exactly by computing W ∗
+0 and applying (32). In this case, Condition A (30) is satisfied, as the null sufficient statistics can be written as a function of the alternative one:
+n1 = na
+1 + nb
+1. (66)
+Thus, following (31), the optimal prior on the null is the distribution of n0 induced by W1(na
+1 , nb
+1). If na
+1 and nb
+1
+are independently distributed:
+W1(na
+1 , nb
+1) = W a
+1 (na
+1) · Wb
+1 (nb
+1), (67)
+then W ∗
+0 is simply the convolution of W a
+1 and W b
+1:
+W∗
+0 = Wa
+1 ∗Wb
+1 , (68)
+where f ∗ g represents the convolution between functions f and g.
+Example 1: Microcanonical test with NML In the microcanonical case, resorting to the Normalized Maximum Likelihood approach is completely equivalent to putting a uniform prior on both parameters of the alternative model, as shown in [36]. Consequently, this case is reduced to Example A in III A, and is not considered further.
+2 × 2 canonical test
+The null canonical model obtained by constraining the average number of 1s, i.e., the expected value of n1, is represented by the exponential distribution
+Pcan(x; θ0) = e−θ0·n1(x)
+(1 + e−θ0 )n , (69)
+which can be rewritten in the mean-value parametrization:
+Pcan(x; p0) = pn1(x)
+0 (1 − p0)n−n1(x) (70)
+upon defining
+p0 = e−θ0
+1 + e−θ0 . (71)
+
+
+14
+The null model is the distribution of a collection of n i.i.d. Bernoulli variables, where the occurrence of x = 1 has the same probability p0 regardless of the group. The alternative model, obtained by constraining the expected values of na
+1 and nb
+1, reads:
+Pcan(x; θa, θb) = e−θa·na
+1 (x)−θb·nb
+1 (x)
+(1 + e−θa )na (1 + e−θb )nb , (72)
+or, equivalently,
+Pcan(x; pa, pb) = pna
+1 (x)
+a (1 − pa)na−na
+1 (x)
+× pnb
+1 (x)
+b (1 − pb)nb−nb
+1(x) (73)
+upon defining the mean-value parameters:
+pa = e−θa
+1 + e−θa and pb = e−θb
+1 + e−θb . (74)
+The alternative model assumes that data in group A and group B are independent Bernoulli variables, where the probability of x = 1 is different according to the group. In this scenario, the aim of the test is to assess whether pa and pb are the same or whether they are different. In what follows, we explicitly apply the procedure described in section III B to different choices of P ̄can,1.
+Example 2: Canonical test with NML. First, we focus on the test between two canonical models with an NML approach, i.e., P ̄can,1 = P NML
+can,1 . For a model with two independent Bernoulli distributions, the exact expression of the NML distributions reads [36, 39]:
+P NML
+can,1 (x) = P a, NML
+can,1 (x) · P b, NML
+can,1 (x) (75)
+with
+P i, NML
+can,1 (x) =
+ni
+1 (x) ni
+ni
+1 (x)
+1 − ni
+1 (x) ni
+ni −ni
+1 (x)
+eni Γ(ni,ni)
+(ni)ni−1 + 1
+(76)
+for i ∈ {a, b}. In the formula above, Γ(s, t) is the upper incomplete gamma function. According to the procedure described in III B, a good candidate e-variable in this case is the microcanonical approximation, i.e., the GRO e-variable of the corresponding microcanonical test. To build it, we need the distribution of the alternative sufficient statistics (na
+1 , nb
+1) induced by P i, NML
+can,1 , which is
+Wcan,1(na
+1 , nb
+1) = W a
+can,1(na
+1) · Wb
+can,1(nb
+1) (77)
+with
+Wa
+can,1(na
+1) = Ωa
+1 (na
+1) ·
+na
+1 (x) na
+na
+1 (x)
+1 − na
+1 (x) na
+na −na
+1 (x)
+ena Γ(na,na)
+(na)na−1 + 1
+(78)
+and
+Wb
+can,1(nb
+1) = Ωb
+1(nb
+1) ·
+nb
+1 (x) nb
+nb
+1 (x)
+1 − nb
+1 (x) nb
+nb −nb
+1 (x)
+enb Γ(nb,nb)
+(nb)nb−1 + 1
+.
+(79) Given that na
+1 and nb
+1 are independently distributed,
+W∗
+0 (n1) is the convolution of W a
+can,1(na
+1) and W b
+can,1(nb
+1), which can be computed numerically.
+Example 3: Independent beta priors. The beta probability distribution reads:
+Beta(y; α, β) = yα−1(1 − y)β−1
+B(α, β) , for y ∈ (0, 1), (80)
+where B(α, β) is the beta function, defined as
+B(α, β) =
+Z1
+0
+tα−1(1 − t)β−1dt. (81)
+The beta prior represents a popular choice because it is flexible enough to encompass several cases of interest (Table S1 of the Supplementary Material). Here, we put two independent beta priors wa
+1 and wb
+1 with parameters, respectively, (αa, βa) and (αb, βb), on pa and pb. The Bayesian marginal likelihood resulting from this choice can be written explicitly as
+P ̄can,1(x) = B(α ̄a, β ̄a)
+B(αa, βa) · B(α ̄b, β ̄b)
+B(αb, βb) (82)
+where
+α ̄a = na
+1 + αa, β ̄a = na − na
+1 + βa,
+α ̄b = nb
+1 + αb, β ̄b = nb − nb
+1 + βb.
+As in the previous example, to obtain the microcanonical approximation for this problem, we look for the probability mass function induced by P ̄can,1 on the alternative sufficient statistics, which reads:
+Wcan,1(na
+1 , nb
+1) = W a
+can,1(na
+1) · Wb
+can,1(nb
+1) (83)
+with
+Wa
+can,1(na
+1) = Ωa
+1 (na
+1) · B(α ̄a, β ̄a)
+B(αa, βa) (84)
+and
+Wb
+can,1(nb
+1) = Ωb
+1(nb
+1) · B(α ̄b, β ̄b)
+B(αb, βb) . (85)
+With this choice, W a
+1 and W b
+1 are beta-binomial
+distributions. Given that na
+1 and nb
+1 are independently distributed, as we expected because we put independent priors on pa and pb, W ∗
+0 (n1) is the convolution of
+Wa
+can,1(na
+1) and W b
+can,1(nb
+1). Whether this expression can
+
+
+15
+be written in closed form depends on the specific values of the beta parameters chosen. For example, if all beta parameters are equal to 1, W ∗
+0 reduces to the convolution between two discrete uniform distributions (35). When no closed form is available, the convolution can be computed numerically. In Figure S1 we show W a
+1 , Wb
+1, W∗
+0 , w1
+pseudo,0 and w2
+pseudo,0 for different choices of the beta parameters. As expected, in all cases where wa
+1 and wb
+1 are well defined
+in the whole parameter space, w1
+pseudo,0 and w2
+pseudo,0
+are almost indistinguishable. This is a consequence of Theorem 1: the distribution of the mean value parameter (w2
+pseudo,0) and that of the sufficient statistic (w1
+pseudo,0)
+resemble each other when the sample size is big (high resolution limit).
+In the next section, we show results obtained by numerical simulations for what concerns the optimality of the microcanonical approximation and the regret, measured in the examples reported in this section. For simplicity, when necessary, we will assume that the two groups have the same sample size, i.e., na = nb = m, and that the independent beta priors on the alternative, denoted by wa
+1 and wb
+1, have all parameters equal to a certain value γ > 0.
+Evaluating the microcanonical approximation
+In order to evaluate the goodness of the microcanonical approximation, we employ two approaches: a direct comparison and a comparison through r. In the first case, we directly compare the e-power of the microcanonical approximation to the GRO-optimal canonical one, where the latter is computed by numerically solving the optimization problem (37). We find that the e-power of the microcanonical approximation converges to that of the canonical GRO e-variable as the total size grows (Figure S2). The e-power of the pseudo approximation converges as well, even though the convergence is slower compared to that of the microcanonical one. From these plots, we can already conclude that the microcanonical one works as a good approximation of SGRO
+can .
+Notice that, if na
+1 and nb
+1 are both big enough, using
+P NML
+can,1 is asymptotically equivalent to using a Bayesian universal distribution with a Jeffreys prior [30] on the alternative parameters, which in our case is equivalent to a beta prior with parameters all equal to γ = 0.5. More precisely, let us, for simplicity, set na = nb = m. Then, for any INECCSI subset M′
+1 ⊂ M1, as m → ∞, with w1 equal to the density of Jeffreys prior,
+sup
+μ1 ∈M1
+Eμ1 − log P w1
+can,1(xm) + log P NML
+can,1 = o(1), (86)
+where o(1) denotes a quantity that goes to 0 as m → +∞. Nevertheless, a difference persists at the boundaries (outside M′
+1), where Jeffreys prior diverges and the NML
+induced priors do not. This difference becomes even more important when convoluting the independent Jeffreys priors to compute W ∗
+0 . This explains why the first and third pictures in Figure S2 are quite different. For this reason, in all simulations, we implement the exact NML formula instead of its Jeffreys approximation.
+The numerical approach to directly compare the epower is feasible in a few simple cases and only for relatively small sample sizes. Conversely, the value of r can be easily evaluated, even for very large system sizes. In Figure S3, we show the plot of r as defined earlier to evaluate the effectiveness of the microcanonical approximation in different scenarios. The results confirm those of Figure S2, as in all cases considered, r converges to 0. In conclusion, we argue that the microcanonical approximation is a perfect candidate in this case.
+Results on regret
+Let’s again consider the m-dimensional i.i.d. extension of our models. In section S6 of the Supplementary Materials, we show that, if the error r′(μ1) in (50) vanishes as the sample size m increases, both the canonical growth-optimal e-variable SGRO
+can and its microcanonical
+approximation SGRO
+mic satisfy:
+REG1(μ1, ·) = d1 − d0
+2 · log m + O(1). (87)
+In the 2 × 2 case, where d1 = 2 and d0 = 1, this becomes:
+REG1(μ1; ·) = 1
+2 log m + O(1).
+This result holds uniformly over all μ1 ∈ M′
+1, provided
+that M′
+1 is an INECCSI set (i.e., excluding regions near the boundary of the parameter space). However, it does not extend to the full parameter space M, where the asymptotic form (19) may fail to hold even in well-specified cases. Our experiments confirm these insights. We evaluated worst-case regret in the 2 × 2 setting for different values of the beta prior parameter γ. Notice that in what follows we apply our reasoning to the mean value parameter spaces, (pa, pb) ∈ M1 = [0, 1]2 and p0 ∈ M0 = [0, 1], and that we consider INECCSI sets with respect to M1. From experimental results, collected in Figure 5, we observe a clear dichotomy:
+• For γ < 1, the convolution of the beta priors wa
+1
+and wb
+1 is non-differentiable at p0 = 1/2, as shown in Figure S1 (e.g., for γ = 0.5). Consequently, the
+convergence of V ∗(m)
+0 to a density over the meanvalue space M0 (as discussed under Theorem 1) may be very slow or fail altogether. In this case, Spseudo becomes incomparable to SGRO
+can and SGRO
+mic , and (87) no longer holds (see Figure S4). Indeed, in Figure 5, we see that even on small INECCSI sets, the regret grows like a log m + b for some a > 1/2.
+
+
+16
+• For γ = 1, convergence is moderate. Although r′ decays quickly (Figure S4), the experimental values of Figure 5 shows areas (e.g., the yellow counterdiagonal) where regret exceeds the expected rate. These may still belong to an INECCSI set, but convergence has not yet been reached at the sample sizes considered (m ≤ 1800).
+• For γ > 1, the convolution is differentiable, and convergence of V ∗(m)
+0 is fast. The asymptotic behavior (1/2) log m + O(1) is observed on INECCSI sets (see again Figure 5)
+These findings imply that, from a minimax perspective, using priors with γ < 1 is generally suboptimal. Such priors fail to achieve the expected regret rate of (1/2) log m+O(1) even when the true parameters lie well inside the parameter space. This has implications for default prior choices. In both the Bayesian and MDL literatures, Jeffreys prior [30] is often recommended as a default when no prior knowledge is available, and is justified in the MDL framework because it achieves asymptotically minimax optimal redundancy (i.e., the middle inequality in (19) becomes an equality [40]). However, in our setting, Jeffreys prior corresponds to γ = 1/2, which, despite its MDL-optimality, is not optimal with respect to worst-case regret under e-values.
+B. 2 × k contingency tables
+A 2 × k contingency table is a natural extension of the 2 × 2 case, allowing us to assess whether the distribution of a binary outcome differs across multiple (k) groups. Given a dataset where each observation consists of a binary variable x ∈ {0, 1} and a categorical label indicating group membership (among k different groups), the data can be summarized in the following 2 × k table:
+Group 1 Group 2 · · · Group k Total
+x = 1 n1
+1 n2
+1 · · · nk
+1 n1
+x = 0 n1
+0 n2
+0 · · · nk
+0 n0
+Total n1 n2 · · · nk n
+The dataset consists of k groups, represented as xi = (xi
+1, ..., xi
+ni ) for i = 1, ..., k, where ni denotes the size
+of group i. The table reports the number of ones (ni
+1)
+and zeros (ni
+0) in each group, along with their respective totals, n1 and n0. The key question remains whether the probability of observing x = 1 differs between groups. This problem again translates into a hypothesis testing problem, where:
+FIG. 5. Fitted slope of the logarithmic growth a log m + b of the microcanonical approximation regret 14 in the 2 × 2 case (na = nb = m), shown for different combinations of the alternative parameters (pa, pb). The expected asymptotic slope is 0.5 (yellow). Three alternative beta priors are considered: α = β = 0.5, α = β = 1 and α = β = 1.5 . The sample sizes used for fitting are m ∈ {600, 800, 1000, 1200, 1400, 1600, 1800}. pa and pb vary in the interval [0.02, 0.98], with a grid step of 0.02. Values at the boundaries are excluded to improve the readability of the plots.
+• Under the alternative hypothesis, the groups are distinct, meaning the number of ones is constrained separately in each group:
+c1 = (n1
+1, n2
+1, . . . , nk
+1). (88)
+• Under the null hypothesis, the groups are indistinguishable, meaning only the total number of ones
+
+
+17
+is constrained:
+c0 = n1. (89)
+These constraints define the sufficient statistics under each hypothesis of the microcanonical and canonical tests discussed next. As the examples will illustrate, most of the results in this section naturally extend from the 2 × 2 case. The key distinction is that, in the latter case, the only relevant asymptotic behavior is as the total sample size n grows large. In contrast, in the present setting, both n and k can grow large, with different scenarios arising depending on the application (see IV C). In all cases, the asymptotic behavior of e-variables plays a crucial role, particularly in the canonical test, where only asymptotic approximations are available, and we need to assess whether the microcanonical approximation can be used.
+2 × k microcanonical test
+While the null model stays the same (Eq. (62), the alternative model is simply the extension of (64) from 2 to k groups:
+Pmic, 1(x; {ni
+1}) =
+
+ 
+ 
+1 Ω1 ({ni
+1}), if (n1
+1(x), ..., nk
+1 (x))
+= (n1
+1, ..., nk
+1 ),
+0, else, (90) where
+Ω1({ni
+1}) =
+k
+Y
+i=1
+ni
+ni
+1
+. (91)
+As in the 2 × 2 case, Condition A (30) is satisfied:
+n1 =
+k
+X
+i=1
+ni
+1 (92)
+and the optimal prior on the null is the marginal distribution of n0 induced by W1({ni
+1}). If all ni
+1 are independently distributed:
+W1({ni
+1}) =
+k
+Y
+i=1
+Wi
+1 (ni
+1) (93)
+then W ∗
+0 is simply the convolution of the individual alternative priors:
+W∗
+0 = W1
+1 ∗ ... ∗ W k
+1 . (94)
+Interestingly, when the number of groups k is large, and the priors are regular enough, a Central Limit Theorem holds; thus, W ∗
+0 is well approximated by a discrete Gaussian distribution, i.e., if k ≫ 1:
+W∗
+0 (n1) ≈ 1
+N (μk, σk) exp − (n1 − μk)2
+2σ2
+k
+(95)
+where N is the normalization constant and
+μk =
+k
+X
+i=1
+EW i
+1 [ni
+1]
+σ2
+k=
+k
+X
+i=1
+VarW i
+1 (ni
+1).
+This result is particularly convenient: when k is big enough, the only effect of the choice of priors on the alternative, as long as they are independent and regular enough, is in determining the average and the variance of the optimal (approximated) Gaussian prior on the null.
+Example 4: Independent uniform priors. Here, we extend Example 1, i.e., Example A, to the case of k groups. When a uniform discrete prior U is put on each parameter of the alternative:
+W1({ni
+1}) =
+k
+Y
+i=1
+Ui(ni
+1) =
+k
+Y
+i=1
+1
+ni + 1 , (96)
+the GRO null prior is again the convolution of all the individual priors, i.e., the convolution of k discrete uniform distributions, which reads [41]:
+W∗
+0 (n1) =
+=
+X
+S⊆{1, ... k}
+(−1)|S| n1 + k − 1 − P
+j∈S (nj − n) n1 − 1
+×
+"k Y
+i=1
+ni + 1
+#−1
+, (97)
+where the sum runs over all possible subsets of {1, . . . k} and | S | is the number of elements of set S. In the formula, the first factor stands for the number of ways in which a set of k non-negative numbers ({ni
+1}) can be chosen uniformly such that their sum is equal to n1, with the constraint that for each i, ni
+1 must be smaller than or
+equal to ni. The second factor represents a normalization constant. If all ni are equal to a certain value m, the formula simplifies and reads:
+W∗
+0 (n1) =
+⌊n1 /(m+1)⌋
+X
+j=1
+(−1)j n
+j
+n1 − j(m + 1) + k − 1 k−1
+×
+"k Y
+i=1
+ni + 1
+#−1
+. (98)
+where ⌊x⌋ is the floor function of x. This is the formula used to generate Figure 6, where we show W ∗
+0 , along with its Gaussian approximation, for increasing values of k.
+
+
+18
+FIG. 6. The microcanonical GRO-optimal prior on the null W∗
+0 for testing 2 × k tables is obtained as the convolution of the k independent priors on the alternative, which are discrete uniform priors in the case shown in this picture. Each convolution, for k > 2, is superposed to its discrete Gaussian approximation.
+2 × k canonical test
+The null canonical model is the same as in the 2 × 2 case, Eq. (69), i.e., a collection of n i.i.d. Bernoulli trials, where the probability of observing x = 1 is the same across all groups. The alternative model extends Eq. (72) and (73) to the case of k groups, by constraining the expected values of ni
+1 separately for each group i, leading to the expression:
+Pcan(x; θ) = e− Pk
+i=1 θini
+1 (x)
+Qk
+i=1(1 + e−θi )ni , (99)
+or, equivalently, in the mean-value parametrization:
+Pcan(x; p) =
+k
+Y
+i=1
+pni
+1 (x)
+i (1 − pi)ni−ni
+1(x), (100)
+where we define the group-specific probabilities as:
+pi = e−θi
+1 + e−θi , for each i ∈ {1, . . . , k}. (101)
+In this formulation, the alternative model assumes that data in each group are independent Bernoulli variables, where the probability of x = 1 depends on the group. The goal of the hypothesis test is to determine whether these probabilities are equal across all groups (p1 = p2 = · · · = pk) or whether they differ, indicating that the probability of observing x = 1 is group-dependent.
+In the following sections, we apply the procedure described in section III B to different choices of P ̄can,1.
+Example 5: Canonical test with NML. Extending results from Example 2, for a model with k independent Bernoulli distributions, the NML distribution reads [36]:
+P NML
+can,1 (x) =
+k
+Y
+i=1
+P i, NML
+can,1 (x) (102)
+where P i, NML
+can,1 is that of Eq. (76). The microcanonical approximation is obtained by defining
+Wcan,1({ni
+1}) =
+k
+Y
+i=1
+Wi
+can,1(ni
+1) (103)
+with
+Wi
+can,1(ni
+1) = Ωi
+1(ni
+1) ·
+ni
+1 (x) ni
+ni
+1 (x)
+1 − ni
+1 (x) ni
+ni −ni
+1 (x)
+eni Γ(ni,ni)
+(ni)ni−1 + 1
+.
+(104) W∗
+0 is then the convolution of all W i
+can,1(ni
+1), which again can be computed numerically or by resorting to the Gaussian approximation (95).
+Example 6: Independent beta priors. Here, we extend Example 3 to the case of k groups. We assume that each pi is independently distributed according to a beta prior with parameters (αi, βi). The Bayesian marginal likelihood reads:
+P ̄can,1(x) =
+k
+Y
+i=1
+B(α ̄i, β ̄i)
+B(αi, βi) (105)
+where
+α ̄i = ni
+1 + αi
+β ̄i = ni − ni
+1 + βi for each i ∈ {1, . . . , k}.
+To derive the microcanonical approximation, we compute the probability mass function induced by P ̄can,1(x) on {ni
+1}, which reads:
+Wcan,1({ni
+1}) =
+k
+Y
+i=1
+Wi
+can,1(ni
+1) (106)
+with
+Wi
+can,1(ni
+1) = Ωi
+1(ni
+1) · B(α ̄i, β ̄i)
+B(αi, βi) for each i ∈ {1, . . . , k}.
+(107) W∗
+0 (n1) is, then, the convolution of all W i
+can,1(ni
+1). If all
+beta parameters are equal to 1, W ∗
+0 reduces to the convolution between k discrete uniform distributions (97). When the beta parameters are such that no closed form
+
+
+19
+is available, the convolution must be computed numerically. Alternatively, if k is big enough, one can resort to the discrete Gaussian approximation (95). Analogously, a continuous Gaussian approximation can be used to approximate wpseudo. Figure (S5), we show W i
+can,1, W ∗
+0, and wpseudo for k = 10.
+Evaluating the microcanonical approximation
+To assess the effectiveness of the microcanonical approximation, we study the behavior of the interval width r in different cases. To simplify the problem, all beta priors considered in our results have parameters equal to the same number, γ, and all groups share the same size, i.e., ni = m for all i ∈ {1, . . . , k}. In this scenario, we have that n = m · k. We consider three cases: m increases and k is fixed; n is fixed, and m and k change accordingly; finally, m and k grow together according to a certain law. We evaluate Spseudo, and consequently r, by using w1
+pseudo, 0, according to the procedure described in Example C, which is easily extended to the case of k groups. Our experiments (Figure S6) show that:
+1. r converges quickly to 0 for fixed k as the m increases (or, equivalently, the total sample size increases);
+2. r grows slowly for n fixed and k getting bigger;
+3. r converges quickly to 0 whenever k and m grow together according to different power laws.
+The only case where r does not converge to 0 corresponds to a decreasing m as O(1/k). Our conclusion is that our microcanonical approximation SGRO
+mic is an optimal candidate as long as m, i.e., the data size of each group, is big enough.
+C. Connection to models of networks and time series
+maximum entropy models are widely used to construct null models of complex systems that preserve specific structural or temporal features, while remaining otherwise random [14, 16–18, 42]. For instance, when applied to networks, maximum entropy models in their canonical formulations are known as exponential random graph models [18, 43, 44]. Examples of commonly used maximum entropy network models are the Erd ̋os–R ́enyi model, Configuration Models, and Stochastic Block Models [16, 18]. The framework presented here is fully general and can be applied to build and compute e-values when testing between general maximum entropy network models with different sufficient statistics, in both their canonical and microcanonical formulations. Moreover, section II A establishes a link between e-values and the Minimum Description Length
+principle — a framework increasingly used in recent years for network inference and model selection [36, 45–47]. In particular, the hypothesis tests for contingency tables developed here have a direct correspondence with hypothesis tests between common network models. This mapping arises because the sufficient statistics in our contingency tables capture the same structural constraints as those imposed in standard network ensembles [16, 18]. Indeed, a binary network is represented by a binary adjacency matrix, which is a (structured) collection of 1s and 0s, corresponding to the presence or absence of a link between two nodes. The null model considered here, in both its canonical and microcanonical formulation, corresponds to the wellknown Erd ̋os–R ́enyi model (ER), where the sufficient statistic is the total number of links, equal to (half, if the network is undirected) the total number of 1s observed in the adjacency matrix. In the Stochastic Block Model (SBM), nodes are partitioned into groups and the adjacency matrix of a network is structured in k blocks, corresponding to the presence of inter- and intra-group links. For instance, in models of networks with community structure, intragroup link probabilities are larger than inter-group ones. The sufficient statistics are the number of links in each block. Testing an SBM against an ER model corresponds exactly to testing whether connection probabilities are identical across all blocks (i.e., communities are absent), and this SBM vs ER problem reduces to our canonical or microcanonical contingency table 2 × k test.
+In the Partial Configuration Model (PCM) for bipartite networks [48], the degree of each node in one layer is constrained, while connections to the other layer are otherwise random. The (bi-)adjacency matrix is a k × m rectangular binary matrix, and the sufficient statistics are the number of links connected to each node in the constrained layer, i.e., the number of 1s in each row. Testing a PCM against a bipartite ER model corresponds to testing whether all nodes in the constrained layer have the same connection probability (and therefore the same expected degree), i.e., testing for homogeneity of node properties in the graph. This again maps to a 2 × k contingency table, where each constrained node represents a “group” and each group size equals the number m of nodes in the unconstrained layer. Besides network models, a final connection worth mentioning is the one between binary contingency tables and multivariate time series data describing, e.g., a system of units being active (1) or inactive (0) at discrete time steps (such as spiking neurons data). The PCM can, in this case, represent a model enforcing, for each time step, a different activation probability of the various units. Therefore, testing the PCM against a bipartite ER model corresponds in this case to testing non-stationarity vs stationarity of the observed process over time. We therefore conclude that our microcanonical evariable for contingency tables can be directly applied to a wide range of problems, both exactly in the
+
+
+20
+microcanonical case and as an approximation for the canonical case. Moreover, our results on the behavior of r show that the microcanonical approximation works very well in both scenarios, as long as the size of each group is large enough. This circumstance is particularly convenient when studying models of large complex systems with a growing number of heterogeneous features, such as PCMs where the number of nodes in both layers can diverge in the “thermodynamic limit” of infinitely large graphs, SBMs used to model networks with a growing number of communities, and models of high-dimensional multivariate (nonstationary) time series. As we mentioned, the growing number of features (and parameters) in these models is generally needed to replicate the heterogeneous properties of real-world networks and time series more closely. At the same time, it makes the study of these models more challenging because of the breakdown of various useful approximations valid for a finite number of parameters —and even of the asymptotic equivalence between canonical and microcanonical versions of the resulting ensembles [36, 49]. Despite these complications, the results derived here nicely apply to those regimes.
+V. CONCLUSION
+In this work, we have developed a general framework for constructing optimal e-values for hypothesis testing between maximum entropy models with different constraints, in both microcanonical and canonical formulations. Our main theoretical contribution is the exact derivation of the microcanonical GRO e-variable and its use as a valid approximation to the canonical GRO e
+variable when the latter is intractable. We provided analytical and numerical evidence that this approximation becomes asymptotically exact in many relevant regimes.
+We illustrated our results through applications to 2 × 2 contingency tables, in both Bayesian and nonBayesian (NML) settings, showing numerically that the microcanonical approximation provides a good proxy for the canonical solution, confirming our theoretical results. We then extended the analysis to general 2 × k tables, where numerical results suggest that the microcanonical approximation works and remains asymptotically optimal for different interplays between k and the group sizes, as long as the latter are sufficiently large. Interestingly, when k becomes large, the microcanonical e-variable is itself well approximated by choosing a discrete Gaussian prior on the null. We highlighted that this framework can be naturally translated into network-science terms, where many important models can be derived as maximum entropy models.
+A central role in our construction is played by universal distributions. These are the same distributions that underlie the Minimum Description Length (MDL) principle, where they achieve minimax redundancy. Our results show that such universal distributions (including Bayesian and NML ones) can be conveniently used to build GRO e-variables as well, thus providing a direct and convenient connection between description lengths and e-variables. A possible direction to explore in future work is to extend this connection beyond pairwise model comparisons and investigate how GRO e-variables and MDL can be combined to design tests involving multiple models at once.
+[1]J. P. A. Ioannidis. Why most published research findings are false. PLoS medicine, 2(8):e124, 2005. [2]D. J. Benjamin et al. Redefine statistical significance. Nature Human Behaviour, 2(1):6–10, 2017.
+[3]B. B. McShane, D. Gal, A. Gelman, C. Robert, and J. L. Tackett. Abandon statistical significance. The American Statistician, 73(sup1):235–245, 2019. [4]Aaditya Ramdas, Peter Gru ̈nwald, Vladimir Vovk, and Glenn Shafer. Game-theoretic statistics and safe anytime-valid inference. Statist. Sci., 38(4):576–601, 2023. [5]Aaditya Ramdas and Ruodu Wang. Hypothesis testing with e-values. Foundations and Trends in Statistics, 2025. To Appear. [6]Yanbao Zhang, Scott Glancy, and Emanuel Knill. Asymptotically optimal data analysis for rejecting local realism. Physical Review A, 84(6):062118, 2011. [7]P. Gr ̈unwald, R. de Heide, and W. Koolen. Safe testing. Journal of the Royal Statistical Society Series B: Statistical Methodology, 86(5):1091–1128, 2024.
+[8]L. Wasserman, A. Ramdas, and S. Balakrishnan. Universal inference. Proceedings of the National Academy of Sciences, 117(29):16880–16890, 2020.
+[9]V. Vovk and R. Wang. E-values: Calibration, combination and applications. The Annals of Statistics, 49(3), 2021. [10]G. Shafer. Testing by betting: A strategy for statistical and scientific communication. Journal of the Royal Statistical Society Series A: Statistics in Society, 184(2):407–431, 2021. [11]Tyron Lardy, Peter Gr ̈unwald, and Peter Harremoe ̈s. Reverse information projections and optimal e-statistics. IEEE Transactions on Information Theory, 70(11):76167631, 2024. [12]Martin Larsson, Aaditya Ramdas, and Johannes Ruf. The numeraire e-variable and reverse information projection. Annals of Statistics, 2025. [13]J. Gibbs. Elementary Principles in Statistical Mechanics: Developed with Especial Reference to the Rational Foundation of Thermodynamics. Cambridge Library Collection - Mathematics. Cambridge University Press, 2010. [14]E. T. Jaynes. Information theory and statistical mechanics. Phys. Rev., 106:620–630, 1957.
+[15]L.D. Brown. Fundamentals of Statistical Exponential Families, with Applications in Statistical Decision Theory. Institute of Mathematical Statistics, Hayward, CA,
+
+
+21
+1986. [16]T. Squartini and D. Garlaschelli. Maximum-Entropy Networks: Pattern Detection, Network Reconstruction and Graph Combinatorics. Springer Cham, 2017.
+[17]T. Squartini, G. Caldarelli, G. Cimini, A. Gabrielli, and D. Garlaschelli. Reconstruction methods for networks: The case of economic and financial systems. Physics Reports, 757, 2018. [18]G. Cimini, T. Squartini, F. Saracco, D. Garlaschelli, A. Gabrielli, and G. Caldarelli. The statistical physics of real-world networks. Nature Reviews Physics, 1, 2019. [19]R. Marcaccioli and G. Livan. Correspondence between temporal correlations in time series, inverse problems, and the spherical model. Physical Review E, 102(1):012112, 2020. [20]R. Marcaccioli and G. Livan. Maximum entropy approach to multivariate time series randomization. Scientific Reports, 10(1):10656, 2020. [21]Rosanne Turner and Peter Gr ̈unwald. Anytime-valid confidence intervals for contingency tables and beyond. Statistics and Probability Letters, 2023.
+[22]Rosanne Turner, Alexander Ly, and Peter Gr ̈unwald. Generic e-variables for exact sequential k-sample tests that allow for optional stopping. Statistical Planning and Inference, 230:106116, 2024. [23]Yunda Hao and Peter Gru ̈nwald. E-values for exponential families: the general case. arXiv: 2409.11134, 2024. [24]Peter Gru ̈nwald, Tyron Lardy, Yunda Hao, Shaul K. Bar Lev, and Martijn de Jong. Optimal e-values for exponential families: the simple case. arXiv: 2404.19465, 2024. [25]Peter D. Gru ̈nwald. Beyond neyman–pearson: Evalues enable hypothesis testing with a data-driven alpha. Proceedings of the National Academy of Sciences, 121(39):e2302098121, 2024. [26]Z. Zhang, A. Ramdas, and R. Wang. On the existence of powerful p-values and e-values for composite hypotheses. arXiv: 2305.16539, 2024.
+[27]Q. Wang, R. Wang, and J. Ziegel. E-backtesting. arXiv: 2209.00991, 2024.
+[28]V. Vovk and R. Wang. Efficiency of nonparametric etests. arXiv: 2208.08925, 2024.
+[29]Richard D Morey, Jan-Willem Romeijn, and Jeffrey N Rouder. The philosophy of Bayes factors and the quantification of statistical evidence. Journal of Mathematical Psychology, 72(6-18):36, 2016.
+[30]P. Gr ̈unwald. The minimum description length principle. MIT press, 2007. [31]P. Gr ̈unwald and T. Roos. Minimum description length revisited. International journal of mathematics for industry, 11(01):1930001, 2019.
+[32]K. Yamanishi. Learning with the Minimum Description Length Principle. Springer Nature Singapore, 2023.
+[33]M. Li and P. Vita ́nyi. An Introduction to Kolmogorov Complexity and Its Applications. Springer, New York, 3rd edition, 2008. [34]Kyoungseok Jang, Kwang-Sung Jun, Ilja Kuzborskij, and Francesco Orabona. Tighter pac-bayes bounds through coin-betting. In Proceedings COLT 2023, 2023.
+[35]O.E. Barndorff-Nielsen. Information and Exponential Families in Statistical Theory. Wiley, Chichester, UK, 1978. [36]F. Giuffrida, T. Squartini, P. Gr ̈unwald, and D. Garlaschelli. Description length of canonical and microcanonical models. Phys. Rev. Res., 2025. [37]He ́lder Alves, Paula Brito, and Pedro Campos. Community detection in interval-weighted networks. Data Mining and Knowledge Discovery, 38(2):653–698, 2024.
+[38]Max Jerdee, Alec Kirkley, and Mark E. J. Newman. Mutual information and the encoding of contingency tables. Physical review. E, 110 6-1:064306, 2024. [39]P. P. A. Staniczenko, M.J. Smith, and S. Allesina. Selecting food web models using normalized maximum likelihood. Methods in Ecology and Evolution, 5(6):551–562, 2014. [40]B.S. Clarke and A.R. Barron. Jeffreys’ prior is asymptotically least favorable under entropy risk. Journal of Statistical Planning and Inference, 41:37–60, 1994.
+[41]M. Earnest (user). Extended stars-and-bars problem(where the upper limit of the variable is bounded). Mathematics Stack Exchange. URL:https://math.stackexchange.com/q/3182858 (version: 2019-04-14). [42]A Golan, G Judge, and D Miller. Maximum Entropy Econometrics: Robust Estimation with Limited Data. John Wiley), Chichester, UK, 1996. [43]P. W. Holland and S. Leinhardt. An exponential family of probability distributions for directed graphs. Journal of the American Statistical Association, 76(373):33–50, 1981. [44]D. R. Hunter and M. S. Handcock. Inference in curved exponential family models for networks. Journal of Computational and Graphical Statistics, 15(3):565–583, 2006. [45]T. P. Peixoto. Nonparametric bayesian inference of the microcanonical stochastic block model. Phys. Rev. E, 95:012317, 2017. [46]Tiago P. Peixoto. Network reconstruction via the minimum description length principle. Phys. Rev. X, 15:011065, Mar 2025. [47]T. Vall`es-Catala`, T. P. Peixoto, M. Sales-Pardo, and R. Guimera`. Consistencies and inconsistencies between model selection and link prediction in networks. Phys. Rev. E, 97:062316, 2018. [48]Qi Zhang and Diego Garlaschelli. Strong ensemble nonequivalence in systems with local constraints. New Journal of Physics, 24(4):043011, 2022. [49]Tiziano Squartini, Joey de Mol, Frank den Hollander, and Diego Garlaschelli. Breaking of ensemble equivalence in networks. Physical review letters, 115(26):268701, 2015. [50]I. Csisza ́r. Sanov property, generalized I-projection and a conditional limit theorem. The Annals of Probability, pages 768–793, 1984. [51]Peter Gr ̈unwald, Yunda Hao, and Akshay Balsubramani. Growth-optimal e-variables and an extension to the multivariate Csisza ́r-Sanov-Chernoff theorem. arXiv: 2412.17554, 2024.
+
+
+1
+Supplementary Materials
+S1. REDUNDANCY AND REGRET
+Here we show that, given the null and alternative models M0 = {P0(x; θ)}θ∈Θ0 and M1 = {P1(x; θ)}θ∈Θ1 , the regret (15) of the GRO e-variable (11), i.e.,
+SGRO(x) =
+P ̄1(x)
+P w∗
+0 (x) (S1)
+for a given distribution P ̄1, is bounded by the redundancy (17) of P ̄1. Indeed, for any INECCSI (Def. 1) subset Θ′ of Θ:
+REG(Θ′
+1; P ̄1) = max
+θ1 ∈Θ′
+1
+Eθ1
+"
+log SGRO(θ1) − log
+P ̄1(x)
+P w∗
+0
+0 (x)
+#
+= max
+θ1 ∈Θ′
+1
+min
+w′
+0 ∈Wθ0
+Eθ1
+"
+log P1(x; θ1)
+P w′
+0
+0 (x)
+− log
+P ̄1(x)
+P w∗
+0
+0 (x)
+#
+= max
+θ1 ∈Θ′
+1
+min
+w′
+0 ∈Wθ0
+Eθ1
+"
+log P w∗
+0
+0 (x)
+P w′
+0
+0 (x)
+#
++ RED1(θ1; P ̄1)
+!
+≤ RED1(Θ′
+1; P ̄1). (S2)
+S2. MICROCANONICAL TEST
+In this section, the subscript “mic” is omitted for the sake of clarity, as all the models considered are microcanonical models.
+A. Exact solution of the optimization problem
+We consider a test between a microcanonical alternative M1 and a microcanonical null M0. Given a universal
+microcanonical distribution P ̄1 (either NML or Bayesian) on the alternative, the GRO-optimal microcanonical evariable
+SGRO =
+P ̄1
+PW∗
+0 0
+(S3)
+is found by solving the optimization problem
+W∗
+0 = arg min
+W ∈Wc0
+DKL(P ̄1∥P W
+0 ) (S4)
+= arg min
+W ∈Wc0
+X
+x∈X
+P ̄1(x) log
+P ̄1(x) P ̄W
+0 (x)
+= arg max
+W ∈Wc0
+X
+x∈X
+P ̄1(x) log P ̄W
+0 (x).
+For a microcanonical model with sufficient statistics ci, the Bayesian marginal likelihood reads [36]
+P Wi
+i (x) =
+X
+ci ∈Ci
+Pi(x; ci)Wi(ci) = Pi(x; ci(x))Wi(ci(x)) = Wi(ci(x))
+Ωi(ci(x)) (S5)
+where the latter equality is due to the definition of the microcanonical model, which assigns a positive probability only if ci(x) = ci. By putting this result in (S4), one gets
+
+
+2
+W∗
+0 = arg max
+W ∈Wc0
+X
+x∈X
+P ̄1(x)[log W0(c0(x)) − log Ω0(c0(x))] (S6)
+= arg max
+W ∈Wc0
+X
+x∈X
+P ̄1(x) log W0(c0(x)).
+The latter expression can be written as a sum over the values of c0:
+W∗
+0 = arg max
+W ∈Wc0
+X
+c0 ∈C0
+
+
+X
+x : c(x)=c0
+P ̄1(x)
+
+ log W (c0). (S7)
+According to Gibbs inequality, the distribution maximizing the quantity above is
+W∗
+0 (c0) =
+X
+x : c0(x)=c0
+P ̄1(x) (S8)
+i.e., the marginal distribution of the null sufficient statistic c0(x) induced by P ̄1, hereby denoted, for simplicity, by
+P ̄ c0
+1.
+In the special case where the alternative sufficient statistics completely determine the value of the null one, we can write:
+Condition A: (S9)
+there exists a function f : C1 → C0 s.t.c0(x) = f (c1(x)),
+and thus
+W∗
+0 (c0) =
+X
+x : c0(x)=c0
+P ̄1(x) (S10)
+=
+X
+x : c0(x)=c0
+W1(c1(x)) Ω1(c1(x))
+=
+X
+c1 : f (c1)=c0
+Ω1(c1) W1(c1)
+Ω1(c1)
+=
+X
+c1 : f (c1)=c0
+W1(c1).
+In other words, the GRO-optimal prior on the null is the distribution induced on the null sufficient statistics by the alternative prior, or, equivalently, the marginal distribution of c0 induced by W1, hereby denoted by W c0
+1.
+Once that W ∗
+0 is computed, given that all universal microcanonical distributions considered here are, in fact, Bayesian marginal likelihoods, the microcanonical GRO-optimal e-variable can be expressed as
+SGRO(x) = P W1
+1 (x)
+PW∗
+0
+0 (x)
+(S11)
+= P1(x; c1(x))
+P0(x; c0(x))
+W1(c1(x)) W∗
+0 (c0(x))
+= Ω0(c0(x))
+Ω1(c1(x))
+W1(c1(x)) W∗
+0 (c0(x)) .
+B. The average under the null of the GRO e-variable is always unitary
+Here, we show that E0[ SGRO ] = 1 ∀P0 ∈ M0.
+
+
+3
+We start by picking a generic distribution inside the null model:
+P0(x;  ̄c0) =
+
+
+
+1
+Ω0(c ̄0) if c0(x) =  ̄c0
+0 else.
+(S12)
+Then, we compute the average under P0(x;  ̄c0) of SGRO:
+E0[SGRO] = E0
+" P ̄1
+PW∗
+0 0
+#
+=
+X
+x∈X
+P0(x; c ̄0)
+P ̄1(x)
+PW∗
+0
+0 (x)
+(S13)
+=1
+Ω0( ̄c0)
+X
+x : c0(x)=c ̄0
+P ̄1(x)
+PW∗
+0
+0 (x)
+(S14)
+In what follows, we use the explicit expression of the Bayesian marginal likelihood (S5), i.e., P W0
+0 (x) = W0(c0(x))
+Ω0(c0(x)) , and
+that of the GRO optimal prior (S8)
+E0[ SGRO ] = 1
+Ω0( ̄c0)
+X
+x : c0(x)=c ̄0
+Ω0(c0(x))P ̄1(x) W∗
+0 (c0(x)) (S15)
+=1
+Ω0( ̄c0)
+Ω0( ̄c0) W∗
+0 (c ̄0)
+X
+x : c0(x)=c ̄0
+P ̄1(x) = 1.
+S3. MICROCANONICAL APPROXIMATION
+A. Every microcanonical e-variable is a canonical e-variable
+Given a sufficient statistics c(x), the microcanonical probability distribution can be expressed as a conditional canonical one:
+Pmic(x; c) = Pcan(x; θ | c). (S16)
+where the probability of x is conditioned on a certain value of c(x). According to the law of total expectation, for every random variable S(x) defined on X :
+Ecan[ S ] = Ecan, [ Ecan[ S | c ] ] = Ecan [ Emic[ S ] ] . (S17)
+It follows that if Emic is a microcanonical e-variable, it is also a canonical one:
+Emic[ Emic ] ≤ 1 ∀Pmic ∈ Mmic ⇒ Ecan[ Emic ] ≤ 1 ∀Pcan ∈ Mcan (S18)
+Moreover, as proven in the last section, it holds:
+Emic[ SGRO
+mic ] = 1. (S19)
+Thus, from (S17), it follows that
+Ecan[ SGRO
+mic ] = 1. (S20)
+B. A canonical universal distribution can always be expressed as microcanonical Bayesian marginal likelihood
+In what follows, we show that:
+1.Given a canonical universal distribution P ̄can relative to a sufficient statistic c, we can always define a prior distribution Wcan(c) on the sufficient statistic such that
+P ̄can = P ̄Wcan
+mic . (S21)
+2.The opposite is not true: for some P ̄W
+mic, there is no choice of prior density w(θ) such that P ̄W
+mic = P ̄w
+can.
+
+
+4
+Proof 1
+By construction, a canonical universal distribution P ̄can(x) relative to the sufficient statistics c always assigns the same probability mass to configurations sharing the same value of the sufficient statistic, just as the corresponding Pcan(x; θ) does. Consequently, the following holds:
+P ̄can(x | c) = Pmic(x; c), (S22)
+i.e., when conditioned on the sufficient statistic, the universal canonical distribution reduces to a uniform distribution over the number of configurations corresponding to the observed value, which is the microcanonical distribution. Moreover, we can always write
+P ̄can(x) = P ̄can(x | c(x))P ̄c
+can(c(x)) = Pmic(x; c(x))P ̄c
+can(c(x)) (S23)
+where P ̄c
+can(c) is the distribution of c induced by P ̄can. The proof follows by comparing the expression above with the
+general expression of the microcanonical Bayesian marginal likelihood (S5) and by setting Wcan(c) = P ̄c
+can(c).
+Proof 2
+The canonical Bayesian marginal likelihood P ̄w
+can
+Pw
+can(x) =
+Z
+Θ
+Pcan(x; θ)w(θ)dθ (S24)
+is the weighted sum of positive functions; indeed, Pcan(x; θ) is an exponential function that assigns positive probability
+to all x ∈ X . As such, for all proper choices of the prior density w(θ), P ̄w
+can is strictly positive everywhere:
+P ̄w
+can(x) > 0 ∀x ∈ X . (S25)
+Consider a microcanonical prior W (c) such that W (c∗) = 0 for a certain value c∗ of the sufficient statistics. Consequently,
+P ̄W
+mic(x∗) = 0 ∀ x : c(x) = c∗. (S26)
+Thus, there is no choice of canonical prior w(θ) s.t. P ̄W
+mic = P ̄w
+can.
+S4. PROOF OF THEOREM 1
+In the proof, we freely use well-known properties of exponential families as described by, e.g., [35]. Set B := M′. Fix a constant a and consider the sets, for m = 1, 2, . . .:
+B+
+m = μ : inf
+μ′∈B ∥μ − μ′ ∥2
+2 ≤ a log m
+m , B−
+m = μ ∈ B : inf
+μ′̸∈B ∥μ − μ′ ∥2
+2 ≥ a log m
+m.
+B+
+m is a superset of B, including a small region (whose volume tends to 0 with sample size) just outside B’s boundary;
+similarly B−
+m excludes a small region just inside B’s boundary. To shorten notation we write μˆ := s(y(m))/m and
+P w := P w (m)
+can and, for any measurable subset B′ ⊂ M, Qw(B′) := Qw(μ ∈ B′), and Pμ := Pcan(·; θ(μ)) where θ(μ) is the mapping from mean-value parameters to corresponding canonical parameters, i.e. the inverse of the (1-to-1) mapping μ(θ) defined in the main text. We have:
+P w(μˆ ∈ B) =
+Z
+μ∈M
+Pμ(μˆ ∈ B)w(μ)dμ ≥
+Z
+μ∈B−
+m
+Pμ(μˆ ∈ B)w(μ)dμ
+≥ Qw(B−
+m) inf
+μ∈B−
+m
+Pμ(μˆ ∈ B) ≥ Qw(B−
+m) inf
+μ∈B−
+m
+(1 − Pμ(μˆ ̸∈ B))
+≥ Qw(B−
+m) − sup
+μ∈B−
+m
+Pμ(μˆ ̸∈ B)Qw(B) + O log m
+m − sup
+μ∈B−
+m
+Pμ(μˆ ̸∈ B). (S27)
+
+
+5
+and also
+P w(μˆ ∈ B) =
+Z
+μ∈B+
+m
+Pμ(μˆ ∈ B)w(μ)dμ +
+Z
+μ̸∈B+
+m
+Pμ(μˆ ∈ B)w(μ)dμ
+≤ Qw(B+
+m) + sup
+μ∈M,μ̸∈B+
+m
+Pμ(μˆ ∈ B) = Qw(B) + O log m
+m + sup
+μ∈M\B+
+m
+Pμ(μˆ ∈ B). (S28)
+We will now further bound the supremum terms in the above two formulas, showing that they are both of order O(m−a). The result then follows by plugging in a = 1. a. Supremum in (S28) To bound the supremum in (S28), note first that B is a convex set. We can therefore use Csisz ́ar’s [50] multivariate generalization of Chernoff’s concentration inequality (see [51] for general discussion) to get that
+sup
+μ∈M\B+
+m
+Pμ(μˆ ∈ B) ≤ sup
+μ∈M\B+
+m ,μ′ ∈B
+e−mDKL(Pμ′ ∥Pμ) = e−m infμ∈M\B+ m,μ′∈B DKL(Pμ′ ∥Pμ) ≤ e−m infμ∈∂B+ m,μ′∈B DKL(Pμ′ ∥Pμ),
+(S29)
+where DKL(Pμ′ ∥Pμ) is the Kullback-Leibler divergence between Pμ′ and Pμ defined at a single outcome, and in the final inequality we used the standard fact that the KL divergence between members of an exponential family is strictly convex in its first argument. Now since B is an INECCSI subset of M, clearly there exists another INECCSI subset of M, say B ̄, and a finite m0 such that B+
+m ⊂ B ̄ for all m ≥ m0. Since B ̄ is INECCSI, there exist c, C with 0 < c < C < ∞ such that all eigenvalues of the Fisher information matrix I(μ) in the mean-value parameterization are in between c and C for all μ ∈ B ̄. This means that the KL divergence between any μ, μ′ ∈ B ̄ satisfies
+(1/2)ck a log m
+m ≤1
+2 ck∥μ − μ′∥2
+2 ≤ DKL(Pμ′ ∥Pμ) ≤ 1
+2 Ck∥μ − μ′∥2
+2 ≤ (1/2)Ck a log m
+m . (S30)
+The result now follows by plugging in the lower bound on the KL divergence implied by the above into (S29) and then setting a = 1 and plugging further into (S28). b. Supremum in (S27) To bound the supremum in (S27), fix any μ ∈ B−
+m and let Rm,μ be a hyper-rectangle
+centered at μ that is a subset of B and that has side-length 2εm. By construction there is c′ > 0 such that, for all m, we can take εm = c′ ·
+p
+(a log m/m). Noting that we can write μ = (μ1, . . . , μd), with d the dimensionality of both the canonical space Θ and the mean-value space M, we set H≥
+μ,j,ε := {μ′ ∈ M : μ′
+j ≥ μj + ε} and H≤
+μ,j,ε := {μ′ ∈ M : μ′
+j ≤ μj − ε}. We have:
+sup
+μ∈B−
+m
+Pμ(μˆ ̸∈ B) ≤ sup
+μ∈B−
+m
+Pμ(μˆ ̸∈ Rm,μ) ≤
+d
+X
+j=1
+Pμ(μˆ ∈ H≤
+μ,j,εm ) + Pμ(μˆ ∈ H≥
+μ,j,εm )
+≤
+d
+X
+j=1
+e
+−m infμ′∈H≤
+μ,j,εm
+DKL(Pμ′ ∥Pμ)∥)
++e
+−m infμ′∈H≥
+μ,j,εm
+DKL(Pμ′ ∥Pμ)∥)
+= O m−a . (S31)
+Here the second inequality is the union bound and the third is once again Csisz ́ar’s [50] multivariate generalization of Chernoff’s concentration inequality (in (S29), we bounded Pμ(μˆ ∈ B) where B was a convex set, allowing us to use Csisz ́ar’s result directly; but in (S31), we need to bound Pμ(μˆ ̸∈ B) = Pμ(μˆ ∈ M \ B); since M \ B is not a convex set, yet convexity is required by Csiszr ́’s result, we now first need to cover it by 2d convex sets H·
+μ,·,εm , for each of which we then use Csisz ́ar’s result). The final inequality follows by using (S30) again.
+
+
+6
+S5. PSEUDO APPROXIMATION THROUGH THE HIGH RESOLUTION LIMIT
+Below, we provide pseudocode to compute the density w1
+pseudo,0 for a canonical test on 2 × 2 contingency tables, under the alternative hypothesis with independent beta priors on the mean-value parameters. Notice that for αa = βa = αb = βb = 1, we retrieve the uniform prior of Example B. The procedure starts from the induced distribution on the sufficient statistics under the alternative, denoted W a
+can,1
+and W b
+can,1 in the main text, which follow a beta-binomial form. To approximate the continuous limit, we increase the resolution by multiplying the original group sizes by a scaling factor (Steps 1–2). The higher the scaling factor, the better the approximation — at the cost of greater computational effort. The two high-resolution distributions are then convolved to obtain an approximation of the GRO-optimal prior on the null, W ∗
+0 (Step 3). Since we want a density over p0 ∈ [0, 1], we define a pseudo-continuous support for p0 accordingly (Step 4). Finally, the convolved distribution is normalized to form a proper density over this support (Step 5).
+Input: n_a, n_b // group sizes scaling_factor // resolution multiplier alpha_a, beta_a // beta-binomial parameters for group a alpha_b, beta_b // beta-binomial parameters for group b
+Step 1: Define high-resolution support x_high_a = 0 to scaling_factor * n_a x_high_b = 0 to scaling_factor * n_b
+Step 2: Compute high-resolution beta-binomial PMFs For each i in x_high_a: p_high_a[i] = BetaBinomialPMF(i, scaling_factor * n_a, alpha_a, beta_a) For each i in x_high_b: p_high_b[i] = BetaBinomialPMF(i, scaling_factor * n_b, alpha_b, beta_b)
+Step 3: Convolve the two distributions conv_high = Convolve(p_high_a, p_high_b)
+Step 4: Define pseudo-continuous support over [0, 1] p_0_fine = [0, 1, ..., len(conv_high)-1] / (scaling_factor * (n_a + n_b))
+Step 5: Normalize the convolved distribution step = p_0_fine[1] - p_0_fine[0] conv_high = conv_high / (sum(conv_high) * step)
+Output: conv_high // approximate density over [0, 1] p_fine // corresponding support
+
+
+7
+S6. BOUND ON REGRET
+Here we provide a bound for the regret of a maximum entropy model (15). Let M0 be a maximum entropy model. We begin by recalling an extension of the classical (d/2) log m asymptotic redundancy result (see Equation (19)) that remains valid even when the model M0 is misspecified — i.e., it does not contain the true distribution P ∗. This generalization appears in [30], and is formalized in [23, Proposition 3]. Let xm be an i.i.d. sample from a distribution P ∗ that may lie outside M0. Suppose that there exists a distribution Pθ ̃0 ∈ M0 minimizing the Kullback-Leibler divergence to P ∗:
+Pθ ̃0 = arg min
+θ0 ∈Θ0
+DKL(P ∗∥Pθ0 ).
+Then, for any regular prior density w0, we have:
+RED0(P ∗; P w0
+0 ) := EP ∗ − log P w0
+0 (xm) + log Pθ ̃0 (xm)
+= d0
+2 log m + O(1). (S32)
+In the well-specified case where P ∗ ∈ M0, it holds that P ∗ = Pθ ̃0 , and RED0(P ∗; P w0
+1 ) coincides with our earlier
+definition RED0(θ ̃0, P w0
+1 ) (up to notation), thus recovering the classical result (19).
+We now apply this general result in the setting where P ∗ = Pθ1 ∈ M1, in order to bound the regret REG(θ1; P w1
+1)
+of the Bayesian marginal P w1
+1 for a regular prior w1. Consider the pseudo-e-variable Spseudo, used as a proxy for
+either SGRO
+mic or SGRO
+can . Using the previous result to refine equation (22), we obtain:
+REG(θ1; Spseudo) = Eθ1 log SGRO(θ1) − log P w1
+1 (x)
+P wpseudo,0
+0 (x)
+= Eθ1
+"
+log P wpseudo,0
+0 (x)
+P w ̃′
+0
+0 (x)
+#
++ RED1(θ1; P w1
+1)
+= Eθ1
+"
+log P wpseudo,0
+0 (x) Pθ ̃0 (x)
+#
++ RED1(θ1; P w1
+1)
+= RED1(θ1; P w1
+1 ) − RED0(Pθ1 ; P wpseudo, 0
+0 ) + O(1)
+(=a) d1 − d0
+2 · log m + O(1). (S33)
+The first two equalities are direct, and the third follows from [23, Theorem 3 (Parts 3,4)]. Equality (a) holds provided that wpseudo,0 is regular, in particular, that it has a continuous density.
+S7. SUPPLEMENTARY TABLES AND FIGURES
+Case Parameter Condition Behavior
+Uniform α = β = 1 Flat distribution
+Jeffreys Prior α = β = 0.5 U-shaped
+Bimodal (U-shaped) α, β < 1 Peaks at 0 and 1
+Left-skewed α > 1, β < 1 Peak near 1
+Right-skewed α < 1, β > 1 Peak near 0
+Bell-shaped α, β > 1 Normal-like
+Highly concentrated α = β ≫ 1 Sharp peak
+Degenerate (Dirac Delta) α, β → ∞ Point mass at α
+α+β
+TABLE S1. Behaviors of the beta distribution for different parameter values.
+
+
+8
+FIG. S1. Construction of the microcanonical optimal prior W ∗
+0 (third column) and the pseudo-prior approximations w1
+pseudo,0
+(fourth column) and w2
+pseudo,0 (fifth column), for 2 × 2 contingency tables with independent beta priors on the alternative. Starting from the induced independent beta-binomial distribution on the alternative sufficient statistics (first and second columns), the microcanonical GRO-optimal prior W ∗
+0 is obtained as their convolution. The pseudo prior approximation w1
+pseudo,0
+is obtained starting from W ∗
+0 through a high-resolution limit. The pseudo prior approximation w2
+pseudo,0 is obtained by directly convoluting the original continuous beta priors, when well defined on the whole parameter space (i.e., for γ ≥ 1).
+
+
+9
+FIG. S2. E-power difference between the canonical GRO e-variable (computed numerically), its microcanonical approximation (orange curve), and the pseudo approximation (green curve), across sample sizes and different choices on the alternative (NML and beta with all parameters equal to γ). The microcanonical and pseudo approximations provide a lower and upper bound for the canonical GRO e-power, converging to it as the sample size grows. Results are shown for the 2 × 2 contingency tables canonical test with na = nb = m and sample size equal to 2m.
+
+
+10
+FIG. S3. Convergence of r in 2 × 2 contingency tables, for na = nb (left column) and na = 2nb (right column), as the sample size n = na + nb grows. Results are shown for different choices of P ̄can,1: beta independent priors with all parameters equal to γ = 0.5 (first row), 1 (second row), 3 (third row), and NML (fourth row).
+
+
+11
+FIG. S4. Worst case regret (left) and convergence of r′ (right), for 2 × 2 tables with na = nb = m and sample size equal to n = 2m. Different choices of the alternative are considered: Bayesian with identical independent beta priors B(γ, γ) with γ = 0.5, 1, 1.5, and NML. r′ is computed by considering w1
+pseudo,0, obtained through a high resolution limit with resolution scale equal to 100000.
+
+
+12
+FIG. S5. The first column shows the discrete distribution of each component of the alternative sufficient statistics, here denoted simply by W i
+1, induced by independent identical beta priors on the alternative, for different prior parameters. The GRO-optimal
+microcanonical prior on the null W ∗
+0 (second column) for the 2 × k test is obtained by convolving these discrete distributions k
+times. The pseudo prior density w1
+pseudo (third column) is instead obtained by directly convolving k times the corresponding beta priors. Both W ∗
+0 and w1
+pseudo are shown together with their Gaussian approximations (discrete for W ∗
+0 and continuous for w1
+pseudo). In this example, k = 10.
+
+
+13
+FIG. S6. Convergence to 0 of the interval width r in the case of 2 × k contingency tables, where all groups have same size m, for different interplays between the number of groups k and the size of each group m. Results are shown for identical independent beta priors on the alternative, with all parameters equal to γ = 1.
