@@ -163,8 +163,12 @@ Artifact is regenerated from it and republished, never edited by hand.
 - Wiki: https://claude.ai/artifact/EdnyNYvYX4QCoZNbkF6cim
   built by `scripts/build_wiki_page.py` from `wiki/` (index, sources,
   concepts, gaps, log). Republish after every ingest or lint.
-- `wiki/candidates.md` is the agent's proposal list for the human. Rows move
-  from `missing` to `bib` to `staged` only through the human's actions.
+- `wiki/candidates.md` is the agent's proposal list for the human, grouped by
+  theme (foundations; optimality; sequential; composite nulls; multiple
+  testing; decisions; change detection; applications; history) with a
+  priority letter A/B/C inside each theme and stable row ids. Never group by
+  author. Rows move from `missing` to `bib` to `staged` to `ingested` as the
+  pipeline runs; the human decides what enters the bib.
 
 ## Public list
 

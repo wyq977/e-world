@@ -10,14 +10,15 @@ md = (ROOT / "wiki" / "candidates.md").read_text()
 
 tiers, cur = [], None
 for line in md.splitlines():
-    m = re.match(r"^## (Tier \d+) — (.*)$", line)
+    m = re.match(r"^## (.+)$", line)
     if m:
-        cur = {"id": m.group(1).lower().replace(" ", ""), "name": m.group(1), "desc": m.group(2), "rows": []}
+        if m.group(1).startswith("Sources for"): cur = None; continue
+        cur = {"id": re.sub(r"[^a-z0-9]+", "-", m.group(1).lower()).strip("-"), "name": m.group(1), "desc": "", "rows": []}
         tiers.append(cur); continue
     if cur and line.startswith("|") and not line.startswith("|--") and not line.startswith("| #"):
         cells = [c.strip() for c in line.strip("|").split("|")]
-        if len(cells) >= 5:
-            cur["rows"].append(dict(n=cells[0], title=cells[1], who=cells[2], status=cells[3], ev=cells[4]))
+        if len(cells) >= 6:
+            cur["rows"].append(dict(n=cells[0], title=cells[1], who=cells[2], prio=cells[3], status=cells[4], ev=cells[5]))
 
 def status_key(s):
     s = s.lower()
@@ -35,14 +36,16 @@ def row_html(r):
     ev = re.sub(r"book:(\d+)", r'<span class="ev book" title="citations in Ramdas &amp; Wang">book ×\1</span>', ev)
     ev = ev.replace("SAVI", '<span class="ev savi" title="SAVI 2022 reading list">SAVI</span>')
     ev = re.sub(r"\bweb\b", '<span class="ev web" title="web check, Oct 2026">web</span>', ev)
-    return (f'<tr data-status="{k}"><td class="n">{html.escape(r["n"])}</td>'
+    pr = r.get("prio", "")
+    return (f'<tr data-status="{k}" data-prio="{pr}"><td class="n">{html.escape(r["n"])}</td>'
             f'<td class="t">{html.escape(r["title"])}<div class="who">{html.escape(r["who"])}</div></td>'
+            f'<td class="p"><span class="prio p{pr}" title="A read first, B core, C specialised">{pr}</span></td>'
             f'<td class="s"><span class="chip {k}">{html.escape(r["status"])}</span></td>'
             f'<td class="e">{ev}</td></tr>')
 
 sections = "".join(
-    f'<section id="{t["id"]}"><h2><span class="tier">{html.escape(t["name"])}</span> {html.escape(t["desc"])}</h2>'
-    f'<div class="wrap"><table><thead><tr><th>#</th><th>Paper</th><th>Status</th><th>Evidence</th></tr></thead>'
+    f'<section id="{t["id"]}"><h2>{html.escape(t["name"])}</h2>'
+    f'<div class="wrap"><table><thead><tr><th>#</th><th>Paper</th><th>Priority</th><th>Status</th><th>Evidence</th></tr></thead>'
     f'<tbody>{"".join(row_html(r) for r in t["rows"])}</tbody></table></div></section>'
     for t in tiers)
 
@@ -72,6 +75,7 @@ h1 {{ font-family:var(--display); font-weight:600; font-size:clamp(1.8rem,4vw,2.
 .filters {{ position:sticky; top:env(safe-area-inset-top,0px); z-index:2; background:var(--bg); padding-block:8px; display:flex; flex-wrap:wrap; gap:8px; border-bottom:1px solid var(--rule); margin-bottom:1.5rem; }}
 .filters button {{ font:inherit; font-size:.9rem; padding:4px 12px; border-radius:999px; border:1px solid var(--rule); background:var(--card); color:var(--fg); cursor:pointer; }}
 .filters button[aria-pressed="true"] {{ background:var(--accent); border-color:var(--accent); color:var(--bg); }}
+.sep {{ width:1px; background:var(--rule); margin:0 4px; }}
 .filters button:focus-visible {{ outline:2px solid var(--accent); outline-offset:2px; }}
 section {{ margin-bottom:2.2rem; }}
 h2 {{ font-family:var(--display); font-weight:500; font-size:1.3rem; margin:0 0 .6rem; text-wrap:balance; }}
@@ -88,6 +92,10 @@ td.t {{ min-width:0; }}
 .chip.ingested {{ background:var(--accent); color:var(--bg); }}
 .chip.bib {{ background:var(--mid-bg); color:var(--mid); }}
 .chip.missing {{ background:var(--no-bg); color:var(--no); }}
+.prio {{ display:inline-block; width:1.6em; text-align:center; font-weight:600; font-size:.8rem; border-radius:4px; border:1px solid var(--rule); }}
+.prio.pA {{ background:var(--accent); color:var(--bg); border-color:var(--accent); }}
+.prio.pB {{ background:var(--accent-soft); color:var(--accent); }}
+.prio.pC {{ color:var(--muted); }}
 td.e {{ font-size:.88rem; color:var(--muted); }}
 .ev {{ display:inline-block; padding:0 6px; border-radius:3px; background:var(--accent-soft); color:var(--accent); font-weight:600; margin-right:4px; }}
 tr[hidden] {{ display:none; }}
@@ -98,7 +106,7 @@ footer a {{ color:var(--accent); }}
 </style>
 <main>
 <h1>E-world Reading Queue</h1>
-<p class="sub">Proposed ingestion order for the e-value literature wiki, foundations first. The agent proposes; only a human adds a paper to the bibliography or stages its PDF.</p>
+<p class="sub">The e-value literature, grouped by theme. Priority A is read first, B is the core of its theme, C is specialised or recent. The agent proposes; a human decides what enters the bibliography.</p>
 <div class="summary"><span><b>{total}</b> titles</span><span><b>{counts["ingested"]}</b> ingested</span><span><b>{counts["staged"]}</b> staged</span><span><b>{counts["bib"]}</b> in bib, not staged</span><span><b>{counts["missing"]}</b> missing</span></div>
 <div class="filters" role="group" aria-label="Filter by status">
 <button id="f-all" data-f="all" aria-pressed="true">All</button>
@@ -106,6 +114,11 @@ footer a {{ color:var(--accent); }}
 <button id="f-missing" data-f="missing" aria-pressed="false">Missing</button>
 <button id="f-bib" data-f="bib" aria-pressed="false">In bib</button>
 <button id="f-staged" data-f="staged" aria-pressed="false">Staged</button>
+<span class="sep"></span>
+<button id="p-all" data-p="all" aria-pressed="true">All priorities</button>
+<button id="p-A" data-p="A" aria-pressed="false">A</button>
+<button id="p-B" data-p="B" aria-pressed="false">B</button>
+<button id="p-C" data-p="C" aria-pressed="false">C</button>
 </div>
 {sections}
 <p class="legend"><b>Evidence</b>: <i>book ×N</i> is the approximate number of times the paper is cited in Ramdas and Wang, <i>Hypothesis testing with e-values</i> (2025). <i>SAVI</i> marks the 2022 Safe Anytime-Valid Inference workshop reading list. <i>web</i> marks an October 2026 web check.</p>
@@ -113,18 +126,21 @@ footer a {{ color:var(--accent); }}
 </main>
 <script>
 (function(){{
-  var btns=document.querySelectorAll('.filters button');
-  function apply(f){{
-    btns.forEach(function(b){{b.setAttribute('aria-pressed', String(b.dataset.f===f));}});
-    document.querySelectorAll('tbody tr').forEach(function(tr){{tr.hidden = (f!=='all' && tr.dataset.status!==f);}});
+  var sb=document.querySelectorAll('.filters button[data-f]'), pb=document.querySelectorAll('.filters button[data-p]');
+  var f='all', p='all';
+  function apply(){{
+    sb.forEach(function(b){{b.setAttribute('aria-pressed', String(b.dataset.f===f));}});
+    pb.forEach(function(b){{b.setAttribute('aria-pressed', String(b.dataset.p===p));}});
+    document.querySelectorAll('tbody tr').forEach(function(tr){{tr.hidden = (f!=='all' && tr.dataset.status!==f) || (p!=='all' && tr.dataset.prio!==p);}});
     document.querySelectorAll('section').forEach(function(s){{
       var vis=s.querySelectorAll('tbody tr:not([hidden])').length; s.classList.toggle('empty', vis===0);
     }});
-    try{{localStorage.setItem('ew-filter',f);}}catch(e){{}}
+    try{{localStorage.setItem('ew-filter',f+'|'+p);}}catch(e){{}}
   }}
-  btns.forEach(function(b){{b.addEventListener('click',function(){{apply(b.dataset.f);}});}});
+  sb.forEach(function(b){{b.addEventListener('click',function(){{f=b.dataset.f; apply();}});}});
+  pb.forEach(function(b){{b.addEventListener('click',function(){{p=b.dataset.p; apply();}});}});
   var saved=null; try{{saved=localStorage.getItem('ew-filter');}}catch(e){{}}
-  if(saved && saved!=='all') apply(saved);
+  if(saved){{ var sp=saved.split('|'); if(sp[0]) f=sp[0]; if(sp[1]) p=sp[1]; apply(); }}
 }})();
 </script>
 """

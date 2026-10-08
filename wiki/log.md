@@ -46,3 +46,6 @@ Testing maximum entropy models with e-values (arXiv 2509.01064v1). New concept p
 
 ## [2026-10-08] lint | remaining bib entries
 Not ingested and not planned: waldSequentialAnalysis1947 (no PDF in Zotero), johnsonUniformlyMostPowerful2013 (citekey not found in Zotero), and twelve background entries (Brown 1986, Diaconis–Ylvisaker 1979, Dickhaus 2012/2015, Eisinga 2011, Fog 2008, Grünwald 2019 MDL, Mieth 2016, Pérez 1994, Yamanishi 2023). Thirteen queue papers are in Zotero but not in the bib; listed to the human.
+
+## [2026-10-08] query | candidates regrouped by theme
+On the human's request: rows 49 and 83 removed; the author-based Tier 8 dissolved; list regrouped into nine themes with an A/B/C priority column and stable row ids; rows 85–86 added for the two newly added bib papers without a row. Thirteen papers added to the bib via scripts/bib_add.py and approved; ingest running.
