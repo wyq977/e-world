@@ -1,7 +1,7 @@
 ---
 slug: e-process
 title: E-process
-sources: 9
+sources: 16
 updated: 2026-10-08
 ---
 
@@ -24,6 +24,10 @@ An e-process is an adapted nonnegative process (E_t) with E_P[E_τ] ≤ 1 for ev
 - Koolen and Grünwald's 'anytime-valid e-value' (E_{P^τ}[E] ≤ 1 for every randomised stopping time) is the same notion; every such process is an infimum of test martingales, one per null element, and the numerical example exhibits a log-optimal one that drops below one deterministically and recovers, hence is not a supermartingale [koolenLogoptimalAnytimevalidEvalues2022, Def. 1, Lemma 4, Sec. 4.5].
 - Always-valid p-values satisfy equivalent uniform, stopping-time and random-time formulations [howardTimeuniformNonparametricNonasymptotic2021, Lemma 3].
 - Block-structured e-processes with past-dependent but pre-fixed block sizes, evaluated only at complete blocks [turnerGenericEvariablesExact2024, Sec. 3.1]; continuous-time e-processes indexed by events for survival data [terschureAnytimevalidLogrankTest2024, Prop. 3.1, Cor. A.2].
+- Six equivalent definitions (stopping times with lim sup or lim inf, finite or bounded stopping times, domination by a nonnegative martingale or supermartingale for each null) proved via Snell envelopes and Doob decomposition; e-processes are not closed under running maxima, unlike p-processes [ramdasAdmissibleAnytimevalidSequential2022, Lemma 6, Lemma 3].
+- Admissibility: every e-process is dominated by an essential infimum of pointwise nonnegative martingales, itself an e-process; admissible composite e-processes are such infima with initial value one; under a point null admissible e-processes are exactly nonnegative martingales with E[e_0] = 1; the gap between composite martingales and e-processes is real [ramdasAdmissibleAnytimevalidSequential2022, Prop. 23, Cors 24, 26, 29, Thm 18, Examples 31–32].
+- p-processes (always-valid p-values): [0,1]-valued with Q(p_τ ≤ α) ≤ α at every stopping time; admissible ones are closed max-martingales with uniform limit, not ordinary martingales, and initial randomisation is needed for admissibility but ruins e-process tests via overshoot [ramdasAdmissibleAnytimevalidSequential2022, Sec. 4.1, Thm 18, Cor. 21, Example 20, Sec. 8.3].
+- Bounded e-processes: every admissible bounded anytime-valid test is the Doob martingale of a terminal test [koningAnytimeValidityFree2026, Prop. 2]; s-delay (restartable, conditionally valid) e-processes and the fact that a weighted sum then infimum is again an e-process [sahaNonpartitionedEdetectorsNonparametric2026, Def. 2.1, Thm 2.3]; e_j-processes started at time j as e-detector building blocks [shinEdetectorsNonparametricFramework2023, Def. 2.5]; e-specifications vs e-processes for e-collections [grunwaldEposterior2023, Sec. 3]; stopped e-processes as e-BH inputs under adaptive stopping [wangFalseDiscoveryRate2021, Secs 7–8]; (T^{M_n}) is an e-process for the invariant filtration but not for the data filtration [perezortizEstatisticsGroupInvariance2024, Prop. 6].
 
 ## Variants and related concepts
 - [test-martingale](test-martingale.md), the special case most constructions use.
@@ -39,6 +43,8 @@ An e-process is an adapted nonnegative process (E_t) with E_P[E_τ] ≤ 1 for ev
 - [koolenLogoptimalAnytimevalidEvalues2022](../sources/koolenLogoptimalAnytimevalidEvalues2022.md) — anytime-valid e-values, infimum representation, non-supermartingale example.
 - [howardTimeuniformNonparametricNonasymptotic2021](../sources/howardTimeuniformNonparametricNonasymptotic2021.md) — always-valid p-values, Lemma 3.
 - [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — block and continuous-time instances.
+- [ramdasAdmissibleAnytimevalidSequential2022](../sources/ramdasAdmissibleAnytimevalidSequential2022.md) — equivalent definitions, admissibility, p-processes.
+- [koningAnytimeValidityFree2026](../sources/koningAnytimeValidityFree2026.md), [sahaNonpartitionedEdetectorsNonparametric2026](../sources/sahaNonpartitionedEdetectorsNonparametric2026.md), [shinEdetectorsNonparametricFramework2023](../sources/shinEdetectorsNonparametricFramework2023.md), [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md), [wangFalseDiscoveryRate2021](../sources/wangFalseDiscoveryRate2021.md), [perezortizEstatisticsGroupInvariance2024](../sources/perezortizEstatisticsGroupInvariance2024.md) — instances.
 
 ## Disagreements / open issues
 - "Approximate optional stopping" for e-variables that are not e-processes is conjectured, possibly via time-uniform central limit theory or coarser filtrations [haoEValuesExponentialFamilies2025, Sec. 7].

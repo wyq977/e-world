@@ -1,7 +1,7 @@
 ---
 slug: test-martingale
 title: Test martingale
-sources: 11
+sources: 17
 updated: 2026-10-08
 ---
 
@@ -21,6 +21,9 @@ A test martingale (or test supermartingale) is a nonnegative (super)martingale u
 - Sequential e-values (E[E_k | E_1..E_{k−1}] ≤ 1) have partial products that are test supermartingales, valid in any order [vovkEvaluesCalibrationCombination2021, Sec. 4]; Shafer's Protocol 2 shows any global bet is implementable round by round so the capital is a nonnegative martingale [shaferTestingBettingStrategy2021, Sec. 4].
 - Nonparametric test supermartingales: the sub-ψ exponential supermartingales and the empirical-Bernstein self-normalised supermartingale [howardTimeuniformNonparametricNonasymptotic2021, Def. 1, App. A.8]; see [confidence-sequence-boundaries](confidence-sequence-boundaries.md).
 - A simple e-variable multiplied over i.i.d. outcomes is a test martingale whose stopped value is log-optimal for any adapted stopping time [grunwaldOptimalEValuesExponential2024, Sec. 1.3; koolenLogoptimalAnytimevalidEvalues2022, Thm 12]; the Cox partial-likelihood ratio is a continuous-time test martingale [terschureAnytimevalidLogrankTest2024, Prop. 3.1].
+- A composite nonnegative martingale is a likelihood ratio against an 'implied alternative' for every null element; nonnegative martingales with initial value one are precisely the admissible e-processes under a point null; complete characterisation under conditional symmetry as ∏ f_t(X_t) with f_t(x) + f_t(−x) = 2, and de la Peña's symmetric supermartingale is inadmissible, dominated by its mirrored version [ramdasAdmissibleAnytimevalidSequential2022, Prop. 4, Thm 18, Cor. 29, Prop. 39, Example 40].
+- Useful supermartingales that are not nonnegative (improper mixtures with a receding floor), and the floor-hugger martingale as the extremal process for crossing a growing threshold from a sinking floor [koolenGeneralisationVilleInequality2025, eqs 3, 5–6, 8].
+- Invariant likelihood ratios are martingales in the coarsened filtration [perezortizEstatisticsGroupInvariance2024, Prop. 6]; induced tests are bounded nonnegative martingales started at the size of the terminal test [koningAnytimeValidityFree2026, Remark 1]; restarted test martingales as change-detection primitives [sahaNonpartitionedEdetectorsNonparametric2026, Props 3.1, 4.1, A.1; shinEdetectorsNonparametricFramework2023, Defs 2.8–2.9].
 
 ## Variants and related concepts
 - [villes-inequality](villes-inequality.md), the inequality that makes them tests.
@@ -36,6 +39,8 @@ A test martingale (or test supermartingale) is a nonnegative (super)martingale u
 - [vovkEvaluesCalibrationCombination2021](../sources/vovkEvaluesCalibrationCombination2021.md), [shaferTestingBettingStrategy2021](../sources/shaferTestingBettingStrategy2021.md) — sequential e-values, round-by-round bets.
 - [howardTimeuniformNonparametricNonasymptotic2021](../sources/howardTimeuniformNonparametricNonasymptotic2021.md) — nonparametric supermartingales.
 - [grunwaldOptimalEValuesExponential2024](../sources/grunwaldOptimalEValuesExponential2024.md), [koolenLogoptimalAnytimevalidEvalues2022](../sources/koolenLogoptimalAnytimevalidEvalues2022.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — products of simple e-variables, survival martingale.
+- [ramdasAdmissibleAnytimevalidSequential2022](../sources/ramdasAdmissibleAnytimevalidSequential2022.md) — admissibility and symmetry.
+- [koolenGeneralisationVilleInequality2025](../sources/koolenGeneralisationVilleInequality2025.md), [perezortizEstatisticsGroupInvariance2024](../sources/perezortizEstatisticsGroupInvariance2024.md), [koningAnytimeValidityFree2026](../sources/koningAnytimeValidityFree2026.md), [sahaNonpartitionedEdetectorsNonparametric2026](../sources/sahaNonpartitionedEdetectorsNonparametric2026.md), [shinEdetectorsNonparametricFramework2023](../sources/shinEdetectorsNonparametricFramework2023.md) — instances.
 
 ## Disagreements / open issues
 - None recorded.

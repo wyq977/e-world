@@ -1,7 +1,7 @@
 ---
 slug: survival-e-values
 title: E-values for survival data (anytime-valid logrank)
-sources: 2
+sources: 3
 updated: 2026-10-08
 ---
 
@@ -20,6 +20,7 @@ For time-to-event data under proportional hazards, the ratio of sequentially com
 - Meta-analysis: the product of per-trial martingales is a test martingale even when trial start times depend on other trials' data, enabling ALL-IN living meta-analysis [terschureAnytimevalidLogrankTest2024, Prop. 5.1]; see [optional-continuation](optional-continuation.md).
 - Covariates: running-MLE universal-inference denominator is practical; a RIPr version is valid for any prior but not yet computable [terschureAnytimevalidLogrankTest2024, eq. 8.2, Thm B.1].
 - Inverting the prequential statistic gives anytime-valid confidence sequences for the hazard ratio; inverting the point-alternative one can leave intervals wide forever [terschureAnytimevalidLogrankTest2024, Sec. 6, Sec. 8.4].
+- Cox partial-likelihood ratios are e-processes, so the e-posterior results apply to proportional-hazards estimation [grunwaldEposterior2023, Sec. 5].
 
 ## Variants and related concepts
 - [k-sample-and-contingency-table-e-values](k-sample-and-contingency-table-e-values.md), the discrete two-group analogue.
@@ -28,6 +29,7 @@ For time-to-event data under proportional hazards, the ratio of sequentially com
 ## Sources
 - [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — founding source.
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — positioning as the MLR example.
+- [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md) — e-posterior for survival.
 
 ## Disagreements / open issues
 - Rigorous justification of the sequential Gaussian approximation is left to time-uniform central limit theory [terschureAnytimevalidLogrankTest2024, Sec. 4].

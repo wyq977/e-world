@@ -1,7 +1,7 @@
 ---
 slug: universal-inference
 title: Universal inference and the split likelihood ratio
-sources: 8
+sources: 13
 updated: 2026-10-08
 ---
 
@@ -23,6 +23,8 @@ A procedure is universal when its type-I error or coverage guarantee holds in fi
 - The maximum-likelihood plug-in e-value (alternative over maximised null likelihood) is anytime-valid but strictly less log-optimal than the RIPr likelihood ratio: implied target 3.072 vs 3.466 at n = 10 for the Gaussian scale problem [koolenLogoptimalAnytimevalidEvalues2022, Sec. 4.3].
 - Running-MLE denominator over nuisance regression coefficients is the recommended practical route to the full Cox model; power suffers when the covariate dimension is large relative to the number of events [terschureAnytimevalidLogrankTest2024, Sec. 8.1, eq. 8.2].
 - Asymptotically equal e-power to GRO but extreme finite-n loss for multivariate Gaussians; UI is coherent across subsets of the null where GRO is not, a power–coherence trade-off; a GRO analogue of empirical-risk universal inference is called for [grunwaldAuthorsReplyDiscussion2024, Secs 2, 4, 5].
+- Inadmissibility proved: p* ≤ p_max μ-a.s. so X* ≥ X_UI with strict inequality with positive probability for nondegenerate composite nulls; explicit example 2q/(p1 + p2) vs q/max(p1, p2) [larssonNumeraireEvariableReverse2025, Sec. 7, Lemma 7.1, Sec. 5.1].
+- Universal-inference t e-process for Gaussian means with unknown variance, growth ½ log(1 + (m − θ)²/v) [sahaNonpartitionedEdetectorsNonparametric2026, Prop. 5.1]; universal-inference e-processes where no supermartingale exists (log-concavity) serve as e-detector inputs [shinEdetectorsNonparametricFramework2023, Remark 2.10]; per-P induction generalises UI beyond log utility [koningAnytimeValidityFree2026, Remark 6]; UI named as the generic computable design but not power-competitive in regression [grunwaldBeyondNeymanPearsonEvalues2024, Sec. 4.1].
 
 ## Variants and related concepts
 - [reverse-information-projection](reverse-information-projection.md), for the RIPr split LRT and misspecification.
@@ -38,6 +40,8 @@ A procedure is universal when its type-I error or coverage guarantee holds in fi
 - [koolenLogoptimalAnytimevalidEvalues2022](../sources/koolenLogoptimalAnytimevalidEvalues2022.md) — quantitative loss vs RIPr.
 - [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — Cox model with covariates.
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — finite-n loss and coherence.
+- [larssonNumeraireEvariableReverse2025](../sources/larssonNumeraireEvariableReverse2025.md) — inadmissibility.
+- [sahaNonpartitionedEdetectorsNonparametric2026](../sources/sahaNonpartitionedEdetectorsNonparametric2026.md), [shinEdetectorsNonparametricFramework2023](../sources/shinEdetectorsNonparametricFramework2023.md), [koningAnytimeValidityFree2026](../sources/koningAnytimeValidityFree2026.md), [grunwaldBeyondNeymanPearsonEvalues2024](../sources/grunwaldBeyondNeymanPearsonEvalues2024.md) — uses and caveats.
 
 ## Disagreements / open issues
 - The original authors say they do not fully understand how close to optimal the split LRT is beyond uniform and Gaussian cases [wassermanUniversalInference2020, Sec. 2]; the later numeraire and exponential-family results quantify the loss.

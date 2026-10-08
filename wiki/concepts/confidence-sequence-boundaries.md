@@ -1,7 +1,7 @@
 ---
 slug: confidence-sequence-boundaries
 title: Confidence sequence boundaries and sub-ψ supermartingales
-sources: 3
+sources: 7
 updated: 2026-10-08
 ---
 
@@ -19,6 +19,9 @@ A sub-ψ process is a pair (S_t, V_t) such that exp{λS_t − ψ(λ)V_t} is domi
 - For one-parameter exponential families, mixture boundaries are exactly Robbins' mixture SPRT, and stitching is an approximate discrete mixture [howardTimeuniformNonparametricNonasymptotic2021, Cor. 6, App. A.6].
 - Catalogue in the survey: sub-Gaussian mixture sequence (eq. 22), Catoni heavy-tailed, empirical-Bernstein (eq. 23), betting martingale for bounded means (eq. 24), symmetry via self-normalisation (eq. 25), reverse-submartingale and asymptotic sequences [ramdasGametheoreticStatisticsSafe2023, Sec. 5].
 - Ville's own exponential mixture ∫ e^{λx − λ²t/2} dF(λ) reproves Petrowsky's upper-class test for Brownian motion, the first sub-Gaussian mixture boundary; for Bernoulli data every martingale is a Beta-type mixture [villeEtudeCritiqueNotion1939, Ch. V §3, §7].
+- Third route to iterated-logarithm boundaries: an improper mixture e^{−η²/2}dη/|η| over the sub-Gaussian exponential supermartingale, bounded below by −ln(1 + n)/√(2π), combined with the generalised Ville inequality gives a finite-time LIL at rate √(2 ln(ln n/δ)) with explicit lower-order terms for δ ≤ 3/5; thresholds must grow super-linearly in the floor [koolenGeneralisationVilleInequality2025, Lemma 4.1, Example 3.3].
+- Sub-Gaussian trichotomy for nulls μ_t = 0, μ_t ≤ 0, Σμ_i ≤ 0 and admissibility of exp(ΣX_i − t/2) for all conditionally 1-sub-Gaussian laws, yet inadmissibility for an intermediate class [ramdasAdmissibleAnytimevalidSequential2022, Sec. 5, Thm 35, Example 37].
+- Boundary technology transferred to change detection: geometric grids, zeta weights and stitching-style boundary functions for mixture e-detectors [shinEdetectorsNonparametricFramework2023, Def. 4.1, eqs 53, 59–61]; restarted Gaussian-mixture supermartingale [sahaNonpartitionedEdetectorsNonparametric2026, eq. 6].
 
 ## Variants and related concepts
 - [confidence-sets-and-sequences](confidence-sets-and-sequences.md), the object these boundaries produce.
@@ -28,6 +31,8 @@ A sub-ψ process is a pair (S_t, V_t) such that exp{λS_t − ψ(λ)V_t} is domi
 - [howardTimeuniformNonparametricNonasymptotic2021](../sources/howardTimeuniformNonparametricNonasymptotic2021.md) — the taxonomy, rates, tuning, applications.
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — compendium of exponential supermartingales and nonparametric sequences.
 - [villeEtudeCritiqueNotion1939](../sources/villeEtudeCritiqueNotion1939.md) — the earliest mixture boundaries.
+- [koolenGeneralisationVilleInequality2025](../sources/koolenGeneralisationVilleInequality2025.md) — improper mixtures and finite-time LIL.
+- [ramdasAdmissibleAnytimevalidSequential2022](../sources/ramdasAdmissibleAnytimevalidSequential2022.md), [shinEdetectorsNonparametricFramework2023](../sources/shinEdetectorsNonparametricFramework2023.md), [sahaNonpartitionedEdetectorsNonparametric2026](../sources/sahaNonpartitionedEdetectorsNonparametric2026.md) — admissibility, change detection.
 
 ## Disagreements / open issues
 - Howard et al. 2020, "Time-uniform Chernoff bounds via nonnegative supermartingales", defines the sub-ψ condition and is not in the bib; see gaps.

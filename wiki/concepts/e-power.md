@@ -1,7 +1,7 @@
 ---
 slug: e-power
 title: E-power and sample size
-sources: 11
+sources: 12
 updated: 2026-10-08
 ---
 
@@ -25,6 +25,7 @@ The e-power of an [e-variable](e-variable.md) E against an alternative Q is E_Q[
 - Expected log growth and worst-case regret used to tune the Beta(γ, γ) prior to γ ≈ 0.18 and to compare with Fisher's exact and chi-square tests at 80% power [turnerGenericEvariablesExact2024, eqs 2.5, 2.7, Figs 2–5]; growth rate of a simple e-variable equals inf over the convex hull of KL [grunwaldOptimalEValuesExponential2024, eq. 1.5].
 - The reply calls e-power a 'sore point': defined for single e-variables but meaningful only under optional continuation; Wang's examples of e-power −∞ for an almost-surely growing e-variable and +∞ for its reciprocal are recorded, Rényi-projection utilities proposed as remedy, GRO predicted to remain the default; for d × d Gaussians the finite-n e-power gap between GRO and universal inference is 'extreme' when n is not much larger than d [grunwaldAuthorsReplyDiscussion2024, Secs 1–2].
 - E-power of the microcanonical approximation is sandwiched between its own value and that of a non-e-variable pseudo approximation; the gap is the convergence diagnostic [giuffridaTestingMaximumEntropy2025, eqs 43–49].
+- Strong duality identifies the supremum e-power with the minimum relative entropy over the effective null; positive e-power is attainable iff Q lies outside the effective null, extending the finite-null result of Zhang, Ramdas and Wang [larssonNumeraireEvariableReverse2025, Thm 3.6, Remark 3.10, Cor. 4.6].
 
 ## Variants and related concepts
 - [gro-criterion](gro-criterion.md), optimising e-power.
@@ -40,6 +41,7 @@ The e-power of an [e-variable](e-variable.md) E against an alternative Q is E_Q[
 - [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md), [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md), [grunwaldOptimalEValuesExponential2024](../sources/grunwaldOptimalEValuesExponential2024.md) — applied comparisons.
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — concessions and the GRO vs UI gap.
 - [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — sandwich diagnostic.
+- [larssonNumeraireEvariableReverse2025](../sources/larssonNumeraireEvariableReverse2025.md) — duality and attainability.
 
 ## Disagreements / open issues
 - Whether log growth is the right objective is contested: the Safe Testing authors concede GRO rests on independence and bounded variance of log E and that it fails to explain stitching rates [grunwaldSafeTesting2024, Sec. 8]; Wang's Pareto counterexamples show rejection probability and e-power can point in opposite directions.

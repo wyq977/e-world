@@ -1,7 +1,7 @@
 ---
 slug: confidence-sets-and-sequences
 title: E-confidence sets and confidence sequences
-sources: 9
+sources: 13
 updated: 2026-10-08
 ---
 
@@ -22,6 +22,9 @@ An e-confidence set inverts a family of [e-variables](e-variable.md) indexed by 
 - Survey: inversion C_t = {θ : M^θ_t < 1/α}, explicit sub-Gaussian, empirical-Bernstein and betting sequences, asymptotic and reverse-submartingale sequences, e-confidence intervals versus credible and support intervals [ramdasGametheoreticStatisticsSafe2023, Sec. 2.8, eq. 12, Secs 5, 6.3, App. A].
 - Exact anytime-valid confidence sequences for risk difference, relative risk and odds ratio in 2 × 2 tables by inverting GRO e-variables over effect sizes; one-sided union for the non-convex odds-ratio level set [turnerExactAnytimevalidConfidence2023, eq. 12, Sec. 3.1]; hazard-ratio sequences from the prequential logrank statistic [terschureAnytimevalidLogrankTest2024, Sec. 6].
 - Ly's incompatibility: under GROW point priors a test and an anytime-valid confidence interval cannot both shrink and be consistent; the authors 'did not realize this' and point to REGROW and nonlocal priors; Cattaneo's minimum-e-value estimator under optional continuation is open [grunwaldAuthorsReplyDiscussion2024, Secs 3, 5].
+- E-confidence regions {θ : E_θ(ω) < α} for arbitrary parameter sets, read through the Fisher disjunction 'covers θ unless ω is α-strange', nested in α and simultaneously valid for every derived parameter g(θ); Jeffreys's levels √10, 10, 10^{3/2}, 100; toy intervals x ± 2.11/2.50/2.88/3.27 vs x ± 2.58 for p = 0.01 [vovkConfidenceDiscoveriesEvalues2023, Sec. 4, eqs 15–21].
+- Formal (φ, P, α)-confidence sequence definition, inversion of tests and the equivalence of admissibility of a confidence sequence with that of its inverted tests; no convex-hull closure for confidence sequences; admissible sequence for the centre of symmetry [ramdasAdmissibleAnytimevalidSequential2022, Lemma 2, Prop. 13, Thm 30, Examples 43, 48].
+- E-collections and e-confidence sets with data-dependent loss on the interval; e-CI about 1.4 times wider than the classical one but valid at unknown stopping times; the e-posterior as the family of all e-CIs [grunwaldBeyondNeymanPearsonEvalues2024, Sec. 3, Examples 4–5; grunwaldEposterior2023, Sec. 4]; see [e-posterior](e-posterior.md).
 
 ## Variants and related concepts
 - [universal-inference](universal-inference.md), [villes-inequality](villes-inequality.md), [post-hoc-validity](post-hoc-validity.md).
@@ -35,6 +38,9 @@ An e-confidence set inverts a family of [e-variables](e-variable.md) indexed by 
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — catalogue.
 - [turnerExactAnytimevalidConfidence2023](../sources/turnerExactAnytimevalidConfidence2023.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — exact applied sequences.
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — test/interval consistency.
+- [vovkConfidenceDiscoveriesEvalues2023](../sources/vovkConfidenceDiscoveriesEvalues2023.md) — e-confidence regions.
+- [ramdasAdmissibleAnytimevalidSequential2022](../sources/ramdasAdmissibleAnytimevalidSequential2022.md) — formal definitions and admissibility.
+- [grunwaldBeyondNeymanPearsonEvalues2024](../sources/grunwaldBeyondNeymanPearsonEvalues2024.md), [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md) — e-CIs and e-posteriors.
 
 ## Disagreements / open issues
 - Estimation is declared out of scope by the book, so confidence sequences are only sketched there [ramdasHypothesisTestingEvalues2025, Sec. 13.1.1].

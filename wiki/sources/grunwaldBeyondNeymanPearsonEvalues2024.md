@@ -79,6 +79,8 @@ The paper asks what the decision-theoretic meaning of "P ≪ α" is in Neyman–
 - [gro-criterion](../concepts/gro-criterion.md): GRO as the organising principle of Sec. 4 and its computational limits.
 - [testing-by-betting](../concepts/testing-by-betting.md): the NP e-variable is the all-or-nothing bet.
 - [optional-continuation](../concepts/optional-continuation.md): cited as the other advantage of e-values (Sec. 1.2).
+- [e-power](../concepts/e-power.md): growth rate ("also called e-power") named as the analogue of power in Sec. 4, tied to the sample size needed to reject and to CI width; the paper never optimises it itself.
+- [optional-stopping](../concepts/optional-stopping.md): the e-CI of Example 4 is valid at an unknown stopping time τ (Sec. 3.1); Sec. 5.4 says that matching classical power often requires embracing optional stopping, which is the sociological obstacle.
 
 ## Versions
 arXiv 2205.00901 (first version May 2022) is the preprint; the reply to the Safe Testing discussion cites it as "Grünwald 2022". The text layer is the PNAS version of record. The SI Appendix (proofs, infinite-risk examples, the richness enlargement, the ℓ-normalisation discussion, the evidence conjecture) is not included in paper.txt.

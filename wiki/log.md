@@ -49,3 +49,9 @@ Not ingested and not planned: waldSequentialAnalysis1947 (no PDF in Zotero), joh
 
 ## [2026-10-08] query | candidates regrouped by theme
 On the human's request: rows 49 and 83 removed; the author-based Tier 8 dissolved; list regrouped into nine themes with an A/B/C priority column and stable row ids; rows 85–86 added for the two newly added bib papers without a row. Thirteen papers added to the bib via scripts/bib_add.py and approved; ingest running.
+
+## [2026-10-08] ingest | batch 3: thirteen sources added to the bib on request
+larssonNumeraireEvariableReverse2025, ramdasAdmissibleAnytimevalidSequential2022, perezortizEstatisticsGroupInvariance2024, wangFalseDiscoveryRate2021, vovkConfidenceDiscoveriesEvalues2023, xuBringingClosureFalse2025, goemanUniformImprovementBenjaminiHochberg2026, grunwaldEposterior2023, koolenGeneralisationVilleInequality2025, grunwaldBeyondNeymanPearsonEvalues2024, shinEdetectorsNonparametricFramework2023, sahaNonpartitionedEdetectorsNonparametric2026, koningAnytimeValidityFree2026. Bib entries built from Zotero metadata via scripts/bib_add.py; first agent run was killed by a usage limit and rerun.
+
+## [2026-10-08] lint | concept layer after batch 3
+Four new concept pages: e-closure-principle, e-posterior, group-invariance-e-statistics, test-induction. Folded: true-discovery-guarantees→e-closure-principle; admissibility and p-process→e-process; effective-null and reverse-renyi-projection→numeraire; change-detection-delay-bounds→e-detector; e-closure (Goeman)→e-closure-principle. Twenty-five existing pages updated; numeraire page now cites the paper's own numbering; stale "not in bib" notes removed. Eight gap rows retired, ten added. Metadata for the human: raw/vovkConfidenceDiscoveriesEvalues2023/meta.yaml says publisher-oa but the text is arXiv 1912.13292v5; raw/grunwaldEposterior2023 text carries the arXiv v2 stamp (author says identical to the journal version).

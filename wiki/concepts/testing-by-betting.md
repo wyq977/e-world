@@ -1,7 +1,7 @@
 ---
 slug: testing-by-betting
 title: Testing by betting
-sources: 9
+sources: 14
 updated: 2026-10-08
 ---
 
@@ -21,6 +21,8 @@ Testing by betting represents a hypothesis test as a sequential game: a bettor s
 - The game tree with an opponent controlling stop/continue nodes and the null choosing chance moves [koolenLogoptimalAnytimevalidEvalues2022, Sec. 2.3]; the test martingale as capital in a sequential game with no expected earnings under the null [terschureAnytimevalidLogrankTest2024, Sec. 3.1].
 - Ville's gambler with betting fractions λ_n, μ_n and the reading of von Mises's impossibility of a gambling system, with the complaint that von Mises ignored the distribution of stakes [villeEtudeCritiqueNotion1939, Ch. IV §§2–3].
 - The payout is E, not log E; agreement with Shafer that free continuation is best treated game-theoretically [grunwaldAuthorsReplyDiscussion2024, Secs 1, 4].
+- The numeraire property is the numeraire-portfolio property (any wealth divided by the numeraire is a supermartingale), its existence theorem the e-variable fundamental theorem of asset pricing, and the numeraire is the optimal Kelly bet against P when reality follows Q [larssonNumeraireEvariableReverse2025, Def. 2.1, Thm 2.6].
+- One-dollar-per-day skeptic reading of e-detectors: Shiryaev–Roberts is total wealth, CUSUM max-minus-min wealth [shinEdetectorsNonparametricFramework2023, Sec. 6.1]; receding floors in the generalised Ville inequality are deterministic subsidies funding repeated attempts, i.e. multiple testing [koolenGeneralisationVilleInequality2025, Sec. 5]; bounded conditional-mean nulls tested by wealth Π(1 + λ(X − θ)) with betting information governing delay [sahaNonpartitionedEdetectorsNonparametric2026, eq. 17, Thm 4.2]; the De Finetti-style bookie game behind the e-posterior risk bound [grunwaldEposterior2023, Sec. 2].
 
 ## Variants and related concepts
 - [e-power](e-power.md), [gro-criterion](gro-criterion.md), [e-process](e-process.md).
@@ -33,6 +35,7 @@ Testing by betting represents a hypothesis test as a sequential game: a bettor s
 - [vovkEvaluesCalibrationCombination2021](../sources/vovkEvaluesCalibrationCombination2021.md), [koolenLogoptimalAnytimevalidEvalues2022](../sources/koolenLogoptimalAnytimevalidEvalues2022.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — betting readings.
 - [villeEtudeCritiqueNotion1939](../sources/villeEtudeCritiqueNotion1939.md) — the original gambler.
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — payout and game-theoretic framing.
+- [larssonNumeraireEvariableReverse2025](../sources/larssonNumeraireEvariableReverse2025.md), [shinEdetectorsNonparametricFramework2023](../sources/shinEdetectorsNonparametricFramework2023.md), [koolenGeneralisationVilleInequality2025](../sources/koolenGeneralisationVilleInequality2025.md), [sahaNonpartitionedEdetectorsNonparametric2026](../sources/sahaNonpartitionedEdetectorsNonparametric2026.md), [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md) — betting readings.
 
 ## Disagreements / open issues
 - Shafer 2021 (in the bib) and Shafer and Vovk 2019 (not in the bib) are the primary sources and are not yet ingested.

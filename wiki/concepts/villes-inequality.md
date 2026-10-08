@@ -1,7 +1,7 @@
 ---
 slug: villes-inequality
 title: Ville's inequality
-sources: 10
+sources: 15
 updated: 2026-10-08
 ---
 
@@ -19,6 +19,9 @@ For a nonnegative supermartingale (M_t) with M_0 ≤ 1 under P, P(∃t : M_t ≥
 - Ville's theorem (P(A) < ε iff some test martingale exceeds 1/ε on A), its composite version requiring e-processes, equality for continuous paths, overshoot as the discrete-time looseness, and the extension to nonintegrable supermartingales [ramdasGametheoreticStatisticsSafe2023, Sec. 2.5, eqs 8–10].
 - Applied to exponential supermartingales it yields only linear boundaries; curved boundaries need mixtures or a union bound over epochs [howardTimeuniformNonparametricNonasymptotic2021, Lemmas 1–2, Thm 1]; see [confidence-sequence-boundaries](confidence-sequence-boundaries.md).
 - Used to sharpen the sequential-e-value-to-p merger to the running minimum [vovkEvaluesCalibrationCombination2021, App. G]; the single safety guarantee in the k-sample, contingency-table and logrank papers [turnerGenericEvariablesExact2024, eq. 2.4; turnerExactAnytimevalidConfidence2023, Sec. 3; terschureAnytimevalidLogrankTest2024, Prop. 3.1].
+- Generalisation to monotone floors and thresholds: for a supermartingale with M_n ≥ −f(n) and non-decreasing f, g, P{∃n : M_n ≥ g(n)} ≤ 1 − ((g(0) − E M_0)/(g(0) + f(0))) ∏_{n ≥ 1} (g(n) + f(n − 1))/(g(n) + f(n)); tight, attained by the floor-hugger martingale; proved by applying classic Ville to a look-ahead supermartingale, so it is a corollary, not a strengthening; continuous relaxation via ∫ f′/(g + f); yields a finite-time law of the iterated logarithm with explicit constants [koolenGeneralisationVilleInequality2025, Thm 2.1, Lemma 2.2, Cor. 3.1, Lemma 4.1].
+- Three equivalent forms plus a conditional version; anti-concentration converse sup_Q Q(sup M_t ≥ 1/α) = α under infinite aggregate variance; tightness does not imply admissibility [ramdasAdmissibleAnytimevalidSequential2022, Sec. 3.1, Lemma 33, Cor. 34, Example 50].
+- Replaced by a direct expectation bound for bounded martingales in test induction [koningAnytimeValidityFree2026, Thm 5]; the ARL analogue E N* ≥ E M_{N*} ≥ (1/α) P(N* < ∞) for e-detectors [shinEdetectorsNonparametricFramework2023, Thm 2.4]; p-values from running maxima of e-processes [wangFalseDiscoveryRate2021, Sec. 7].
 
 ## Variants and related concepts
 - [e-process](e-process.md), [test-martingale](test-martingale.md).
@@ -31,6 +34,8 @@ For a nonnegative supermartingale (M_t) with M_0 ≤ 1 under P, P(∃t : M_t ≥
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — Ville's theorem and composite forms.
 - [howardTimeuniformNonparametricNonasymptotic2021](../sources/howardTimeuniformNonparametricNonasymptotic2021.md) — boundaries from Ville.
 - [vovkEvaluesCalibrationCombination2021](../sources/vovkEvaluesCalibrationCombination2021.md), [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md), [turnerExactAnytimevalidConfidence2023](../sources/turnerExactAnytimevalidConfidence2023.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — applications.
+- [koolenGeneralisationVilleInequality2025](../sources/koolenGeneralisationVilleInequality2025.md) — generalised Ville.
+- [ramdasAdmissibleAnytimevalidSequential2022](../sources/ramdasAdmissibleAnytimevalidSequential2022.md), [koningAnytimeValidityFree2026](../sources/koningAnytimeValidityFree2026.md), [shinEdetectorsNonparametricFramework2023](../sources/shinEdetectorsNonparametricFramework2023.md), [wangFalseDiscoveryRate2021](../sources/wangFalseDiscoveryRate2021.md) — forms and analogues.
 
 ## Disagreements / open issues
 - None recorded.

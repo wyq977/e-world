@@ -1,7 +1,7 @@
 ---
 slug: e-variable
 title: E-variable
-sources: 12
+sources: 20
 updated: 2026-10-08
 ---
 
@@ -33,6 +33,11 @@ An e-variable is a [0, ∞]-valued statistic E with E_P[E] ≤ 1 under every dis
 - Local e-variables (null restricted to a canonical neighbourhood) need not be global, but locality for all alternatives in the generated family implies globality [grunwaldOptimalEValuesExponential2024, Sec. 2, Thm 1, Fig. 3].
 - Constructive e-variables for composite nulls without invariance: the k-sample block e-variable [turnerGenericEvariablesExact2024, Thm 1], the lifted single-outcome e-variable for general two-sample nulls [turnerExactAnytimevalidConfidence2023, Thm 1], the one-event partial-likelihood ratio for survival data [terschureAnytimevalidLogrankTest2024, eq. 3.3]; see [k-sample-and-contingency-table-e-values](k-sample-and-contingency-table-e-values.md), [survival-e-values](survival-e-values.md).
 - Two constructions from the reply: the robustified (1 − γ)E + γ with γ learnable by mixtures, and the renormalised empirical e-variable [grunwaldAuthorsReplyDiscussion2024, Secs 3–4].
+- Infinite-valued e-variables are essential; Example 4.4 gives a null where every [0,1]-valued function is an e-variable; exact description of the e-variable class under symmetry [larssonNumeraireEvariableReverse2025, Thm 2.6, Remark 3.14, Sec. 5.4].
+- E-variables are exactly the Type-I risk safe statistics; S_np(α) = (1/α)1{P ≤ α} reproduces every level-α test; sharpness E_{P0}[S] = 1 [grunwaldBeyondNeymanPearsonEvalues2024, Prop. 1, Example 2, Thm 1].
+- Six statistical reasons to prefer e-values with concrete constructions: (ΣX_i)/(nμ) for nonnegative data, exp(λX − λ²X²/2) for symmetric data, products under conditional-mean nulls; approximate (1 + ε) and asymptotic e-values [wangFalseDiscoveryRate2021, Sec. 2, Example 1, Sec. 5.2].
+- The basic e-variable 1/α on A cannot be improved while the basic p-variable can; permutation e-values valid conditionally on the multiset of scores [vovkConfidenceDiscoveriesEvalues2023, Sec. 2, eq. 38]. E-collections (e_S)_S and the calibrated indicator 1{p ≤ a}/a with a random non-increasing threshold as an e-variable under PRDS [xuBringingClosureFalse2025, Def. 5; goemanUniformImprovementBenjaminiHochberg2026, Thm 5].
+- E-values as tests rescaled to [0, 1/α], and utility-optimal e-values characterised by λ dP/dQ ∈ ∂U(ε*) [koningAnytimeValidityFree2026, Sec. 6.1, eq. 8]; dampened e-variables (1 − γ) + γS and max{S, 1}/E[max{S, 1}] [grunwaldEposterior2023, eq. 35].
 
 ## Variants and related concepts
 - [e-process](e-process.md), the sequential object.
@@ -50,6 +55,7 @@ An e-variable is a [0, ∞]-valued statistic E with E_P[E] ≤ 1 under every dis
 - [grunwaldOptimalEValuesExponential2024](../sources/grunwaldOptimalEValuesExponential2024.md) — local vs global e-variables.
 - [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md), [turnerExactAnytimevalidConfidence2023](../sources/turnerExactAnytimevalidConfidence2023.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — constructive composite-null e-variables.
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — robustified and empirical e-variables.
+- [larssonNumeraireEvariableReverse2025](../sources/larssonNumeraireEvariableReverse2025.md), [grunwaldBeyondNeymanPearsonEvalues2024](../sources/grunwaldBeyondNeymanPearsonEvalues2024.md), [wangFalseDiscoveryRate2021](../sources/wangFalseDiscoveryRate2021.md), [vovkConfidenceDiscoveriesEvalues2023](../sources/vovkConfidenceDiscoveriesEvalues2023.md), [xuBringingClosureFalse2025](../sources/xuBringingClosureFalse2025.md), [goemanUniformImprovementBenjaminiHochberg2026](../sources/goemanUniformImprovementBenjaminiHochberg2026.md), [koningAnytimeValidityFree2026](../sources/koningAnytimeValidityFree2026.md), [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md) — batch-3 contributions.
 
 ## Disagreements / open issues
 - Wang's discussion of Safe Testing shows that e-variables with high rejection probability can have e-power minus infinity, so "good e-variable" is not a single ordering [grunwaldSafeTesting2024, discussion].

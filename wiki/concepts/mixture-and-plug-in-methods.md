@@ -1,7 +1,7 @@
 ---
 slug: mixture-and-plug-in-methods
 title: Mixture and plug-in methods for composite alternatives
-sources: 12
+sources: 17
 updated: 2026-10-08
 ---
 
@@ -23,6 +23,7 @@ When the alternative is composite, two standard devices produce a single likelih
 - Applied prequential plug-ins: Bayes posterior mean per block with REGROW-tuned Beta priors [turnerGenericEvariablesExact2024, eq. 3.5, Prop. 2]; two-virtual-point smoothed MLE for the hazard ratio, tracking the oracle and beating a misspecified GROW test [terschureAnytimevalidLogrankTest2024, eq. 3.7, Fig. 1].
 - 'Empirical E': renormalise a data-optimised e-variable by its supremum null expectation, turning redundancy into regret; predictive recursion praised as an alternative to Robbins mixtures and plug-in; learning the robustification weight by mixtures [grunwaldAuthorsReplyDiscussion2024, Secs 2–4].
 - Composite alternatives handled only by Bayes mixtures and NML, whose redundancy bounds the e-variable's regret [giuffridaTestingMaximumEntropy2025, eq. 22, Thm 1].
+- Improper mixtures of increments ∫(L_n(η) − 1) dη/|η| with the Feynman-trick closed form M_n = I(S_n/√(n + 1)) − ln(1 + n)/√(2π) [koolenGeneralisationVilleInequality2025, eq. 8, Lemma B.2]; method of mixtures over δ for composite invariant parameters [perezortizEstatisticsGroupInvariance2024, Sec. 3.3]; mixtures over a grid are e-detectors while the supremum is not, with adaptive re-weighting on growing supports [shinEdetectorsNonparametricFramework2023, Remark 3.1, Prop. 3.3]; Gaussian, arcsine universal-portfolio and Jeffreys-beta mixtures as restarted primitives [sahaNonpartitionedEdetectorsNonparametric2026, eqs 6, 18, 51]; the numeraire paper leaves mixtures and plug-in for composite alternatives to future work [larssonNumeraireEvariableReverse2025, Sec. 8].
 
 ## Variants and related concepts
 - [universal-inference](universal-inference.md), [exponential-family-e-values](exponential-family-e-values.md).
@@ -37,6 +38,7 @@ When the alternative is composite, two standard devices produce a single likelih
 - [grunwaldOptimalEValuesExponential2024](../sources/grunwaldOptimalEValuesExponential2024.md), [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — applied plug-ins.
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — empirical E, predictive recursion.
 - [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — universal numerators.
+- [koolenGeneralisationVilleInequality2025](../sources/koolenGeneralisationVilleInequality2025.md), [perezortizEstatisticsGroupInvariance2024](../sources/perezortizEstatisticsGroupInvariance2024.md), [shinEdetectorsNonparametricFramework2023](../sources/shinEdetectorsNonparametricFramework2023.md), [sahaNonpartitionedEdetectorsNonparametric2026](../sources/sahaNonpartitionedEdetectorsNonparametric2026.md), [larssonNumeraireEvariableReverse2025](../sources/larssonNumeraireEvariableReverse2025.md) — batch-3 contributions.
 
 ## Disagreements / open issues
 - RIPr for plug-in alternatives and sequential RIPr for Bayesian alternatives are not analysed [haoEValuesExponentialFamilies2025, Remark 3].

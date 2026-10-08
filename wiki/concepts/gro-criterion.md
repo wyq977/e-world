@@ -1,7 +1,7 @@
 ---
 slug: gro-criterion
 title: GRO, GROW, REGROW and log-optimality
-sources: 12
+sources: 18
 updated: 2026-10-08
 ---
 
@@ -26,6 +26,10 @@ Growth-rate optimality (GRO) chooses, for a given alternative Q, the [e-variable
 - GRO without a convex null: the block k-sample e-variable is GRO whenever the single-outcome model is convex; any valid 'mixture of means' ratio on a convex parameter set is GRO; Wald's SPRT product is not [turnerGenericEvariablesExact2024, Thm 1, Prop. 3, Sec. 8.2]; GRO for every closed convex null in the 2 × 2 table [turnerExactAnytimevalidConfidence2023, Thm 2]; conditional GROW for θ ≤ θ1 in survival data [terschureAnytimevalidLogrankTest2024, Sec. 3.1].
 - Greenland's one-shot chi-square challenge (y = 3.84, p = 0.05): naive e-variables need p ≤ 0.0000077, a REGROW-style exponentiated-Cauchy prior gives E = 1.81 and needs p ≤ 0.0007, Johnson's UMP Bayes factor with a point prior at δ* = 7.378 needs p ≤ 0.007, the best among likelihood-ratio e-variables; REGROW is 'not the method of choice' for one-shot n = 1 tests [grunwaldAuthorsReplyDiscussion2024, Sec. 2]. GROW point priors break test and confidence-interval consistency (Ly); REGROW or nonlocal priors fix it; REGROW is the reference-Bayes-like variant with no efficient general construction [grunwaldAuthorsReplyDiscussion2024, Sec. 3].
 - 'Regret' as the name for REGROW relative to the oracle point-alternative GRO e-variable; universal numerators give regret (d_1/2) log m + O(1) and ((d_1 − d_0)/2) log m for nested maximum entropy models; Jeffreys' prior is regret-suboptimal in the 2 × 2 canonical test [giuffridaTestingMaximumEntropy2025, eqs 12–22, 87, Fig. 5]; see [mdl-and-maximum-entropy-e-values](mdl-and-maximum-entropy-e-values.md).
+- Existence and uniqueness of the GRO e-variable for every composite null and point alternative without any condition, with benchmarked log-optimality to handle infinite growth [larssonNumeraireEvariableReverse2025, Prop. 2.4, Thm 2.6, Remarks 2.5, 3.8]; strengthens Safe Testing's Corollary 2 [larssonNumeraireEvariableReverse2025, Thm 4.1].
+- Anytime-valid Hunt–Stein: under amenability the invariant likelihood ratio is GROW among all e-statistics, and GROW = REGROW under invariance; composite δ handled by optimal or proper priors [perezortizEstatisticsGroupInvariance2024, Thms 2, 4, Cors 3, 5, 8, 9]; see [group-invariance-e-statistics](group-invariance-e-statistics.md). Power is unusable as a criterion because a power-optimal e-statistic is zero with positive probability [perezortizEstatisticsGroupInvariance2024, Sec. 2.4].
+- Log utility is the only utility whose optimal e-value is preserved under conditioning; the SPRT arises as the limit of induced Neyman–Pearson tests with α_N = exp(−N D(Q ‖ P)) [koningAnytimeValidityFree2026, Thms 7–8, Prop. 6].
+- For e-collections used in estimation GRO is not the design criterion: Savage–Dickey GRO collections assess worse than a two-point collection [grunwaldEposterior2023, Example 11]; the delay-optimal e-detector baseline maximises E_Q log L_1 [shinEdetectorsNonparametricFramework2023, eq. 20]; 'simultaneous REGROW regularity' and local REGROW witness bases drive optimal change-detection delay [sahaNonpartitionedEdetectorsNonparametric2026, Defs 6.6, 6.8].
 
 ## Variants and related concepts
 - [numeraire](numeraire.md), the assumption-free form.
@@ -42,6 +46,9 @@ Growth-rate optimality (GRO) chooses, for a given alternative Q, the [e-variable
 - [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md), [turnerExactAnytimevalidConfidence2023](../sources/turnerExactAnytimevalidConfidence2023.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — GRO in applied constructions.
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — one-shot regimes, Ly's incompatibility.
 - [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — regret rates.
+- [larssonNumeraireEvariableReverse2025](../sources/larssonNumeraireEvariableReverse2025.md) — assumption-free existence.
+- [perezortizEstatisticsGroupInvariance2024](../sources/perezortizEstatisticsGroupInvariance2024.md) — invariance.
+- [koningAnytimeValidityFree2026](../sources/koningAnytimeValidityFree2026.md), [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md), [shinEdetectorsNonparametricFramework2023](../sources/shinEdetectorsNonparametricFramework2023.md), [sahaNonpartitionedEdetectorsNonparametric2026](../sources/sahaNonpartitionedEdetectorsNonparametric2026.md) — further uses.
 
 ## Disagreements / open issues
 - Ly's discussion: GROW point priors leave δ+ inside anytime-valid confidence intervals forever; the authors answer with REGROW or nonlocal priors [grunwaldSafeTesting2024, discussion and reply].

@@ -1,7 +1,7 @@
 ---
 slug: optional-stopping
 title: Optional stopping and sequential decomposability
-sources: 9
+sources: 14
 updated: 2026-10-08
 ---
 
@@ -22,6 +22,8 @@ Optional stopping means ending a single data stream at a data-dependent time. An
 - Ville derived the martingale condition from fairness under every non-randomised stopping rule, with expectation one when the game ends almost surely [villeEtudeCritiqueNotion1939, Ch. V §1].
 - Applied: block-wise stopping with pre-fixed block sizes, Fisher's exact test losing type-I control under the same stopping [turnerGenericEvariablesExact2024, Sec. 3.1, Fig. S4.1]; level α at any random time for survival data, no anytime-valid trial is 'doomed' [terschureAnytimevalidLogrankTest2024, Prop. 3.1, Sec. 8.3].
 - Composite alternatives under (RE)GROW may need a coarser filtration; interim analysis is a bonus 'not always' available; 'design by filtration change' floated as possibly unifiable with information projection [grunwaldAuthorsReplyDiscussion2024, Secs 1, 4].
+- Stopping-time, random-time and time-uniform validity coincide for events but not for expectations; conditional validity E[e_τ | F_s] ≤ e_{s∧τ} forces the supermartingale property [ramdasAdmissibleAnytimevalidSequential2022, Lemmas 1–3, after Lemma 6].
+- Validity only for stopping times of the invariant filtration; a data-filtration stopping time exists for which the stopped t-test statistic is not an e-statistic [perezortizEstatisticsGroupInvariance2024, Sec. 3.2, supplement S3.1]; induced tests may be aborted at any stopping time and continued at the conditional level [koningAnytimeValidityFree2026, Thms 1, 5]; adaptive stopping of bandit arms induces negative dependence that e-BH tolerates and BH does not [wangFalseDiscoveryRate2021, Sec. 7]; e-specifications vs e-processes decide whether e-posterior decisions survive stopping [grunwaldEposterior2023, Sec. 3].
 
 ## Variants and related concepts
 - [optional-continuation](optional-continuation.md), the study-level version.
@@ -35,6 +37,7 @@ Optional stopping means ending a single data stream at a data-dependent time. An
 - [howardTimeuniformNonparametricNonasymptotic2021](../sources/howardTimeuniformNonparametricNonasymptotic2021.md), [villeEtudeCritiqueNotion1939](../sources/villeEtudeCritiqueNotion1939.md) — time-uniform validity, fairness.
 - [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — applied guarantees.
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — filtration coarsening.
+- [ramdasAdmissibleAnytimevalidSequential2022](../sources/ramdasAdmissibleAnytimevalidSequential2022.md), [perezortizEstatisticsGroupInvariance2024](../sources/perezortizEstatisticsGroupInvariance2024.md), [koningAnytimeValidityFree2026](../sources/koningAnytimeValidityFree2026.md), [wangFalseDiscoveryRate2021](../sources/wangFalseDiscoveryRate2021.md), [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md) — batch-3 contributions.
 
 ## Disagreements / open issues
 - When a GRO criterion admits a seqdec or ε-seqdec specification is open [grunwaldSafeTesting2024, eq. 31].

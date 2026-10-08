@@ -1,7 +1,7 @@
 ---
 slug: bayes-factor-e-variable
 title: Bayes factors as e-variables, and the safe t-test
-sources: 10
+sources: 13
 updated: 2026-10-08
 ---
 
@@ -24,6 +24,8 @@ A Bayes factor with the null in the denominator is an [e-variable](e-variable.md
 - The Bayes-mixture logrank numerator is a Bayes factor between the mixture and θ0, anytime valid under any prior, framed as luckiness rather than Bayesian inference [terschureAnytimevalidLogrankTest2024, App. A.4].
 - Johnson's UMP Bayes factor is an e-variable with an α-dependent point prior; right-Haar prior non-uniqueness vanishes for e-posteriors; Mulder's fractional Bayes factor point is left unanswered [grunwaldAuthorsReplyDiscussion2024, Secs 2–3].
 - The microcanonical GRO e-variable is a Bayes factor with a discrete null prior, while the pseudo approximation is a Bayes factor with a continuous null prior that is not an e-variable, by the uniqueness in Safe Testing's Theorem 1 [giuffridaTestingMaximumEntropy2025, eqs 27, 32, 44–45].
+- Wijsman's representation identifies the invariant likelihood ratio with the right-Haar Bayes factor; the Rouder/Jeffreys Bayesian t-test is an e-statistic and REGROW for priors with a (2 + ε)-th moment, open for Cauchy; Sun–Berger non-uniqueness does not affect GROW e-statistics [perezortizEstatisticsGroupInvariance2024, eq. 5, Cor. 9, Sec. 5.2]; see [group-invariance-e-statistics](group-invariance-e-statistics.md).
+- Savage–Dickey density ratios are e-posteriors; the two-point e-variable is Johnson's two-sided UMP Bayes factor at C = −log α; Berger–Brown–Wolpert conditional error probabilities are uniform-prior Bayes posteriors [grunwaldEposterior2023, eq. 7, Example 3, eq. 14]; generalized Bayes factor exp(ηδx − η²δ²/2) with η = 2 improves weak-signal multiple testing [vovkConfidenceDiscoveriesEvalues2023, App. D].
 
 ## Variants and related concepts
 - [gro-criterion](gro-criterion.md), [mixture-and-plug-in-methods](mixture-and-plug-in-methods.md).
@@ -37,6 +39,7 @@ A Bayes factor with the null in the denominator is an [e-variable](e-variable.md
 - [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — applied cases.
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — survey treatment.
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md), [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — UMP Bayes factors, microcanonical Bayes factors.
+- [perezortizEstatisticsGroupInvariance2024](../sources/perezortizEstatisticsGroupInvariance2024.md), [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md), [vovkConfidenceDiscoveriesEvalues2023](../sources/vovkConfidenceDiscoveriesEvalues2023.md) — batch-3 contributions.
 
 ## Disagreements / open issues
 - Cauchy (Jeffreys) prior case for the t-test is open [grunwaldSafeTesting2024, Sec. 4.3].

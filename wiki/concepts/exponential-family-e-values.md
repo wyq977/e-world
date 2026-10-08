@@ -1,7 +1,7 @@
 ---
 slug: exponential-family-e-values
 title: E-values for exponential family nulls
-sources: 7
+sources: 10
 updated: 2026-10-08
 ---
 
@@ -24,6 +24,7 @@ The setting is a composite null that is a regular d-dimensional exponential fami
 - Survey remarks: monotone-likelihood-ratio families with separated null and alternative have GRO equal to a simple likelihood ratio; conditional e-values via sufficient statistics are usually not (RE)GRO(W) [ramdasGametheoreticStatisticsSafe2023, Secs 4.1.1, 4.1.3].
 - For 2 × 2 tables the conditional (sufficient-statistic) e-variable is Wald's two-sample SPRT, equal to one whenever the counts tie, and inferior to the GRO block e-variable [turnerGenericEvariablesExact2024, Sec. 8.2]; see [k-sample-and-contingency-table-e-values](k-sample-and-contingency-table-e-values.md).
 - Canonical maximum entropy models are exponential families with uniform carrier; testing between families with different sufficient statistics complements the same-statistic setting, and the microcanonical GRO e-variable is the conditional e-variable with Z = c_0 [giuffridaTestingMaximumEntropy2025, Secs II–III]; see [mdl-and-maximum-entropy-e-values](mdl-and-maximum-entropy-e-values.md).
+- One-dimensional exponential family with sufficient statistic and null with smallest element θ* > θ_1: RIPr p_{θ*}, numeraire p_{θ_1}/p_{θ*} via convexity of the log-partition function [larssonNumeraireEvariableReverse2025, Sec. 5.5]; Gaussian scale-location examples under invariance [perezortizEstatisticsGroupInvariance2024, Secs 2.2, 4.1, 4.2]; two-point e-process rates, MLE minimaxity and dampened Savage–Dickey bounds for regular one-dimensional families [grunwaldEposterior2023, SM Thm 1, Props 3–4].
 
 ## Variants and related concepts
 - [reverse-information-projection](reverse-information-projection.md), [gro-criterion](gro-criterion.md).
@@ -37,6 +38,7 @@ The setting is a composite null that is a regular d-dimensional exponential fami
 - [koolenLogoptimalAnytimevalidEvalues2022](../sources/koolenLogoptimalAnytimevalidEvalues2022.md) — interval nulls under optional stopping.
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md), [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md) — MLR remark, conditional e-variable for 2 × 2.
 - [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — different-statistic tests.
+- [larssonNumeraireEvariableReverse2025](../sources/larssonNumeraireEvariableReverse2025.md), [perezortizEstatisticsGroupInvariance2024](../sources/perezortizEstatisticsGroupInvariance2024.md), [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md) — batch-3 contributions.
 
 ## Disagreements / open issues
 - No general n-free sufficient condition for the UI regularity condition in multivariate families [haoEValuesExponentialFamilies2025, App. C.1].

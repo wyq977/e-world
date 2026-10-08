@@ -1,7 +1,7 @@
 ---
 slug: e-merging
 title: Merging e-values and p-values
-sources: 5
+sources: 9
 updated: 2026-10-08
 ---
 
@@ -19,6 +19,8 @@ An e-merging function F produces an [e-variable](e-variable.md) F(E_1, …, E_K)
 - Family-wise validity: adjusted e-values E*_k are family-wise valid if E_Q[max_{k : Q ∈ H_k} E*_k] ≤ 1 for all Q, the e-analogue of FWER; closure of the mean gives an O(K²) procedure valid under any dependence and closure of the product an O(K) procedure for sequential e-values [vovkEvaluesCalibrationCombination2021, eq. 9, Thm 5.1, Algorithms 1–2]; non-singleton closure for FDP control is flagged as future work.
 - Shafer's reply endorses weighted averaging of bets, equal to a Bayes factor for simple nulls with prior weights, over max-plus-adjustment [shaferTestingBettingStrategy2021, reply]; Koolen and Grünwald explain why the product's robustness to changing nulls costs power when the null is fixed [koolenLogoptimalAnytimevalidEvalues2022, Sec. 5].
 - Survey: averaging arbitrarily dependent e-values with weights fixed in advance; multiplication of independent or conditionally valid e-values [ramdasGametheoreticStatisticsSafe2023, Secs 2.9–2.10].
+- Closure of the arithmetic mean over all index sets with |R \ I| = j gives FDP-type bounds; Bonferroni and Simes e-mergers as lower bounds with tight ratios ln n + 1 and n; e-Bonferroni far worse than averaging for FDP control; U-statistic merger under independence [vovkConfidenceDiscoveriesEvalues2023, Sec. 6, App. B, Remark 6.5].
+- The arithmetic mean as local e-value makes closed e-BH valid under arbitrary dependence; admissible procedures reduce to weighted affine mergers via Clerico's characterisation [xuBringingClosureFalse2025, eq. 6, Thm 17, App. B, Prop. 51]; e_S as the mean merger of indicator e-values certifies a whole range of nested rejection sets via the horizon lemma [goemanUniformImprovementBenjaminiHochberg2026, eq. 9, Lemma 10]; group-level averaging or products before post-selection e-BH [wangFalseDiscoveryRate2021, Sec. 5.1].
 
 ## Variants and related concepts
 - [e-bh](e-bh.md), merging for multiple testing rather than a single decision.
@@ -29,6 +31,7 @@ An e-merging function F produces an [e-variable](e-variable.md) F(E_1, …, E_K)
 - [vovkEvaluesCalibrationCombination2021](../sources/vovkEvaluesCalibrationCombination2021.md) — the primary source.
 - [shaferTestingBettingStrategy2021](../sources/shaferTestingBettingStrategy2021.md), [koolenLogoptimalAnytimevalidEvalues2022](../sources/koolenLogoptimalAnytimevalidEvalues2022.md) — averaging vs product.
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — survey summary.
+- [vovkConfidenceDiscoveriesEvalues2023](../sources/vovkConfidenceDiscoveriesEvalues2023.md), [xuBringingClosureFalse2025](../sources/xuBringingClosureFalse2025.md), [goemanUniformImprovementBenjaminiHochberg2026](../sources/goemanUniformImprovementBenjaminiHochberg2026.md), [wangFalseDiscoveryRate2021](../sources/wangFalseDiscoveryRate2021.md) — batch-3 contributions.
 
 ## Disagreements / open issues
 - Primary sources not yet in the bib: Vovk and Wang 2021 is in the bib; Wang 2025 "The only admissible way of merging arbitrary e-values", Vovk, Wang and Wang 2022 on p-merging, and Vovk and Wang 2024 on martingale merging are not.

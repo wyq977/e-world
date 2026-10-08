@@ -1,7 +1,7 @@
 ---
 slug: calibrator
 title: Calibrators between p-values and e-values
-sources: 6
+sources: 13
 updated: 2026-10-08
 ---
 
@@ -21,6 +21,10 @@ A p-to-e calibrator is a decreasing function f with ∫_0^1 f ≤ 1, so that f(P
 - Calibrators preserve family-wise validity in both directions; cross-merging: average e-values then invert, or calibrate p-values then average [vovkEvaluesCalibrationCombination2021, Remark A.1, App. G].
 - Survey uses: turn any confidence interval into an e-confidence interval at level f^{−1}(1/α), lookback calibrators, calibrate per-study p-values before multiplying [ramdasGametheoreticStatisticsSafe2023, Secs 2.4, 6.1, 6.3].
 - Lottery-ticket argument: reporting p is claiming the payout of a ticket one never bought; calibration makes the p-value an honest bet; the authors concede that once p-values are calibrated, e-values do not need more data [grunwaldAuthorsReplyDiscussion2024, Sec. 1].
+- BH, BY and every Blanchard–Roquain shape-function step-up rule are e-BH applied to calibrated p-values f(p_k) with f = ψ/α; calibrators and inversion preserve PRDS; boosting factors for λp^{λ−1} [wangFalseDiscoveryRate2021, Prop. 4, Remark 4, Fact 1, Examples 2, 5, 7].
+- Round-trip inefficiency: 1/VS(0.005) ≈ 0.072, VS(0.05) ≈ 2.456; Jeffreys (5% ~ √10, 1% ~ 10) and Good correspondences; the harmonic-mean p-value is the 1/e image of averaging [vovkConfidenceDiscoveriesEvalues2023, Sec. 3, eqs 6–12, App. B].
+- Two new |S|-dependent p-to-e calibrators for closed BY and closed Su; calibrate-then-average is weaker than tailoring the local e-value; calibrators with a level must keep it fixed for post-hoc α [xuBringingClosureFalse2025, Lemmas 27, 32, Remarks 31, 49]; the extreme calibrator 1_{[0,a]}/a with a random threshold [goemanUniformImprovementBenjaminiHochberg2026, eq. 9].
+- Adjusters a with ∫ a(x)/x² dx ≤ 1 on running maxima of e-processes, equivalently calibrators under x = 1/p; growth-preserving example a(x) = 2x/(2 + log x)² [sahaNonpartitionedEdetectorsNonparametric2026, Def. 6.1, Lemma 6.2]; calibrating then applying the e-rule is the only known Type-I-risk-safe use of a p-value and is usually suboptimal [grunwaldBeyondNeymanPearsonEvalues2024, Sec. 1.2]; whole-process calibration both ways [ramdasAdmissibleAnytimevalidSequential2022, Props 12, 14].
 
 ## Variants and related concepts
 - [e-variable](e-variable.md), [e-merging](e-merging.md).
@@ -32,6 +36,7 @@ A p-to-e calibrator is a decreasing function f with ∫_0^1 f ≤ 1, so that f(P
 - [shaferTestingBettingStrategy2021](../sources/shaferTestingBettingStrategy2021.md) — the 1/√p − 1 calibrator and its defence.
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — uses.
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — lottery-ticket argument.
+- [wangFalseDiscoveryRate2021](../sources/wangFalseDiscoveryRate2021.md), [vovkConfidenceDiscoveriesEvalues2023](../sources/vovkConfidenceDiscoveriesEvalues2023.md), [xuBringingClosureFalse2025](../sources/xuBringingClosureFalse2025.md), [goemanUniformImprovementBenjaminiHochberg2026](../sources/goemanUniformImprovementBenjaminiHochberg2026.md), [sahaNonpartitionedEdetectorsNonparametric2026](../sources/sahaNonpartitionedEdetectorsNonparametric2026.md), [grunwaldBeyondNeymanPearsonEvalues2024](../sources/grunwaldBeyondNeymanPearsonEvalues2024.md), [ramdasAdmissibleAnytimevalidSequential2022](../sources/ramdasAdmissibleAnytimevalidSequential2022.md) — batch-3 contributions.
 
 ## Disagreements / open issues
 - None recorded.

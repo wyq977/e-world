@@ -1,7 +1,7 @@
 ---
 slug: reverse-information-projection
 title: Reverse information projection (RIPr)
-sources: 12
+sources: 17
 updated: 2026-10-08
 ---
 
@@ -25,6 +25,9 @@ The reverse information projection of an alternative Q onto a convex set of null
 - Sequential RIPr for the Cox model with covariates is valid for any prior but not yet computable; a Li–Barron algorithm is proposed [terschureAnytimevalidLogrankTest2024, Thm B.1, App. B.2].
 - The reply doubts Bon and Robert's conjecture that the RIPr prior on a bounded Gaussian location null is an endpoint point mass: experiments show the mass spreads over many points, a single point only when the alternative prior's mean lies outside the interval [grunwaldAuthorsReplyDiscussion2024, Sec. 3].
 - A new exactly solvable family: for microcanonical maximum entropy nulls the RIPr prior is the push-forward of the alternative's universal distribution onto the null sufficient statistic; for canonical nulls the RIPr stays uncomputable and the microcanonical RIPr gives a valid lower bound [giuffridaTestingMaximumEntropy2025, eqs 29–31, 47].
+- Assumption-free definition dP*/dQ = 1/X* on the effective null; P* coincides with Li's and with Lardy–Grünwald–Harremoës's RIPr whenever those exist, can be a proper sub-probability, and H(Q | P) can be infinite for every P in the null while H(Q | P*) is finite or zero [larssonNumeraireEvariableReverse2025, Lemma 3.3, Def. 3.4, Thm 4.7, Cors 4.10–4.11, Examples 4.4, 4.9, Table 1].
+- Under group invariance the infimum KL over null-and-alternative mixtures equals the invariant KL and is approached, not attained, by truncated right-Haar priors when the group is non-compact [perezortizEstatisticsGroupInvariance2024, Thm 2].
+- Betting-information identity I_bet(Q, θ) = inf_{R : E_R X = θ} D(Q ‖ R) with explicit minimiser dR*/dQ = 1/f_{λ*} [sahaNonpartitionedEdetectorsNonparametric2026, Lemma C.4]; RIPr block e-values multiply into supermartingales usable as e-detector baselines [shinEdetectorsNonparametricFramework2023, Sec. 2.6]; RIPr e-variables supply e-collections with nuisance parameters for the e-posterior [grunwaldEposterior2023, Sec. 5].
 
 ## Variants and related concepts
 - [gro-criterion](gro-criterion.md), [numeraire](numeraire.md).
@@ -41,6 +44,9 @@ The reverse information projection of an alternative Q onto a convex set of null
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md) — survey view, survival with covariates.
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — spread of RIPr priors.
 - [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — microcanonical RIPr.
+- [larssonNumeraireEvariableReverse2025](../sources/larssonNumeraireEvariableReverse2025.md) — assumption-free RIPr.
+- [perezortizEstatisticsGroupInvariance2024](../sources/perezortizEstatisticsGroupInvariance2024.md) — invariant case.
+- [sahaNonpartitionedEdetectorsNonparametric2026](../sources/sahaNonpartitionedEdetectorsNonparametric2026.md), [shinEdetectorsNonparametricFramework2023](../sources/shinEdetectorsNonparametricFramework2023.md), [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md) — applied uses.
 
 ## Disagreements / open issues
 - No general fast algorithm for computing the RIPr prior is given; numerical accuracy for infinite sample spaces is unclear [grunwaldSafeTesting2024, Sec. 2]; direct computation is infeasible for large effect sizes in the simulations [haoEValuesExponentialFamilies2025, Sec. 4].
