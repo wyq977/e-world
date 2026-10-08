@@ -13,3 +13,6 @@ Added 19 rows (50–68) after the human flagged gaps: e-closure / closed eBH fam
 
 ## [2026-10-08] query | candidates: Koning
 Added Tier 8 (rows 69–75) for Nick Koning's post-hoc, permutation and continuous-testing line, from memory and unverified: the web search was refused by the permission layer. Approval of the four staged papers was also refused to the agent; the human runs make approve.
+
+## [2026-10-08] query | candidates: testability foundations
+Added rows 76–80 to Tier 1 after the human pointed to the 2026 Larsson–Ruf–Ramdas testability paper; verified titles and authors on arXiv.
