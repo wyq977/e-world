@@ -1,0 +1,1281 @@
+                             Acomplete characterization of testable hypotheses
+                                                     ∗                         †                      ‡
+                                   Martin Larsson           Aaditya Ramdas            Johannes Ruf
+                                                             July 27, 2026
+                                                                Abstract
+                              Werevisit a fundamental question in hypothesis testing: given two sets of probabil-
+                           ity measures P and Q, when does a nontrivial (i.e. strictly unbiased) test for P against
+                           Qexist? Le Cam showed that, when P and Q have a common dominating measure, a
+                           test that has power exceeding its level by more than ε exists if and only if the convex
+                           hulls of P and Q are separated in total-variation distance by more than ε. The re-
+                           quirement of a dominating measure is frequently violated in nonparametric statistics.
+                           In a passing remark, Le Cam described an approach to address more general scenarios,
+                           but he stopped short of stating a formal theorem. This work completes Le Cam’s pro-
+                           gram, by presenting a matching necessary and sufÏcient condition for testability: for
+                           the aforementioned theorem to hold without assumptions, one must take the closures
+                           of the convex hulls of P and Q in the space of bounded finitely additive measures. We
+                           provide simple elucidating examples, and elaborate on various subtle measure-theoretic
+                           and topological points regarding compactness and achievability.
+                     1    Introduction
+                     Let M1 denote the set of all (countably additive) probability measures on a given measur-
+                     able space (Ω,F). The null and alternative hypotheses are P,Q ⊂ M1, always assumed
+                     nonempty. A test ϕ is a [0,1]-valued measurable function on this space, and its worst-case
+                     level (or type-I error) and power are given by supµ∈P Eµ[ϕ] and infν∈QEν[ϕ]. Let Φ denote
+                     the set of all tests. One calls a test ϕ strictly unbiased if
+                                                         supEµ[ϕ] < inf Eν[ϕ],
+                                                         µ∈P          ν∈Q
+                     meaning that its worst-case power is larger than its worst-case level. Since this is a rather
+                     reasonable minimal requirement for a test, we use the shorter term “nontrivial” to mean
+                     strictly unbiased. This paper answers a simple question: when does a nontrivial test exist?
+                        ∗Department of Mathematical Sciences, Carnegie Mellon University, larsson@cmu.edu
+                        †Departments of Statistics and Machine Learning, Carnegie Mellon University aramdas@cmu.edu
+        arXiv:2601.05217v3  [math.ST]  23 Jul 2026‡Department of Mathematics, London School of Economics, j.ruf@lse.ac.uk
+                                                                    1
+                       The risk of a test ϕ is defined as the sum of its worst-case type-I and type-II errors,
+                                         R(ϕ) = R(ϕ,P,Q) = supE [ϕ]+supE [1−ϕ].
+                                                                    µ           ν
+                                                              µ∈P         ν∈Q
+                    Therisk is unaffected if P and Q are replaced by their convex hulls co(P) and co(Q), which
+                    consist of all finite convex combinations of elements of P and Q. That is,
+                                                R(ϕ,P,Q)=R(ϕ,co(P),co(Q)).
+                    The minimax risk is defined by
+                                                   R(P,Q)= inf R(ϕ,P,Q).
+                                                               ϕ∈Φ
+                    Clearly a test ϕ is nontrivial if and only if R(ϕ) < 1, and such a test exists if and only if
+                    R(P,Q) < 1. If R(P,Q) = R(ϕ∗) for some ϕ∗ ∈ Φ, we call ϕ∗ a minimax optimal test.
+                    Because the risk R(ϕ) is a supremum of afÏne functions, it is convex. Thus solving for the
+                    minimax risk is a convex minimization problem. However, Φ is not in general compact in
+                    any topology for which the risk is continuous (or lower semicontinuous), and so a minimax
+                    optimal test may not always exist. It is well-known that a minimax optimal test does exist
+                    under certain conditions; this is discussed further below.
+                       The minimax risk is closely related to the total-variation (TV) distance between co(P)
+                    and co(Q). Indeed, for any test ϕ and arbitrary probability measures µ,ν, it holds that
+                                               Eµ[ϕ]+Eν[1−ϕ]≥1−dTV(µ,ν),
+                    where dTV denotes the TV distance; see (2.1) for details. As a result we have
+                                                      R(ϕ) ≥ 1−d      (µ,ν)
+                                                                   TV
+                    for any ϕ ∈ Φ, µ ∈ co(P), and ν ∈ co(Q). Minimizing over ϕ and maximizing over µ and
+                    ν then yields the “weak duality”
+                                               R(P,Q)≥1−dTV(co(P),co(Q)),                                (1.1)
+                    where the TV distance between sets S,T of (finitely or countably additive) probability
+                    measures is given by d   (S,T) = infµ∈S,ν∈T d   (µ,ν). To foreshadow later developments,
+                                          TV                     TV
+                    we note that the definition of TV distance carries over without change to (sets of) finitely
+                    additive probability measures.
+                       Because the distance between two sets is always the same as the distance between their
+                    closures, we could replace co(P) and co(Q) by their TV closures co(P) and co(Q) in (1.1).
+                    Crediting Lucien Le Cam, Kraft (1955) presented the following fundamental result, which
+                    is a sufÏcient condition for equality to hold in (1.1).
+                                                                2
+              Theorem 1.1. If P and Q have a common dominating measure γ (meaning that µ ≪ γ
+              and ν ≪ γ for all µ ∈ P, ν ∈ Q, and always understood to be σ-finite), then for any ε ≥ 0,
+                            ∃ test ϕ ∈ Φ: inf E [ϕ] > supE [ϕ]+ε
+                                      ν∈Q ν       µ
+                                               µ∈P                         (1.2)
+                                           ⇐⇒ dTV(co(P),co(Q))>ε.
+               In fact, we have
+                                  R(P,Q)=1−dTV(co(P),co(Q))                (1.3)
+                                               ∗
+              where the minimax risk is achieved by some ϕ ∈ Φ, but the infimum in dTV is in general
+              not achieved by any µ ∈ co(P),ν ∈ co(Q).
+                 In words, if P and Q have a common dominating measure, then a nontrivial test exists
+              if and only if the convex hulls of P and Q are separated in TV distance. Actually, Kraft
+              (1955) presented only (1.2) and proved it using the Hahn–Banach separating hyperplane
+              theorem. A statement like (1.3) appears on page 476 of Le Cam (2012) and was proved
+              succinctly using a minimax theorem, but the left-hand side there is subtly (yet critically)
+              different; we return to Le Cam’s claim in Theorem 1.12 and again in Appendix B. Also
+              using Hahn–Banach, Proposition 1.6 shows that Theorem 1.1 is a corollary of our own more
+              general Theorem 1.5, itself proved using a minimax theorem.
+              Example 1.2. The infimum TV distance is not achieved in general in Theorem 1.1. To
+              see this, let Q = {δ } and
+                            0
+                                1  1    1   1             
+                            P =     −   δ +   +    δ : n ∈ N, n ≥ 3 .
+                                  2  n   0   2  n  n
+              Then d (co(P),δ ) = 1/2, but this is not achieved by any µ ∈ co(P) because there is no
+                   TV       0
+              such µ with mass exactly 1/2 at 0. Said differently, the TV projection onto co(P) may not
+              exist. (The TV projection always exists onto co*(P), an object introduced later.)
+                 The assumption of a common dominating measure made in the above theorem appears
+              innocuous but is violated in many standard nonparametric testing problems. For example,
+              here are commonly encountered classes which do not have a dominating measure:
+                (i) distributions on a bounded support (like [0,1]) with a specified mean (like 0.5);
+               (ii) all symmetric distributions around the origin;
+               (iii) all (unbounded) distributions with a specified mean and bound on the variance;
+               (iv) all σ-sub-Gaussian distributions for a given σ > 0;
+               (v) the TV, Wasserstein, or Kolmogorov ball around a given distribution.
+                                              3
+                        In all these cases, Theorem 1.1 is silent. The importance of studying such settings has
+                     not escaped statisticians. For example, Huber and Strassen (1973) remark at the end of
+                     their Section 6 that “...the more interesting sets P,Q are not dominated...”. Here is a very
+                     simple example from van der Vaart (2002) where the assumption of Theorem 1.1 fails and
+                     its conclusion also fails.
+                     Example 1.3. Let P = {δ : x ∈ [0,1]}, where δ is the Dirac delta mass at x, and let
+                                                 x                        x
+                     Q={Uni[0,1]}, where Uni[0,1] denotes the uniform distribution on [0,1]. The TV distance
+                     between Uni[0,1] and co(P) equals 1, the largest possible value. However, as should be
+                     intuitively clear, and also follows as a consequence of our main theorem below, no nontrivial
+                     test exists for this problem and the minimax risk is R(P,Q) = 1. (See also Proposition C.1.)
+                     Note that above, a test ϕ maps a single observation to [0,1]. Letting P = {δ ×δ : x ∈ [0,1]}
+                                                                                                 x   x
+                     and Q = {Uni[0,1] × Uni[0,1]}, one can design a perfect test that has zero type-I error
+                     and power one (the test rejects if the two observations are different). While our setup
+                     allows the underlying Ω and distributions to be arbitrary, and covers the case of P and Q
+                     consisting of product distributions as a special case, the purpose of the example is to show
+                     that Theorem 1.1 can fail in nondominated settings.
+                        After seeing the above example, it may be tempting to conjecture that when there is
+                     no reference measure, the closure in TV may need to be replaced by the standard weak
+                     closure (i.e. closure in the standard topology of weak convergence of probability measures).
+                     Indeed in the above example, the weak closure of co(P) contains Uni[0,1]. However, the
+                     following simple counterexample shows that using the weak closure of the convex hull is
+                     also in general the wrong answer.
+                     Example 1.4. Take Ω = [0,1], P = {δ : x ∈ [0,0.5)}, and Q = {δ : y ∈ (0.5,1]}. Then a
+                                                             x                            y
+                     perfect test exists: 1       has level 0 and power 1. However, the standard weak closures
+                                          {X>0.5}
+                     of both P and Q include δ    . In short, perfect tests exist even though the weak closures of
+                                                0.5
+                     the null and alternative hypotheses intersect, so (1.2) could not have used the weak closures
+                     of co(P) and co(Q), respectively. Once more, our theorem will lead to the right conclusion.
+                        In the first example above, the TV closure was not large enough. In the second example,
+                     the standard weak closure was too large. Our main result employs a type of closure that lies
+                     in between (in strength) the standard weak and strong closures: we take the closure in the
+                     weak-∗ topology on ba, the space of bounded finitely additive measures. In this topology,
+                     convergence of µ    to µ is equivalent to convergence of E     [f] to E [f] for all bounded
+                                      α                                           µ          µ
+                                                                                   α
+                     measurable functions f. The formal definitions are reviewed further in Section 2.
+                        Let us give some intuition for why the weak-∗ topology arises naturally. Suppose a
+                     test ϕ has risk R(ϕ) = r, so that E [ϕ] + E [1 − ϕ] ≤ r for all µ ∈ P and ν ∈ Q, and
+                                                           µ        ν
+                     r is the smallest number with this property. This inequality remains true for all µ,ν in
+                     the convex hulls co(P),co(Q), and then for all µ,ν in the closures of the convex hulls—
+                     assuming the closures are taken in a topology for which the expectation Eµ[ϕ] is continuous
+                     in µ. The significance of the weak-∗ topology on ba is that it is the weakest topology with
+                                                                   4
+                    this property for any test ϕ. Thus the weak-∗ convex closures co*(P),co*(Q) are the largest
+                    extensions of P,Q that preserve the risk of any test ϕ. It is the distance between these
+                    closures that matters for the minimal achievable risk. While this motivates the use of the
+                    weak-∗ topology, it does not explain why the space ba is needed. This is indeed a more
+                    subtle matter, which we address further in Section 2.
+                        Wenowstateourmainresultgivingaquantitative characterization of testable hypothe-
+                    ses. (We recall later in (2.1) how the TV distance is defined in ba.)
+                    Theorem 1.5. For any P,Q ⊂ M and ε ≥ 0, we have the following equivalence:
+                                                        1
+                                         ∃ test ϕ : inf E [ϕ] > supE [ϕ] +ε
+                                                   ν∈Q ν             µ
+                                                                µ∈P
+                                                           ⇐⇒ dTV(co*(P),co*(Q)) > ε.
+                     In fact, we have
+                                               R(P,Q)=1−dTV(co*(P),co*(Q)),                                (1.4)
+                    where the infimum in the dTV is achieved by some µ ∈ co*(P),ν ∈ co*(Q).
+                        Wesuspect that outside of special cases, such as the dominated setting of Theorem 1.1,
+                    the minimax risk may not in general be achieved by any test ϕ.
+                        Theproofoftheaboveresultisbasedonaminimaxtheorem,asdetailedinthefollowing
+                    section. We note that the choice of topology is a critical and subtle matter in this regard,
+                    because it affects both the compactness of sets and continuity of functions, required for
+                    invoking an appropriate minimax theorem. In Appendix A we expand briefly on this, not-
+                    ing that the established literature contains instances where minimax theorems are applied
+                    incorrectly.
+                        While Theorem 1.5 holds under weaker assumptions, it is not immediately apparent
+                    that it implies Theorem 1.1. The following result clarifies this.
+                    Proposition 1.6. If P and Q admit a common reference measure γ, then
+                                            d   (co(P),co(Q)) = d     (co*(P),co*(Q)).
+                                              TV                   TV
+                    Moreover, the minimax risk is always attained by a minimax optimal test, so Theorem 1.5
+                    implies Theorem 1.1.
+                        The above result holds despite the fact that co(P) ̸= co*(P) in general. To see that the
+                    two closures can be different, we consider the sample space N, put P = {δn: n ∈ N}, and
+                    note that co*(P), which is weak-∗ compact, must include some limit point of the sequence
+                    of point masses δ . We pick such a limit point and denote it by δ   because it is “supported
+                                     n                                               ∞
+                    at infinity”, in that it assigns zero mass to any finite subset of N. In particular, this implies
+                    that δ   is purely finitely additive since any nonzero countably additive component would
+                          ∞
+                    have to charge some finite subsets of N. (We may also note this from Example 1.2, where
+                    co*(P) contains an equal mixture of δ0 and δ∞.)
+                                                                 5
+                        Thus, Theorem 1.5 appears to be fundamental since it holds without any (statistically
+                     relevant) restrictions, and is the main contribution of this paper. We also present an-
+                     other result that is of independent interest, because it involves the usual topology of weak
+                     convergence and does not involve the weak-∗ closure in ba.
+                     Remark 1.7. Recall that if Ω is a metric space and Cb denotes the set of continuous
+                     bounded functions on Ω, the topology of weak convergence on M1 is the weakest one for
+                     which µ 7→ E [f] is continuous for every f ∈ C . Equivalently, a sequence µ         converges
+                                   µ                                   b                              n
+                     weakly to µ if E   [f] converges to E [f] for every f ∈ C . Thanks to Prokhorov’s theorem
+                                     µ                    µ                    b
+                                      n
+                     (see Billingsley (1999, Theorem 5.1)) one can check weak compactness by checking weak
+                     closedness and tightness. This topology differs from the weak-∗ topology used above both in
+                     the choice of test functions (continuous instead of measurable) and because the underlying
+                     set is different (M instead of ba); see Section 2.
+                                        1
+                     Theorem 1.8. Assume Ω is a metric space and F the Borel σ-algebra. If P and Q are
+                     convex and weakly compact (in the usual sense), then
+                                                R(P,Q)= inf R(ϕ)
+                                                            ϕ∈Φ∩C
+                                                                  b
+                                                          =1−dTV(P,Q)
+                                                          =1−dTV(co*(P),co*(Q)).
+                      In particular, (1.2) holds and the test ϕ can be taken to be continuous therein, and the
+                     infimum in the total-variation distance dTV is achieved by some µ ∈ P,ν ∈ Q.
+                        One can also rephrase the above result in the following manner: if co(P) and co(Q) are
+                     weakly compact, then R(P,Q) = 1−dTV(co(P),co(Q)). Note also that above, P and Q
+                     need not have a reference measure (Example 1.11) and so Theorem 1.8 itself is incomparable
+                     to Theorem 1.1.
+                     Remark 1.9. In the context of Theorem 1.8, let us first note that in general, P ⊊ co*(P).
+                     Consider Ω = [−1,1] and P to be the set of all symmetric laws around 0, which is convex
+                     and weakly compact. Now, consider the sequence µ = Uni[−1/n,1/n], which converges
+                                                                           n
+                     weakly to δ0, but does not converge to δ0 in the weak-∗ topology. (Indeed, the test function
+                     ϕ(x) = 0 for x ̸= 0 and ϕ(x) = 1 for x = 0 satisfies E        [ϕ] = 0, but E [ϕ] = 1, and
+                                                                                 µ                 δ
+                                                                                  n                 0
+                     such discontinuous test functions are permissible in the weak-∗ topology.) However, by
+                     compactness the sequence µn does have a subnet that converges to an element µ∞ in
+                     ba. This limit assigns mass zero to {0} but mass one to any open interval containing 0. In
+                     particular, this shows that µ  ∈/ M andthatP ⊊co*(P)asclaimed. Despitethis, the TV
+                                                  ∞      1
+                     distance in the above theorem is unaffected by taking the closure in ba because in a metric
+                     space with the Borel σ-algebra, dTV(µ,ν) = supϕ∈Φ∩C (Eµ[ϕ] − Eν[ϕ]); see Lemma 2.3.
+                                                                               b
+                     That is, we only need to consider continuous [0,1]-bounded functions to compute the TV
+                     distance. In fact, Lemma 2.3 is the only reason we need a metric, rather than merely a
+                     topology, in Theorem 1.8.
+                                                                   6
+                      The weak-∗ closure is always at least as large as the TV closure, so the right-hand side
+                  of (1.4) is always at least as large as the right-hand side of (1.3). Moreover, there exist
+                  problems (like Example 1.3) where
+                                            R(P,Q)>1−dTV(co(P),co(Q)).
+                  Hence, we see that (1.3) is overly optimistic about the minimax risk, in the sense that
+                  problems without a reference measure can be harder than what (1.3) may suggest. Even
+                  though we have not shown that a minimax optimal test always exists, the following result
+                  is still practically useful to verify that a candidate test is, in fact, minimax optimal.
+                  Corollary 1.10. For any P,Q ⊂ M1, and any ϕ ∈ Φ,µ ∈ co*(P),ν ∈ co*(Q), one has
+                  the weak duality inequality
+                                                  R(ϕ) ≥ 1−d     (µ,ν).
+                                                              TV
+                  Thus, if one can exhibit ϕ∗ ∈ Φ,µ∗ ∈ co*(P),ν∗ ∈ co*(Q) such that
+                                                R(ϕ∗) = 1−dTV(µ∗,ν∗),
+                        ∗                          ∗  ∗
+                  then ϕ is minimax optimal, and µ ,ν are the TV-closest pair between co*(P),co*(Q).
+                  Proof. The first display is an immediate consequence of (1.4). The second display implies
+                                ∗             ∗  ∗
+                  R(P,Q)≤R(ϕ )=1−d (µ ,ν )≤1−d (co*(P),co*(Q)),butsincethefirst and last
+                                          TV              TV
+                  quantities are equal by (1.4), equality must hold throughout.
+                      An interesting nonparametric example where the above corollary proves particularly
+                  useful is the following.
+                  Example 1.11. Let P be all probability measures on [0,1] whose mean is at most m ,
+                                                                                                    1
+                  and let Q be those with mean at least m , where 0 < m < m < 1. These sets do not
+                                                         2             1      2
+                  have a dominating reference measure, but are weakly compact and convex, and so The-
+                                                                            ∗                  ∗  ∗
+                  orem 1.8 applies, but we can say more. Consider the test ϕ (x) = x and let µ ,ν   be
+                  Bernoullis with means m ,m . Then R(ϕ∗) is easily seen to equal m + (1 − m ), which
+                                          1  2                                     1         2
+                  equals 1 − dTV(µ∗,ν∗). Thus, Corollary 1.10 implies that ϕ∗ is minimax optimal and the
+                  two Bernoullis are the TV-closest pair. Thus, here, the minimax optimal test exists, despite
+                  Theorem 1.8 not guaranteeing its existence.
+                      There are other recent attempts we are aware of to handle nondominated hypotheses.
+                  For instance, Liebrich et al. (2022) consider the class of so-called supported P,Q, and fol-
+                  lowing our first preprint, Klein and Köstenberger (2026, Theorem 52) consider pre-Hahn
+                  localizable P,Q (with some further assumptions). These works aim to restrict P,Q sufÏ-
+                  ciently so that, while being nondominated, the corresponding strong duality does not need
+                  to consider finitely additive measures. We note, of course, that Theorem 1.8 also achieves
+                  this goal. The last result that we wish to highlight is that of Huber and Strassen (1973),
+                                                           7
+            who prove that if the Choquet capacities induced by P,Q are two-alternating, then a least
+            favorable distribution pair exists, such that a likelihood ratio test between them is minimax
+            optimal. This result applies to both parametric settings which may not be compact (e.g.,
+            testing unit variance Gaussians with nonpositive mean against those with mean larger than
+            one), as well as nonparametric settings without a reference measure (e.g., when the null and
+            alternative are each described by a total-variation ball around a simple hypothesis). Never-
+            theless, it does not yield a necessary and sufÏcient condition for testability as Theorem 1.5
+            does, just a (very useful) sufÏcient one.
+              As a final note, we highlight that Le Cam appeared to be fully aware of the deficiencies
+            of Theorem 1.1. However, his preferred solution was highly nonstandard. Notice that
+            Theorem 1.5 alters the right-hand side of (1.2) but leaves the left-hand side unchanged.
+            Le Cam’s book (2012, pg. 476) presents a statement that changes the left-hand side of
+            (1.2), but leaves the right-hand side unchanged. However, while mathematically correct,
+            its statistical implications are limited, as also pointed out by van der Vaart (2002). We
+            nevertheless provide it below for completeness.
+              Write Mforthesetoffinitesignedcountablyadditive measures on Ω, which is a Banach
+            space when equipped with the TV-norm, and let M′ denote its dual space of continuous
+            linear functionals. A generalized test is an element ϕ ∈ M′ such that ϕ(µ) ∈ [0,1] for all
+            µ ∈ M . (The reader is warned that Le Cam just called these tests, which may lead to
+                 1
+            confusion unless one very carefully follows his definitions.)
+            Theorem 1.12 (Le Cam (2012)). Let P and Q be arbitrary subsets of M1, and let ε ≥ 0.
+            Then we have the following equivalence:
+                        ∃ generalized test ϕ : inf ϕ(ν) > supϕ(µ) + ε
+                                    ν∈Q    µ∈P
+                                     ⇐⇒ dTV(co(P),co(Q)) > ε.
+              As Le Cam had also noted, these generalized tests may not correspond to bounded
+            measurable functions, and thus need not be possible to evaluate using observed samples;
+            certain additional information may be required. The tests ϕ that we consider also live in
+            M′, but are in fact given by bounded measurable functions (by definition). Thus the above
+            result, while correct, has limited practical applicability, unlike our main Theorem 1.5. We
+            discuss this point in detail in Appendix B.
+              Once more, Le Cam was aware of this drawback of his mathematically general (but
+            statistically opaque) formulation in Theorem 1.12. In a remark following Lemma 1 on
+            page 476 of Le Cam (2012), he even suggested a way of only working with tests that are
+            bounded measurable functions. Following his sentence “One case which occurs often in
+            the study of robust procedures is as follows...”, he goes on to describe a proof strategy for a
+            result similar to Theorem 1.5. However, unfortunately, Le Cam only treats this in a passing
+                                       8
+         remark, that is easily missed (or unappreciated) due to its abstractness. A clearly stated
+         theorem, which actually holds with no unnecessary restrictions on the tests or hypotheses
+         (like Theorem 1.5), was not provided. It remains unclear to us whether Le Cam did not
+         realize that what he was proposing in that remark were the seeds of a complete solution, or
+         whetherherealizeditbutsimplychosenottoemphasizeit(despiteitsapparentimportance)
+         for reasons of personal preference. Such ponderings aside, we believe it to be the case that
+         most statisticians, even after parsing his remark, would not be able to clearly answer the
+         question posed at the start of the abstract, motivating us to write this paper to settle the
+         issue.
+           We end the introduction by noting that there is much precedent for the use of finitely
+         additive measures in statistics, dating back nearly a century. An early proponent was
+         de Finetti (circa 1930), whose push for finite additivity in subjective Bayesian probability
+         continues to be the topic of much discussion today; see Bingham (2010); Regazzini (2013);
+         Seidenfeld et al. (2025) and references therein. Another prominent book to employ finite
+         additivity is that of Dubins and Savage (2014), who claim that many of their theorems are
+         more general and easier to prove when working with finitely additive measures.
+           Wefind it critical to point out that this present paper is very different from the above
+         in its use of finitely additive measures. Our paper does not seek to promote or defend
+         the use of finite additivity as an axiom or mathematical tool of convenience. We do not
+         take a position on this issue. Our mathematical formalism and setup, from questions asked
+         to assumptions made, are about countably additive probability measures, as the currently
+         most prevalent model in probability and statistics. We did make a significant effort to
+         stay in the realm of countable additivity, but found that there is no escape: least favorable
+         distribution pairs that witness the minimax risk can in fact have nonzero finitely additive
+         components; see e.g. Example 3.5. Thus finite additivity appears as a fundamental and
+         unavoidable mathematical consequence of providing a complete answer to a question about
+         countably additive probability, very different from the aforementioned works of de Finetti,
+         Dubins–Savage, and others.
+           The rest of this paper is organized as follows. Section 2 presents the mathematical
+         background to understand the weak-∗ closure in ba, and the proofs of all the results stated
+         above. Section 3 discusses the interesting case of a singleton Q = {ν} and its relation to
+         recent work. Appendix A elaborates on some subtle issues related to the choice of topology.
+         Appendix B discusses Le Cam’s generalized tests in more detail. Appendix C contains
+         some auxiliary technical results. Appendix D proves Theorem 3.4, which is a result relating
+         the closed convex hull in ba to the effective null of P, another fundamental object from
+         recent work. Lastly, Appendix E outlines some consequences of our work for statistical
+         applications, including a convex programming representation of the minimax risk.
+                             9
+                     2     Finite additivity and main proofs
+                     Our goal here is to prove the results presented in Section 1 and, in the process of doing
+                     so, review the required mathematical machinery and elucidate the role of finitely additive
+                     measures. General references on this topic include Yosida and Hewitt (1952); Bhaskara Rao
+                     and Bhaskara Rao (1983). Recall that we have fixed a measurable space (Ω,F), and we let
+                     Ldenote the set of bounded measurable functions on this space.
+                     Definition 2.1. A bounded finitely additive measure is a real-valued set function µ on F
+                     that is (i) additive, µ(A∪B) = µ(A)+µ(B) for all disjoint sets A,B ∈ F, and (ii) bounded
+                     in total-variation norm, ∥µ∥TV = sup P          |µ(A)| < ∞, where the supremum ranges over
+                                                             π   A∈π
+                     all finite measurable partitions of Ω. The space of all such µ is denoted by ba, the subset
+                     taking nonnegative values by ba , and the further subset with unit mass by ba . Thus ba
+                                                       +                                                 1           1
+                     is the space of finitely additive probability measures, also known as probability charges.
+                         Since countable additivity implies finite additivity, one has M ⊂ ba , and the inclusion
+                                                                                           1     1
+                     is strict as soon as F is infinite. Every µ ∈ ba   admits a unique decomposition µ = µ +µ
+                                                                     +                                          c    p
+                     into a countably additive part µc ∈ M+ (the set of nonnegative measures in M) and a
+                     purely finitely additive part µ ∈ ba . That µ is purely finitely additive means that any
+                                                     p      +          p
+                     countably additive ν such that 0 ≤ ν ≤ µp (setwise) must equal 0.
+                         The integral RΩfdµ, or Eµ[f] in probabilistic notation, is defined for any f ∈ L and
+                     any µ ∈ ba, and is linear in f and µ; see Yosida and Hewitt (1952, Section 2). Limit
+                     theorems such as the dominated and monotone convergence theorems need not hold for
+                     finitely additive integration, but one does have the bound |Eµ[f]| ≤ ∥f∥∞∥µ∥             , where
+                                                                                                           TV
+                     ∥f∥    =sup       |f(ω)| is the supremum norm. This leads to the identification of ba as the
+                         ∞        ω∈Ω
+                     dual of the Banach space (L,∥·∥ ).
+                                                         ∞
+                         Like the dual of any Banach space, ba can be equipped with the weak-∗ topology σ(ba,L),
+                     defined as the weakest topology such that the linear functionals µ 7→ Eµ[f] are continuous
+                     for all f ∈ L. Equivalently, a net µα converges to µ in the weak-∗ topology if Eµ [f]
+                                                                                                                  α
+                     converges to E [f] for every f ∈ L. We write co*(P) for the weak-∗ closure in ba of co(P),
+                                     µ
+                     and similarly for other sets. The Banach–Alaoglu theorem implies that the set ba1 is weak-
+                     ∗ compact, and then so is any weak-∗ closed subset of ba1. In particular, this is the case
+                     for co*(P) and co*(Q). It is this compactness property under the weak-∗ topology that
+                     explains the appearance of the space ba in Theorem 1.5.
+                         The compactness is crucial because the proof of Theorem 1.5 relies on the following
+                     special case of a minimax theorem due to Fan (1953, Theorem 2).
+                     Theorem 2.2. Let X be a compact convex subset of a Hausdorff topological vector space,
+                     and Y a convex subset of a vector space. Let F be a real-valued function on X × Y such
+                     that F(x,y) is lower semicontinuous and convex in x for each fixed y ∈ Y , and concave in
+                     y for each fixed x ∈ X. Then
+                                                    inf supF(x,y) = sup inf F(x,y),
+                                                   x∈Xy∈Y              y∈Y x∈X
+                                                                    10
+                    where the infima are attained thanks to compactness of X and lower semicontinuity in x of
+                    F(x,y) and supy∈Y F(x,y).
+                       The total-variation norm on ba has the representation ∥µ∥      =sup       Eµ[f], where
+                                                                                  TV        f∈B1
+                    B is the unit ball in L. It is customary to define the total-variation distance d   (µ,ν)
+                     1                                                                               TV
+                    between two probability charges µ,ν as half the total-variation norm of µ−ν. Because µ,ν
+                    have unit mass, and because B = 2Φ−1, meaning that f ∈ B if and only if f = 2ϕ−1
+                                                   1                               1
+                    for some test ϕ, one obtains the representation
+                                  d   (µ,ν) = 1∥µ−ν∥       =sup E [ϕ]−E [ϕ],       µ,ν ∈ ba .           (2.1)
+                                    TV         2        TV          µ       ν                1
+                                                              ϕ∈Φ
+                       With these preliminaries in hand, the proof of Theorem 1.5 is straightforward.
+                    Proof of Theorem 1.5. We will apply Fan’s minimax theorem with X = co*(P)×co*(Q),
+                    Y = Φ, and F: ((µ,ν),ϕ) 7→ E [ϕ] − E [ϕ]. Indeed, X is a compact convex subset of the
+                                                   ν       µ
+                    product space ba×ba, where each factor has the weak-∗ topology, Y is a convex subset of
+                    L, and F has the required concavity and convexity properties and is continuous in (µ,ν)
+                    by definition of the weak-∗ topology. Using first Fan’s minimax theorem, then linearity and
+                    weak-∗ continuity of µ 7→ Eµ[ϕ], and finally a simple algebraic manipulation, we have
+                                           inf   sup Eν[ϕ]−Eµ[ϕ]
+                                         µ∈co*(P)ϕ∈Φ
+                                         ν∈co*(Q)                                  
+                                                      =sup inf       E [ϕ]−E [ϕ]
+                                                            µ∈co*(P)   ν       µ
+                                                         ϕ∈Φν∈co*(Q)
+                                                                               
+                                                      =sup inf Eν[ϕ]−Eµ[ϕ]
+                                                         ϕ∈Φµ∈P
+                                                            ν∈Q                        
+                                                      =1−inf sup Eµ[ϕ]+Eν[1−ϕ] ,
+                                                            ϕ∈Φµ∈P
+                                                                ν∈Q
+                    where the infimum on the left-hand side is attained by some µ∗ ∈ co*(P) and ν∗ ∈ co*(Q).
+                    This is the desired statement, because the left-hand side is equal to dTV(co*(P),co*(Q))
+                    in view of (2.1), while the right-hand side is equal to 1 − R(P,Q).
+                       Asimilar, but different, calculation can be used to obtain Theorem 1.8. This calculation
+                    will make use of the assumption that P and Q are convex and weakly compact in the usual
+                    sense, i.e., in the topology σ(M1,C ). By considering continuous tests ϕ ∈ Φc = Φ ∩ C ,
+                                                       b                                                    b
+                    the map µ 7→ Eµ[ϕ] remains continuous, and the minimax theorem still applies. Restricting
+                    to continuous tests raises the question of whether the representation in (2.1) for the total-
+                    variation distance remains valid with Φ in place of Φ. The following lemma confirms that
+                                                           c
+                    in the metric space setting of Theorem 1.8 this is indeed so.
+                                                               11
+                     Lemma2.3. AssumeΩisametricspace with its Borel σ-algebra. Then for any µ,ν ∈ M1
+                     we have d    (µ,ν) = sup      (E [ϕ]−E [ϕ]).
+                               TV             ϕ∈Φc   µ        ν
+                     Proof. The Hahn decomposition of the signed measure η = µ−ν yields a measurable set A
+                     such that the positive part η+ is concentrated on A and the negative part η− is concentrated
+                          c                                                                       +
+                     on A . The total-variation distance is then d     (µ,ν) = µ(A) − ν(A) = η (A), the total
+                                                                    TV
+                     mass of η+. Fix any closed sets F ⊂ A and F ⊂ Ac. Urysohn’s lemma, which applies
+                                                         1             0
+                     in any metric space, yields a continuous function ϕ with ϕ = 1 on F , ϕ = 0 on F , and
+                                                                                             1              0
+                     0 ≤ ϕ ≤ 1. Thus
+                                              +         − c             +         −         − c
+                                    E [ϕ] ≥ η (F )−η (A \F ) = η (F )+η (F )−η (A ).
+                                      η           1              0          1         0
+                     Weconclude that
+                                                                   +         −         − c
+                                          sup(E [ϕ]−E [ϕ]) ≥ η (F )+η (F )−η (A )
+                                                 µ       ν             1         0
+                                          ϕ∈Φ
+                                              c
+                     for all closed sets F  ⊂ A and F ⊂ Ac. Taking the supremum of the right-hand side
+                                          1             0
+                     over all such F and F yields η+(A), since positive finite measures on a metric space with
+                                    1       0
+                     the Borel σ-algebra are regular; see Billingsley (1999, Theorem 1.1). We have shown that
+                     supϕ∈Φ (Eµ[ϕ] − Eν[ϕ]) ≥ dTV(µ,ν), and the reverse inequality follows from the fact that
+                            c
+                     Eµ[ϕ]−Eν[ϕ] ≤ d      (µ,ν) for all ϕ ∈ Φ.
+                                       TV
+                        Wenowproceed with the proof of Theorem 1.8. Although the main calculation is very
+                     similar to the one in the proof of Theorem 1.5, we emphasize that it is not subsumed by
+                     it. Furthermore, Theorem 1.5 is used in the proof, so the two results are not independent.
+                     Recall that Φ = Φ∩C denotes the set of continuous tests.
+                                   c         b
+                     Proof of Theorem 1.8. Using first Fan’s minimax theorem, then an algebraic manipulation
+                     and the definition of R(ϕ,P,Q), and finally relaxing the infimum to a larger set, we obtain
+                                                                                            
+                                         inf sup Eν[ϕ]−Eµ[ϕ] = sup inf Eν[ϕ]−Eµ[ϕ]
+                                         µ∈Pϕ∈Φ                      ϕ∈Φ µ∈P
+                                         ν∈Q     c                       c ν∈Q
+                                                                   =1− inf R(ϕ,P,Q)
+                                                                         ϕ∈Φ
+                                                                             c
+                                                                   ≤1−R(P,Q).
+                     The infimum on the left-hand side is attained and, in view of Lemma 2.3, is equal to
+                     dTV(P,Q). By Theorem 1.5, the right-hand side equals dTV(co*(P),co*(Q)), which is
+                     bounded above by dTV(P,Q), the distance between two smaller sets. We have thus shown
+                     that
+                                          d    (P,Q)=1− inf R(ϕ,P,Q)
+                                            TV               ϕ∈Φ
+                                                                c
+                                                      ≤1−R(P,Q)
+                                                      ≤d (co*(P),co*(Q))≤d (P,Q).
+                                                          TV                      TV
+                                                                  12
+                   Thus there is equality throughout, completing the proof.
+                       We end with the proof of Proposition 1.6. We could have used the minimax theorem
+                   here too, but this does not seem to simplify matters compared to the proof below, which
+                   relies on the Hahn–Banach theorem instead.
+                                                                                  1      1
+                   Proof of Proposition 1.6. We regard P and Q as subsets of L      = L (γ) by identifying
+                                                                                                           1
+                   measures µ with their γ-densities f   = dµ/dγ. The total-variation norm is then the L
+                                                       µ
+                   norm of the density, ∥µ∥     = ∥f ∥ 1. Set r = d      (co(P),co(Q)) = inf 1∥f − f ∥ 1,
+                                            TV       µ L              TV                      2  µ     ν L
+                   where the infimum extends over all µ ∈ co(P) and ν ∈ co(Q). Suppose r > 0 and note
+                   that the convex set co(P) − co(Q) is disjoint from B , the open ball of radius 2r in L1.
+                                                                        2r
+                   The Hahn–Banach theorem (see, e.g., Schaefer and Wolff (1999, Theorem II.9.1)) then
+                                                     ∞
+                   yields a unit-norm element ψ ∈ L (γ) such that E [ψ(f − f )] ≥ 2r for all µ ∈ co(P),
+                                                                       γ    µ    ν
+                   ν ∈ co(Q). We fix a version of ψ such that |ψ| ≤ 1, and define the test ϕ = (1+ψ)/2 ∈ Φ.
+                   It follows that E [ϕ] − E [ϕ] ≥ r for all µ,ν in co(P) and co(Q), and then in co*(P) and
+                                    µ       ν
+                   co*(Q) by weak-∗ continuity. We conclude that d      (co*(P),co*(Q)) ≥ r. (If r = 0 this
+                                                                     TV
+                   holds trivially.) On the other hand, the reverse inequality holds because r is the distance
+                   between the two smaller sets co(P) and co(Q).
+                       It remains to confirm that the minimax risk is always attained in the dominated setting.
+                   To do so, observe that for any µ ≪ γ, the map ϕ 7→ E [ϕ] = E [f ϕ] is continuous in
+                                                                            µ        γ  µ
+                   the weak-∗ topology of L∞(γ). Thus the risk R(ϕ,P,Q) is lower semicontinuous in this
+                                                                                                       ∞
+                   topology. Since the set of all (γ-equivalence classes of) tests is weak-∗ compact in L (γ)
+                   thanks to the Banach–Alaoglu theorem, there exists one that minimizes the risk.
+                   3    The case of a singleton Q
+                   The case of a singleton Q = {ν} is of particular interest in relation to the recent work
+                   of Larsson et al. (2025). As we formalize below, a corollary of that work (not explicitly
+                   stated there, but stated and proved below) is that a nontrivial test exists if and only if ν
+                   does not lie in the effective null hypothesis Peff, defined below. A trivial corollary of our
+                   main theorem in this paper is that a nontrivial test exists if and only if ν does not lie in
+                   co*(P). What exactly is the relationship between these two geometric objects appearing in
+                   the above statements? This section provides the answer.
+                       Webeginwithsomedefinitions. Given a set of distributions P, an e-variable is a [0,∞]-
+                   valued random variable whose expectation is at most one under every µ ∈ P. The set of
+                   all e-variables for P is given by the polar set of P,
+                                             E ={Z ≥0:E [Z]≤1 for all µ ∈ P}.
+                                                           µ
+                   Larsson et al. (2025) then define the polar of E (the bipolar of P) as
+                                          P ={µ∈M :E [Z]≤1forallZ∈E},
+                                            eff          +    µ
+                                                              13
+                    and call it the effective null hypothesis. Note that every element of P   has mass at most
+                                                                                           eff
+                    one; just consider the e-variable Z = 1. No test can have nontrivial power against any
+                    distribution in P . Indeed, as a corollary of their main theorem, we have the following.
+                                     eff
+                    Corollary 3.1. ν ∈ P      if and only if for any test ϕ, E [ϕ] ≤ sup    E [ϕ].
+                                           eff                               ν         µ∈P µ
+                    Proof. For the forward direction, assume ν ∈ P , and consider any test ϕ. If the constant
+                                                                    eff
+                    c = sup     Eµ[ϕ] is strictly positive, then ϕ/c is an e-variable, and ν ∈ P    implies that
+                            µ∈P                                                                  eff
+                    Eν[ϕ/c] ≤ 1. If instead c = 0, then ϕ + 1 is an e-variable and ν ∈ Peff implies Eν[ϕ] = 0.
+                        For the reverse direction, assume ν ∈/ P . Then there exists an e-variable Z such that
+                                                                eff
+                    Eν[Z] > 1. By monotone convergence we may assume that Z ≤ n for some large n ∈ N.
+                    Then ϕ = Z/n is a test, and we have E [ϕ] > 1/n ≥ sup        E [ϕ], a contradiction.
+                                                            ν                µ∈P µ
+                        On the other hand, we also have the following immediate corollary of Theorem 1.5.
+                    Corollary 3.2. ν ∈ co*(P) if and only if for any test ϕ, E [ϕ] ≤ sup       E [ϕ].
+                                                                                ν          µ∈P µ
+                        Note that co*(P) ̸= P . For example, the zero measure is always in P          but never
+                                               eff                                                 eff
+                    in co*(P). However, it is also not the case that P        contains co*(P): the latter may
+                                                                           eff
+                    contain finitely additive elements that are absent from the former. Nevertheless, the above
+                    corollaries immediately imply the following theorem.
+                    Theorem 3.3. co*(P)∩M =P ∩M .
+                                                 1     eff    1
+                        Theabovetheoremexplains why, with their focus on a singleton Q = {ν}, Larsson et al.
+                    (2025) managed to avoid ba: the qualitative behavior of testability (i.e. the existence of a
+                    nontrivial test) does not require ba. Further, the quantitative statements of Larsson et al.
+                    (2025) in terms of infimum KL divergence from ν to P also avoided ba. However, even for
+                    a singleton Q = {ν}, the TV distances in Theorem 1.5 could not have used Peff instead of
+                    co*(P); we provide an example soon.
+                        The precise relationship between P     and co*(P) is however more subtle. It is char-
+                                                            eff
+                    acterized in the following theorem, whose proof is presented in Appendix D. This result
+                    also immediately implies Theorem 3.3. In the following statement, maximal is with respect
+                    to the setwise ordering, and the solid hull of a set A ⊂ M+ is the set {µ ∈ M+: µ ≤
+                    ν for some ν ∈ A}.
+                                                                                                   ′
+                    Theorem3.4. Everyµ∈P issetwisedominatedbysomemaximalelementµ ∈P . The
+                                                eff                                                     eff
+                    maximal element µ′ is the countably additive part of some µ′′ ∈ co*(P). As a consequence,
+                    Peff is the solid hull of the countably additive parts of co*(P).
+                        Wecontinue with a simple yet important example, which demonstrates that even in the
+                    case of a simple alternative Q = {ν}, in Theorem 1.5 it does not sufÏce to only consider
+                    co*(P)∩M1 (which restricts attention to countably additive probability measures, such as
+                                                                 14
+                       ν), but we indeed have to consider finitely additive measures in co*(P). This example has
+                       the subtle feature that it assumes that
+                                             there is no diffuse probability measure on Pow(R),                          (3.1)
+                       where “Pow” denotes the power set (the set of all subsets). This assumption is discussed
+                       further in Remark 3.6 below; in particular, it is implied by the continuum hypothesis. The
+                       upshot of that discussion is that the standard setting of probability theory allows for (3.1).
+                       Without further undesirable assumptions, situations like the one in the example below can
+                       occur and must be covered by the general theory. It is an interesting open question whether
+                       similar examples can be constructed without any assumptions such as (3.1).
+                       Example 3.5. Let Ω = [−1,1] and define
+                                               F ={A∪B:A∈Pow([−1,0]),B ∈Bor([0,1])}.
+                       Here “Pow” denotes the power set and “Bor” the Borel σ-algebra. Then F is the σ-algebra
+                       generated by the Borel subsets of [0,1] and all subsets of [−1,0]. We assume that (3.1)
+                       holds. Consider
+                                        P =1δ +1δ :x∈(0,1), Q={ν}, ν=Uni[0,1].
+                                                2 x     2 −x
+                       We will show that
+                                           d   (co*(P)∩M ,Q)=1 but d (co*(P),Q)= 1.                                      (3.2)
+                                            TV                1                     TV                  2
+                       This demonstrates that, in general, one cannot restrict attention to the countably additive
+                       elements of co*(P) and co*(Q) in Theorem 1.5. Put differently, in order for Theorem 1.5
+                       to hold, the closure of co(P) and co(Q) cannot be taken in the space M with the topology
+                                                                                                         1
+                       σ(M1,L). Finitely additive measures are really needed.
+                           To argue (3.2), we first observe that every µ ∈ co*(P) is symmetric around zero in
+                       the sense that µ(A ∪ (−A)) = 2µ(A) = 2µ(−A) for every A ∈ Bor([0,1]), where −A =
+                       {−x: x ∈ A}. Indeed, this holds for all µ ∈ P, thus for all µ ∈ co(P), and finally for all
+                       µ∈co*(P) by weak-∗ continuity.
+                           Consider now any µ ∈ co*(P) ∩ M1. Its restriction to [−1,0] is a positive countably
+                       additive measure on Pow([−1,0]), and is therefore concentrated on a countable set S0 ⊂
+                       [−1,0] thanks to Proposition C.3. The symmetry property applied with A = −S0 then
+                       shows that µ is concentrated on S = S ∪(−S ). But since any countable set is a ν-nullset,
+                                                                  0        0
+                       we have dTV(µ,ν) ≥ µ(S)−ν(S) = 1, and this yields the first part of (3.2).
+                           Wenowfocusonthesecondpartof (3.2). Thetestϕ = 1                     certifies that d   (co*(P),Q)
+                                                                                          [0,1]                TV
+                       is at least 1, and the point is to show that this is achieved for some µ ∈ co*(P). To do
+                                   2
+                       this we start with a net (ηα) of finitely supported probability measures on (0,1) that con-
+                       verges to ν; this is possible thanks to Proposition C.1. The symmetrizations µ (A ∪ B) =
+                                                                                                                 α
+                                                                         15
+                       1(η (−A) + η (B)) for A ∈ Pow([−1,0]) and B ∈ Bor([0,1]) then belong to co(P).
+                       2  α            α
+                      On passing to a convergent subnet, we may assume that (µα) converges to some limit
+                      µ∈co*(P). The restriction of µ to [0,1] is equal to ν/2 by construction, and it follows that
+                      dTV(µ,ν) = 1. This completes the proof of the second part of (3.2).
+                                     2
+                          It is worth noting that the restriction of µ to [−1,0] must be purely finitely additive.
+                      Indeed, its countably additive part is atomless (due to the symmetry property and the fact
+                      that on [0,1], µ is proportional to the uniform distribution) and therefore zero due to Propo-
+                      sition C.3.
+                      Remark 3.6. The assumption (3.1) is known to be consistent with the Zermelo–Fraenkel
+                      set theory with the axiom of choice (ZFC). One may thus add (3.1) as an axiom without
+                      rendering any theorems proved in ZFC false. Indeed, there are important models of ZFC,
+                      such as Gödel’s constructible universe L, where (3.1) can be proved as a theorem. Specifi-
+                      cally, Gödel (1940) showed that the continuum hypothesis holds in L, and by a theorem of
+                      Banach and Kuratowski (1929, Théorème I), this implies (3.1). See also Theorem 13.20 and
+                      Theorem 10.1 in Jech (2003) for a textbook treatment. For these reasons, it seems sensible
+                      that our general theory should not depend on any axioms or hypotheses that disallow (3.1).
+                          We end by discussing an important implication of our theorem for the existence of
+                      uniformly powered bounded e-variables for composite Q. An e-variable Z for P is said to
+                      be uniformly powered against Q if infν∈QEν[Z] > 1.
+                      Corollary 3.7. Let P,Q ⊂ M1. Then there exists a bounded e-variable for P that is
+                      uniformly powered against Q if and only if d         (co*(P),co*(Q)) > 0.
+                                                                        TV
+                      Proof. In the forward direction, let Z be the uniformly powered e-variable that lies in [0,B]
+                      for some finite B. Then clearly, Z/B is a nontrivial test with type I error at most 1/B and
+                      worst-case power strictly greater than 1/B, which implies that dTV(co*(P),co*(Q)) > 0
+                      by Theorem 1.5, completing the first direction.
+                          Assume now that dTV(co*(P),co*(Q)) > 0. By Theorem 1.5, there exists a test ϕ such
+                      that infν∈QEν[ϕ] > supµ∈P Eµ[ϕ]. If supµ∈P Eµ[ϕ] = 0, set Z = 1 + ϕ. Otherwise, set
+                      Z = ϕ/supµ∈P Eµ[ϕ]. Then Z is a bounded e-variable that is uniformly powered against
+                      Q, completing the proof.
+                          Following RamdasandWang(2025,Chapter3),wesaythatane-variableZ isuniformly
+                      e-powered against Q if infν∈QEν[logZ] > 0. Theorem 3.14 in the above book then proves
+                      that a uniformly powered bounded e-variable exists if and only if a uniformly e-powered
+                      bounded e-variable exists, and so the above theorem could have also been stated with
+                      “powered” being replaced by “e-powered”. This extends some results in the above book, and
+                      in Zhang et al. (2024).
+                                                                        16
+         Acknowledgments
+         WethankSivaraman Balakrishnan for useful discussions regarding Le Cam’s work. ML ac-
+         knowledges support from the National Science Foundation under grant NSF DMS-2510965.
+         ARacknowledges support from the Sloan Fellowship and the National Science Foundation
+         under grant NSF DMS-2310718.
+         References
+         Stefan Banach and Kazimierz Kuratowski. Sur une généralisation du problème de la mesure.
+          Fundamenta Mathematicae, 14(1):127–131, 1929. 16
+         K. P. S. Bhaskara Rao and M. Bhaskara Rao. Theory of Charges, volume 109 of Pure and
+          Applied Mathematics. Academic Press, Inc. [Harcourt Brace Jovanovich, Publishers],
+          New York, 1983. ISBN 0-12-095780-9. 10
+         Patrick Billingsley. Convergence of Probability Measures. Wiley Series in Probability and
+          Statistics: Probability and Statistics. John Wiley & Sons, Inc., New York, second edition,
+          1999. ISBN 0-471-19745-9. doi: 10.1002/9780470316962. 6, 12
+         NHBingham. Finite additivity versus countable additivity: De Finetti and Savage. Elec-
+          tronic Journal History of Probability and Statistics, 6(1):1–38, 2010. 9
+         Lester E Dubins and Leonard J Savage. How To Gamble If You Must: Inequalities For
+          Stochastic Processes. Courier Corporation, 2014. 9
+         KyFan. Minimaxtheorems. Proc. Nat. Acad. Sci. U.S.A., 39:42–47, 1953. ISSN 0027-8424.
+          doi: 10.1073/pnas.39.1.42. 10
+         D. H. Fremlin. Measure Theory. Vol. 2. Torres Fremlin, Colchester, 2003. ISBN 0-9538129-
+          2-8. Broad foundations, Corrected second printing of the 2001 original. 22
+         Kurt Gödel. The consistency of the continuum hypothesis, volume No. 3 of Annals of
+          Mathematics Studies. Princeton University Press, Princeton, NJ, 1940. 16
+         Gökhan Gül and Abdelhak M Zoubir. Minimax robust hypothesis testing. IEEE Transac-
+          tions on Information Theory, 63(9):5572–5587, 2017. 20
+         Peter J. Huber and Volker Strassen. Minimax tests and the Neyman-Pearson lemma for
+          capacities. Ann. Statist., 1:251–263, 1973. ISSN 0090-5364,2168-8966. 4, 7
+         Thomas Jech. Set Theory. Springer Monographs in Mathematics. Springer-Verlag, Berlin,
+          millennium edition, 2003. ISBN 3-540-44085-2. 16
+                            17
+                   Irene Klein and Georg Köstenberger. Can the L1-L∞ duality be restored for non-dominated
+                     families of probability measures? arXiv:2605.04912, 2026. 7
+                   Charles Kraft. Some conditions for consistency and uniform consistency of statistical pro-
+                     cedures. University of California Publication in Statistics, 2:125–141, 1955. 2, 3
+                   Martin Larsson, Aaditya Ramdas, and Johannes Ruf.         The numeraire e-variable and
+                     reverse information projection.   Annals of Statistics, 53(3):1015–1043, 2025.    doi:
+                     10.1214/24-AOS2487. 13, 14
+                   Lucien Le Cam. Asymptotic Methods in Statistical Decision Theory. Springer Science &
+                     Business Media, 2012. 3, 8, 21
+                   BernardCLevy. Principles of Signal Detection and Parameter Estimation. Springer Science
+                     &Business Media, 2008. 20
+                   Felix-Benedikt Liebrich, Marco Maggis, and Gregor Svindland. Model uncertainty: A
+                     reverse approach. SIAM J. on Financial Math., 13(3):1230–1269, 2022. 7
+                   Aaditya Ramdas and Ruodu Wang. Hypothesis testing with e-values. Foundations and
+                     Trends® in Statistics, 1(1-2):1–390, 2025. 16
+                   Eugenio Regazzini. The origins of de Finetti’s critique of countable additivity. In Advances
+                     in modern statistical theory and applications: a Festschrift in honor of Morris L. Eaton,
+                     volume 10, pages 63–83. Institute of Mathematical Statistics, 2013. 9
+                   H. H. Schaefer and M. P. Wolff. Topological Vector Spaces, volume 3 of Graduate Texts
+                     in Mathematics. Springer-Verlag, New York, second edition, 1999. ISBN 0-387-98726-6.
+                     doi: 10.1007/978-1-4612-1468-7. 13, 25
+                   Teddy Seidenfeld, Joseph B Kadane, Mark J Schervish, and Rafael B Stern. Finite addi-
+                     tivity, complete additivity, and the comparative principle. Erkenntnis, 90(5):1945–1968,
+                     2025. 9
+                   Aad van der Vaart. The statistical work of Lucien Le Cam. The Annals of Statistics, 30
+                     (3):631–682, 2002. 4, 8
+                   Kôsaku Yosida and Edwin Hewitt. Finitely additive measures. Trans. Amer. Math. Soc.,
+                     72:46–66, 1952. ISSN 0002-9947,1088-6850. doi: 10.2307/1990654. URL https://doi.
+                     org/10.2307/1990654. 10, 26
+                   Zhenyuan Zhang, Aaditya Ramdas, and Ruodu Wang. On the existence of powerful p-
+                     values and e-values for composite hypotheses. The Annals of Statistics, 52(5):2241–2267,
+                     2024. 16
+                                                              18
+                     A Further comments on the choice of topology
+                     In the introduction we showed why the TV topology and the weak convergence topology
+                     cannot, in general, be used to obtain characterizations of testability; see Examples 1.3 and
+                     1.4 and the adjacent discussion. An alternative approach would be to look for topologies
+                     on the set Φ of all tests, making this set compact. This could then be leveraged to apply
+                     the minimax theorem without compactness of the closed convex hulls of P and Q. This
+                     idea works in the dominated setting of Theorem 1.1, and Le Cam’s approach to embed Φ
+                     into the larger, compact, space of generalized tests can be viewed as an extension of this
+                     idea to the general case, with important drawbacks as discussed in Appendix B.
+                        It is then natural to look for topologies that make Φ itself compact in the general non-
+                     dominated setting. A natural attempt is to consider the space [0,1]Ω of all [0,1]-valued
+                     functions on Ω, equipped with the topology of pointwise convergence. This is simply the
+                     product topology on [0,1]Ω, which is compact by Tychonoff’s theorem. There are however
+                                                                         Ω
+                     two issues with this approach. First, Φ ⊂ [0,1]        is the proper subspace consisting of
+                     measurable functions, which is not compact in general. Moreover, the linear functions
+                     ϕ 7→ E [ϕ] fail to be continuous (or semicontinuous) in general. Thus, even if one could
+                            µ
+                     meaningfully extend the definition of the risk R(ϕ) to every ϕ in the compact space [0,1]Ω,
+                     the semicontinuity hypothesis of the minimax theorem would not be satisfied, and the
+                     theorem could not be used.
+                        To restore (semi-)continuity, one has to work with a stronger topology. A very strong
+                     topology is the one induced by the supremum norm ∥ϕ∥           = sup      |ϕ(ω)|. The above
+                                                                                 ∞        ω∈Ω
+                     linear maps ϕ 7→ Eµ[ϕ] are now continuous, even Lipschitz, thanks to the inequality |Eµ[ϕ]−
+                                                                                               Ω
+                     Eµ[ψ]| ≤ ∥µ∥    ∥ϕ−ψ∥∞. However, compactness of both Φ and [0,1] now fails, again
+                                   TV
+                     rendering the minimax theorem inapplicable. Indeed, given any sequence ω of mutually
+                                                                                                    n
+                     distinct points, the tests ϕ  =1       are at a distance ∥ϕ − ϕ ∥       =1apart, and thus
+                                                 n     {ω }                       n    m ∞
+                                                         n
+                     form a sequence with no convergent subsequence.
+                        At this point it may be tempting to consider the topology σ(Φ,M), which is the weak-
+                     est topology on Φ that makes the linear maps ϕ 7→ Eµ[ϕ] continuous for all µ ∈ M.
+                     Unfortunately, compactness of Φ still fails, and the net ϕ   =1 indexed by finite subsets
+                                                                                A     A
+                     A ⊂ Ω = [0,1] again furnishes an example. Indeed, suppose for contradiction that com-
+                     pactness holds. Then there is a convergent subnet ϕB with some limit ϕ. This limit is the
+                     constant function ϕ = 1. To see this, note that for each ω ∈ [0,1], ϕB(ω) = 1 eventually,
+                     so ϕ(ω) = E [ϕ] = lim E [ϕ ] = 1, where we used that lim E [ϕ ] = E [ϕ] for every
+                                  δ          B δ     B                                B µ B         µ
+                                  ω               ω
+                     µ ∈ M by definition of the topology. However, if we now take µ to be Lebesgue measure,
+                     we obtain the contradiction 0 = lim Eµ[ϕ ] = Eµ[ϕ] = 1. This shows that ϕ             has no
+                                                           B      B                                      A
+                     convergent subnet, and hence that Φ is not compact.
+                        One thus arrives at the conclusion that either Φ has to be “compactified” (for example
+                     by enlarging it to generalized tests as proposed by Le Cam, with its drawbacks discussed in
+                     AppendixB),oronehastofindawaytocompactifythespaceofmeasuresratherthantests.
+                     The latter is the route taken in the present paper (by enlarging the space of measures),
+                                                                  19
+                    which leads us naturally — even necessarily — to working with finitely additive measures.
+                        Wehopethatthisdiscussiongivesafurtherperspectiveonthedelicateinterplaybetween
+                    the choice of ambient space, its topology, and how these must be tailored to fit the confines
+                    of the minimax theorem. Unfortunately, we are aware of several published works which
+                    incorrectly use minimax theorems to achieve important conclusions. For example Gül and
+                    Zoubir (2017) mistakenly invoke Sion’s minimax theorem after using the product topology
+                    on[0,1]Ω, which as we discussed above destroys continuity. As another example Levy (2008,
+                    Chapter 6) invokes von Neumann’s minimax theorem after endowing Φ with ∥·∥∞, which
+                    as we discussed above renders Φ non-compact. While we know of several more examples,
+                    it is not our goal to point out all such errors in other works, but merely to point to the
+                    subtleties involved with the careful choices necessary for everything to work out. It would
+                    also be of interest to see whether the corresponding conclusions in these works are incorrect,
+                    or if their proofs can be fixed using techniques developed here.
+                    B Generalized tests
+                    In this section we elaborate on the distinction between Theorem 1.5 and Le Cam’s result
+                    on generalized tests, Theorem 1.12. After all, the two results lead to different conclusions
+                    regarding which hypotheses are testable. While this is not a contradiction mathematically
+                    (the two results make use of tests and generalized tests, respectively), it seems worthwhile
+                    to look closer at how they differ in order to understand the implications.
+                        It is useful to return to the basic example in the introduction, where Ω = [0,1], F is
+                    the Borel σ-algebra, P = {δx: x ∈ [0,1]}, and Q = {ν} with ν = Uni[0,1], the uniform
+                    distribution on [0,1]. The weak-∗ convex closure co*(P) contains all probability measures
+                    on [0,1], in particular ν, so Theorem 1.5 implies that R(P,Q) = 1. Thus there is no
+                    nontrivial test for this pair of hypotheses. On the other hand, we have d   (co(P),ν) = 1,
+                                                                                             TV
+                                                                                        ∗
+                    so Le Cam’s Theorem 1.12 implies that there is a generalized test ϕ that separates P and
+                    Q.                                                                                     a
+                        In fact, it is not hard to construct such a generalized test. For any µ ∈ M, let µ be
+                    its absolutely continuous part with respect to ν. The map µ 7→ µa is linear and continuous
+                                                                                  ∗        a
+                    (even a contraction) in the total-variation norm. Now define ϕ (µ) = µ (Ω), the total mass
+                        a         ∗                                                ∗
+                    of µ . Then ϕ is a continuous linear functional on M, and ϕ (µ) ∈ [0,1] for all µ ∈ M1.
+                              ∗                                      ∗              ∗
+                    That is, ϕ is a generalized test. Furthermore, ϕ (ν) = 1 and ϕ (µ) = 0 for all µ ∈ P.
+                        The key issue here is that ϕ∗(µ) may depend on the entire distribution µ, not just on
+                    the sample ω ∈ [0,1] that is produced by µ. In this example, to compute the value of
+                    the generalized test it is not enough to know the realized sample ω—in fact, its value is
+                    irrelevant—but rather whether it came from an absolutely continuous distribution or not.
+                    This can be thought of as additional information that the experimenter would need to
+                    acquire in addition to the sample itself.
+                        More generally, Theorem 1.5 shows that whenever no nontrivial test exists, but a non-
+                                                                20
+                                trivial generalized test does exist, some form of additional information is always necessary
+                                in order to evaluate the generalized test.
+                                      Interestingly, as Le Cam points out in the remark on page 476 of Le Cam (2012),
+                                although generalized tests need not be representable by a measurable function ϕ on the
+                                original sample space Ω (i.e., by a test), it is always possible to extend (Ω,F) to a larger
+                                                          e e
+                                sample space (Ω,F) in such a way that every generalized test can be represented by a
+                                                                         e
+                                measurable function on Ω. As such, this extension furnishes the additional data needed to
+                                evaluate generalized tests. However, since in applications the original space (Ω,F) typically
+                                                                                                                                                                     e e
+                                models the information available to the experimenter, passing to the extension (Ω,F) may
+                                alter the information structure in an unintended way. The example above illustrates this
+                                quite clearly: here the sample ω needs to be accompanied with a “tag” indicating whether
+                                or not it was drawn from an absolutely continuous distribution.
+                                      Lastly, it may be of interest to know something about the structure of the extended
+                                                         e e
+                                sample space (Ω,F). The construction outlined in Chapter 1.6 of Le Cam (2012) is very
+                                general but also quite abstract and difÏcult to interpret. In the setting of the present paper,
+                                there is a significantly less abstract construction which we now describe.
+                                      We start with the original measurable space (Ω,F) and its space M of finite signed
+                                measures. Zorn’s lemma implies that there exists a set {µi: i ∈ I} of pairwise singular
+                                probability measures that is maximal in the collection of all such sets, ordered by inclusion.
+                                Every µ ∈ M is then absolutely continuous with respect to some countable combination of
+                                the µ . Note that the index set I need not be countable. (If I is countable there is a single
+                                         i
+                                                                                                                            1
+                                dominating measure γ, and M can be identified with L (γ).) No extension of Ω is needed
+                                in this case, so the following is only relevant if I is uncountable.
+                                      For each i ∈ I we let (Ω ,F ) be a copy of (Ω,F) and consider the disjoint union
+                                                                              i     i
+                                                                                                  e       G
+                                                                                                  Ω= Ωi,
+                                                                                                          i∈I
+                                                                                  e                                              e
+                                equipped with the σ-algebra F consisting of all sets A ⊂ Ω such that A ∩ Ωi ∈ Fi for all
+                                                                                                       e
+                                i ∈ I. We further let µe be the measure on Ω that restricts to µi on each Ωi,
+                                                                                             X                                     e
+                                                                                µe(A) = i∈I µi(A∩Ωi),                     A∈F.
+                                If I is uncountable, which is the relevant case, the measure µe is not σ-finite. Nonethe-
+                                         e
+                                less, F-measurable functions f can be integrated provided they are µe-integrable, meaning
+                                that the restriction fi = f|                       belongs to L1(µi) for each i ∈ I and the norm ∥f∥ 1                                             =
+                                P                                             Ωi                                                                                         L (µe)
+                                          ∥f ∥ 1           is finite. Note that this requires f = 0 for all but countably many i ∈ I.
+                                    i∈I      i   L (µ )                                                             i
+                                                       i
+                                The space L1(µe) of (equivalence classes of) µe-integrable functions with the norm ∥ · ∥ 1
+                                                                                         1                           1                                                        L (µe)
+                                is a Banach space, known as the ℓ -direct sum of L (µi), i ∈ I.
+                                      ThekeypointisthatL1(µe) is isometrically isomorphic to the Banach space (M,∥·∥                                                               ).
+                                                                                                                                                                               TV
+                                Indeed, any µ ∈ M can be mapped to the unique f ∈ L1(µe) whose restriction f to Ω is the
+                                                                                                                                                                 i         i
+                                                                                                         21
+                             a             a
+                   density dµ /dµi, where µ is the absolutely continuous part of µ with respect to µi. Note
+                         a
+                   that µ depends on i, although this is not indicated in the notation, and all but countably
+                   many f are zero. The mapping µ 7→ f is furthermore linear and surjective. Thanks to the
+                          i
+                   maximality property of the family {µi: i ∈ I}, it preserves the norm ∥µ∥TV = ∥f∥ 1   ,
+                   and is thus an isometry.                                                        L (µe)
+                      In this way the elements of M can be regarded as µe-absolutely continuous measures
+                                                                 e                                 ′
+                   on the (potentially much larger) sample space Ω. Furthermore, the dual space M can
+                   be identified with the dual of L1(µe), which is L∞(µe). Thus any generalized test can be
+                                                          e
+                   represented as a measurable function on Ω, which was the goal of the construction. (The
+                   L1-L∞ duality holds in the present non-σ-finite case because µe is (strictly) localizable; see
+                   Fremlin (2003, Chapters 21 and 24), specifically Definition 211E, Theorem 211L(d), and
+                   Theorem 243G.)
+                      Let us clarify how this construction encodes the “additional information” mentioned
+                                                        e
+                   previously. The observed sample ωe ∈ Ω belongs to Ω for exactly one i, so it must have
+                                                                      i
+                   been generated by a distribution µ with nonzero density relative to µ . Thus i, which can
+                                                                                     i
+                   be inferred from ωe, is the “tag” that conveys information about what might be called the
+                   “absolute continuity type” of the generating distribution µ. Since the spaces Ωi are tagged,
+                   but otherwise identical, copies of Ω, the sample ωe can indeed be regarded as a point of
+                   Ω, supplemented with the tag i. The generalized test, regarded as a bounded measurable
+                               e
+                   function on Ω, can now be evaluated as long as this supplemented sample is observed.
+                                                                                          e
+                   Furthermore, ordinary (not generalized) tests correspond to functions on Ω that are the
+                   same on every Ωi, that is, do not depend on the tag i.
+                                                                                    e
+                      Lastly, we note that the considerable complexity of the space Ω can sometimes be
+                   reduced. This happens when the family {µi: i ∈ I} can be replaced by a smaller family
+                   that still dominates P and Q but perhaps not every measure in M. In particular, in
+                   the dominated case of Theorem 1.1, the reference measure itself can be used as the single
+                                                         e
+                   member of the family, and one can take Ω = Ω as noted previously.
+                   Remark B.1. Le Cam has shown that the minimax risk, computed over all generalized
+                                                                                        e
+                   tests, can always be attained by a generalized test. The extended space Ω can be used to
+                   construct a net of (non-generalized) tests that converge in the weak-∗ topology of L∞(µe)
+                   to a given generalized test. Specifically, let ϕ∗ ∈ L∞(µe) be a generalized test, and let ϕ∗ be
+                                                                                                    i
+                   its restriction to Ωi for each i ∈ I. For any countable subset of indices J ⊂ I one can find
+                   mutually disjoint sets A ∈ F, i ∈ J, such that µ (A ) = 1 for all i ∈ J, where we regard
+                                          i               P       i  i
+                   Ai as a subset of Ωi. Now define ϕJ =       ϕ∗1Ai, regarded as a function on Ω. Then
+                                                            i∈J i
+                   ϕ is a (non-generalized) test and satisfies ϕ = ϕ∗, µ -a.s., for all i ∈ J. Furthermore, for
+                    J                                        J    i   i
+                   every µ ∈ M we have Eµ[ϕ ] = ϕ∗(µ) whenever J contains all i ∈ I such that dµa/dµi is
+                                             J
+                                                                     ∗                           ∞
+                   not zero. Thus the ϕJ form a net that converges to ϕ in the weak-∗ topology of L (µe).
+                                                            22
+                     C Somemeasure-theoretic results
+                     Proposition C.1. Let (Ω,F) be a measurable space and let P = {δω: ω ∈ Ω}. Then
+                     co*(P) = ba .
+                                 1
+                     Remark C.2. Let us point out that if Ω = [0,1] and P consists of all µ with a Lebesgue
+                     density, then co*(P) is not equal to all of ba . This is because every µ ∈ co*(P) satisfies
+                                                                    1
+                     µ(A) = 0 for all Lebesgue nullsets A. In particular, point masses δ          are not weak-∗
+                                                                                                ω
+                     limit points of co(P). For example, the sequence µ      = Uni[0,1/n] does not converge to
+                                                                           n
+                     δ . In fact, this sequence does not converge at all. This is demonstrated, for instance,
+                      0
+                     by the function f(ω) = sin(log(1/ω)) for ω ̸= 0 and f(0) = 0, which satisfies E         [f] =
+                                                                                                          µ
+                                       √                                                                    n
+                     sin(π/4+log(n))/ 2. This does not converge as n → ∞, and then neither can µ . However,
+                                                                                                      n
+                     weak-∗ compactness implies that µ does have a convergent subnet. The limit is a purely
+                                                         n
+                     finitely additive probability measure µ that assigns unit mass to any interval [0,ϵ] with
+                     ϵ > 0.
+                     Proof of Proposition C.1. Fix any µ ∈ ba . We construct a net in co(P) as follows. Let Π
+                                                               1
+                     be the set of all partitions π = {A ,...,A } of Ω into finitely many nonempty measurable
+                                                        1       n
+                     sets, partially ordered by refinement. For each such π, choose points ω ∈ A , i = 1,...,n,
+                                                                                              i     i
+                     and define                             n
+                                                     µ =Xµ(A)δ ∈co(P).                                       (C.1)
+                                                       π           i  ω
+                                                                       i
+                                                            i=1
+                     Consider now any B ∈ F. For any π ∈ Π and any π′ ∈ Π that is a common refinement of π
+                     and the partition {B,Bc}, we have µπ′(B) = µ(B). It follows that the net (µπ(B))π∈Π in
+                     Rconverges to µ(B). Since this holds for every B ∈ F, we conclude that the net (µπ)
+                     in co(P) converges to µ.                                                                  π∈Π
+                        Recall that Pow(R) refers to the power set of R.
+                     Proposition C.3. Assume (3.1) and let µ be a positive finite measure on (R,Pow(R)).
+                     Then µ is purely atomic, i.e., the set S = {x ∈ R : µ({x}) > 0} is at most countable and
+                     for every A ⊂ R we have                      X
+                                                        µ(A) =         µ({x}).
+                                                                 x∈A∩S
+                     Proof. For each k ∈ N, the set S = {x ∈ R: µ({x}) > k−1} must be finite. Thus the
+                             S                          k
+                     set S =       S is at most countable. Now set µ (A) = µ(A) − µ(A ∩ S) for all A ⊂ R.
+                               k∈N k                                     d
+                     This defines a positive, finite, and diffuse measure on Pow(R). By (3.1), µ = 0, and this
+                                                                                                   d
+                     completes the proof.
+                                                                  23
+                     D Proof of Theorem 3.4
+                     Thefirst part of Theorem 3.4 states that every element of P     is setwise dominated by some
+                                                                                  eff
+                     maximal element of Peff. This is shown in Lemma D.3 below, building on several auxiliary
+                     results which we now develop. We say that a net µα in ba+ is increasing if µα ≥ µ setwise
+                                                                                                          β
+                     whenever α ≥ β. It is bounded if the total masses µ (Ω) have a finite upper bound.
+                                                                           α
+                     Lemma D.1. Let µ be a bounded increasing net in ba           and define µ(A) = sup µ (A),
+                                          α                                     +                         α α
+                     A∈F. Then µ belongs to ba and µ converges to µ in the weak-∗ topology. If each µ is
+                                                   +        α                                                  α
+                     countably additive, then so is µ.
+                     Proof. The boundedness assumption means that supαµα(Ω) < ∞, so µ is well-defined.
+                     Moreover, a bounded increasing net in R converges to its supremum, so we have µ(A) =
+                     limαµα(A) for all A ∈ F. For any disjoint A,B ∈ F we pass to the limit in the identity
+                     µ (A∪B)=µ (A)+µ (B)toseethatµ∈ba . Forboundednetsinba,setwiseconvergence
+                      α            α        α                      +
+                     is equivalent to weak-∗ convergence, so µ → µ in the weak-∗ topology. Lastly, suppose each
+                                                              α
+                     µα is countably additive, and consider an arbitrary countable family of mutually disjoint
+                     sets Ai ∈ F. Monotonicity and finite additivity of µ yields
+                                                   ∞ !            n ! n
+                                                µ [A ≥µ [A =Xµ(A)
+                                                         i              i             i
+                                                    i=1            i=1        i=1
+                     for all n, while countable additivity of µ  and the fact that µ dominates µ yields
+                                                               α                                   α
+                                                    ∞ ! ∞                      ∞
+                                                µ    [A =Xµ(A)≤Xµ(A)
+                                                 α        i          α   i            i
+                                                     i=1        i=1            i=1
+                     for all α. Passing to the limit in n and α, respectively, shows that µ is countably additive.
+                     LemmaD.2. Letµα beanincreasing net in P . Then µα converges in the weak-∗ topology
+                                                                     eff
+                     to an element µ of Peff.
+                     Proof. By Lemma D.1, µα converges in the weak-∗ topology to some nonnegative countably
+                     additive measure µ. This measure belongs to P       because the property R fdµ ≤ 1 for all
+                                                                       eff                            α
+                     bounded f ∈ E is preserved under weak-∗ convergence. Monotone convergence then yields
+                     R fdµ ≤ 1 for all f ∈ E.
+                     Lemma D.3. Every µ ∈P           is dominated by some maximal element of P .
+                                             0     eff                                              eff
+                     Proof. Let D = {ν ∈ P : ν ≥ µ } be the set of elements of P        that dominate µ setwise.
+                                             eff       0                              eff                0
+                     Every chain in D is an increasing net, which thanks to Lemma D.2 admits an upper bound
+                     in Peff, hence in D. Zorn’s lemma then yields a maximal element of D, which must also be
+                     maximal in P .
+                                   eff
+                                                                   24
+                      The remaining parts of Theorem 3.4 require the introduction of a third object: one
+                   must view the null hypothesis P as a subset of ba and consider an appropriate extension of
+                   the effective null, namely,
+                                         Pba = {µ ∈ ba+: Z fdµ ≤ 1 for all f ∈ E },                 (D.1)
+                                          eff                                    b
+                   where E is the set of all bounded e-variables. Note that P     consists precisely of the
+                           b                                                   eff
+                   countably additive elements of Pba.
+                                                  eff
+                   Lemma D.4. Pba =ba ∩co*(P −ba ).
+                                   eff    +             +
+                   Proof. The polars and bipolars below are understood with respect to the dual pair (L,ba),
+                   and we follow the notation and definitions of Schaefer and Wolff (1999). We first show that
+                                                                     ◦
+                                                      E =(P−ba+) .                                  (D.2)
+                                                       b
+                   The right-hand side equals {f ∈ L: R fd(µ − ν) ≤ 1 for all µ ∈ P,ν ∈ ba+}, which
+                   certainly contains E . Conversely, suppose f belongs to the right-hand side. Taking ν = 0
+                               R      b
+                   we see that  fdµ ≤ 1 for all µ ∈ P. Moreover, for any ω ∈ Ω we may take an arbitrary
+                   µ ∈ P and set ν = µ+tδ for t > 0 to get f(ω) ≥ −t−1. Sending t to infinity shows that
+                                           ω
+                   f ∈ L , and hence that f ∈ E . This establishes (D.2). Next, the definition (D.1) states
+                         +                      b
+                   that Pba = ba ∩E◦. Together with (D.2), this yields
+                         eff    +    b
+                                                   ba                   ◦◦
+                                                  P =ba ∩(P−ba ) .
+                                                   eff    +           +
+                   Since P−ba+ contains zero, an application of the bipolar theorem completes the proof.
+                   Lemma D.5. Pba is the solid hull of co*(P), i.e.,
+                                   eff
+                                                     Pba = solidco*(P).                             (D.3)
+                                                      eff
+                   As a consequence, the set of maximal elements of Pba precisely equals co*(P), and every
+                         ba                              ′           eff
+                   µ∈P issetwise dominated by some µ ∈ co*(P).
+                        eff
+                   Proof. We prove (D.3); the remaining statement is then immediate. In view of Lemma D.4,
+                   it sufÏces to show that
+                                          ba ∩co*(P −ba )⊂solidco*(P)⊂Pba.                          (D.4)
+                                            +              +                   eff
+                   We start with the first inclusion, and let η be an element of the left-hand side. Then
+                   η ∈ ba  and there is a net η = µ −ν with µ ∈ co(P) and ν ∈ ba such that η → η.
+                         +                    α    α    α       α               α     +            α
+                   Because each µ belongs to ba , which is weak-∗ compact by the Banach–Alaoglu theorem,
+                                 α              1
+                   on passing to a subnet we have µ → µ for some µ ∈ ba . In fact, µ ∈ co*(P). We also get
+                                                  α                     1
+                   ν =µ −η →ν=µ−ηwhich,like each ν , belongs to the weak-∗ closed set ba . In
+                    α     α    α                               α                                    +
+                   summary, we have shown that 0 ≤ η ≤ µ with µ ∈ co*(P). That is, η ∈ solidco*(P).
+                                                             25
+                                                We now prove the second inclusion in (D.4). It is clear from the definition (D.1) that
+                                         Pba is convex, weak-∗ closed, and contains P. Therefore it also contains co*(P). It is also
+                                            eff                   ba
+                                         clear that Peff is solid, so it must contain solidco*(P) as well. This completes the proof of
+                                         (D.4), and hence of (D.3).
+                                                We now turn to the second part of Theorem 3.4; this is the content of the following
+                                         lemma.
+                                         LemmaD.6. Everymaximal element of P                                                           is the countably additive part of some element
+                                                                                                                                 eff
+                                         of co*(P).
+                                                                   ′                                                                                                ba
+                                         Proof. Let µ ∈ P                           be a maximal element. Since P                                          ⊂P , the representation (D.3) of
+                                                                              eff                                                                     eff           eff
+                                                                                                                                                           ′          ′′                         ′′
+                                         Lemma D.5, which we just established, implies that µ ≤ µ for some µ ∈ co*(P). Let
+                                           ′′           ′′         ′′                                                                                         ′′
+                                         µ = µc +µp be the Yosida–Hewitt decomposition of µ into its countably additive and
+                                         purely finitely additive parts; see Yosida and Hewitt (1952, Theorem 1.24). The countably
+                                         additive part µ′′ is the largest countably additive measure that is dominated by µ′′. Indeed,
+                                                                       c
+                                                          ′′                                                                                    ′′  +            ′′                                                ′′  +
+                                         if ν ≤ µ is countably additive, then so is (ν − µc)                                                             ≤µp, implying that (ν − µc)                                        =0
+                                                       ′′                                                                                              ′′                                                           ′
+                                         since µ is purely finitely additive, and hence ν ≤ µ . We apply this with ν = µ to get
+                                                       p                                                                                               c
+                                         µ′ ≤ µ′′. Moreover, because µ′′ is countably additive and dominated by µ′′, it belongs to
+                                            ba         c                                                c                                                       ′
+                                         P and hence, being countably additive, to P . But µ is maximal in P , so we must
+                                            eff                                                                                            eff                                                       eff
+                                                                        ′          ′′
+                                         actually have µ = µ .
+                                                                                   c
+                                         E Practical implications
+                                         E.1           Contaminated null against simple alternative
+                                         Consider testing a contaminated null distribution against a simple alternative Q = {ν }.
+                                                                                                                                                                                                                              0
+                                         The null hypothesis is given by P = {(1 − ε)µ + εη: η ∈ C}, where µ is a simple null
+                                                                                                                                            0                                                  0
+                                         distribution, C is a convex set of contamination laws, and ε ∈ (0,1) is the fraction of the
+                                         population that comes from such a law. The classical Kraft–Le Cam theorem, if it applied,
+                                         would suggest that the minimax risk is given by 1−d                                                              (P,Q). (No convex hulls are needed
+                                                                                                                                                    TV
+                                         since both P and Q are already convex.) However, depending on the contamination model,
+                                         this may give an incorrect answer. For example, suppose µ and ν are both atomless, but
+                                                                                                                                                                  0              0
+                                         C is the convex hull of all Dirac point masses. Then, because µ0 and ν0 are both singular
+                                         with respect to all η ∈ C, we have in view of (2.1) that
+                                                                                             d       (P,Q)= 1∥(1−ε)µ −ν ∥                                            +ε.
+                                                                                                TV                        2                     0         0 TV             2
+                                         However, thanks to Proposition C.1, the weak-∗ closure of C contains all of M , so co*(P) ⊃
+                                                                                                                                                                                                      1
+                                         {(1−ε)µ +εη: η ∈M }. In particular, by considering η = ν one finds
+                                                            0                             1                                                                               0
+                                                                                            d        (co*(P),Q) ≤ 1(1−ε)∥µ −ν ∥                                               .
+                                                                                               TV                                   2                     0         0 TV
+                                                                                                                                    26
+                            Now, the triangle inequality applied with the decomposition (1−ε)(µ −ν ) = ((1−ε)µ −
+                                                                                                                                0     0                   0
+                            ν0) +εν0 yields
+                                                            (1−ε)∥µ0−ν0∥                 ≤∥(1−ε)µ0−ν0∥                   +ε,
+                                                                                    TV                              TV
+                            and the inequality is always strict. Indeed, for any µ ∈ M and ν ∈ M , one can only
+                                                                                                                                       +
+                            have ∥µ + ν∥TV = ∥µ∥TV + ∥ν∥TV if there is a ν-full measure set Ω′ such that µ(· ∩ Ω′)
+                            is nonnegative. With µ = (1 − ε)µ − ν and ν = εν , this would yield 0 ≤ µ(Ω′) =
+                                                                                  0       0                   0
+                            (1−ε)µ0(Ω′)−1≤−ε, a contradiction. Thus
+                                                                        dTV(co*(P),Q) < dTV(P,Q),
+                            and the gap can be as large as ε (for instance if µ = ν ). Thus, for this choice of contami-
+                                                                                                   0       0
+                            nation model, the classical theory will underestimate the minimax risk. On the other hand,
+                            for other choices this issue does not arise, such as when µ , ν , and C are all dominated by
+                                                                                                               0    0
+                            a reference measure. This illustrates the need to exercise caution when choosing the model.
+                            E.2       Quantized alternative against simple null
+                            Let Ω = [0,1) regarded as a circle (“mod 1”). We consider the simple null P = {µ } where
+                                                                                                                                                  0
+                            µ0 is the uniform distribution. The alternative is that the data comes from some ν0, but
+                            is only observed up to a known precision 1/m and with unknown bias θ for some m ∈ N
+                            and θ ∈ [0,1). More precisely, for each θ, let qθ be the quantization map that rounds any
+                            x∈[0,1)downtothenearestpointinthegrid{θ+k/m: k = 0,...,m−1}. Thealternative
+                            is then defined as the set of pushforwards
+                                                                           Q={(q ) ν : θ ∈ [0,1)}.
+                                                                                       θ ∗ 0
+                            Every element of co(Q) is singular with respect to µ0, so the TV distance is one, and
+                            classical Kraft–Le Cam suggests the risk is zero. However, it can be shown that co*(Q)
+                            actually contains, in particular, all mixtures ν = R                          (q ) ν h(θ)dθ where h(θ) is a density
+                                                                                             h       [0,1)   θ ∗ 0
+                            on [0,1). A calculation shows that any such mixture has a Lebesgue density given by
+                                                                                             m−1                    
+                                                              f (x) = ν           x,x+ 1             Xh x− k .
+                                                                h           0               m                         m
+                                                                                                     k=0
+                            The TV distance to µ0 equals 1 R                       |f (x) − 1|dx, which can be smaller than one. Here
+                                                                          2 [0,1)     h
+                            are two cases where this happens:
+                                 • Taking h ≡ 1, the TV distance d                           (µ ,ν ) tends to d              (µ ,ν ) in the infinite-
+                                                                                         TV 0 h                          TV 0 0
+                                     precision limit m → ∞. Thus for large m, the risk is approximately bounded below
+                                     by the simple-vs-simple risk 1 − d                  (µ ,ν ).
+                                                                                      TV 0 0
+                                 • Suppose ν is (1/m)-periodic in the sense that ν ([x,x+1/m)) is constant in x; this
+                                                   0                                                      0
+                                     is the case, for instance, if ν             has a (1/m)-periodic density. Then with h ≡ 1, f is
+                                                                              0                                                                           h
+                                     constant and ν is the uniform density. Thus dTV(µ0,ν ) = 0 and the risk is equal to
+                                                          h                                                         h
+                                     one in this (rather special) case.
+                                                                                            27
+                     E.3    Minimax risk via convex programs
+                     Wenowpresent a method by which the minimax risk can, in principle, be computed via a
+                     sequence of convex programs. Recall that Π denotes the set of finite measurable partitions
+                     of Ω, and that µ is given by (C.1) for any measure µ. For each π ∈ Π, consider the subsets
+                                      π
+                     of the |π|-simplex given by
+                                         C =cl{µ : µ∈co(P)},          D =cl{ν : ν ∈ co(Q)},
+                                           π        π                   π        π
+                     where “cl” refers to the Euclidean closure.
+                     Corollary E.1. We have
+                                                  1−R(P,Q)=sup min 1∥p−q∥ .                                    (E.1)
+                                                                      p∈C 2          1
+                                                                  π∈Π     π
+                                                                      q∈Dπ
+                     Consequently, for every ε ≥ 0, the minimax risk is below 1−ε if and only if there is a finite
+                     measurable partition π for which d     (C ,D ) > ε. In that event, there is a test with risk
+                                                          TV   π   π
+                     below 1−ε which is constant on the sets of π.
+                     Proof. Note that |R(ϕ) − R(ψ)| ≤ 2∥ϕ − ψ∥          for all ϕ,ψ ∈ Φ. Since every test can be
+                                                                     ∞
+                     approximateduniformlybyatestthatisconstantonafinitemeasurablepartition, itsufÏces
+                     to compute the minimax risk over such tests. Fix π = {A ,...,A } and parameterize these
+                                                   P                             1       k
+                     tests by a ∈ [0,1]k via ϕ =     k   a 1 . The finite-dimensional minimax theorem gives
+                                              a      i=1 i Ai
+                                                                              ⊤
+                                            sup (1−R(ϕa))= sup min a (q−p)
+                                                k                     k p∈Cπ
+                                          a∈[0,1]                a∈[0,1] q∈Dπ
+                                                                  ⊤                 1
+                                                  = min sup a (q−p)= min ∥p−q∥1,
+                                                    p∈C        k              p∈C 2
+                                                        π a∈[0,1]                 π
+                                                    q∈Dπ                      q∈Dπ
+                     where the last equality follows from P (q − p ) = 0. Taking the supremum over π proves
+                                                              i  i    i
+                     (E.1).
+                         Combining (E.1) with Theorem 1.5 yields
+                                               d   (co*(P),co*(Q)) = supd       (C ,D ).
+                                                TV                           TV    π   π
+                                                                        π∈Π
+                     If π′ refines π, then d   (C ′,D ′) ≥ d      (C ,D ), so the finite-partition values form an
+                                            TV    π    π       TV   π    π
+                     increasing net under refinement.
+                                                                   28

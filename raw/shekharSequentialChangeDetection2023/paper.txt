@@ -1,0 +1,1332 @@
+                       Sequential change detection via backward conﬁdence sequences
+                                               Shubhanshu Shekhar ∗1 and Aaditya Ramdas †1,2
+                                1Department of Statistics and Data Science, Carnegie Mellon University
+                                        2Machine Learning Department, Carnegie Mellon University
+                                                                           Abstract
+                             Wepresent a simple reduction from sequential estimation to sequential changepoint detection (SCD).
+                          In short, suppose we are interested in detecting changepoints in some parameter or functional θ of the
+                          underlying distribution. We demonstrate that if we can construct a conﬁdence sequence (CS) for θ,
+                          then we can also successfully perform SCD for θ. This is accomplished by checking if two CSs — one
+                          forwards and the other backwards — ever fail to intersect. Since the literature on CSs has been rapidly
+                          evolving recently, the reduction provided in this paper immediately solves several old and new change
+                          detection problems. Further, our “backward CS”, constructed by reversing time, is new and potentially
+                          of independent interest. We provide strong nonasymptotic guarantees on the frequency of false alarms
+                          and detection delay, and demonstrate numerical eﬀectiveness on several problems.
+                   Contents
+                   1 Introduction                                                                                                          2
+                   2 Preliminaries                                                                                                         3
+                   3 Warmup: change detection via a forward CS                                                                             4
+                   4 Change detection via a backward CS                                                                                    5
+                   5 Instantiations of BCS-Detector                                                                                        6
+                       5.1   Parametric Change of Mean Detection . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .              7
+                       5.2   Nonparametric Change of Mean Detection . . . . . . . . . . . . . . . . . . . . . . . . . . . . .               8
+                       5.3   Detecting Changes in CDFs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .            9
+                       5.4   Detecting Change in Homogeneity of Two Streams . . . . . . . . . . . . . . . . . . . . . . . .                 9
+                       5.5   Detecting Harmful Distribution Shifts . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .          10
+         arXiv:2302.02544v1  [math.ST]  6 Feb 20235.6Other change detection tasks . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .11
+                   6 Conclusion                                                                                                           11
+                   A Additional Background                                                                                                15
+                   B Proof of Proposition 8                                                                                               16
+                   C Proof of Theorem 13                                                                                                  17
+                   D Deferred proofs from Section 5                                                                                       19
+                       D.1 Proofs of Corollary 17, Corollary 22, Corollary 23 . . . . . . . . . . . . . . . . . . . . . . . . .           19
+                       D.2 Proof of Proposition 19        . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   20
+                      ∗shubhan2@andrew.cmu.edu
+                      †aramdas@stat.cmu.edu
+                                                                               1
+                   E Details of Experiments                                                                                           21
+                   F Repeated sequential test interpretation                                                                          24
+                   1     Introduction
+                   We study the problem of sequential changepoint detection (SCD), where the goal is to quickly detect any
+                   changes in the distribution generating a stream of observations, while controlling the false alarm rate at a
+                   speciﬁed level. Formally, for some (possibly inﬁnite-dimensional) index set Θ, let {P }             denote a class of
+                                                                                                                θ θ∈Θ
+                   distributions on some observation space X. Suppose that for some T ≥ 1, the observations {X : 1 ≤ t ≤ T}
+                                                                                                                          t
+                   are drawn i.i.d. from P      with θ ∈ Θ, and {X : t > T} are drawn i.i.d. from P             for some θ ∈ Θ, with
+                                            θ          0               t                                     θ              1
+                                             0                                                                1
+                   θ 6= θ . Then, the SCD problem involves deciding between the null H : {T = ∞}, meaning no change
+                    1     0                                                                        0
+                   occurred, and the alternative H = ∪         {T =i}.
+                                                      1     i∈N
+                       Since the observations arrive sequentially, our task is to design a random stopping time, τ, adapted to
+                   the natural ﬁltration {F : t ≥ 1} with F = σ(X ,...,X ), at which we reject the null. A good stopping
+                                              t                  t        1        t
+                   rule τ takes large values under the the null (i.e., when T = ∞), while minimizing the time required to detect
+                   the change under the alternative (i.e., when T < ∞). Formally, when T = ∞, we require the average run
+                   length (ARL), E∞[τ], to be lower bounded by 1/α, for a given α ∈ (0,1], while ensuring a small detection
+                   delay, E [(τ − T)+], when T < ∞. Informally, this means that we will have a false alarm roughly every
+                            T
+                                                                −3
+                   1/α steps, so the reader may use α = 10          as a rough guideline. (We also brieﬂy discuss how to keep the
+                   probability of even a single false alarm below α, but there is a tradeoﬀ between the false alarm guarantee
+                   and detection delay; detecting true changes quickly necessitates tolerating infrequent false alarms.)
+                       Theliterature on the topic of sequential changepoint detection is vast, as this problem arises in several im-
+                   portant real-world applications, such as quality control (Shewhart, 1930), monitoring power networks (Chen
+                   et al., 2015), analysis of genomes (Chen et al., 2011; Shen and Zhang, 2012), and epidemic detection (Baron
+                   et al., 2004; Yu et al., 2013). Some of the earliest works in this topic (Shewhart, 1925; Page, 1954; Shiryaev,
+                   1963) assume that the pre- and post-change distributions admit known densities f0 and f1 (w.r.t. some
+                   common reference measure). These methods use statistics involving likelihood ratios, that can be computed
+                   eﬃciently in an incremental manner, and have also been shown to admit strong optimality properties. The
+                   ideas underlying these likelihood-based schemes have also been extended to the case of (ﬁnite-dimensional)
+                   parametric families of distributions, such as the exponential family; see Tartakovsky et al. (2014) for a de-
+                   tailed discussion. However, these parametric assumptions are often too stringent to be applicable to many
+                   practical applications, where the data distributions may lie in much larger, nonparametric, classes. Most
+                   of the ideas developed for the parametric setting, and in particular the likelihood-based schemes, fail to be
+                   applicable in the nonparametric case. With some exceptions discussed later, there are very few general prin-
+                   ciples for constructing nonparametric changepoint detection schemes. Our work in this paper addresses this
+                   issue, by developing a conceptually simple ‘meta-algorithm’ for transforming any conﬁdence sequence con-
+                   struction into a powerful changepoint detection method. As a consequence, we can immediately build upon
+                   the recent progress in constructing conﬁdence sequences to instantiate new changepoint detection methods.
+                   Remark1. WenotethattheSCDproblemisusuallystudiedintwosettings, that diﬀer from each other is a
+                   very subtle manner. In the ﬁrst (and the more common) setting, the pre- and post change distributions (Pθ
+                                                                                                                                        0
+                   and Pθ ) are assumed to lie in two diﬀerent, and usually well-separated, classes of distributions. Using
+                           1
+                   our notation, this is equivalent to assuming that there exist two known disjoint sets Θ and Θ , such that
+                                                                                                                   0        1
+                   θ ∈ Θ , for i = 0,1. The second setting, that is the subject of our paper, assumes less information. That
+                    i     i
+                   is, both θ and θ are assumed to lie in some common index set (Θ in our notation), and the only condition
+                             0       1
+                   is that θ 6= θ . Hence, the ﬁrst setting is in some sense “easier”, as the additional knowledge about Θ and
+                            0     1                                                                                                0
+                   Θ1 (their size, and their separation) can be exploited to design appropriate SCD schemes. While there exist
+                   some works that develop methods for SCD in the second setting, those schemes often rely on the speciﬁc
+                   structure of the problems considered. In this paper, we address this issue by developing a general principle
+                   for designing SCD schemes in the second setting.
+                                                                             2
+                    2     Preliminaries
+                    Theprimarytechnicaltoolweuseinourstrategyaretime-uniformversionofconﬁdencesets,calledconﬁdence
+                    sequences (CSs), that were ﬁrst introduced in statistics literature by Darling and Robbins (1967). We present
+                    a deﬁnition adapted to our problem below.
+                    Deﬁnition 2 (Confidence Sequences). Suppose X ,X ,... are drawn i.i.d. from P , for some θ ∈ Θ.
+                                                                                  1    2                                 θ
+                    Then, for any α ∈ (0,1), a level-(1 − α) CS, denoted by {Ct : t ≥ 1}, is a collection of subsets Ct ⊂ Θ, such
+                    that (i) C is σ(X ,...,X )-measurable and (ii) P ∀t ≥ 1 : θ ∈ C  ≥ 1−α.
+                               t         1        t                                             t
+                    Remark 3. Due to the time-uniformity in the deﬁnition of CSs, we can replace the conﬁdence set Ct with
+                                      e :                                e                                                             e      e
+                    the smaller set C = ∩         C . The new CS, {C : t ≥ 1}, consists of nested conﬁdence sets; that is, C ⊂ C
+                    for s < t.         t      s≤t s                       t                                                              t     s
+                    Remark4. Thedatadonotneedtobei.i.d.fordeﬁningCSs. Theabovedeﬁnitioncanbeeasilygeneralized
+                    to the case of independent random variables, with X ∼ P , with ϑ ∈ Θ (see Appendix A). This, however,
+                                                                                 t     ϑ          t
+                                                                                        t
+                    requires that Θ is endowed with the notions of addition and scalar multiplication (a suﬃcient condition is
+                    that Θ is a vector space), which we implicitly assume when needed.
+                        Wenowintroduce a notion of the ‘size’ of the conﬁdence set Ct, that reﬂects the amount of uncertainty.
+                    Deﬁnition 5 (CS width). Let Θ be endowed with a distance metric d, and let {Ct : t ≥ 1} denote a
+                    level-(1 − α) CS constructed on observations X ,X ,... drawn i.i.d. from P . A function w(t,θ,α) denotes
+                                                                           1   2                            θ
+                    the pointwise width (bound) of the CS, if for all t ∈ N and θ ∈ Θ, we have supθ0∈Ct d(θ,θ0) ≤ w(t,θ,α). We
+                    deﬁne the uniform width over Θ, as w(t,Θ,α) = supθ∈Θw(t,θ,α).
+                        As we will see later in Section 5, most of the non-trivial CSs have their pointwise widths (and often, the
+                    uniform widths as well) converging to 0 with the number of observations.
+                    Example 6. Consider independent random variables {X : t ≥ 1}, with X ∼ N(θ,1) and θ ∈ R for all
+                                                                                       t                     t
+                    t ≥ 1. In this case, the parameter set is Θ = R. For this process, we can deﬁne the CS {Ct : t ≥ 1} as follows:
+                                                                            P                          p
+                            ¯            ¯                     ¯               t
+                    C =[X −w/2,X +w/2], where X = (1/t)                            X, and w = 3.4 (loglog(2t)+0.72log(10.4/α))/t.
+                      t      t      t      t     t               t             i=1   i         t
+                    Thus, if we endow the parameter space Θ with the metric d(θ,θ0) = |θ − θ0|, we observe that the uniform
+                    width of Ct, denoted by w(t,Θ,α) = wt, converges to 0.
+                    Related Work. As we mentioned earlier, a large part of the existing SCD literature focuses on the para-
+                    metric setting. We refer the reader to some recent surveys, such as those by Veeravalli and Banerjee (2014);
+                    Xie et al. (2021), and the textbook by Tartakovsky et al. (2014) for details. In this section, we discuss some
+                    results on nonparametric SCD methods that are more relevant to our work.
+                        Shin et al. (2022) developed a novel framework for changepoint detection by introducing e-detectors;
+                    obtained by combining a sequence of e-processes deﬁned uniformly over the class of pre-change distribution.
+                    They showed that their resulting strategy using e-detectors controls the ARL under very general conditions,
+                    and also proved the optimality of their schemes (in terms of worst-case detection delays) in some cases.
+                    However, as we mentioned in Remark 1, their framework is applicable mainly in cases where the pre-
+                    and post-change distributions are known to lie in diﬀerent classes. Our techniques, described in Section 3
+                    and Section 4, addresses this issue.
+                        Maillard (2019b) considered the task of detecting a change in the mean of a sequence of independent,
+                    univariate, sub-Gaussian random variables; and proposed an SCD method by deriving a new, doubly time-
+                    uniform conﬁdence sequence for the scan statistics associated with a generalized likelihood ratio scheme (Lai
+                    and Xing, 2010). The original proof of this concentration inequality (Maillard, 2019b, Theorem 4) was
+                    incomplete, and a corrected version (with an additional loglog term) was obtained by the author in (Maillard,
+                    2019a, Chapter 3, § 4.1). For the resulting scheme, Maillard (2019a) obtained bounds on the probability
+                    of false alarm and on the detection delay, and also established the optimality of this scheme under certain
+                    scenarios (such as for Gaussian observations). Unlike Maillard (2019a), our SCD framework is applicable to
+                    a much wider class of problems beyond univariate mean testing. Nevertheless, when specialized to the case
+                    of univariate sub-Gaussian observations, our scheme achieves the same detection delay bound, while also
+                    providing control over the ARL (instead of the probability of false alarm).
+                                                                                 3
+                    Puchkin and Shcherbakova (2022) considered the SCD problem under the assumption that both the pre-
+                 and post-change distributions admit densities w.r.t. a common reference measure, and proposed a strategy
+                 based on learning a discriminator to estimate the density ratio. They showed that their strategy can control
+                 ARLat the required level, and also obtained high probability upper bound on the detection delay in terms
+                 of the Jensen Shannon (JS) divergence and the L norm of the diﬀerence of densities. Unlike them, our
+                                                                   2
+                 framework does not require the existence of densities, and it also works for distributions that are separated
+                 in terms of a large class of metrics, and not just the JS divergence.
+                    Another class of nonparametric schemes for SCD are based on the kernel-MMD metric, ﬁrst employed
+                 by Gretton et al. (2012) for designing powerful nonparametric two-sample tests. Li et al. (2019) proposed
+                 a SCD scheme based on a variant of the block-MMD statistic (Zaremba et al., 2013) computed using the
+                 observations, and a block of pre-change data. More recently, Flynn and Yoo (2019) and Wei and Xie (2022)
+                 proposed new SCD schemes that use linear and block-MMD statistics to deﬁne nonparametric analogues
+                 of the CuSum test of Page (1954). However, these schemes suﬀer from weak theoretical guarantees on the
+                 detection delay. Furthermore, similar to the case of Puchkin and Shcherbakova (2022), the strategies for
+                 designing these SCD schemes are speciﬁc to the kernel-MMD metric; and there is no obvious way to extend
+                 them to other popular metrics, such as the Kolmogorov-Smirnov metric. Our work addresses these issues.
+                    Similarly, most other existing works in SCD are geared towards speciﬁc problem settings. Hence, both
+                 the design of the scheme as well as their analysis are strongly tied to the details of the problem being studied.
+                 Examples include empirical likelihood based methods for distributions on ﬁnite alphabets (Lau et al., 2018),
+                 nearest-neighbor techniques for multivariate or non-euclidean data (Chen, 2019), and spectral scan statistics
+                 for graph valued data (Sharpnack et al., 2013). However, our objective in this paper is diﬀerent: instead of
+                 developing a powerful SCD scheme for a speciﬁc task, we develop an abstract unifying template for designing
+                 SCDschemes, that can then be instantiated for a large range of (old and new) SCD problems.
+                 Our Contributions. In Section 3, we ﬁrst present (as a warmup) a changepoint detection scheme that
+                 uses a single level-α forward CS. Our strategy is to stop as soon as the CS becomes ‘inconsistent’; that is,
+                 it includes a point that it had previously discarded. We show in Proposition 8, that this simple strategy
+                 controls the probability of false alarm at level α, and we also obtain a high probability upper bound on its
+                 detection delay. However, this scheme is too conservative as its ARL is inﬁnite, and in practice this might
+                 result in large detection delays, especially when T is large.
+                    In Section 4, we present our main strategy that proceeds by checking at each time t, whether a forward
+                 CS and a backward CS (a new notion) are consistent, and stops whenever an inconsistency is detected.
+                 In Theorem 13, we show that the ARL of this scheme is at least 1/(2α), and we characterize its expected
+                 detection delay under general conditions.
+                    Finally, in Section 5, we demonstrate the power and generality of our proposed scheme by instantiating it
+                 with ﬁve diﬀerent conﬁdence sequences. The general bound on the detection delay obtained in Theorem 13
+                 easily translate into problem-speciﬁc upper bounds in all these cases, and we also empirically verify the
+                 theoretical predictions through some simple numerical simulations.
+                 3    Warmup: change detection via a forward CS
+                 Before presenting our general scheme in the next section, we ﬁrst introduce a simpler SCD method that only
+                 uses a single forward CS. We refer to this scheme as the FCS-Detector. The idea underlying this scheme is
+                 that if there is a change in the distribution generating the observations {X : t ≥ 1}, then the intersection of
+                                                                                          t
+                 the CS will eventually end up being empty. Formally, we proceed by constructing a level-(1−α) conﬁdence
+                 sequence (CS) for the unknown θ , denoted by {C : t ≥ 1}, as introduced in Deﬁnition 2. When there is
+                                                  0                t
+                 no changepoint, then the CS satisﬁes P (∀t ∈ N : θ ∈ C ) ≥ 1 − α. However, if there is a changepoint at
+                                                        ∞            0    t
+                 some time T, we expect that the conﬁdence sets, C , deviate away from the conﬁdence set C , for t > T.
+                                                                     t                                        T
+                 Eventually, after suﬃciently many post-change observations, the conﬁdence sequence will be inconsistent
+                                                                                                                 t
+                 and self-contradictory. That is, at some time t such that t−T is large enough, we expect that ∩    Cs = ∅.
+                                                                                                                 s=1
+                 Wethus deﬁne the stopping time, τ, as the smallest t at which the above inconsistency is observed.
+                 Deﬁnition 7 (FCS-Detector). Given observations X ,X ,..., we construct a conﬁdence sequence (CS),
+                                                                       1   2
+                                                                                           :
+                 denoted by {C : t ≥ 1} for the pre-change parameter θ . We stop at time τ = min{n ≥ 1 : ∃t < n, C ∩C =
+                               t                                      0                                            t    n
+                 ∅}.
+                                                                     4
+                        This strategy satisﬁes the following properties.
+                    Proposition 8. Consider a change point detection problem with observations X ,X ,... drawn i.i.d. from
+                                                                                                                 1   2
+                    P for t ≤ T and from P          for t > T, with T lying in N ∪ {∞} and θ ,θ ∈ Θ. Suppose for any θ ∈ Θ, we
+                     θ                           θ                                                  0   1
+                      0                           1
+                    can construct conﬁdence sequences {Ct : t ≥ 1}, with uniform width w(t) ≡ w(·,Θ,α). Then, we have the
+                    following:
+                    (i) When T = ∞, the FCS-Detector controls the probability of false alarm (PFA) at level α. That is,
+                    P∞(τ <∞)≤α.                                                                                                           e
+                    (ii) Suppose T is large enough to ensure that w(T) < d(θ ,θ ). For t > T, deﬁne λ := T/t, and θ :=
+                                                                            n           0   1                    o      t                  t
+                                                                                                              e
+                    λ θ +(1−λ )θ . Then, we have τ −T ≤ min t−T : w(t)+w(T) ≤ d(θ ,θ ) , with probability at least
+                     t 0           t  1                                                                    0   t
+                    1−α.
+                    Remark 9. If d is induced by a norm on Θ, we can bound the detection delay under the event E by
+                            +                                    t−T           	                                             √
+                    (τ −T) ≤min t−T :w(t)+w(T)≤                       d(θ ,θ ) . In many instances, we have w(t) ≈ 1/ t suppressing
+                                                                   t      0  1
+                    logarithmic factors. Then, the above expression implies that from ‘small’ T, the delay is linear in T, while
+                                                                             √
+                    for large T, the delay behaves approximately like          T. The details of these calculations, along with plots of
+                    delay versus T are in Appendix B.
+                    Remark10. TheconditiononT usedaboveforobtainingtheboundondetectiondelayisnecessary, because
+                    we do not assume that the pre-change distribution (i.e., the parameter θ0) is known to us. Thus, to be able
+                    to detect the change in distribution, we must have enough observations from the pre-change distribution to
+                    estimate θ accurately enough, in comparison the magnitude of change, d(θ ,θ ). As an extreme example,
+                               0                                                                           0   1
+                    if T = 1, no method can realistically detect that a change occurred (since it is statistically plausible that all
+                    the data are simply i.i.d. and no change occurred at all). Said diﬀerently, T = 0 and T = ∞ are information
+                    theoretically equivalent, and we need to be far enough away from those extremes for practical detectability.
+                        When T = ∞, the FCS-Detector continues sampling without stopping w.p. at least 1 − α. Hence, its
+                    ARL is inﬁnite. This makes it is too conservative in detecting the changepoint — we cannot provide an
+                    upper bound on the expected detection delay when T < ∞, and can only characterize the delay under an
+                    event of probability 1 − α (see Figure 5 in Appendix B). We address this next, by proposing a scheme that
+                    augments the forward CS with a series of backward CSs.
+                    4     Change detection via a backward CS
+                    We now introduce our main SCD strategy that addresses the two drawbacks of the simpler SCD strategy
+                    discussed in the previous section. Informally, the idea underlying our strategy is as follows: in each round t ≥
+                    2, we construct the usual forward CS, and a new backward CS (using reversed observations, see Deﬁnition 11).
+                    We refer to this scheme as the BCS-Detector. If there has been a changepoint, we expect the forward and
+                    backward CSs to concentrate on diﬀerent regions of Θ (i.e., around θ and θ resp.). Hence, we stop as soon
+                                                                                                  0        1
+                    as they become inconsistent. See Figure 4 in Appendix A for a visual illustration, and Appendix F for an
+                    interpretation of our scheme in terms of repeated sequential tests.
+                        Wenowpresent our deﬁnition of backward CSs.
+                    Deﬁnition 11 (Backward Conﬁdence Sequences). Let X ,X ,... be drawn i.i.d. from P , for some θ ∈ Θ.
+                                                                                      1    2                               θ
+                    For any n ≥ 1, we say that a sequence of sets {B(n)}              ⊆ΘisabackwardCS,if (i)B(n) isσ(X ,...,X )
+                                                                (n)     t    1≤t≤n                                    t           t        n
+                    measurable, and (ii) P ∀t ∈ [n] : θ ∈ Bt           ≥1−α.
+                        Notethatforn > 1, a forward CS C does not satisfy the ﬁrst condition, since C is built using X ,...,X ,
+                                                                t                                                 t                  1        t
+                    but B(n) can only use X ,...,X . But, a backward CS at any n can be interpreted as the usual forward CS,
+                          t                    t        n
+                    introduced in Deﬁnition 2, constructed on observations seen in a reverse order from n to 1; see Appendix A
+                    for details.
+                        Without loss of generality, we assume that any CS consists of a nested sequence of sets, as discussed
+                    in Remark 3. In other words, at a given time n, C is the smallest set among {C : t ∈ [n]}, while B(n) is the
+                                                                             n                                 t                     1
+                    smallest among {B(n) : t ∈ [n]}. We say that ‘the two conﬁdence sequences {C : t ≥ 1} and {B(n) : t ∈ [n]}
+                                         t                                                                    t                  t
+                                                                                 5
+                    ‘do not intersect at time n’ if C ∩ B(n) = ∅ for some 1 ≤ r,s ≤ n. It is easy to check that two nested CSs
+                                                         r     s
+                    do not intersect if and only if their smallest sets (i.e., C       and B(n)) do not intersect.
+                                                                                    n         1
+                        WhenT =∞,ateverytimen,bothCSs{C :t≥1}and{B(n) :t∈[n]}willcontainθ withprobability
+                                                                          t                   t                             0
+                    at least 1−2α, and thus they will intersect with the same probability. This motivates us to stop and declare
+                    a changepoint at the ﬁrst time n at which they do not intersect.
+                    Deﬁnition 12 (BCS-Detector). Given observations X ,X ,..., suppose we construct a forward CS {C :
+                                                                                    1    2                                                    t
+                    t ≥ 1} and new backward CSs {B(n) : t ∈ [n]} for every n ≥ 1. Assume that all the constructed CSs are
+                                                            t
+                    nested. Then, we deﬁne the stopping time, τ, as the ﬁrst time at which the forward and backward CSs do
+                    not intersect: τ := inf{n ≥ 1 : C ∩ B(n) = ∅}.
+                                                         n     1
+                        Wenowpresent the main result of this section.
+                    Theorem 13. Consider a SCD problem with observations X ,X ,... drawn i.i.d. from P                          for t ≤ T and
+                                                                                           1    2                            θ0
+                    from P     for t > T, with T lying in N ∪ {∞} and θ ,θ ∈ Θ. Suppose for any θ ∈ Θ, we can construct
+                            θ1                                                    0   1
+                    conﬁdence sequences {Ct : t ≥ 1} with pointwise width w(·,θ,α). Then, we have the following: (i) When,
+                    there is no changepoint (T = ∞), the BCS-Detector satisﬁes E [τ] ≥ 1 − 3.
+                                                                                             ∞        2α     2
+                    (ii) Suppose T < ∞, and the pre-change parameter θ is not known. Introduce the event E = {θ ∈ C : 1 ≤
+                                                                                 0                                                 0     t
+                    t < T}, and note that P (E) ≥ 1 − α by construction. Then, for α ∈ (0,0.5), we have E [(τ −T)+|E] ≤
+                                                T                                                                            T
+                     u (θ ,θ ,T)
+                       0 0 1                 :
+                    3           , where u     =min{t≥1:w(t,θ ,α)+w(T,θ ,α)<d(θ ,θ )}.
+                         1−α               0                         1              0            1  0
+                        Recall from Deﬁnition 5 that w(t,θ ,α) denotes the width of the level-α conﬁdence set with t observations,
+                                                               1
+                    whenthetrueparameterisθ . Theproofofthis theorem is given in Appendix C. In many problem instances,
+                                                    1
+                    the pre-change parameter θ is known as it represents the ‘natural state’ of the process being observed. We
+                                                   0
+                    can specialize the above result stated to this case as follows.
+                    Corollary 14. Suppose the pre-change parameter θ is known, and T < ∞. Then, we have E [(τ −T)+] ≤
+                                                                                0                                               T
+                                                                        :
+                    (3/(1−α))t (θ ,θ ,T), where t ≡ t (θ ,θ ) = min{t ≥ 1 : w(t,θ ,α) < d(θ ,θ )}.
+                                  0  0   1              0     0  0   1                          1           1  0
+                    Remark 15. These results demonstrate how the drawbacks of the FCS-Detector (introduced in Section 3)
+                    are addressed by carefully incorporating the idea of backward CSs in the design strategy. In particular,
+                    this new scheme, called the BCS-Detector, is less conservative, and has a ﬁnite lower bound on the ARL
+                    under the null. More importantly, when T < ∞, the expected detection delay of BCS-Detector is also
+                    ﬁnite, and furthermore, it is also independent of the value of the changepoint T. This is in contrast to the
+                    (high probability) bound on the detection delay for FCS-Detector, in which the detection delay increases
+                                        √
+                    approximately as       T, as the changepoint T → ∞.
+                                                                                                                                              b
+                    Remark 16 (Other estimates). We can also construct an estimate of the changepoint, denoted by T,
+                                                          (τ)                           b     b      :                                   (τ)
+                    as the time at which Ct and B             are most separated: T ≡ T(τ) = max argmax                         d Ct,B        =
+                                             (τ)          t              (τ)                                            1≤t≤τ            t
+                    max{s ≤ τ : d(C ,B          ) = max          d(C ,B     )}. Additionally, we deﬁne an estimate of the magnitude
+                                        s   s             1≤t≤τ      t   t
+                                      :                                                        (τ)
+                    of the change  = d(θ ,θ ) as the separation between C              and B     , as measured by the distance metric d:
+                                             0   1                                    b        b
+                                                                                     T         T
+                              :                            0
+                    b ≡ b(τ) = max         0   (τ) d(θ,θ ). While we do not obtain theoretical guarantees, some empirical results
+                                      θ∈Cb,θ ∈B
+                                          T      b
+                                                 T
+                    in the next section indicate that these estimates are accurate for several instantiations of the BCS-Detector.
+                    5     Instantiations of BCS-Detector
+                    In the previous section, we introduced a conceptually simple device that allows us to transform any conﬁdence
+                    sequence construction into a powerful, sequential changepoint detector. This allows us to instantiate our
+                    general changepoint detection meta-algorithm to various scenarios, by leveraging the recent progress in con-
+                    structing conﬁdence sequences. We illustrate this, by presenting a variety of parametric and nonparametric
+                    SCDproblems in this section.
+                                                                                 6
+                                       T =800                 Detection Delay             Changepoint             Change Magnitude
+                               1
+                             0.5
+                               0
+                            −0.5
+                                  0      1,000    2,000      0      1,000   2,000     200     1,000     1,800      0       1       2
+                    Figure 1: The ﬁgures show the performance of our changepoint detection scheme, BCS-Detector, with
+                    univariate Gaussian observations whose mean changes from 0 to 0.4 at the time T = 800. The ﬁrst plot
+                    showstheforwardandbackwardCSsattimeofdetection(τ = 1264)inoneofthetrials, withtheshadedgray
+                    region being the points at which the two CSs disagree. The next three plots show the empirical distribution
+                    of the detection delay, the estimated changepoint location, and the estimated changepoint magnitude over
+                    250 repeated trials.
+                    5.1     Parametric Change of Mean Detection
+                    We begin by considering the simple case of univariate Gaussian mean changepoint detection (although the
+                    same results also hold for the larger class of sub-Gaussian random variables). In this problem, we observe
+                    {X : t ≥ 1}, drawn i.i.d. according to the distribution N(µ ,1), with µ = θ for t ≤ T and µ = θ for
+                       t                                                                  t             t      0                    t     1
+                    t > T. Note that in this problem, we have Θ = R and we can set the distance metric, d, to be the absolute
+                    value of the diﬀerence. We will use the CS for Gaussian means, recently derived by Howard et al. (2021),
+                    that we had introduced earlier in Example 6. Furthermore, we can use the same expression for constructing
+                    the backward CS at any time n, denoted by {B(n) : t ≥ 1}, but with the order of observations reversed, as
+                                                                           t
+                    described in Section 4. The following result shows that in this parametric setting, our changepoint detection
+                    scheme achieves an order-optimal detection delay (i.e., optimal modulo poly-logarithmic factors):
+                    Corollary 17. Suppose {X : t ≥ 1} are drawn i.i.d. according to P                         = N(θ ,1) for t ≤ T, and
+                                                     t                                                    θ0          0
+                    P    = N(θ ,1) for t > T. Note that in this case, we have d                     (P ,P ) = (θ − θ )2/2. Then, if
+                     θ1          1                                                              KL θ1      θ0         1     0
+                    T =Ω(log(1/d        (P ,P ))/d        (P ,P )), then we have
+                                     KL θ       θ      KL θ      θ
+                                            1    0           1    0
+                                                                           loglog(         1      ) +log(1)!
+                                                                                     dKL(P ,P )            α
+                                                               +                          θ   θ
+                                                  E [(τ −T) |E] = O                        1   0                ,
+                                                    T                                d    (P ,P )
+                                                                                      KL θ       θ
+                                                                                             1    0
+                    where E is the (1 − α) probability event in Theorem 13.
+                    Remark 18. If the pre-change mean (θ ) is known, the above upper bound holds for the worst-case de-
+                                                                   0
+                                                                                       :                              +
+                    tection delay without the conditioning, deﬁned as J (τ) = sup                  esssupE[(τ − T) |F ]. Under the as-
+                                                                                 L            T>0                         T
+                    sumption that θ is also known, Lorden (1971) showed the following universal lower bound on this quantity:
+                                      1
+                               0       log(1/α)
+                    infτ0 JL(τ ) = dKL(P ,P ) (1+o(1)), as α → 0. Thus, BCS-Detector matches this optimal performance,
+                                           θ   θ
+                                            1   0
+                    modulo logarithmic factors, without the knowledge of the post-change parameter. This is unlike some of the
+                    existing schemes for Gaussian mean change detection, such as Pollak and Siegmund (1991), which achieve
+                    the same order optimal detection delay, but with additional assumptions (known lower bound on change,
+                    and in the limit of T → ∞).
+                    Empirical Veriﬁcation. We now verify the theoretical claims of our proposed changepoint detection
+                    scheme using observations drawn from a unit-variance normal distribution with the pre-change mean θ = 0,
+                                                                                                                                         0
+                    and post-change mean θ = ∆. In Figure 1, we consider the case of ∆ = 0.4 with the change occurring
+                                                1
+                    at T = 800. The plots show the forward and backward CSs at the time at which the change is detected
+                    in a trial, as well as the distributions of the detection delay, estimated changepoint, and estimated change
+                    magnitude over 250 trials. The plots indicate that BCS-Detector detects changes quickly and accurately.
+                        In Figure 2, we study the variation of the average detection delay of our changepoint detection scheme
+                                                                                                                                           2
+                    as the change magnitude ∆ is varied. The empirical results verify the expected proportionality to 1/∆ of
+                    the average detection delay, as claimed by our theoretical results.
+                                                                                 7
+                                                                                                 Delay vs Change Magnitude
+                                       1,100
+                                                                Gaussian-mean
+                                       1,000                    Bounded-mean
+                                                                  CDFchange
+                                                                  Two-Sample
+                                          900                 Distribution-Shift
+                                          800
+                                    y     700
+                                    Dela
+                                          600
+                                    Detection500
+                                    erage
+                                    Av    400
+                                          300
+                                          200
+                                          100
+                                                 0          1          2          3          4         5          6          7          8          9         10         11         12
+                                                                                                                          2
+                                                                                                                ∝1/∆
+                           Figure 2: In all the instantiations of the BCS-Detector within Section 5, the width of the CS at a
+                           p
+                              (loglog(t) + log(1/α)/t rate. Hence, by Theorem 13, we expect the detection delay to have an inverse
+                           quadratic dependence on the magnitude of change (∆). The ﬁgure above veriﬁes this claim empirically.
+                           5.2        Nonparametric Change of Mean Detection
+                           Wenowconsideranonparametric analog of the change of mean detection problem from the previous section.
+                           HereweassumethatX ,X ,...areindependentrandomvariablestakingvaluesinaboundedintervalX ⊂ R,
+                                                              1     2
+                           which we set to [0,1] without loss of generality. Prior to the changepoint T, we assume that the observations
+                           have a mean θ ∈ Θ = [0,1], while it changes to θ 6= θ after time T. In this case, we can use the
+                                                   0                                                            1         0
+                           empirical Bernstein (EB) conﬁdence intervals developed by Waudby-Smith and Ramdas (2023). To state
+                           the closed-form expression of the EB conﬁdence sequence, we ﬁrst need to introduce the following terms:
+                                       P                          P                             q                                  P
+                                    1+ t X                    1+ t (X −µb )2                          2log(2/α)                       t    λ X
+                                    2     i=1     i    2      4      i=1     i    t                                    1 b            i=1 i i                                                    2
+                           µb  =                   , σb   =                           , λ =                         ∧ ,θ = P                      , v = (4/log(2/α))(X −µb                     ) ,
+                             t           t+1           t                t+1               t         σb2tlog(t+1)       2     t          t    λ       t                              t      t−1
+                                                                                                      t                                 i=1 i
+                           and Ψ (x) = −log(1−x)−x, for all x ∈ [0,1). Using these terms, we can now state the EB-CS derived
+                                     E                     4                                                                                                                  P
+                                                                                                                                                                 log(2/α)+       t    v Ψ (λ )
+                                                                                                                 b              b                                           P i=1 i E i
+                           byWaudby-SmithandRamdas(2023)asfollows: C = [θ +w /2,θ −w /2],withw =                                                                               t                   .
+                                                                                                          t        t      t       t      t                 t                        λ
+                                                                                                                                                                               i=1 i
+                           Again, by an application of the general result, Theorem 13, we can get the following bound on the expected
+                           detection delay of the SCD scheme, that uses the above EB-CS.
+                           Proposition 19. Suppose X ,X ,...,X are drawn i.i.d. from a distribution on X = [0,1] with mean θ ∈
+                                                                        1      2           T                                                                                                  0
+                           Θ=[0,1], while X                  , . . . are drawn from P              with mean θ 6= θ . Then, assuming θ is known, this instance
+                                                       T+1                                     θ1                     1       0                               0
+                                                                                                              8
+                                                                                                                                                          :                                  2                                  2
+                                of BCS-Detector (Deﬁnition 12) satisﬁes the following (with ∆ = |θ −θ |, and σ = E                                                                                            [(X −θ ) ]):
+                                                                                                                                                                   0        1                1          P                   1
+                                                                                                                                                                                                          θ1
+                                                                                          E [(τ −T)+] = Oσ2 log(1/∆)+log(1/α).
+                                                                                             T                                     1                   ∆2
+                                Remark20. Whilewestatedtheaboveresult under the assumption that the pre- and post-change observa-
+                                tions are i.i.d. from P                      and P            respectively, we note that similar results can be obtained when the random
+                                                                         θ0              θ1
+                                variables are only independent, with ﬁxed (pre- and post-change) means. Further, the assumption that θ
+                                                                                                                                                                                                                                          0
+                                is known can also be waived, at the cost of conditioning on the ‘good’ event E.
+                                Remark 21. In this subsection, we have considered the task of change-of-mean detection in perhaps the
+                                simplest (but nontrivial) nonparametric setting. The same ideas developed here, can however, we extended
+                                easily to other interesting cases, such as the sub-Gaussian family using the CS derived by Howard et al.
+                                (2021), or for heavy-tailed distributions (Wang and Ramdas, 2022).
+                                Empirical Veriﬁcation. To verify our theoretical claims, we consider the case of an independent stream of
+                                observations supported on X = [0,1], with pre- and post-change parameters, θ and θ respectively. We deﬁne
+                                                                                                                                                                                 0            1
+                                distributions with speciﬁed means by taking approprirate mixtures of uniform distributions, as described
+                                in Appendix E. We plot the performance of our changepoint detection scheme for a ﬁxed problem instance
+                                with (θ ,θ ,T) = (0.4,0.6,800) in Figure 6 (Appendix E). The predicted inverse quadratic dependence of
+                                              0     1
+                                the detection delay is veriﬁed in Figure 2.
+                                5.3          Detecting Changes in CDFs
+                                Staying with real-valued observations (or more generally, observations on totally ordered spaces), we now
+                                consider a more general question of detecting whether there have been any changes in distribution generat-
+                                ing the observations. Since real valued random-variables are completely characterized by their cumulative
+                                distribution functions (CDFs), this task can be framed in terms of detecting changes in the CDFs. More
+                                formally, we assume that we are given a stream of observations, X ,X ,..., that are drawn according to a
+                                                                                                                                                               1       2
+                                distribution θ = F for t < T, and according to a distribution θ = F for t ≥ T. Thus, in this case, Θ is the
+                                                         0          0                                                                                   1          1
+                                inﬁnite-dimensional space of all feasible CDFs on R, and we endow it with the Kolmogorov-Smirnov (KS)
+                                metric, d             , deﬁned as d                 (F,G) = sup                     |F(x)−G(x)|.
+                                                 KS                            KS                           x∈R
+                                      To instantiate our SCD scheme, we will employ the following level-α conﬁdence sequence for the CDF in
+                                                                                                                                                                                                                     b
+                                terms of the KS metric, recently derived by Howard and Ramdas (2022): C = {θ ∈ Θ : d                                                                                           (θ,θ ) ≤ w /2},
+                                                             p                                                                                                                  t                         KS           t           t
+                                where wt = 1.7                   loglog(et) +0.8log(1612/α)/t. As a consequence of the general result in Theorem 13, we
+                                can obtain the following performance guarantee for this scheme.
+                                Corollary 22. Suppose, for some T < ∞, the observations X ,...,X are drawn from a known distribution
+                                                                                                                                                    1               T
+                                F , while for t ≥ 1, the observations X                                        , X         , . . . are drawn from an unknown F . Then, our SCD scheme
+                                   0                                                                   T+1          T+2                                                                    1
+                                                                                                                                        :
+                                instantiated with the CS stated above satisﬁes (with ∆ = d                                                           (F ,F )):
+                                                                                                                                                KS 1 0
+                                                                                         ET[(τ −T)+] = Ologlog(1/∆)+log(1/α).
+                                                                                                                                                        2
+                                                                                                                                                    ∆
+                                Empirical veriﬁcation. We test the performance of our proposed scheme for t-distributions with 3 degrees
+                                of freedom. In Figure 7 in Appendix E, we show the performance of our proposed scheme for a ﬁxed problem
+                                instance where the pre- and post-change CDFs satisfy ∆ = d                                                               (F ,F ) ≈ 0.4. The variation of the average
+                                                                                                                                                    KS       0      1
+                                detection delay with changing values of ∆ is plotted in Figure 2, and it displays the expected inverse quadratic
+                                dependence.
+                                5.4          Detecting Change in Homogeneity of Two Streams
+                                Suppose we have a stream of observations in a product space X = U × U, and the parameter set consists
+                                of all product distributions on U × U; that is, Θ = {P × Q : P,Q ∈ P(U)}. Prior to the changepoint, we
+                                assume that the observations X ,X ,...,X , with X = (U ,V ) ∈ U ×U, are drawn from θ = P ×P ;
+                                                                                             1      2              T                   t           t     t                                                        0          U          V
+                                while the post-change observations X                                             , X         , . . .   are assumed to be drawn from some other product
+                                                                                                          T+1         T+2
+                                                                                                                                     9
+                         distribution Q           ×Q . Given some statistical distance measure, ρ : P(U)×P(U) → R, we assume that the
+                                               U        V
+                         ρ(P ,P ) 6= ρ(Q ,Q ). An interesting special case of this problem, motivated by the two-sample testing
+                              U      V             U      V
+                         problem, is when P              =P ,and Q 6=Q .
+                                                      U        V             U        V
+                              If ρ is a probability metric, we can use it induce a distance metric, d, on the parameter space Θ as
+                         follows: d(θ ,θ ) = |ρ(P ,P ) − ρ(Q ,Q ), where θ = P × P                                                 and θ = Q ×Q . Then, to ob-
+                                           0    1              U     V             U      V                 0         U        V            1         U         V
+                         tain a changepoint detection scheme we can employ CSs for the statistical distance ρ. We instantiate
+                         this strategy with the kernel-MMD metric (deﬁned in Appendix A) associated with a kernel k, denoted
+                         by d          (·, ·).   We use the following CS derived by Manole and Ramdas (2021) for the kernel-MMD dis-
+                                MMD
+                                                                                                                        0                                                    b b
+                         tance between two distributions (assuming that sup                                   0 k(u,u ) ≤ 1): C = {(P,Q) : d                               (P ,Q ) −
+                                                                                                          u,u                             t                        MMD t t
+                                                                    b b                                      q                            2 2                        
+                         γ ≤ d             (P,Q) ≤ d              (P ,Q ) + 2κ } where κ =                        log((1 ∨ log (t)) π /6) + log(4/α) /t, and γ =
+                           t       MMD                     MMD t t                    t               t                            2                                                 t
+                           √ √                 p                                3                   
+                           4 2/ t          1+ log(3.54e(1∨log2t) )+log(2/α) . For this instantiation, Theorem 13 implies the follow-
+                         ing.
+                         Corollary 23. With X denoting the pair (U ,V ) on X ×X, suppose that X ,...,X are drawn i.i.d. from
+                                                             t                               t    t                                         1           T
+                         θ =P ×P , and X                        , X       , . . . are drawn i.i.d. from a distribution θ = Q                        ×Q . Then, with ∆ > 0
+                           0       U        V             T+1       T+2                                                                 1        U        V
+                         denoting d(θ ,θ ) = |d                   (P ,P )−d                  (Q ,Q )|, we have the following upper bound on the expected
+                                            0    1         MMD U V                   MMD U V
+                         detection delay of our BCS-detector based on the CS described above:
+                                                                     E(τ −T)+|E = Olog(1/α)+loglog(1/∆),
+                                                                                                                        2
+                                                                                                                      ∆
+                         where E denotes the ‘good’ event {d                         (P ,P ) ∈ C : t ≤ T −1} associated with the forward CS {C : t ≥
+                                                                              MMD U V                    t                                                                       t
+                         1}.
+                         Remark 24. Consider the special case mentioned earlier, where P                                        =P =Q =P forsomedistribution
+                                                                                                                             U        V         U
+                         P, and QY = Q 6= P for some other distribution. Furthermore, assume that it is known that prior to
+                         changepoint PU = PV (that is, the event E is a probability one event). Then, the above result in this case
+                                                                                                                      log(1/α)+loglog(1/∆)
+                         implies an upper bound on the expected detection delay of O                                                  2              , with ∆ = dMMD(P,Q).
+                                                                                                                                    ∆
+                         This matches existing results, such as the kernel CuSum scheme of Wei and Xie (2022).
+                         Remark25. Wefocusedonthecaseofthekernel-MMDmetricmainlyduetoitsgenerality (it is applicable
+                         to distributions over arbitrary spaces on which positive deﬁnite kernels can be deﬁned). However, the same
+                         ideas are applicable to any statistical distance measure that is convex in its arguments, by using the reverse
+                         submartingale based conﬁdence sequence construction of Manole and Ramdas (2021). This family includes
+                         all popular statistical distances, such as Wasserstein metrics, f-divergences and general integral probability
+                         metrics.
+                         Remark 26. The overall computational cost of our scheme is O(τ3), as our scheme involves constructing
+                         a new backward CS, with O(t2) cost, every round. In practice, this complexity can be reduced, either by
+                         using linear or block-MMD statistics, and/or by computing a new backward CS less frequently (instead of
+                         doing so every round).
+                         Empirical Veriﬁcation. We study the performance of our scheme on a stream of paired multivariate
+                         Gaussian observations in p = 5 dimensions. The pre-change distributions, PU and PV both have zero mean
+                         and identity covariance; while for the post change distributions we have Q                                         =P , and Q has a mean δ1,
+                                                                                                                                         U        U             Y
+                         and a diagonal covariance matrix with randomly chosen values. In Figure 8 in Appendix E, we plot the
+                         performance of our changepoint detection scheme for a ﬁxed problem instance with ∆ = d                                                         (Q ,Q )≈
+                                                                                                                                                                 MMD U V
+                         0.33, and T = 800, while the inverse quadratic dependence of the average detection delay with ∆ is veriﬁed
+                         in Figure 2.
+                         5.5        Detecting Harmful Distribution Shifts
+                         As a ﬁnal application, consider the task of detecting ‘harmful’ changes between train and test distributions
+                         of a machine learning (ML) model. Following Podkopaev and Ramdas (2021), we are interested in detecting
+                                                                                                        10
+                    only those distribution changes that lead to a suﬃciently large increase in the risk (i.e., expected loss) of the
+                    trained ML model.
+                        Formally, suppose a machine learning model, denoted by h, is trained on a dataset drawn i.i.d. from
+                    a source distribution P       taking values on some space X. For some bounded loss function, φ, we let θ
+                                               S                                                                                              0
+                    denote the expected training loss of this model; θ = E              [φ(X,h)]. Next, we assume that the model h is
+                                                                              0      PS
+                    deployed on a stream of test data, denoted by X ,X ,..., drawn from the source (or training) distribution
+                                                                            1    2
+                    P for t < T; and from some other distribution P             6=P with P 6=P . Our goal is to detect post-change
+                     S                                                       T      S         T      S
+                    distributions P    that are ‘harmful’ to the trained model; that is, they result in an increase in expected loss:
+                                     T
+                       :
+                    θ =E [φ(h,X)]>θ (see Figure 10 in Appendix E).
+                     1      P                 0
+                             T
+                        For bounded loss functions φ, this problem ﬁts into the nonparametric change of mean detection frame-
+                    work of Section 5.2. Since we are only interested in one-sided changes, we can modify the strategy of Sec-
+                    tion 5.2 to use only upper CS in the forward direction, and lower CSs in the backward direction. As
+                    in Proposition 19, for this strategy, we can show that the expected detection delay of the scheme will depend
+                    inversely on how ‘harmful’ the target distribution is (i.e., the gap θ − θ ).
+                                                                                                 1     0
+                    Empirical Veriﬁcation. To illustrate the ideas discussed above, we consider a simple binary classiﬁcation
+                    problem with linear classiﬁers and 2-dimensional features (see Appendix E for details). We plot the perfor-
+                    mance of our scheme on a speciﬁc problem with ∆ ≈ 0.16 in Figure 9 in Appendix E, and also verify the
+                    inverse quadratic dependence of average detection delay on ∆ in Figure 2.
+                    5.6     Other change detection tasks
+                    We have illustrated the generality of our BCS-Detector strategy by instantiating it for ﬁve diﬀerent sce-
+                    narios in this section. For simplicity, we focused mainly on univariate observations (with the exception
+                    of Section 5.4). However, we note that the same ideas used in the previous instantiations also carry over
+                    easily to more general observations, or under additional robustness or privacy constraints. We list some such
+                    examples here, without going into the details of analysis or practical implementations:
+                    (i) Exponential family. In this case, the observations X ,X ,... lie in X = Rp, and the pre- and post-
+                                                                                        1    2
+                    change distributions (P      and P ) are chosen from a ﬁnite-dimensional exponential family with Θ = Rm for
+                                              θ         θ
+                                               0         1
+                    some m<∞. Here, we can use the BCS-Detector with the CSs derived by Chowdhury et al. (2022).
+                    (ii) Covariance matrix. Again, we assume that X = Rp, but now we assume that at the change point T,
+                    the covariance matrix of the observations changes from θ ∈ Rp×p to some θ 6= θ . For this problem, we can
+                                                                                    0                     1     0
+                    instantiate the BCS-Detector with the CS for covariance matrices derived by Howard et al. (2021, § 4.3).
+                    (iii) Nonparametric regression. Suppose U ,U ,... denote i.i.d. uniform draws from U = [0,1]p, for
+                                                                           1    2
+                    some p ≥ 1. Let Θ denote an RKHS (with kernel k) of functions from U to R. Then, for any θ ∈ Θ, deﬁne
+                    the random variable Y ≡ Y (θ) = θ(U )+η , where {η : t ≥ 1} are an i.i.d. sequence of 1-sub-Gaussian noise.
+                                             t     t           t    t            t
+                    Clearly, the joint distribution of (U ,Y ) is parametrized by θ. Consider the SCD problem, where θ = θ
+                                                             t   t                                                                            0
+                    prior to changepoint T, and θ = θ after that, with kθ − θ k > 0. Our BCS-Detector strategy is easily
+                                                            1                       0    1 k
+                    applicable to this scenario, with an inﬁnite-dimensional index set Θ, using the CS constructed by Chowdhury
+                    and Gopalan (2017).
+                    (iv) Robust SCD. An interesting variant of the SCD problem involves detecting changepoints under ad-
+                    versarial contamination (Li and Yu, 2021). Our BCS-Detector strategy readily extends to such scenarios,
+                    by exploiting recent robust conﬁdence sequence constructions, such as those by Wang and Ramdas (2023).
+                    (v) Private SCD.Privacyisanimportantconcerninmanyapplications, especially involving personal data,
+                    and is often ensured by revealing only randomized versions of the actual data to the analyst. This adds an-
+                    other layer of complexity to the usual SCD task (Cummings et al., 2018). However, our BCS-Detector
+                    framework can easily handle this, building upon the recent advances in private CS construction (Waudby-
+                    Smith et al., 2022).
+                    6     Conclusion
+                    We proposed a general strategy (BCS-Detector) for designing sequential changepoint detection (SCD)
+                    schemes by carefully combining conﬁdence sequences (CSs), and backward CSs — a novel variant of CSs,
+                    that we introduced in this paper. Under very mild, and natural requirements on the CSs, we showed that
+                    BCS-Detector provides tight control over the ARL and the detection delay. Leveraging the recent progress
+                                                                                11
+        in constructing CSs, we instantiated our strategy for a wide range of SCD problems (both parametric, and
+        nonparametric), and empirically veriﬁed the theoretical claims via some small-scale numerical experiments.
+         Our work opens up several directions for future work:
+        (i) Constructing a new backward CS in every round can be computationally costly, and in most cases results
+        in an overall quadratic (or even cubic) complexity. An interesting direction to pursue is to investigate if
+        we can achieve the same performance by updating the backward CS fewer times. (ii) In Remark 16 we
+        deﬁned estimators of the changepoint (T), and the change magnitude (∆), which performed well empirically
+        as shown in Figure 1 and Appendix E. Establishing theoretical guarantees for them is another interesting
+        question for future work.
+                               12
+                References
+                M.Baron,V.Antonov,C.Huber,M.Nikulin,andV.Polischook. Earlydetectionofepidemicsasasequential
+                  change-point problem. Longevity, aging and degradation models in reliability, public health, medicine and
+                  biology, LAD, pages 7–9, 2004.
+                H. Chen. Sequential change-point detection based on nearest neighbors. The Annals of Statistics, 47(3):
+                  1381–1407, 2019.
+                J. Chen, A. Yi˘giter, and K.-C. Chang. A Bayesian approach to inference about a change point model with
+                  application to DNA copy number experimental data. Journal of Applied Statistics, 38(9):1899–1913, 2011.
+                Y. C. Chen, T. Banerjee, A. D. Dominguez-Garcia, and V. V. Veeravalli. Quickest line outage detection and
+                  identiﬁcation. IEEE Transactions on Power Systems, 31(1):749–758, 2015.
+                S. R. Chowdhury and A. Gopalan. On kernelized multi-armed bandits. In International Conference on
+                  Machine Learning, pages 844–853. PMLR, 2017.
+                S. R. Chowdhury, P. Saux, O.-A. Maillard, and A. Gopalan. Bregman deviations of generic exponential
+                  families. arXiv preprint arXiv:2201.07306, 2022.
+                R. Cummings, S. Krehbiel, Y. Mei, R. Tuo, and W. Zhang. Diﬀerentially private change-point detection.
+                  Advances in neural information processing systems, 31, 2018.
+                D. A. Darling and H. Robbins. Conﬁdence sequences for mean, variance, and median. Proceedings of the
+                  National Academy of Sciences, 58(1):66–68, 1967.
+                T. Flynn and S. Yoo. Change detection with the kernel cumulative sum algorithm. In 2019 IEEE 58th
+                  Conference on Decision and Control (CDC), pages 6092–6099. IEEE, 2019.
+                A. Gretton, K. M. Borgwardt, M. J. Rasch, B. Sch¨olkopf, and A. Smola. A kernel two-sample test. The
+                  Journal of Machine Learning Research, 13(1):723–773, 2012.
+                S. R. Howard and A. Ramdas. Sequential estimation of quantiles with applications to A/B testing and
+                  best-arm identiﬁcation. Bernoulli, 28(3):1704–1728, 2022.
+                S. R. Howard, A. Ramdas, J. McAuliﬀe, and J. Sekhon. Time-uniform, nonparametric, nonasymptotic
+                  conﬁdence sequences. The Annals of Statistics, 49(2):1055–1080, 2021.
+                T. L. Lai and H. Xing. Sequential change-point detection when the pre-and post-change parameters are
+                  unknown. Sequential analysis, 29(2):162–175, 2010.
+                T. S. Lau, W. P. Tay, and V. V. Veeravalli. A binning approach to quickest change detection with unknown
+                  post-change distribution. IEEE Transactions on Signal Processing, 67(3):609–621, 2018.
+                M. Li and Y. Yu. Adversarially robust change point detection. Advances in Neural Information Processing
+                  Systems, 34:22955–22967, 2021.
+                S. Li, Y. Xie, H. Dai, and L. Song. Scan B-statistic for kernel change-point detection. Sequential Analysis,
+                  38(4):503–544, 2019.
+                G. Lorden. Procedures for reacting to a change in distribution. The Annals of Mathematical Statistics, pages
+                  1897–1908, 1971.
+                O.-A. Maillard. Mathematics of statistical sequential decision making. 2019a.
+                O.-A. Maillard.  Sequential change-point detection: Laplace concentration of scan statistics and non-
+                  asymptotic delay bounds. In Algorithmic Learning Theory, pages 610–632. PMLR, 2019b.
+                T. Manole and A. Ramdas. Martingale methods for sequential estimation of convex functionals and diver-
+                  gences. arXiv preprint arXiv:2103.09267, 2021.
+                                                                  13
+        F. Orabona. A modern introduction to online learning. arXiv preprint arXiv:1912.13213, 2019.
+        E. S. Page. Continuous inspection schemes. Biometrika, 41(1/2):100–115, 1954.
+        A. Podkopaev and A. Ramdas. Tracking the risk of a deployed model and detecting harmful distribution
+         shifts. In International Conference on Learning Representations, 2021.
+        M. Pollak and D. Siegmund. Sequential detection of a change in a normal mean when the initial value is
+         unknown. The Annals of Statistics, 19(1):394–416, 1991.
+        N. Puchkin and V. Shcherbakova. A contrastive approach to online change point detection. arXiv preprint
+         arXiv:2206.10143, 2022.
+        J. Sharpnack, A. Singh, and A. Rinaldo. Changepoint detection over graphs with the spectral scan statistic.
+         In Artiﬁcial Intelligence and Statistics, pages 545–553. PMLR, 2013.
+        J. J. Shen and N. R. Zhang. Change-point model on nonhomogeneous Poisson processes with application
+         in copy number proﬁling by next-generation DNA sequencing. The Annals of Applied Statistics, 6(2):
+         476–496, 2012.
+        W. A. Shewhart. The application of statistics as an aid in maintaining quality of a manufactured product.
+         Journal of the American Statistical Association, 20(152):546–548, 1925.
+        W. A. Shewhart. Economic quality control of manufactured product. Bell System Technical Journal, 9(2):
+         364–389, 1930.
+        J. Shin, A. Ramdas, and A. Rinaldo. E-detectors: a nonparametric framework for online changepoint
+         detection. arXiv preprint arXiv:2203.03532, 2022.
+        A. N. Shiryaev. On optimum methods in quickest detection problems. Theory of Probability & Its Applica-
+         tions, 8(1):22–46, 1963.
+        A. Tartakovsky, I. Nikiforov, and M. Basseville. Sequential analysis: Hypothesis testing and changepoint
+         detection. CRC Press, 2014.
+        V. V. Veeravalli and T. Banerjee. Quickest change detection. In Academic press library in signal processing,
+         volume 3, pages 209–255. Elsevier, 2014.
+        H.WangandA.Ramdas. Catoni-styleconﬁdencesequencesforheavy-tailedmeanestimation. arXiv preprint
+         arXiv:2202.01250, 2022.
+        H. Wang and A. Ramdas. Huber-robust conﬁdence sequences. arXiv preprint arXiv:2301.09573, 2023.
+        I. Waudby-Smith and A. Ramdas. Estimating means of bounded random variables by betting. Journal of
+         the Royal Statistical Society B, 2023.
+        I. Waudby-Smith, Z. S. Wu, and A. Ramdas. Locally private nonparametric conﬁdence intervals and se-
+         quences. arXiv preprint arXiv:2202.08728, 2022.
+        S. Wei and Y. Xie. Online kernel CUSUM for change-point detection. arXiv preprint arXiv:2211.15070,
+         2022.
+        L. Xie, S. Zou, Y. Xie, and V. V. Veeravalli. Sequential (quickest) change detection: Classical results and
+         new directions. IEEE Journal on Selected Areas in Information Theory, 2(2):494–514, 2021.
+        X. Yu, M. Baron, and P. K. Choudhary. Change-point detection in binomial thinning processes, with
+         applications in epidemiology. Sequential Analysis, 32(3):350–367, 2013.
+        W.Zaremba, A. Gretton, and M. Blaschko. B-test: A non-parametric, low variance kernel two-sample test.
+         Advances in Neural Information Processing Systems, 26, 2013.
+                               14
+                    A Additional Background
+                    CSfor non-i.i.d. observations. As mentioned in Remark 4, we can also deﬁne CSs for non-i.i.d. observa-
+                    tions, as follows.
+                    Deﬁnition 27. Suppose X ,X ,..., denote an independent stream of observations on X, with X ∼ P
+                                                    1    2                                                                             t      ϑ
+                                                                                                                                               t
+                    for ϑt ∈ Θ. Assuming Θ is a vector space, we say that {Ct ⊂ Θ : t ≥ 1} is a level (1−α) CS for the running
+                                                                     P        t         
+                    average of parameters if P {∀t ≥ 1 : (1/t)          i = 1 ϑ ∈ C } ≥ 1−α.
+                                                                                t     t
+                        WeshowasimpleillustrationoftheCSintroducedinExample6withtimevaryingparametersinFigure3.
+                    Figure 3: An example of the CS introduced in Example 6 for the running (conditional) mean of independent
+                    Gaussian processes with a time-varying mean function, variance ﬁxed at 1.
+                    Implementing backward CSs. If we know how to construct forward CSs, we can use that directly to
+                    construct backward CSs in the following steps:
+                        • At the end of round n, we have observed X ,...,X . Introduce the time-reversed version of the ob-
+                                                                              1        n
+                                                                   :
+                          servations Y = X             for s ∈ [n] = {1,...,n}.
+                                        s      n+1−s
+                                                                                                          ¯(n)                           ¯(n)
+                        • Construct a new level-(1 − α) CS using {Y : s ∈ [n]}, denoted by {B                  : s ∈ [n]}. Note that B         is
+                                                                            s                              s                              s
+                          σ(Y ,...,Y ) = σ(X ,X            , . . . , X    ) measurable for all s ∈ [n].
+                              1        s          n   n−1          n−s+1
+                                                                                               (n)                       (n)     ¯(n)
+                        • Finally, we again reverse the index of the CS, to obtain {Bt             : t ∈ [n]}, where Bt      =Bn+1−s. Note
+                          that by virtue of being a CS, we have P  ∀t ∈ [n] : θ ∈ B(n) ≥ 1−α. The superscript (n) serves as
+                                                                        ∞               0      t
+                          a reminder that there is only one forward CS, but there is a diﬀerent backward CS constructed afresh
+                          at each time n.
+                    Illustration of BCS-Detector strategy. In Figure 4, we illustrate the intuition underlying our general
+                    BCS-Detector strategy, introduced in Section 4, using the task of detecting change in means of bounded
+                    observations (Section 5.2). The three plots in Figure 4 highlight the following aspects of our scheme:
+                        • Prior to the changepoint (or if there is no changepoint), both the forward and backward CSs concentrate
+                          around the same region in parameter space Θ (in this case, [0,1]). In particular, note that in this case,
+                          for all values of t, one of the conﬁdence intervals (CI) is entirely contained in the corresponding CI of
+                          the other CS.
+                        • As observations from the post change distribution start arriving, we expect the forward and backward
+                          CSs to start drifting away from each other. This is illustrated in the second plot of Figure 4.
+                                                                                 15
+                    Figure 4: The plots illustrate the general ideas underlying our BCS-Detector strategy. Prior to the change-
+                    point (ﬁrst plot), both the forward and backward CSs have signiﬁcant overlap. After getting some post-
+                    change observations (middle plot), the backward CS starts to drift away from the forward CS, although the
+                    deviation is not enough for the two CSs to become inconsistent. Finally, the last plot shows the scenario,
+                    where a suﬃciently large number of post-change observations have arrived, which causes the forward and
+                    backward CSs to disagree. When this occurs, our scheme stops and rejects the null.
+                        • Finally, after suﬃciently many post-change observations, the backward CS starts concentrating around
+                          the post-change parameter θ , as a result of which some of the backward CIs become disjoint with
+                                                            1
+                          the forward CIs. Our BCS-Detector scheme uses this occurrence as a signal to stop, and declare a
+                          changepoint.
+                    The kernel-MMD metric. In Section 5.4, we constructed a scheme for detecting changes the pairwise
+                    kernel-MMD distance between the distributions generating a stream of paired observations. Here, we recall
+                    the its deﬁnition.
+                        Weassume that k : X ×X → R denotes a uniformly-bounded positive-deﬁnite kernel, and let Hk denote
+                    the reproducing kernel Hilbert space (RKHS) associated with k.
+                    Deﬁnition 28. Given a positive deﬁnite kernel k : X × X → R, the kernel-MMD distance between two-
+                    distributions P and Q on X is deﬁned as
+                                                     d      (P,Q) =        sup       E [g(X)]−E [g(Y)].
+                                                       MMD                             P             Q
+                                                                       g∈H :kgk ≤1
+                                                                           k    k
+                        The kernel-MMD distance deﬁned above is an instance of a class of statistical distances called integral
+                    probability metrics (IPMs). For a class of kernels, called characteristic kernels, it is known that dMMD is a
+                    distance metric on the space of probability distributions.
+                    B Proof of Proposition 8
+                    Proof of the bound on probability of false alarm. Recall that the stopping time is deﬁned as the ﬁrst
+                                                                   τ
+                    time, τ, at which we have the condition ∩          Ct = ∅. Now, consider the ‘good’ event of the CS under the null:
+                                                                   t=1
+                    E = ∩∞ {θ ∈ C }, which satisﬁes P (E) ≥ 1−α by deﬁnition. Hence, under this event {θ } ⊂ ∩∞ 6= ∅,
+                           t=1   0     t                      ∞                                                                0       t=1
+                    which in turn implies that P (τ = ∞) ≥ 1−α, as required.
+                                                     ∞
+                        Proof of the bound on detection delay. Let w(t) ≡ w(t,Θ,α) denote the width of the conﬁdence
+                    Ct after t observations. By assumption, T is large enough to ensure that under the ‘good’ event E =
+                     ∞ 1            	
+                    ∩        ϑ ∈C , we have that θ 6∈ C at the changepoint. Note that in the deﬁnition of E, we have
+                     t=1    t t     t                      1      T
+                    ϑ =θ 1        +θ 1       .
+                     t     0 t≤T      1 t>T                                                                                        ¯
+                        Under the event E, we know that θ ∈ C . For any t > T, introduce the terms λ = T/t and λ = 1−λ .
+                                                                0     T                                             t               t          t
+                                                                                          ¯
+                    Then, by deﬁnition of conﬁdence sequences, we have λ θ +λ θ ∈ C for all t > T under the event E. The
+                                                                                   t 0     t 1      t
+                    width of the set Ct at t > T is no larger than w(t) ≡ w(t,Θ,α). Hence, a suﬃcient condition for stopping
+                    prior to t > T is if the sum of the widths of C and C , that is w(t)+w(T), is smaller than d                          ¯   
+                                                                                                                              θ ,λ θ +λ θ .
+                                                                       t       T                                               0   t 0     t 1
+                        Informal calculations for Remark 9. As mentioned in Remark 9, in many cases, the stopping time
+                                                         √         √
+                    τ satisﬁes: τ ≈ min{t ≥ T : 1/ t + 1/ T ≤ ((t − T)/t)∆}, where ∆ = d(θ ,θ ). We now consider the
+                                                                                                               0   1
+                    behavior of the delay, τ − T, in two diﬀerent regimes of the changepoint T.
+                                                                                 16
+                                                                            2                                      2
+                   First we consider the case where T is ‘small’; that is T ≈ 1/∆ . For concreteness, assume that T = 9/∆ .
+                Then, it is easy to check that with τ ≤ 4T, since for t = 4τ
+                                                 1     1    ∆ ∆ 3∆ t−T
+                                                √t + √T = 4 + 8 ≤ 4 =          t  ∆.
+                                                                                                          
+                                                                                                        √
+                Next, we consider the case where ∆ is ﬁxed, but T → ∞. In this case, we have τ − T = O    T . To see
+                this, consider t = T + u, with u = o(T). Then, we have
+                                               1     1      2          t −T       u
+                                               √t + √ ≈ √ , and           t  ∆≈T∆.
+                                                      T      T
+                                                                                                  √
+                Thus, this implies that the appropriate order of growth of the detection delay is u = O( T/∆), as T → ∞
+                with ∆ ﬁxed.
+                Figure 5: The plots show the variation of the delay of SCD scheme introduced in Section 3, under the
+                                                                     2
+                conditions of Remark 9. When the changepoint T ≈ 1/∆ , the delay has a linear dependence on T, while in
+                the regime where T → ∞ with ∆ ﬁxed, the delay behaves ≈ √T.
+                C Proof of Theorem 13
+                Proof of the ARL control. To prove this result, note that for us to stop under the null at some time τ,
+                either the forward or the backward CS (or both) must be miscovering and failing to contain θ . In other
+                                                                                                          0
+                words,
+                                 {τ = N,T = ∞} =⇒ {C miscovers}∨{B(N) miscovers}
+                                                         N                1
+                                                                            N
+                                                           N               [ (n) 1
+                                 {τ ≤ N,T = ∞} =⇒ {(Ct)        miscovers}∨    {(B   )    miscovers}
+                                                           t=1                    s  s=n
+                                                                           n=1
+                                                                 17
+                    Since each is a (1 − α)-CS, we have by a simple union bound that for any ﬁxed time N,
+                                                              Pr∞(τ ≤N)≤min{(N +1)α,1}.
+                    Rephrasing, we have P∞(τ > N) ≥ (1−α(N +1))∨0, and thus
+                                                                 ∞                     1/α−1
+                                                       E τ = XPr (τ >N)≥ X (1−α−αN)
+                                                         ∞              ∞
+                                                                N=1                     N=1
+                                                                                         1/α−1
+                                                             =(1/α−1)(1−α)−α X N
+                                                                                          N=1
+                                                             =1/α−2+α−α(1/α−1)(1/α)
+                                                                                           2
+                                                             = 1 −3/2+α.
+                                                                2α
+                        AswealludedtoearlierinRemark1,wedidnotneedtoknowθ orθ orthe‘direction’ofthechangepoint.
+                                                                                               0     1
+                    The aforementioned argument goes through for any indexed family of distributions.
+                    Proof of the detection delay bound. We next obtain the upper bound on the average detection delay
+                                                   :                                                                       +
+                    conditioned on the event E = {θ ∈ C : 1 ≤ t ≤ T}, stated in Theorem 13. Since, (τ −T)                    =max{0,τ−T}
+                                                         0     t
+                    is a non-negative random variable, we have
+                                                                    ∞
+                                                           +        X                 +       
+                                              ET[(τ −T) |E] =           PT (τ −T) ≥t|E
+                                                                    t=0
+                                                                    0
+                                                                    t −1
+                                                                 ≤X1+XPT (τ−T)+≥t0|E
+                                                                    t=0         0
+                                                                             t≥t
+                                                                    0
+                                                                    t −1
+                                                                 =X1+XPT(τ>T+t0|E)
+                                                                    t=0         0
+                                                                         Xt≥t
+                                                                 =t0+        P (τ >T +t0|E),         for any t0 ≥ 1.                         (1)
+                                                                               T
+                                                                            0
+                                                                         t≥t
+                    Recall that u ≡ u (θ ,θ ,T) was introduced in the statement of Theorem 13, and it represents an upper
+                                   0      0  0   1
+                    bound on the smallest time after T at which the backward CS must stop intersecting with the forward CS.
+                    For some integer i ≥ 1, consider the event {τ > T +iu0}, and note that it satisﬁes the following inclusion:
+                                                                             i     n        (T+ju0)o
+                                                   {τ > T +iu0}∩E ⊂ ∩                θ0 ∈ B              ∩E
+                                                                               j=1           T
+                                                                             i     n        (T+ju0)    o
+                                                                         ⊂ ∩         θ0 ∈ B                 ∩E.                              (2)
+                                                                               j=1           T+(j−1)u0
+                    In the display above, (2) uses the fact that B(n) ⊂ B(n) for any s0 > s. Next, we make the following two
+                                                                         s          0
+                                                                                   s
+                    observations:
+                     (I) For j 6= j0, the events {θ ∈ B(T+ju0)          } and {θ ∈ B(T+j0u0)        } are independent
+                                                       0     T+(j−1)u0            0     T+(j0−1)u0
+                    (II) For all 1 ≤ j ≤ i, the event {θ ∈ B(T+ju0)           } is independent of E.
+                                                             0      T+(j−1)u
+                                                                             0
+                    The statement (I) follows from the observation that the event {θ                                  ∈     B(T+ju0)     }   lies
+                                                                                                                 0            T+(j−1)u0
+                    in  the sigma-algebra σ({X : T +(j −1)u ≤ k < T +ju }), while {θ                              ∈ B(T+j0u0) } lies in
+                                                       k                 0                 0                 0           T+(j0−1)u0
+                    σ({X :T +(j0−1)u ≤k<T +j0u }); which are independent. Similarly, the second statement (II) uses
+                          k                  0                  0
+                    the fact that E lies in σ ({X : 1 ≤ k < T}), which is independent of σ({X : T +(j −1)u ≤ k < T +ju })
+                                                   k                                                     k                 0                 0
+                    for all 1 ≤ j ≤ i.
+                                                                                 18
+                       Based on the above observations, we conclude that
+                                           P (τ >T +iu |E) = P ({τ > T +iu }∩E)/P (E)
+                                            T              0         T             0          T        
+                                                                ≤P        ∩i   {θ ∈B(T+ju0) } ∩E /P (E)
+                                                                     T     j=1    0     T+(j−1)u0             T
+                                                                        i            (T+ju0)     
+                                                                =P ∩ {θ ∈B                       }                                      (3)
+                                                                     T    j=1   0     T+(j−1)u0
+                                                                ≤αi,     for all i ≥ 1.                                                 (4)
+                   In the above display, (3) follows from (II), and (4) uses (I). Now, we return to (1), and set t0 to i ×u for
+                                                                                                                                0     0
+                   some integer i0 to be speciﬁed later. We then note that
+                                                                              ∞ (i+1)u0−1
+                                                E [(τ −T)+|E] ≤ i u + X             X P (τ>T+t|E)
+                                                  T                   0 0                    T
+                                                                             i=i   t=iu
+                                                                                0       0
+                                                                              ∞
+                                                                  ≤i u +Xu P (τ >T +iu |E)
+                                                                      0 0          0 T               0
+                                                                             i=i
+                                                                                0                        
+                                                                                 αi0                 αi0
+                                                                  ≤i u +u              =u i +               .                           (5)
+                                                                      0 0     01−α         0   0    1−α
+                   The inequality in (5) uses the fact that PT(τ > T + iu0) ≤ αi derived in (4). The ﬁnal result, as stated
+                   in Theorem 13, then follows by selecting i0 = dlog(1/1 − α)/log(1/α)e. Note that when α < 0.5, we have
+                   i0 = 1.
+                   D Deferred proofs from Section 5
+                   D.1 Proofs of Corollary 17, Corollary 22, Corollary 23
+                   All these three results can be obtained as a direct consequence of the following proposition.
+                   Proposition 29. For some ∆ > 0, deﬁne the time t0 as
+                                                    t0 = min(t ≥ 1 : crloglogt+log(1/α) ≤ ∆),
+                                                                                      t              2
+                   where c > 0 is some constant. Then, we have
+                                                                   2 loglog(c/∆)+log(1/α)
+                                                          t0 = O c                  2              .
+                                                                                  ∆
+                   Proof. Without loss of generality, we assume that c = 1; or equivalently, we can replace ∆ with ∆/c. Now,
+                   note that we can upper bound t0 ≤ t1 +t2, where
+                                                  p                                                    p
+                               t1 = min{t ≥ 1 :     loglog(t)/t ≤ ∆/4},      and t2 =min{t≥1:            log(1/α)/t ≤ ∆/4}.
+                                                                                      2
+                   By a simple calculation, we can obtain t2 = O log(1/α)/∆ . Hence to complete the proof, we will show
+                                                   2                                                                    3
+                   that t1 = O loglog(1/∆)/∆ . We proceed in two steps: (i) ﬁrst we show that t1 ≤ 32/∆ , and (ii) using
+                                                                                        2
+                   this, we reﬁne the result to show that t1 = O loglog(1/∆)/∆ .
+                       Let t3 = 32/∆3 for ∆ ≤ 1. Then, observe that
+                                   s                 
+                                                        2
+                                                                      3               3                     2
+                                  4 loglog(t3) = 16 × ∆ loglog(32/∆ ) = 1loglog(32/∆ ) ≤ 0.63 < 1.
+                                                               2
+                                     ∆         t3            ∆               32             2       1/∆
+                   The last inequality, along with the deﬁnition of t implies that t ≤ t .
+                                                                          1                1    3
+                                                                              19
+                                                                            3
+                        Hence, loglog(t1) ≤ loglog(t3) = loglog(32/∆ ) ≤ 2.35+loglog(1/∆). Thus, we have
+                                                              loglog(t )      2.35+loglog(1/∆)
+                                                                        1  ≤                        ,
+                                                                   t1                   t1
+                                                16                                                  2
+                    which implies that t1 ≤ ∆2 (2.35 +loglog(1/∆)) = O loglog(1/∆)/∆ . Combining this bound on t1, with
+                    the previously obtained upper bound on t ; and using the fact that t ≤ t +t , we get the required result.
+                                                                   2                             0    1    2
+                    D.2 Proof of Proposition 19
+                    To prove the variance adaptive bound on the expected detection delay, we ﬁrst show the following result for
+                    the width of the CS derived by Waudby-Smith and Ramdas (2023).
+                    Proposition 30. We can modify the backward CS used instantiating the BCS-Detector in Section 5.2, to
+                    obtian a level (1 − 2α)-backward CS (for every n ≥ T), denoted by {B(n) : 1 ≤ t ≤ n}, such that the width
+                                                                                                     t
+                    of B(n) satisﬁes
+                         t
+                                                                                            
+                                                                                           
+                                                               σ     p              p
+                                                                 1
+                                           w(t,θ ,α) = O       √       log(1/α)+       logt     ,   for all T ≤ t ≤ n.
+                                                  1              t
+                    Remark 31. The main beneﬁt of this result is that it characterizes the width of the backward CS (for
+                    n ≥ T) explicitly in terms of the standard deviation (σ ) of the post-change distribution P , unlike the
+                                                                                     1                                          θ
+                                                                                                                                 1
+                    original CS described in Section 5.2, whose width depends on empirical estimates of σ . As a consequence of
+                                                                                                                      1
+                    this result, we obtain Proposition 19 by ﬁrst appealing to Corollary 14, and then repeating the calculations
+                    used to obtain (29).
+                    Proof. Since we are only interested in characterizing the order with which the width of the CS decays (and
+                    not the exact constants), we will not track the constants in our argument for this proof. In particular, we
+                    will use A . B to indicate that by A/B = O(1), and A ≈ B to indicate that A . B and B . A.
+                        Weproceed in the following steps:
+                        • First, we show that we can construct a level-(1−α) conﬁdence sequence for the empirical variance based
+                                                                                                                  P
+                          on samples from the post-change distribution. In particular, let σb2 = (1 +               n (X −µb )2)/(n+1),
+                                                                                                      n      4      t=1    t     t
+                          with X ,X ,... ∼ P         i.i.d.. Then, we have the following:
+                                  1    2          θ1
+                                                                                (                                              !)
+                                                                       :             2     2         rloglogn+log(1/α)
+                                      P(E ) ≥ 1−α,        where E =∩              |σb  −σ |=O                                      .        (6)
+                                          1                          1      n≥1      n     1                      n
+                          Thus, using this event, for any n ≥ T, we can modify the backward CS to get a level-(1−2α) Backward
+                          CS, in which σb is replaced by σ1 (plus a small approximation error term) for T ≤ t ≤ n. In the next
+                          two steps, we characterize the width of these level-(1 − 2α) CSs.
+                        • Next, we show that under the event E , we have
+                                                                      1
+                                                                        n
+                                                                       Xvψ (λ)≈log(σ2n).                                                    (7)
+                                                                            i  E i            1
+                                                                       i=1
+                        • Under the same event, we then show that
+                                                                            n        s
+                                                                       1 X             2log(2/α)
+                                                                      √        λi ≈         σ2     .                                        (8)
+                                                                        n t=1                1
+                    Combining these results, we get that the width of the CS is of the order
+                                                                   P
+                                                                      n                                              
+                                                   1 log(2/α)+            v ψ (t)      σ     p              p
+                                                                      t=1 t E            1
+                                          wn ≈ √                  P                ≈ √         log(2/α)+       log(n) ,
+                                                               1    n
+                                                    n         √n    t=1λt                n
+                                                                                20
+                    as required. Thus, it remains to prove (6), (7), and (8).
+                        Proof of (6). To prove this, we ﬁrst introduce the usual unbiased estimate of the variance: σe2 =
+                                                                                                                                           n
+                            Pn P (X−X)2
+                       1                    i   j  . Since the observations X ,X ,... ∼ P           are bounded, and lie in [0,1], it is easy
+                                                                                 1    2          θ
+                    n(n−1)    i=1    j6=i     2                                                   1
+                    to verify that |σb2 − σe2| = O(1/n), and hence σb2 ≈ σe2.
+                                      n     n                             n     n
+                        Since, σe2 is an instance of a U-statistic, and hence the process {σe2 : n ≥ 1} is a reverse-martingale,
+                                 n
+                    adapted to the exchangeable ﬁltration.           Using this fact, along with the boundedness (and hence sub-
+                    Gaussianity) of the random variable σe2 for all n ≥ 1, we can use Manole and Ramdas (2021, Corol-
+                    lary 8), to conclude the time-uniform concentration result: P ∀n ≥ 1 : |σe2 − σ2| = O(rn) ≥ 1 − α, where
+                          p                                                                                    1
+                    rn =    (loglogn+log(1/α))/n.
+                        Proof of (7). To show this, we recall the fact that ψ (λ)/(λ2/8) → 1 as λ → 0. Hence, we have the
+                                                                                       E
+                    following:
+                                   n                            n                                     n               2
+                                  X                     4     X              2                4      X             2λi
+                                      v ψ (λ ) =                  (X −µb ) ψ (λ ) ≈                     (X −µb )
+                                       i  E i       log(2/α)         i     i    E i       log(2/α)          i    i   8
+                                  i=1                          i=1                                   i=1
+                                                                n                                       n
+                                                        1     X              2log(2/α)           1     X              2log(2/α)
+                                                 .                (X −µb )               .                 (X −µb )
+                                                    log(2/α)         i     i    iσb2         log(2/α)         i     i    iσb2
+                                                               i=1                 i−1                 i=1                 i−1
+                                                     n                   2
+                                                    X (X −µb )
+                                                 ≈      P i i−1
+                                                           i   (X −µb       )2
+                                                    i=1  j=1      j     j−1!
+                                                           n
+                                                          X                2
+                                                 ≤log        (X −µb       )                                                                 (9)
+                                                                 i    i−1
+                                                         i=1              
+                                                 ≈log nσe2 ≈log nσ2 .
+                                                            n             1
+                    In the above display, (9) follows by an application of the following lemma with f(x) = 1/x.
+                    Lemma 32 (Orabona (2019), Lemma 4.13). Let a ≥ 0 for all i, and f : [0,∞) → [0,∞) be an increasing
+                                                                               i
+                    function. Then                                                      P
+                                                            T              t         Z    T  a
+                                                           X              X               t=0 t
+                                                               a f(a +        a ) ≤             f(x)dx.
+                                                                 t   0         i
+                                                                                      a
+                                                           t=1            i=1           0
+                        This concludes the proof.                              q                         
+                        Proof of (8). We proceed as follows with ri =              loglogi+log(1/α) /i
+                                                 n              n s                  r                n
+                                            1 X            1 X 2log(2/α)                2log(2/α) X             1
+                                           √        λ = √                         &                      p
+                                             n       i      n            σb2 i               n              iσ2(1+r )
+                                                i=1            i=1         i                         i=1      1       i
+                                                          s                n            n     !
+                                                             2log(2/α)     X1 Xri
+                                                       &        σ2n             √ −        √
+                                                                  1        i=1    i   i=1    i
+                                                       ≈s2log(2/α) ×√n=s2log(2/α).
+                                                                σ2n                       σ2
+                                                                  1                         1
+                    This completes the proof of Proposition 30.
+                    E Details of Experiments
+                    Details of the bounded source with a speciﬁed mean (Section 5.2). For testing the performance
+                    of the SCD scheme described in Section 5.2, we constructed a probability distribution, P , over X = [0,1]
+                                                                                                                           θ
+                    with a speciﬁed mean θ ∈ [0,1] by appropriately mixing two uniform distributions. In particular, we deﬁne
+                    P =(1−θ)U +θU , where U ∼Uniform([0,θ]) and U ∼Uniform([θ,1]).
+                     θ              1      2           1                             2
+                    Details of the CDF change detection experiment. (Section 5.3). For this experiment, we used
+                    univariate t-distributions with 3 degrees-of-freedom. For the pre-change distribution, we set the mean to 0,
+                                                                                21
+                                                                                                        T =800                                                                Detection Delay                                                                   Changepoint                                                 Change Magnitude
+                                                                                 1                                                                                                                                                                                                                                   8
+                                                                                                                                                           0.01                                                                         0.01
+                                                                            0.8
+                                                                                                                                                                                                                                                                                                                     6
+                                                                            0.6                                                                                                                                                                0
+                                                                                                                                                           0.01                                                                                                                                                      4
+                                                                            0.4
+                                                                                                                                                                                                                                               0                                                                     2
+                                                                            0.2
+                                                                                 0                                                                                0                                                                            0                                                                     0
+                                                                                             0                                                                                 0                                                                                                                                                         2             3              4             5
+                                                                                                                                                                                                                                                                                                                                         .             .             .             .
+                                                                                                        500         000         500         000                                          200        400        600        800                                                000                    500                                 0             0             0             0
+                                                                                                                    ,           ,           ,                                                                                                                               ,                      ,
+                                                                                                                   1           1           2                                                                                                                               1                      1
+                                                      Figure 6: The ﬁgures show the performance of our changepoint detection scheme with independent bounded
+                                                      observations whose mean changes from p = 0.4 to p = 0.6 at the time T = 800. The ﬁrst plot shows the
+                                                                                                                                                                                          0                                     1
+                                                      forward and backward CSs at time of detection (τ = 863) in one of the trials, with the shaded gray region
+                                                      being the points at which the two CSs disagree. The next three plots show the empirical distribution of
+                                                      the detection delay, the estimated changepoint location, and the estimated changepoint magnitude over 250
+                                                      trials of the experiment with the same value of ∆ = 0.2 and α = 0.01.
+                                                                          Changepoint at T = 400                                                                                 Detection Delay                                                                    Changepoint                                                     Change Magnitude
+                                                                          1
+                                                                                                                                                            0.08                                                                           0.03                                                                          10
+                                                                                                                                                            0.06                                                                           0.02
+                                                                     0.5                                                                                    0.04                                                                                                                                                            5
+                                                                                                                                                            0.02                                                                           0.01
+                                                                          0                                                                                          0                                                                             0                                                                        0
+                                                                                       −10                    0               10                                               0 20 40 60 80                                                                            400                450                                           0.3               0.4                0.5
+                                                      Figure 7: The ﬁgures show the performance of our changepoint detection scheme with observations drawn
+                                                      from univariate t-distributions (3 degrees of freedom) whose mean changes from 0 to 1.0 at the time T = 800.
+                                                      The ﬁrst plot shows the forward and backward CSs around the empirical CDFs, at time of detection in one
+                                                      of the trials. The next three plots show the empirical distribution of the detection delay, the estimated
+                                                      changepoint location, and the estimated changepoint magnitude over 250 trials of the experiment.
+                                                      and the scale parameter to 1. For the post-change distribution, we set the mean to some value δ > 0, and
+                                                      the scale parameter to 2.
+                                                      Details of the Binary classiﬁcation source (Section 5.5) We consider feature-label pairs (Z ,L ) ∈
+                                                                                                                                                                                                                                                                                                                                                                                       i         i
+                                                      R2×{0,1}, with a source distribution P = P ×P                                                                                                                             . WeassumethatthelabelLisdrawnuniformlyonthe
+                                                                                                                                                                                   S                 L               Z|L
+                                                      set {0,1}, and the features are drawn from a bivariate normal conditioned on the labels: P                                                                                                                                                                                                                      =N(µ ,I ),
+                                                                                                                                                                                                                                                                                                                                                         Z|L                               L 2
+                                                      with µL = (2L−1)[1,0]T ∈ R2. For this problem we will consider linear classiﬁers parameterized by a weight
+                                                      vector w ∈ R2, of the form h (z) = 1                                                                                                            . For the 0-1 loss function, φ(z,l,h ) = 1                                                                                                                    , it is easy to
+                                                                                                                                                   w                            hw,zi≥0                                                                                                                                 w                     h (z)6=l
+                                                                                                                                                                                                                                                                                                                                                 w
+                                                                                                                                                                                                                                                                                ∗                    ∗                            ∗                           T
+                                                      check that the Bayes-optimal classiﬁer for the source distribution is h ≡ hw , with w ∝ [1,0] . For the post
+                                                      change distributions, we rotate the mean of the features by an angle γ; that is, µL = (2L−1)[cosγ,sinγ]T.
+                                                                                                                                                                                                                              22
+                                                                  Changepoint at T=800                                                                      Detection Delay                                                        Estimated Changepoint                                                           Estimated Change Magnitude
+                                                                 1                                                                                                                                                                                                                                                       10
+                                                                                                                                                 0                                                                         0.04
+                                                             0.5                                                                                                                                                                                                                                                            8
+                                                                 0                                                                                                                                                                                                                                                          6
+                                                                                                                                                 0                                                                         0.02                                                                                             4
+                                                        −0.5                                                                                                                                                                                                                                                                2
+                                                             −1                                                                                  0                                                                                 0                                                                                        0
+                                                                              0                                                                              0                                                                                                                                                                          0                       2                       4
+                                                                                                                                                                                                                                                                                                                                                                .                      .
+                                                                                         500         000         500         000                                        500         000          500         000                               700                750                800                                                                       0                      0
+                                                                                                   1,           1,          2,                                                     1,          1,          2,
+                                                      Figure 8: The ﬁgures show the performance of our changepoint detection scheme with independent paired
+                                                      multivariate-Gaussian observations whose kernel-MMD distance changes from a pre-change value of 0 to
+                                                      ∆≈0.33 at the time T = 800.
+                                                                                                    T=800                                                               Detection Delay                                                  Estimated Changepoint                                                                     Change Magnitude
+                                                                          1                                                                             0.1
+                                                                      0.8                                                                                                                                                                                                                                                10
+                                                                                                                                                     0.08                                                                         0.02
+                                                                      0.6                                                                            0.06
+                                                                      0.4                                                                            0.04                                                                         0.01                                                                                      5
+                                                                      0.2                                                                            0.02
+                                                                          0                                                                                 0                                                                            0                                                                                  0
+                                                                                       0                                                                                0                                                                                                                                                              1               2               3               4
+                                                                                                                                                                                     20            40           60                                                                                                                     .               .              .               .
+                                                                                                  500         000         500         000                                                                                                                           700                800                                            0               0              0               0
+                                                                                                             ,            ,           ,
+                                                                                                            1            1           2
+                                                      Figure 9: The ﬁgures show the performance of our scheme for detecting harmful changes in test distribution
+                                                      for two-dimensional feature vectors, as described in Section 5.5. In these plots, there is a change with
+                                                      magnitude ∆ ≈ 0.16 at the time T = 800.
+                                                                                                       Source Distribution                                                                                                Benign Shift                                                                                    Harmful Shift
+                                                                                    5                                                               L=0                                                                                                                                                                                                                  ∗∗
+                                                                                                                                                                                                                                                                                                                                                                     h
+                                                                                                                                                    L=1
+                                                                                                                                                        ∗
+                                                                                                                                                    h
+                                                                                    0
+                                                                               −5
+                                                                                           −4                 −2                   0                  2                  4
+                                                      Figure 10: The ﬁrst plot shows the samples corresponding to the two labels (L = 0 and L = 1), as well as the
+                                                                                                                                      ∗
+                                                      optimal linear classiﬁer h for this problem (the dashed black line). In the second plot, the distributions are
+                                                      moreseparated, and the same classiﬁer h∗ is also Bayes-optimal for this problem, with a smaller risk. Finally,
+                                                      in the third ﬁgure, we have an example of a harmful distribution shift. In this case, the feature distributions
+                                                                                                                                                                                                                                                                                                       ∗
+                                                      for the two labels are rotated anti-clockwise by 45 degrees, which makes h a suboptimal classiﬁer for this
+                                                      problem. The new Bayes-optimal classiﬁer is shown by the red dotted line.
+                                                                                                                                                                                                                              23
+                F Repeated sequential test interpretation
+                Our scheme as repeated sequential tests. Due to the equivalence between sequential hypothesis tests
+                and conﬁdence sequences, we can also motivate our general strategy (Deﬁnition 12) in the language of
+                sequential hypothesis testing. In particular, our approach can be informally described as follows, due to the
+                time-uniform coverage guarantees of CSs: in each round t ≥ 2, we run a new sequential hypothesis test for
+                every 1 ≤ s ≤ t−1 to decide whether (X ,...,X ) and (X    , . . . , X ) are drawn from the same distribution,
+                                                      1      s         s+1      t
+                or not. As soon as we ﬁnd a t for which a partition of the observations are suﬃciently distinct, we can stop
+                and declare the existence of a changepoint. As we saw in Section 4, this idea can be implemented in an
+                elegant manner by combining a single forward CS (similar to Section 3) with a succession of CSs constructed
+                on reversed versions of the data, that we called ‘backward CSs’.
+                Connections to CuSum. We end this section by noting that we can also interpret the popular parametric
+                SCDscheme,CuSum,asalsoperformingrepeatedsequentialtests. Letf0 andf1 denotetwodensityfunctions
+                on some observation space X. Let {X : t ≥ 1} denote a sequence of independent observations, and consider
+                                                    t
+                a changepoint detection problem with f0 and f1 as the pre- and post-change distributions respectively.
+                Deﬁnition 33 (CuSum). The cumulative sum (CuSum) method proceeds as follows:
+                                           τ =min{n≥1:W ≥b }, where
+                                            c                 n    α
+                                                                        n
+                                                                       Y f (X)
+                                          W =0, and W = max                 1   i , for t ≥ 2.
+                                            1               n   1≤t≤n      f (X )
+                                                                      i=t+1 0   i
+                The term bα is selected to ensure that the ARL is at least 1/α for a given α ∈ (0,1).
+                   Observe that the CuSum procedure can also be interpreted as a sequence of repeated sequential (power-
+                one) tests in the backward direction, testing the null f0 against the alternative f1. These are power-one
+                tests (as opposed to the usual SPRT) because they only stop when the likelihood ratio process is large, and
+                not when it is small.
+                   We now introduce an alternative version of CuSum. In this deﬁnition, we use the convention that the
+                inﬁmum or minimum over an empty set is inﬁnity, that is, inf{x : x ∈ ∅} = ∞.
+                Deﬁnition 34 (CuSum-II). For any n ≥ 1, and 1 ≤ t ≤ n, deﬁne the backward sequential test, τback, as
+                                                                                                               n
+                follows:
+                                                                                       n
+                                                                                      Y f(X)
+                                    back                    n                  n             1  s
+                                   τ     =min{1≤t≤n:L ≥bα}, where L =                             .
+                                    n                       t                  t           f (X )
+                                                                                   s=n−t+1 0    s
+                Then, we can deﬁne the modiﬁed CuSum stopping time as
+                                                        0 :         back
+                                                       τ  =inf{n:τ       <∞}.
+                                                        c           n
+                Proposition 35. The two tests deﬁned in Deﬁnition 33 and Deﬁnition 34 are the same.
+                Proof. We show that for any N ∈ N, the sets {τ = N} and {τ0 = N} are equal.
+                                                              c            c
+                                                                N−1            
+                                     {τ =N}={W ≥b }∩ ∩              {W <b }
+                                       c            N    α       n=1    n   α
+                                                             N           N−1    n               
+                                              ={∃t∈[N]:L ≥b }∩ ∩             {L <b , ∀t∈[n]}
+                                                             t    α       n=1   t   α
+                                                   back           N−1 back
+                                              ={τ      <∞}∩ ∩        {τ     =∞}
+                                                   N              n=1  n
+                                              ={τ0 =N}.
+                                                   c
+                                                                  24

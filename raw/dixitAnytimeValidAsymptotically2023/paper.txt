@@ -1,0 +1,1736 @@
+                Anytime valid and asymptotically efÏcient inference
+                                  driven by predictive recursion
+                                                    ∗                          †
+                                    Vaidehi Dixit       and     Ryan Martin
+                                               November 5, 2024
+                                                     Abstract
+                       Distinguishing two candidate models is a fundamental and practically important
+                    statistical problem. Error rate control is crucial to the testing logic but, in complex
+                    nonparametric settings, can be difÏcult to achieve, especially when the stopping
+                    rule that determines the data collection process is not available. This paper pro-
+                    poses an e-process construction based on the predictive recursion (pr) algorithm
+                    originally designed to recursively fit nonparametric mixture models. The resulting
+                    pre-process affords anytime valid inference and is asymptotically efÏcient in the
+                    sense that its growth rate is first-order optimal relative to pr’s mixture model.
+                       Keywords and phrases: e-process; mixture model; nonparametric; test martin-
+                    gale; universal inference.
+              1 Introduction
+              A fundamental problem in statistics is that of distinguishing between two classes of
+              candidate models based on observed data. When the two classes of models are simple,
+              i.e., there are just two distinct probability distributions being compared, then Neyman
+              and Pearson (1933) settle the question on how to optimally distinguish the two based on
+              the magnitude of the likelihood ratio. Beyond the test’s statistical properties, the law of
+              likelihood (e.g., Edwards 1992; Hacking 1976; Royall 1997) offers principled justification
+              for comparing the two models in this fashion. In applications, however, it is rare for
+              the relevant comparison to be between two simple hypotheses, and if either of the two
+       arXiv:2309.13441v4  [stat.ME]  4 Nov 2024hypotheses are composite, i.e., consisting of more than one probability distribution, then
+              it is no longer clear how to operationalize the law of likelihood.
+                  Two common strategies are available to quantify the “likelihood” of a composite hy-
+              pothesis: classical likelihood ratios, like those covered by Wilks’s theorem (Wilks 1938),
+              maximize the likelihood, whereas Bayes factors (e.g., Bernardo and Smith 1994; Jeffreys
+              1998) average the likelihood with respect to suitable priors. In either case, judgments are
+              madeasabovebyconsidering the magnitude of the corresponding (maximum or average)
+              likelihood ratio. For various reasons, however, simply thresholding these likelihood ratios
+                 ∗Department of Statistics, University of Missouri, vdixit@missouri.edu
+                 †Department of Statistics, North Carolina State University, rgmarti3@ncsu.edu
+                                                         1
+       is not fully satisfactory: classical strategies to calibration are based on sampling distri-
+       bution calculations that assume a specific data-generating process, and so the reliability
+       statements lack robustness to the kind of departures from these assumptions common in
+       practice, e.g., data-peeking. And since neither of these likelihood ratios generally meet
+       the conditions necessary (see below) to achieve a sort of universal calibration independent
+       of the data-generating process, there is a need for new approaches.
+        To meet this need, there has been a recent surge of interest in testing procedures
+       that are both valid and efÏcient under optional stopping; see Ramdas et al. (2023) for
+       a survey of these rapidly-moving developments. The basic building blocks are e-values,
+       which in some cases lead to test martingales (Shafer et al. 2011) and other kinds of
+       e-processes. These also have close connections to betting interpretations of probability
+       (Shafer 2021) as well as game-theoretic probability (Shafer and Vovk 2019). A practical
+       challenge, however, is that there are so many e-values for data analysts to choose from
+       in applications. Two general and principled strategies for the construction of e-values
+       (which are sometimes e-processes) are universal inference (Wasserman et al. 2020) and
+       reverse information projection (Grun¨ wald et al. 2024). The former approach has different
+       variants, but these can be computationally demanding and/or lacking in statistical efÏ-
+       ciency. The latter strategy is purely efÏciency-motivated, and that makes it difÏcult to
+       apply in nonparametric problems. So, there is a need for an e-process construction that
+       is flexible, conceptually and computationally simple, and is able to achieve the optimal
+       first-order growth rate asymptotically. The present paper offers such a construction.
+        The familiar likelihood ratios fail to offer anytime valid inference in the sense of con-
+       trolling errors independent of the stopping rule, etc. As explained in Section 2.2, it turns
+       out that e-processes themselves are likelihood ratios. Since the null model is determined
+       by the problem itself, an e-process construction reduces to specification of the non-null
+       model likelihood. Intuitively, one wants this non-null model likelihood to match the “true
+       likelihood” as closely as possible. Of course, the data analyst does not know the true
+       likelihood, so his/her choice of non-null likelihood must be sufÏciently flexible to adapt to
+       the information in the data concerning the underlying distribution. Mixtures are flexible,
+       so our proposal is to build this non-null likelihood using a nonparametric mixture model.
+       Fitting such a mixture model is computationally demanding using classical methods, but
+       here we employ a fast, recursive algorithm called predictive recursion, or pr for short
+       (e.g., Newton 2002; Newton et al. 1998); see Section 2.3 for a review. With this flexible
+       and computationally efÏcient strategy to construct a non-null model likelihood, we define
+       a corresponding e-process in Section 3, which we call the pre-process, that offers anytime
+       valid and efÏcient statistical inference.
+        Thanks to pr’s naturally recursive model fit, the pre-process is easily upper-bounded
+       by a genuine likelihood ratio, which is a test martingale under the null and hence has
+       expected value upper-bounded by 1. Then the anytime validity, e.g., hypothesis tests that
+       are valid uniformly over stopping rules, is an immediate consequence; see Section 3.2.
+       With anytime validity guaranteed, we turn our attention to efÏciency in Section 3.3.
+       There we establish that the pre-process asymptotically achieves the first-order optimal
+       growth rate when the null is false.
+        Two illustrations are presented in Section 4, where we show that the pre-process’s
+       empirical, finite-sample growth rate closely matches the theoretical growth rate advertised
+       in Theorem 2. Then, in Section 5, we consider two applications. The first is a classical
+                         2
+              nonparametric problem of testing for log-concavity in the density, and we investigate
+              the efÏciency of our pre-process based test compared to the recently proposed tests in
+              Gangrade et al. (2023) and Dunn et al. (2024). The second application concerns testing
+              for time-homogeneity in discrete-valued time series data. Some concluding remarks are in
+              Section 6 and further discussion and technical details can be found in the supplementary
+              material.
+              2 Background
+              2.1   Notation
+              The data consists of a sequence X ,X ,... of X-valued random variables, and we write
+                                              1   2
+                n                   n
+              X =(X ,...,X )∈X ,forn≥1. LetA denotetheσ-algebraofmeasurablesubsetsof
+                      1       n
+               ∞                     k                                 k
+              X andwrite Ak =σ(X ), for the filtration generated by X , k ≥ 1. An integer-valued
+              random variable N will be called a stopping time if {N ≤ n} ∈ A .
+                                                                           n
+                 Consider a collection P of candidate joint distributions for X∞ = (X ,X ,...) on
+                                                                                    1   2
+              A and let P = P∞ denote a generic distribution in P. Write P , a subset of P, for
+                                                                             0
+              the null hypothesis. Throughout, we use upper-case letters for distributions/probability
+              measures and the corresponding lower-case letters for the associated density (with respect
+              to some common dominating measure). For example, if P is a member of P , then p is
+                                                                    0                0       0
+              its corresponding density.
+              2.2   E-processes
+              An e-value, E, relative to P , is a non-negative random variable with P -expected value
+                                        0                                        0
+              (upper bounded by) 1. With batch data, say, X, and models that have densities, the
+              non-negativity and expected value constraint implies that x 7→ q(x) := E(x)p0(x) is a
+              (sub-probability) density too; therefore, E(x) = q(x)/p (x) is a likelihood ratio which
+                                                                   0
+              can be interpreted as a measure of the evidence in data x against P0, relative to Q.
+              Consequently, if the observed value of E is large, then one would be inclined to reject the
+              hypothesis P . A Bayes factor is an e-value relative to a single P ; but likelihood ratios
+                          0                                                0
+              of the common form “suppp(x)/p0(x)” are not e-values.
+                 The situation described above is impractically simple. Indeed, it is rare that P0 is
+              a singleton and often data does not come in a batch. Test martingales (Shafer et al.
+              2011) offer a solution to the non-batch data problem. A test martingale is a non-negative
+              martingale (M ), relative to P , adapted to the filtration (A ) with M  ≡ 1. Test
+                            n               0                             n         0
+              martingales can also be expressed as likelihood ratios, i.e., if Q is absolutely continuous
+              with respect to P0, then
+                                             n     n          i−1
+                                   M = q(X ) =Y q(Xi|X ), n≥1.                                (1)
+                                     n   p (Xn)       p (X | Xi−1)
+                                          0        i=1 0  i
+              So then the construction of a test martingale boils down to the choice of Q for the nu-
+              merator. To handle composite P0 cases, one can construct a collection of test martingales
+              (MP0) indexed by n and by P ∈ P . This also has a likelihood ratio form but, the choice
+                 n                       0    0
+              of Q could vary with P0. Now define an e-process (En) as a sequence of non-negative
+                                                      3
+                                                   P
+                random variables with E ≤ M 0 for all n and all P ∈ P . An example of this would
+                                            n      n                       0     0
+                                      P
+                be E =inf          M 0 and, if it happened that the Q in (1) does not depend on P , then
+                     n       P ∈P                                                                         0
+                              0  0   n
+                this simplifies to
+                                                           q(Xn)
+                                               En = sup        p0(Xn),     n≥1.
+                                                          P ∈P
+                                                           0  0
+                This is a common e-process construction (e.g., Wasserman et al. 2020, Sec. 8) but it is not
+                the only one; see Ramdas et al. (2023) for more discussion on the various alternatives, in
+                particular, the proposals in Grun¨ wald et al. (2024) and in Waudby-Smith and Ramdas
+                (2024).   We focus here on e-processes that, as above, only depend on a choice of Q
+                representing the alternative.
+                    E-processes tend to be small under P0. In particular, Ville’s inequality (e.g., Howard
+                et al. 2021; Shafer and Vovk 2019) states that if M is a test martingale for P , then
+                                                                        n                             0
+                           sup P (M ≥α−1)≤α, for all α ∈ (0,1) and all stopping times N.
+                                 0    N
+                          P0∈P0
+                Of course, the same is true for any e-process E bounded by M . The implications of
+                                                                     n                  n
+                this are far-reaching: it leads to statistical tests that are anytime valid in the sense that
+                the reliability claims hold (basically) no matter how the investigator decides to conclude
+                their study and perform the statistical analysis, thereby offering additional “safety” (cf.,
+                Grun¨ wald et al. 2024) compared to procedures that only control the Type I error rate
+                for a particular sampling scheme. For example, a test that rejects P based on data Xn
+                                                                                           0
+                when E ≥α−1 controls the Type I error rate even if the investigator peeked at the data
+                        n
+                when deciding whether to conclude the study at time n.
+                2.3     Predictive recursion
+                Here and in what follows, we assume X ,X ,... are iid. Following the notation above,
+                                                            1    2
+                a general mixture model for the (common) marginal distribution defines the density
+                function as                             Z
+                                              qΨ(x) =      p (x)Ψ(du),      x∈X,                              (2)
+                                                            u
+                                                         U
+                where pu is the density corresponding to a distribution Pu, with {Pu : u ∈ U} ⊆ P, and Ψ
+                is a mixing distribution defined on U. Such models are incredibly flexible, so they are often
+                used in contexts where the mixture structure itself is not directly relevant, e.g., in density
+                estimation applications. It is common to think of x 7→ pu(x) as a parametric kernel, like
+                Gaussian, but that is not necessary here; indeed, U could just be a generic indexing of the
+                entire model P. But we should emphasize that mixtures of simple parametric kernels can
+                be incredibly flexible. For example, the set of Gaussian location–scale mixtures is dense
+                with respect to total variation distance in the space of smooth densities in Euclidean
+                space (e.g. DasGupta 2008, Theorem 33.1).
+                    For fitting the mixture model (2) to the observed data Xn = (X ,...,X ), one com-
+                                                                                           1       n
+                mon strategy is nonparametric maximum likelihood (e.g., Laird 1978; Lindsay 1995).
+                Another common strategy is to introduce a prior distribution for Ψ, e.g., a Dirichlet
+                process prior (e.g., Ferguson 1973; Ghosal 2010; Lo 1984), and carry out a nonparamet-
+                ric Bayesian analysis. There are advantages to sticking with existing approaches, the
+                                                                4
+                complexity of these models creates computational challenges. In particular, since tai-
+                lored Monte Carlo methods are required, one cannot capitalize on the Bayesian coherent
+                updating property—“today’s posterior is tomorrow’s prior”—when data are processed
+                sequentially. Maximum likelihood estimation faces similar challenges. A novel alterna-
+                tive, developed by Michael Newton and collaborators in the late 1990s, is a fast, recursive
+                algorithm called predictive recursion, or pr for short (e.g., Newton 2002). Applications
+                in large-scale inference settings include Tao et al. (1999), Newton et al. (2001), Martin
+                and Tokdar (2012), Tansey et al. (2018), and Woody et al. (2022).
+                    Here we provide a quick review of pr and its properties; for more details, see Martin
+                (2021b). Start with a weight sequence (w : i ≥ 1) ⊂ (0,1) that satisfies
+                                                               i
+                                                 ∞                     ∞
+                                                Xw=∞ and Xw2<∞.                                                 (3)
+                                                      i                     i
+                                                i=1                    i=1
+                Following Martin and Tokdar (2009) and the discussion at the end of Section 3.3 below,
+                                         −0.67                                                                ˆ
+                we take w = (i + 1)             for all of our examples. Next, take an initial guess Ψ of
+                            i                                                                                  0
+                Ψ supported on the index space U. Then pr updates the initial guess along the data
+                sequence as follows:
+                                                                         ˆ
+                                                                 p (X )Ψ      (du)
+                           ˆ                    ˆ                  u   i   i−1
+                           Ψ(du)=(1−w)Ψ (du)+w R                                     ,  u∈U, i≥1.               (4)
+                             i               i   i−1          i            ˆ
+                                                                 Upv(Xi)Ψi−1(dv)
+                                                       ˆ                                                      ˆ
+                pr is recursive, so one only needs Ψn and the new data point Xn+1 to get the new Ψn+1.
+                Moreover, this leads naturally to a plug-in estimator of the mixture density
+                                                     ˆ         Z
+                                                     Ψ
+                                           n          n                  ˆ
+                                         qˆ (x) := q    (x) =     p (x)Ψ (du),      x∈X.
+                                          x                        u      n
+                                                                U
+                Large-sample properties of pr have been explored in Ghosh and Tokdar (2006), Martin
+                and Ghosh (2008), Tokdar et al. (2009), Martin and Tokdar (2009, 2011), and Dixit
+                and Martin (2023b). The property most relevant to our efforts here will be explained in
+                Section 3.
+                    The above display defines a pr-based predictive density for X             , given Xn. It also
+                                                                                           n+1
+                produces a joint marginal density for Xn—“marginal” in the sense that the mixing dis-
+                tribution Ψ has been integrated out—and it has a multiplicative form, a` la Wald (1947,
+                                                                                                                  pr
+                Eq. 10.10), Dawid (1984), and Rissanen (1984). That is, the joint marginal density qˆ
+                satisfies
+                                                                   n
+                               pr  n       n−1       pr   n−1     Y i−1                       n     n
+                              qˆ (x ) = qˆ     (xn)qˆ (x     ) =      qˆ   (xi),   n≥1, x ∈X .                  (5)
+                                          x                            x
+                                                                  i=1
+                It is pr’s flexibility and the multiplicative form of its joint marginal density that makes
+                it especially suitable for anytime valid nonparametric inference.
+                    The simple pr algorithm is computationally efÏcient in the sense that the update
+                 ˆ      ˆ
+                Ψ →Ψ isanO(1)operationinn. Buttheintegrationin(4)mustbedonenumerically
+                  n       n+1
+                and requires care. If the dimension of U is relatively low, then integration can be handled
+                easily and accurately using quadrature. Monte Carlo would be a natural alternative,
+                                                                 5
+                                                      ˆ
+                   but direct sampling from Ψn is a challenge, so we developed a “prticle filter” strategy
+                   (Dixit and Martin 2023a) that can easily accommodate mixtures over U of moderate
+                   dimension, as in Example 2 below and in the supplementary material. Extensions to
+                   high-dimensional U is a focus of ongoing research.
+                        The computations in (4) are carried out pointwise on a grid spanning U, which ef-
+                   fectively requires U to be fixed a priori and bounded. In our experience, particularly
+                   with batch data, one can safely fix U as a large compact that contains those u’s even
+                   remotely compatible with the observed data. With sequential data, one could first use a
+                   block of data to inform the choice of U, then go back and process the full sequence with
+                   that choice of U. More formally, Martin and Tokdar (2009, Sec. 5) present a generalized
+                   predictive recursion algorithm that features an adaptive support, but we will not consider
+                   this here.
+                   3 PRe-processes
+                   3.1      Construction
+                   Consider null hypothesis H : P ∈ P . The proposal here is to construct a suitable
+                                                        0             0
+                   marginallikelihoodunderPc bymixingoveraspecifiedclass{P : u ∈ U}ofdistributions.
+                                                       0                                             u
+                   Instead of a computationally demanding nonparametric maximum likelihood or Bayes fit,
+                   here we make use of the efÏcient pr algorithm reviewed in Section 2.3 above.
+                        Let Ψ be a mixing probability distribution supported on the specified index set U and
+                   consider a basic mixture model as in (2). This model can be fit to data Xn using pr, and
+                   the output most relevant to us here is the joint marginal density for Xn that is produced as
+                                                  pr     n                                                                    pr    n
+                   a by-product, namely, qˆ (X ) as given in (5). Recall the multiplicative form of qˆ (X )
+                   in (5), a driving force behind the general formulation in Wasserman et al. (2020, Sec. 8).
+                                                            pr     n−1       pr     n
+                   Moreover, the pr update from qˆ (X                  ) to qˆ  (X )isanO(1)computation,comparedto
+                   the O(n) computation expected with “non-anticipatory” maximum likelihood estimation
+                   (e.g., Gangrade et al. 2023).
+                        With this, we define the following pr-driven e-process, i.e., pre-process,
+                                                                                  pr    n
+                                               Epr = Epr(Xn;P ) =               qˆ  (X )       ,   n≥1.                            (6)
+                                                 n                   0      sup       p(Xn)
+                                                                                 p∈P
+                                                                                     0
+                   Intuitively, since the likelihood tends to favor the true hypothesis, if H is true (resp. false),
+                                                                                                             0
+                   then Epr ought to be small (resp. large). This intuition suggests a test that rejects H if
+                            n                                                                                                      0
+                   and only if Epr is large, and we justify this intuition in Section 3.2 below.
+                                    n
+                        Our proposal can be compared to two of the now-standard e-process constructions
+                   reviewed in Ramdas et al. (2023). Specifically, our proposal is, on the one hand, like the
+                   basic method of mixtures (e.g., Darling and Robbins 1968; Wald 1945) in that it forms a
+                   marginal likelihood under the alternative via a suitable mixture model, which we think
+                   is intuitively appealing. To achieve both the flexibility and the appealing intuition, the
+                   mixture model needs to be nonparametric, which would pose computational challenges
+                   for traditional likelihood-based methods. But pr is specifically designed to simply and
+                   efÏciently handle this challenge. So, the pre-process is like (the no data-splitting variants
+                   of) universal inference (Wasserman et al. 2020, Sec. 8), just with a specific focus on flexible
+                   mixture model alternatives with a fast, recursive updating scheme.
+                                                                            6
+                  OurproposalcanalsobecomparedtothatinGrun¨ waldetal.(2024). Whileourchoice
+               to use “sup    p(Xn)”inthedenominatorof (6)isanaturalone, itisnottheonlyoption.
+                          p∈P0
+               Grun¨ wald et al. propose a strategy based on the reverse information projection (rip), as
+               in Li and Barron (2000), which amounts to replacing “sup      p(Xn)” in the denominator
+                                                                         p∈P0          rip
+               with the likelihood at a fixed—but strategically chosen—density, say, p0    in the convex
+               hull, co(P0), of P0. In our context, they might propose to make inference based on the
+               ratio
+                                              pr+rip    pr   n    rip   n
+                                             E       =qˆ (X )/p (X ),
+                                              n                   0
+                       rip             bpr   rip                   bpr
+               where P     satisfies K(Q ,P     ) = inf        K(Q ,P ). This strategy has powerful
+                       0                     0         P0∈co(P0)         0
+               motivation and nice properties concerning maximal growth rate. However, the complexity
+               of the applications we have in mind, along with pr’s non-trivial learning process, raise
+               some difÏcult questions: first, how to compute Prip and, second, does Epr+rip define a
+                                                                 0                        n
+               proper e-process? We leave these questions for future investigation.
+               3.2    Validity
+               Of course, we cannot refer to the quantity defined in (6) as an “e-process” without
+               showingthatitsatisfies the required properties. Theorem 1 establishes the basic e-process
+               property from which all the relevant statistical properties follow.
+               Theorem 1. Consider a model P for the iid data sequence X ,X ,.... For a model
+                                                                                 1  2
+               P0 ⊂ P to be tested, the pre-process defined in (6) is an e-process.
+               Proof. For any fixed n, since the supremum over P0 appears in the denominator of (6),
+               the following inequality is immediate:
+                       pr     pr   n          pr   n           pr   n        n
+                      E =E (X ;P )≤E (X ;{p })=qˆ (X )/p (X ), for all P ∈P .
+                       n               0               0                 0                0     0
+               The upper bound is a collection of test martingales indexed by P0 ∈ P0 and, therefore,
+               (Epr) is an e-process under P .
+                 n                           0
+                  Fromhere, wecanimmediatelydeduceseveraldirectlyinterpretable statistical results.
+               In particular, suitably-defined pre-process-based testing procedures are anytime valid.
+               Corollary 1. For a desired significance level α ∈ [0,1], let T (Xn) be the test that rejects
+                                                                            α
+               H : P ∈ P if and only if Epr(Xn;P ) ≥ α−1. This test controls the frequentist Type I
+                 0        0                          0
+               error at the designated level, i.e., sup   P {T (XN) rejects} ≤ α for any stopping rule
+                                                    P0∈P0  0   α
+               N.
+                  If one has a valid test, then of course it can be inverted to construct valid confidence
+               sets. Beyond these familiar statistical procedures, one can leverage the pre-process for
+               the purpose of broader uncertainty quantification, as discussed in, e.g., Martin (2022,
+               2023b) and Grun¨ wald (2022, 2023). For further details on these, see the supplementary
+               material.
+                                                           7
+               3.3     Asymptotic growth rate
+               Theorem 1 establishes that pre-process-based tests, etc. are anytime valid. For the pre-
+               process procedure to be efÏcient, we want the e-value to be large under the alternative,
+               at least asymptotically, so that we will correctly reject false null hypotheses. Our goal
+               here is to show that the pre-process is asymptotically optimal in the sense of Cover and
+               Thomas (2006, Ch. 11), i.e., its asymptotic growth rate is optimal to first order in the
+               exponent. Towards this, consider the case where P⋆ ̸∈ P determines the true distribution
+                                                                         0
+               of the data X∞. So far, we have been implicitly assuming that mixtures of the kernels
+               {Pu : u ∈ U} are sufÏciently flexible to warrant consideration as a “non-null model,” i.e.,
+               one is willing to use such a model for nonparametric estimation of the true distribution;
+               see Section 2.3. If Q denotes the convex hull of {Pu : u ∈ U}, the set of all mixtures of
+               these kernels, then a more explicit statement of the aforementioned implicit assumption
+               is that Q is an acceptable non-null model. In other words, if one believes that P⋆ ̸∈ P ,
+                                                                                                         0
+               then he/she would also believe that P⋆ is “closer” to Q than to P .
+                                                                                    0
+                   The main result in Martin and Tokdar (2011) states that, under certain regularity
+               conditions (see the supplementary material), with P⋆-probability 1,
+                              −1     pr   n      −1     ⋆   n         ⋆
+                            n logqˆ (X ) = n       logp (X )−K(P ,Q)+o(1),            n→∞,              (7)
+               where K(P⋆,Q) is the Kullback–Leibler divergence of Q from P⋆ and
+                                               K(P⋆,Q)= inf K(P⋆,Q),                                    (8)
+                                                            Q∈Q
+                                                                                       ⋆
+               with Q = co({P : u ∈ U}) the set of mixtures. For the null P , let κ (P ) be such that
+                                u                                               0          0
+                                   −1      ⋆   n        n       ⋆               ⋆
+                           liminf n   log{p (X )/pˆ (X )} ≥ κ (P ),     with P -probability 1,          (9)
+                            n→∞                     0              0
+               where pˆ (Xn) = sup        p (Xn) is the maximum likelihood estimator under the null P .
+                       0            P0∈P0 0                                                              0
+                                                           ⋆             ⋆                      ⋆
+               From the definition of pˆ , it follows that κ (P ) ≤ K(P ,P ) := inf        K(P ,P ), and
+                                        0                      0             0        P ∈P          0
+                                                                                       0  0
+                      ⋆
+               often κ (P ) will equal this minimal Kullback–Leibler number. For example, if P = {P }
+                          0                                                                       0      0
+               is a singleton and K(P⋆,P ) < ∞, then the law of large numbers gives (9) with “lim,”
+                                           0
+                            ⋆              ⋆                                                 †
+               “=,” and κ (P ) = K(P ,P ). More generally, suppose there exists P              ∈ P with
+                               0              0                                              0      0
+               K(P⋆,P†) = K(P⋆,P0); see, e.g., Patilea (2001) and Kleijn and van der Vaart (2006).
+                        0
+               Then
+                   n−1log{p⋆(Xn)/pˆ (Xn)} = n−1log{p⋆(Xn)/p†(Xn)}+n−1log{p†(Xn)/pˆ (Xn)}.
+                                      0                           0                   0        0
+               Thefirst term on the right-hand side converges to K(P⋆,P ) with P⋆-probability 1, so, the
+                                                                           0
+               boundin(9)isdeterminedbythesecondtermontheright-handside. Thattermvanishes
+               under relatively mild conditions on P0, e.g., when the maximum likelihood estimator is
+               consistent for P† (relative to the true distribution P⋆). In these typical cases, (9) holds
+                               0
+                                        ⋆            ⋆                                 ⋆             ⋆
+               with “lim,” “=,” and κ (P) = K(P ,P ). But it is possible that κ (P ) < K(P ,P ),
+                                                         0                                0             0
+               e.g., in cases where consistency fails; see the supplementary material for an example.
+                   Putting all this together, with P⋆-probability 1, the pre-process (6) satisfies
+                            −1      pr    −1       pr   n       n
+                          n logE =n log{qˆ (X )/pˆ (X )}
+                                    n                       0
+                                          −1       ⋆   n       n       −1      pr   n   ⋆    n
+                                      =n log{p (X )/pˆ (X )}+n           log{qˆ (X )/p (X )}
+                                                           0
+                                          ⋆             ⋆
+                                      ≥κ(P0)−K(P ,Q)+o(1).
+               More details about (7), (9), and the proof are given in the supplementary material.
+                                                            8
+                Theorem 2. Consider X ,X ,... iid with distribution P⋆. If (7) and (9) hold, then
+                                            1   2
+                with P⋆-probability 1, the pre-process has asymptotic first-order growth rate
+                                                ⋆             ⋆             ⋆
+                                            ∆(P ;P0,Q) = κ (P0)−K(P ,Q).                                 (10)
+                That is, as n → ∞, the pre-process satisfies
+                                logEpr ≥ n∆(P⋆;P ,Q)+o(n),            with P⋆-probability 1.
+                                      n               0
+                   A few remarks about Theorem 2 are in order. We focus our attention here on the
+                                      ⋆              ⋆                                               ⋆
+                typical case where κ (P0) = K(P ,P0). First, the non-null case where K(P ,P0) >
+                K(P⋆,Q) is of primary interest. This, again, is because Q is judged to be an acceptable
+                nonparametric model, so surely a non-null P⋆ is closer to Q than to P . We claim that the
+                                                                                        0
+                growth rate ∆(P⋆;P ,Q) is “optimal” which deserves explanation. In the simple-versus-
+                                     0
+                simple case, with P = {P } and Q = {P }, “the likelihood ratio is growth rate optimal”
+                                    0      0               1
+                (Ramdas et al. 2023) and its growth rate K(P ,P ) agrees with (10). More generally,
+                                                                  1   0
+                given a commitment to maximum P0-likelihood in the e-process denominator, the user’s
+                only input in the e-process construction is the choice of “qˆ(Xn)” in the numerator. If
+                this qˆ is constrained to Q, then there is no choice of numerator that can achieve a larger
+                first-order asymptotic growth rate than that in (10). This can also be compared to the
+                growth rates in Grun¨ wald et al. (2024). Indeed, if the true P⋆ was known and used in
+                their e-value’s numerator, then their solution is, by definition, growth rate optimal and
+                its first-order growth rate agrees with that in Theorem 2. Since the growth rate cannot
+                be better when the true P⋆ is unknown, our pre-process must be asymptotically optimal
+                in the above sense too.
+                   Second, suppose K(P⋆,P ) < K(P⋆,Q), i.e., P is “more true” then Q; a special
+                                               0                       0
+                case is when K(P⋆,P ) = 0 and hence P is “true.” Then we want the pre-process
+                                       0                      0
+                to be vanishing with n and, in the not-uncommon case where (9) holds with “lim” and
+                “=,” Theorem 2 establishes this: if K(P⋆,P ) < K(P⋆,Q), then the pre-process van-
+                                                                0
+                ishes as n → ∞; see, also, Ramdas et al. (2022, Sec. 8.2). In the edge case where
+                K(P⋆,P ) = K(P⋆,Q), so P and Q are “equally true” and cannot be distinguished, we
+                        0                     0
+                do not specifically expect Epr to grow or to vanish, so Theorem 2’s ambiguity about the
+                                             n
+                behavior of Epr in such cases accurately reflects this.
+                              n
+                   Next, howsmallistheo(n)terminTheorem2’slowerbound? Thisisrelevantbecause
+                it describes the asymptotic gap between the proposed pre-process and an oracle e-process
+                that uses the true p⋆ in the numerator. Specifically, the oracle e-process is given by
+                                                              p⋆(Xn)
+                                                  Eor =                    ,
+                                                    n    sup       p (Xn)
+                                                             P ∈P   0
+                                                              0  0
+                and, asymptotically, the difference between the two log-e-processes, logEor − logEpr, is
+                                                                                              n         n
+                the “o(n)” term in our lower bound. Moreover, that same log-difference is
+                                                              ⋆   n      n        ⋆
+                                  logEor −logEpr = log p (X ) = Xlog p (Xi) ,
+                                        n          n         pr   n
+                                                            qˆ (X )             qˆ i−1(Xi)
+                                                                        i=1      X
+                where qˆ i−1 is pr’s one-step-ahead predictive density as in (5).       Martin and Tokdar
+                        X
+                (2011) showed that the right-hand side of the above display grows, asymptotically, like
+                                                              9
+                nK(p⋆,qˆ n). Furthermore, Martin and Tokdar (2009) proved the following: in addition to
+                          X
+                the conditions presented in the supplementary material, if P⋆ is in the interior of Q and if
+                                                                  −γ                          1−γ     ⋆    n
+                pr’s weight sequence (w ) is such that w ≍ n         for γ ∈ (2/3,1], then n      K(p ,qˆ   ) → 0
+                                           i                n                                             X
+                with P⋆-probability 1. One immediate take-away is that, apparently, γ ≈ 2/3 gives the
+                best rates for pr. Those authors argue that their rate is “worst-case” corresponding to
+                P⋆ arbitrarily close to the boundary of Q, which is most difÏcult for pr to learn. When
+                P⋆ is away from the boundary of Q, however, pr’s rate tends to be faster than Martin
+                &Tokdar’s conservative upper bound. In fact, our empirical work suggest the following
+                conjecture: n1−γ/2K(p⋆,qˆ n) → 0; see Section 6. If true, then this would be near-optimal
+                                            X
+                in certain cases. For instance, if p⋆ is a monotone decreasing density, i.e., a scale mixture
+                of uniform kernels (e.g., Williamson 1956), then pr’s rate with γ ≈ 2/3 would virtually
+                                                                           −2/3
+                agree with the well-known minimax optimal rate of n             in Kullback–Leibler divergence.
+                (There is another new sense in which pr’s rate is actually faster than what Martin &
+                Tokdar’s result suggests, which we present in Section 4 of the supplementary material.)
+                Returning to the original question, the aforementioned theory implies that, with γ ≈ 2/3,
+                the pre-process’s o(n) error term is conservatively like n2/3. Our conjecture, however, says
+                that the error is more like n1/3, and the empirical results in Section 5 of the supplementary
+                material support this. Better approximations of the oracle e-process are possible in some
+                cases, e.g., using nonparametric Bayes predictive densities in the e-process numerator,
+                but not with pr’s computational efÏciency—and the corresponding “o(n)” term would
+                still generally be of polynomial order in n.
+                4 Illustrations
+                Here we consider two illustrations of the procedure described in Section 3: testing for
+                monotonicity and testing a parametric model. Our focus here is on comparing the empir-
+                ical growth rate of the pre-process to that predicted by Theorem 2. So, in what follows,
+                the data X ,X ,... will be generated from a distribution P⋆ that does not belong to P .
+                            1    2                                                                               0
+                Example 1. Monotone densities on the positive half-line are common in biomedical, en-
+                gineering, and astronomy applications. Our goal is to test the null hypothesis that the
+                underlying density is monotone. For the denominator of our pre-process, we use R pack-
+                age REBayes (Koenker and Gu 2017) to find the the nonparametric maximum likelihood
+                estimator, i.e., the Grenander estimator (e.g., Grenander 1956). For the numerator, we
+                use a mixture model with a gamma kernel, i.e., pu is a gamma density with u the shape
+                and rate parameter pair. Then we fit a mixture model over U = [1,15]×[10−5,5] with the
+                initial guess Ψ0 the uniform distribution over U. For our experiments, the true distribu-
+                tion P⋆ is a gamma distribution with unit rate parameter and varying shape parameter.
+                The idea is that, if the shape parameter is 1, then P⋆ would be exponential which is
+                monotone; so as the shape parameter varies from 2, to 5, and to 10, the density becomes
+                “less monotone.” We generate 100 data sets from P⋆ and calculate the pre-process Epr
+                                                                                                                 n
+                at the increments n = 100,200,...,5000. A plot of the logEpr versus n is displayed
+                                                                                        n
+                in Figure 1(a), along with a reference line having slope K(P⋆,P ). First note that, as
+                                                                                         0
+                expected, the growth rate increases as the true density gets “less monotone” and, second,
+                that the pre-process closely follows the theoretical growth rate across all three scenarios.
+                                                                10
+                       2000                                            2000
+                       1500                                            1500
+                      alue)                                          alue)
+                      v1000                                          v 1000
+                      log(e                                          log(e
+                       500                                             500
+                       0                                               0
+                         0     1000    2000   3000    4000    5000      0      1000   2000    3000    4000   5000
+                                            n                                               n
+                          (a) Example 1: testing monotonicity          (b) Example 2: testing a parametric null
+                 Figure 1:     Plots of logEpr versus n for 100 data sets of size n = 5000 under three
+                                               n
+                 settings of the true density in the alternative. Each case shows a line with slope based
+                 on the theoretical growth rate in Theorem 2. In both panels, the gray, blue, and pink
+                 lines correspond to cases where the data are generated from a distribution that is “close,”
+                 “less close,” and “farthest” from the null, respectively. Specific details about the settings
+                 are given in the text.
+                 Example 2. Testing for clustering of directional data is an important practical problem
+                 (e.g., Mardia and Jupp 2000). Here we focus on testing for a single von Mises–Fisher
+                 model P0 versus a mixture thereof. This problem is also challenging since the null lies on
+                 the boundary of the alternative (e.g., McVinish et al. 2009; Tokdar et al. 2010).
+                     Computation of the pre-process’s denominator is straightforward, since closed-form
+                 expressions are available for the maximum likelihood estimators. The von Mises–Fisher
+                 distribution is generally parameterized with a mean parameter µ and concentration pa-
+                 rameter κ, where ∥µ∥ ≤ 1 and κ ≥ 0. So for the numerator we take the mixing distri-
+                 bution variable as u = (µ ,µ ,κ) where (µ ,µ ) ∈ (0,π)×(0,2π) represent the spherical
+                                              θ   ϕ               θ  ϕ
+                 coordinates of µ. Note that because of the multivariate nature of the problem we need
+                 to implement the prticle filter machinery in Dixit and Martin (2023a) to calculate the
+                 normalizing constants. For this we generate particles of size t = 10,000 from Unif(0,π),
+                 Unif(0,2π) and Unif(0.2,10) respectively for µ ,µ and κ. For our simulation, we generate
+                                                                     θ   ϕ
+                 data from a bimodal mixing distribution Ψ⋆ which fixes κ = 10 and distributes (µ ,µ )
+                                                                                                                θ   ϕ
+                 over (0,π) ×(0,2π) according to a mixture of truncated bivariate normals,
+                                           (µ ,µ ) ∼ 0.5trN (η ,Σ)+0.5trN (η ,Σ).                                 (11)
+                                              θ   ϕ            2   1              2   2
+                                                                                                                    2       2
+                 In(11), the covariance matrix Σ is a diagonal matrix with the diagonal vector as {(π/12) ,(π/6) },
+                                                                ⊤
+                 and the mean vectors are η = (π/4,π/2) and η varying,
+                                                1                        2
+                                         η2 ∈ {(3π/8,3π/4)⊤,(π/2,π)⊤,(3π/4,3π/2)⊤}
+                 .  The distance between the two modes (η ,η ) acts as a measure of the “degree of
+                                                                    1   2
+                 clustering,” with large distances corresponding to going further away from the null. We
+                 generate 100 data sets under each configuration and plot logEpr versus n at increments
+                                                                                         n
+                 n=100,200,...,5000 in Figure 1(b), along with a reference line of slope K(P⋆,P ). As
+                                                                                                               0
+                 expected, the slope increases in the “degree of clustering” and the log-pre-process paths
+                 closely follow this trend.
+                                                                  11
+                    5 Applications
+                    5.1      Testing log-concavity of a density
+                    Examples of log-concave densities on the real line include the Gaussian, logistic, Laplace,
+                    and others. EfÏcient numerical methods have been developed (e.g., Cule et al. 2010;
+                    Dum¨  bgen and Rufibach 2011) to find the maximum likelihood estimator of a log-concave
+                    density, and its asymptotic properties are studied in, e.g., Doss and Wellner (2016). As
+                    for testing log-concavity, e-process-based tests have been proposed recently in Gangrade
+                    et al. (2023) and Dunn et al. (2024). Here, we compare the pre-process’s growth rate to
+                    that of the aforementioned e-processes.
+                        For the pre-process denominator, we get the log-concave maximum likelihood es-
+                    timator using the logConDens function in the R package logcondens (Dum¨ bgen and
+                    Rufibach 2011). For the numerator, we consider a mixture model with Gaussian kernel
+                    pu, where u is mean and standard deviation pair, and mixing distribution supported on
+                    U = [−10,20] × [0.01,3]. An R package for pre-process testing of log-concavity can
+                    be found at https://github.com/vdixit005/PReprocess. For Dunn et al.’s e-process,
+                    Eui, we use the code at https://github.com/RobinMDunn/LogConcaveUniv with its de-
+                      n
+                    fault settings. For the e-process proposed in Gangrade et al. (2023), Eulr, we follow their
+                                                                                                                  n
+                    recommendation and use an iteratively fit Gaussian kernel density estimator.
+                        For the simulation, we take P⋆ as an uneven mixture of two normals, with means
+                    0 and µ and variances 2. As above, µ also acts as a measure of the “degree of non-
+                    log-concavity,” i.e., if µ is close to 0, then p⋆ is only mildly non-log-concave; otherwise,
+                    p⋆ is more severely non-log-concave. The three cases we consider in our experiments
+                    are µ = 6,10,14. We generate 100 data sets under each, calculate Epr, Eui and Eulr
+                                                                                                                    n      n           n
+                    at increments n = 100,200,...,5000. Plots of logE versus n, along with a pointwise
+                                                                                            n
+                    average over replications for each method are shown in Figure 2. The key takeaways are
+                    as follows. First, in terms of statistical efÏciency, our pre-process’s growth rate is faster
+                    thanDunnetal.’sandnoslowerthanGangradeetal.’sineachscenario. Interestingly, the
+                    slopes of the n versus logEui lines in Figure 2 are roughly half that of the n versus logEpr
+                                                        n                                                                                n
+                    lines, which suggests that the loss of efÏciency is due to the 50–50 data-splitting Dunn
+                    et al. employ. Second, in terms of stability, the log-pre-process has considerably smaller
+                    variance than Gangrade et al.’s log-e-process. Third, in terms of computational efÏciency,
+                    both Eui and Eulr process the entire observed data sequence each time a batch of data
+                             n           n
+                    arrives because the previous calculation cannot be directly updated. The pre-process,
+                    on the other hand, has a genuinely recursive update and is much faster.
+                        Theabovecomparisonfocusedonthescalar-datacase,butthesamee-processescanbe
+                    defined and used for testing log-concavity in multivariate settings. In the supplementary
+                    material we present a comparison of Epr and Eui in a multivariate case. The take-away
+                                                                        n            n
+                    message there is that increasing the dimension naturally impacts the quality of the tests,
+                    but it affects the pre-process less in the sense that Epr tends to be closer to a suitable
+                                                                                             n
+                    oracle e-process than Eui does.
+                                                   n
+                                                                              12
+                         300                                                                                     2500
+                                                                     1400
+                         250                                                                                     2000
+                         200                                         1000
+                        alue)                                      alue)                                       alue)1500
+                        v150                                       v                                           v
+                        log(e                                      log(e600                                    log(e1000
+                         100
+                         50                                                                                      500
+                                                                     200
+                         0                                           0                                           0
+                          0     1000   2000   3000   4000   5000      0     1000   2000   3000   4000   5000      0     1000   2000   3000   4000  5000
+                                            n                                           n                                           n
+                                      (a) µ = 6                                  (b) µ = 10                                  (c) µ = 14
+                      Figure 2: Plots of logEpr (blue), logEulr (pink) and logEui (green) versus n, based
+                                                           n                      n                               n
+                      on the not-log-concave density p⋆ as a mixture of normals. Panel (a) corresponds to p⋆
+                      “closest” to log-concave while (c) is “farthest.”
+                      5.2       Testing time homogeneity
+                      Let X = (X ,...,X ) denote a binary time series of length T ≥ 1, i.e., X                                                ∈{0,1}
+                               i         i,1          i,T                                                                                 i,t
+                      for each (i,t) pair, generally dependent within the Xi’s, but independent between Xi
+                      and Xj, for j ̸= i.              This situation arises when a binary characteristic, such as em-
+                      ployed/unemployed, is measured on subject i at time t. Newton and Zhang (1999, Sec. 6)
+                      consider an application where Xi,t = 1 if dairy cow i’s milk sample at time t tests positive
+                      for pathogens and Xi,t = 0 otherwise. The relevant question here is whether the time
+                      series are homogeneous or, in other words, is there temporal dependence within the time
+                      series or are they independent? Below we construct a pre-process and anytime valid test
+                      for independence versus a type of Markovian dependence.
+                           Under the null hypothesis of time homogeneity, each Xi consists of a sequence of
+                      Bernoulli trials with its own success probability ω . In this case, the likelihood is binomial,
+                                                                                              i                   P
+                      which, for data Xn = (X ,...,X ), is maximized at ωˆ = T−1                                      T    X , for i = 1,...,n.
+                                                           1           n                              i               t=1     i,t
+                      Thismaximumlikelihoodgoesinthedenominatorofthepre-process. Forthealternative,
+                      we consider a mixture of Markov models where the mass function qΨ(x) is given by (2)
+                      with kernel
+                                                   t   (x)                                           t   (x)
+                                                    00                  t01(x)              t10(x)    11
+                                     p (x) = u             (1 −u )             (1 −u )              u       ,    x=(x ,...,x ),
+                                       u           00               00                  11           11                    1          T
+                      t  (x) the number of transitions in series x from state a ∈ {0,1} to state b ∈ {0,1}, and
+                       ab
+                      u = (u ,u ) ∈ U = [0,1]2 is the pair of probabilities corresponding to the “transitions”
+                               00     11
+                      0 →0 and 1 → 1, respectively. As described in Section 3, we apply the pr algorithm to
+                                                                                          pr      n
+                      fit this mixture model and obtain likelihood qˆ (X ), which is goes in the pre-process’s
+                      numerator.
+                           For illustration, we consider two simulation settings. The first is where the null is true,
+                      with each X being a sequence of Bernoulli trials with success probability ω ∼ Unif(0,1).
+                                        i                                                                                            i
+                      Thesecondiswherethealternative is true, so that Xi is a Markov chain and its transition
+                      probability matrix is determined by the pair (U                           , U     ) iid Beta(2,4). In both cases, the
+                                                                                            00,i    11,i
+                      processes are of length T = 15, and sample sizes are n = 20,40,...,200. The paths of
+                      logEpr versus n for the null and alternative cases are shown in Figure 3 and, as desired,
+                             n
+                      we find that Epr vanishes rapidly under the null and diverges similarly rapidly towards
+                                            n
+                      infinity under the alternative.
+                                                                                      13
+                                                                    250
+                             −50
+                                                                    200
+                          alue−100                               alue
+                                                                    150
+                             −150                                   100
+                          log PRe−v                              log PRe−v
+                             −200                                   50
+                                                                    0
+                             −250
+                                    50     100     150     200             50     100     150     200
+                                              n                                     n
+                                     (a) Null is true                   (b) Alternative is true
+                Figure 3: Plots of the pre-process trajectories, logEpr versus n, for the time homogeneity
+                                                                       n
+                tests in Section 5.2.
+                6 Conclusion
+                This paper proposes a universal inference-inspired e-process construction based on the pr
+                algorithm—a fast, recursive procedure for fitting flexible, nonparametric mixture models.
+                We show that pre-process is a genuine e-process and, therefore, offers provable, finite-
+                sample, anytime valid inference.      Further, we show that the pre-process attains the
+                optimal first-order growth rate under the alternative relative to the mixture model fit
+                by pr. Numerical results demonstrate that the pre-process’s finite-sample empirical
+                performance closely agrees with the optimal behavior predicted by the asymptotic theory.
+                Moreover, here and in the supplementary material, our proposal with a pr fit in the e-
+                process numerator is shown to be computationally more efÏcient, numerically more stable,
+                and more accurately approximates the oracle e-process compared to, say, a kernel density
+                fit in the numerator.
+                   The pre-process developments here shed new light on pr and motivates further com-
+                putational and theoretical investigations. In particular, there are open questions con-
+                cerning pr’s convergence rates (as it pertains to our pre-process’s growth rate here and
+                otherwise) and a need for finite-sample bounds and efÏcient numerical methods for han-
+                dling higher-dimensional multivariate data. On the last point, our prticle filtering pro-
+                cedures employed here for multivariate problems is able to accommodate mixtures over
+                moderate-dimensional space U but, when the data and hence U are high-dimensional,
+                we do not expect the prticle filter to be especially accurate, at least not in a reasonable
+                time, so new ideas are needed to tackle those cases.
+                Acknowledgments
+                Thanks to Aaditya Ramdas for feedback on and corrections to a previous version, and to
+                the other anonymous reviewers for their very helpful suggestions. This work is partially
+                supported by the U.S. National Science Foundation, SES–2051225.
+                                                              14
+              References
+              Bernardo, J.-M.andSmith, A.F.M.(1994). Bayesian Theory. WileySeriesinProbability
+                and Mathematical Statistics: Probability and Mathematical Statistics. John Wiley &
+                Sons, Ltd., Chichester.
+              Blackwell, D. and Dubins, L. (1962). Merging of opinions with increasing information.
+                Ann. Math. Statist., 33:882–886.
+              Bousquet, O. and Warmuth, M. K. (2002). Tracking a small set of experts by mixing
+                past posteriors. J. Mach. Learn. Res., 3:363–396.
+              Choquet, G. (1953–1954). Theory of capacities. Ann. Inst. Fourier, Grenoble, 5:131–295
+                (1955).
+              Cover, T. M. and Thomas, J. A. (2006).       Elements of information theory.   Wiley-
+                Interscience [John Wiley & Sons], Hoboken, NJ, second edition.
+              Cule, M., Samworth, R., and Stewart, M. (2010). Maximum likelihood estimation of
+                a multi-dimensional log-concave density.   J. R. Stat. Soc. Ser. B Stat. Methodol.,
+                72(5):545–607.
+              Darling, D. A. and Robbins, H. (1968). Some nonparametric sequential tests with power
+                one. Proc. Nat. Acad. Sci. U.S.A., 61:804–809.
+              DasGupta, A. (2008). Asymptotic Theory of Statistics and Probability. Springer Texts in
+                Statistics. Springer, New York.
+              Dawid, A. P. (1984). Statistical theory. The prequential approach. J. Roy. Statist. Soc.
+                Ser. A, 147(2):278–292.
+              Dawid, A. P. (1985). Calibration-based empirical probability. Ann. Statist., 13(4):1251–
+                1285. With discussion.
+              Dawid, A. P. (1991). Fisherian inference in likelihood and prequential frames of reference.
+                J. Roy. Statist. Soc. Ser. B, 53(1):79–109. With discussion and a reply by the author.
+              Denœux,T.(2019). Decision-making with belief functions: a review. Internat. J. Approx.
+                Reason., 109:87–110.
+              Devaine, M., Gaillard, P., Goude, Y., and Stoltz, G. (2013). Forecasting electricity
+                consumption by aggregating specialized experts: a review of the sequential aggregation
+                of specialized experts, with an application to Slovakian and French country-wide one-
+                day-ahead (half-)hourly predictions. Mach. Learn., 90(2):231–260.
+              Dixit, V. and Martin, R. (2023a). A PRticle filter algorithm for nonparametric estimation
+                of multivariate mixing distributions. Stat. Comput., 33(4):Paper No. 76, 14.
+              Dixit, V. and Martin, R. (2023b). Revisiting consistency of a recursive estimator of
+                mixing distributions. Electron. J. Stat., 17(1):1007–1042.
+                                                        15
+                    Doss, C. R. and Wellner, J. A. (2016). Global rates of convergence of the MLEs of
+                       log-concave and s-concave densities. Ann. Statist., 44(3):954–981.
+                    Dubois, D. and Prade, H. (1988). Possibility Theory. Plenum Press, New York.
+                    Dum¨  bgen, L. and Rufibach, K. (2011). logcondens: Computations related to univariate
+                       log-concave density estimation. J. Stat. Softw., 39:1–28.
+                    Dunn, R., Gangrade, A., Wasserman, L., and Ramdas, A. (2024). Universal inference
+                       meets random projections: a scalable test for log-concavity. J. Comput. Graph. Statist.,
+                       to appear arXiv:2111.09254.
+                    Duong, T. (2024). ks: Kernel Smoothing. R package version 1.14.2.
+                    Edwards, A. W. F. (1992). Likelihood. Johns Hopkins University Press, Baltimore, MD,
+                       expanded edition. Revised reprint of the 1972 original.
+                    Ferguson, T. S. (1973). A Bayesian analysis of some nonparametric problems. Ann.
+                       Statist., 1:209–230.
+                    Gangrade, A., Rinaldo, A., and Ramdas, A. (2023). A sequential test for log-concavity.
+                       arXiv:2301.03542.
+                    Ghosal, S. (2010). The Dirichlet process, related priors and posterior asymptotics. In
+                       Bayesian Nonparametrics, Camb. Ser. Stat. Probab. Math., pages 35–79. Cambridge
+                       Univ. Press, Cambridge.
+                    Ghosh, J. K. and Tokdar, S. T. (2006). Convergence and consistency of Newton’s algo-
+                       rithm for estimating mixing distribution. In Fan, J. and Koul, H., editors, Frontiers in
+                       Statistics, pages 429–443. Imp. Coll. Press, London.
+                    Grenander, U. (1956). On the theory of mortality measurement. II. Skand. Aktuarietid-
+                       skr., 39:125–153 (1957).
+                    Grun¨ wald, P. (2022). Beyond Neyman–Pearson. arXiv:2205.00901.
+                    Grun¨ wald, P. (2023). The e-posterior. Philos. Trans. Roy. Soc. A, 381(2247):Paper No.
+                       20220146, 21.
+                    Grun¨ wald, P., de Heide, R., and Koolen, W. (2024). Safe testing. J. R. Stat. Soc. Ser. B
+                       Stat. Methodol., to appear; arXiv:1906.07801.
+                    Hacking, I. (1976). Logic of Statistical Inference. Cambridge University Press, Cambridge-
+                       New York-Melbourne.
+                    Hahn, P. R., Martin, R., and Walker, S. G. (2018). On recursive Bayesian predictive
+                       distributions. J. Amer. Statist. Assoc., 113(523):1085–1093.
+                    Howard, S. R., Ramdas, A., McAuliffe, J., and Sekhon, J. (2021). Time-uniform, non-
+                       parametric, nonasymptotic confidence sequences. Ann. Statist., 49(2):1055–1080.
+                                                                              16
+       Jeffreys, H. (1998). Theory of Probability. Oxford Classic Texts in the Physical Sciences.
+        The Clarendon Press, Oxford University Press, New York. Reprint of the 1983 edition.
+       Kleijn, B. J. K. and van der Vaart, A. W. (2006). Misspecification in infinite-dimensional
+        Bayesian statistics. Ann. Statist., 34(2):837–877.
+       Koenker, R. and Gu, J. (2017). Rebayes: An R package for empirical Bayes mixture
+        methods. J. Stat. Softw., 82(8):1–26.
+       Kosorok, M. R. (2008). Introduction to Empirical Processes and Semiparametric Infer-
+        ence. Springer Series in Statistics. Springer, New York.
+       Laird, N. (1978). Nonparametric maximum likelihood estimation of a mixed distribution.
+        J. Amer. Statist. Assoc., 73(364):805–811.
+       Li, J. Q. and Barron, A. R. (2000). Mixture density estimation. In Solla, S., Leen, T.,
+        andMueller, K.-R., editors, Advances in Neural Information Processing Systems, pages
+        279–285. MIT Press, Cambridge, Massachusetts.
+       Liese, F. and Vajda, I. (1987). Convex Statistical Distances. Teubner, Leipzig.
+       Lindsay, B. G. (1995). Mixture Models: Theory, Geometry and Applications. IMS, Hay-
+        wood, CA.
+       Littlestone, N. and Warmuth, M. K. (1994). The weighted majority algorithm. Inform.
+        and Comput., 108(2):212–261.
+       Lo, A. Y. (1984). On a class of Bayesian nonparametric estimates. I. Density estimates.
+        Ann. Statist., 12(1):351–357.
+       Mardia, K. V. and Jupp, P. E. (2000). Directional Statistics. Wiley Series in Probability
+        and Statistics. John Wiley & Sons, Ltd., Chichester.
+       Martin, R. (2021a). Inferential models and the decision-theoretic implications of the
+        validity property. arXiv:2112.13247.
+       Martin, R. (2021b). A survey of nonparametric mixing density estimation via the pre-
+        dictive recursion algorithm. Sankhya B, 83(1):97–121.
+       Martin, R. (2022). Valid and efÏcient imprecise-probabilistic inference with partial priors,
+        II. General framework. arXiv:2211.14567.
+       Martin, R. (2023a). Comment on Waudby-Smith & Ramdas’s “Estimating means of
+        bounded random variables by betting”. J. R. Stat. Soc. Ser. B Stat. Methodol., to
+        appear; https://www4.stat.ncsu.edu/ rmartin/comment_rm.pdf.
+                         ~
+       Martin, R. (2023b). A possibility-theoretic solution to Basu’s Bayesian–frequentist via
+        media. Sankhya A, to appear, arXiv:2303.17425.
+       Martin, R. and Ghosh, J. K. (2008). Stochastic approximation and Newton’s estimate of
+        a mixing distribution. Statist. Sci., 23(3):365–382.
+                         17
+                Martin, R. and Liu, C. (2013). Inferential models: a framework for prior-free posterior
+                  probabilistic inference. J. Amer. Statist. Assoc., 108(501):301–313.
+                Martin, R. and Liu, C. (2015). Inferential Models, volume 147 of Monographs on Statistics
+                  and Applied Probability. CRC Press, Boca Raton, FL.
+                Martin, R. and Tokdar, S. T. (2009). Asymptotic properties of predictive recursion:
+                  robustness and rate of convergence. Electron. J. Stat., 3:1455–1472.
+                Martin, R. and Tokdar, S. T. (2011). Semiparametric inference in mixture models with
+                  predictive recursion marginal likelihood. Biometrika, 98(3):567–582.
+                Martin, R. and Tokdar, S. T. (2012). A nonparametric empirical Bayes framework for
+                  large-scale multiple testing. Biostatistics, 13(3):427–439.
+                McVinish, R., Rousseau, J., and Mengersen, K. (2009). Bayesian goodness of fit testing
+                  with mixtures of triangular distributions. Scand. J. Stat., 36(2):337–354.
+                Newton, M., Kendziorski, C., Richmond, C., Blattner, F., and Tsui, K. (2001). On
+                  differential variability of expression ratios: improving statistical inference about gene
+                  expression changes from microarray data. J. Comput. Biology, 8:37–52.
+                Newton,M.A.(2002). Onanonparametricrecursiveestimatorofthemixingdistribution.
+                  Sankhy¯a Ser. A, 64(2):306–322.
+                Newton, M. A., Quintana, F. A., and Zhang, Y. (1998). Nonparametric Bayes methods
+                  using predictive updating. In Dey, D., Muller,¨     P., and Sinha, D., editors, Practical
+                  Nonparametric and Semiparametric Bayesian Statistics, volume 133 of Lecture Notes
+                  in Statist., pages 45–61. Springer, New York.
+                Newton, M. A. and Zhang, Y. (1999). A recursive algorithm for nonparametric analysis
+                  with missing data. Biometrika, 86(1):15–26.
+                Neyman, J. and Pearson, E. S. (1933). On the problem of most efÏcient tests of statistical
+                  hypotheses. Phil. Trans. Roy. Soc. London Ser. A, 231:289–337.
+                Neyman, J. and Scott, E. L. (1948). Consistent estimates based on partially consistent
+                  observations. Econometrica, 16:1–32.
+                Patilea, V. (2001). Convex models, MLE and misspecification. Ann. Statist., 29(1):94–
+                  123.
+                Ramdas, A., Grun¨ wald, P., Vovk, V., and Shafer, G. (2023). Game-theoretic statistics
+                  and safe anytime-valid inference. Statist. Sci., 38(4):576–601.
+                Ramdas,A.,Ruf,J.,Larsson, M., andW., K.(2022). Admissibleanytime-validsequential
+                  inference must rely on nonnegative martingales. arXiv:2009.03167.
+                Rissanen, J. (1984). Universal coding, information, prediction, and estimation. IEEE
+                  Trans. Inform. Theory, 30(4):629–636.
+                                                             18
+                 Robbins, H. and Siegmund, D. (1971). A convergence theorem for non negative almost
+                    supermartingales and some applications. In Optimizing methods in statistics (Proc.
+                    Sympos., Ohio State Univ., Columbus, Ohio, 1971), pages 233–257. Academic Press,
+                    New York.
+                 Royall, R. M. (1997). Statistical Evidence, volume 71 of Monographs on Statistics and
+                    Applied Probability. Chapman & Hall, London.
+                 Shafer, G. (1976). A Mathematical Theory of Evidence. Princeton University Press,
+                    Princeton, N.J.
+                 Shafer, G. (2021). Testing by betting: a strategy for statistical and scientific communi-
+                    cation. J. Roy. Statist. Soc. Ser. A, 184(2):407–478.
+                 Shafer, G., Shen, A., Vereshchagin, N., and Vovk, V. (2011). Test martingales, Bayes
+                    factors and p-values. Statist. Sci., 26(1):84–101.
+                 Shafer, G. and Vovk, V. (2019). Game-Theoretic Foundations for Probability and Finance.
+                    Wiley, Hoboken, NJ.
+                 Tansey, W., Oluwasanmi, K., Poldrack, R. A., and Scott, J. G. (2018). False discovery
+                    rate smoothing. J. Amer. Statist. Assoc., 113(523):1156–1171.
+                 Tao, H., Palta, M., Yandell, B. S., and Newton, M. A. (1999). An estimation method for
+                    the semiparametric mixed effects model. Biometrics, 55(1):102–110.
+                 Teicher, H. (1998). Strong laws for martingale differences and independent random vari-
+                    ables. J. Theoret. Probab., 11(4):979–995.
+                 Tokdar, S. T., Chakrabarti, A., and Ghosh, J. K. (2010). Bayesian nonparametric good-
+                    ness of fit tests. In Cheh, M.-H., Dey, D., Muller,¨     P., Sun, D., and Ye, K., editors, Fron-
+                    tiers of Statistical Decision Making and Bayesian Analysis, pages 185–194. Springer.
+                 Tokdar, S. T., Martin, R., and Ghosh, J. K. (2009). Consistency of a recursive estimate
+                    of mixing distributions. Ann. Statist., 37(5A):2502–2522.
+                 Troffaes, M. C. M. and de Cooman, G. (2014). Lower Previsions. Wiley Series in Prob-
+                    ability and Statistics. John Wiley & Sons, Ltd., Chichester.
+                 van de Geer, S. A. (2000). Empirical Processes in M-Estimation, volume 6 of Cambridge
+                    Series in Statistical and Probabilistic Mathematics. Cambridge University Press, Cam-
+                    bridge.
+                 van der Vaart, A. W. (1998). Asymptotic Statistics. Cambridge University Press, Cam-
+                    bridge.
+                 van der Vaart, A. W. and Wellner, J. A. (1996). Weak Convergence and Empirical
+                    Processes. Springer-Verlag, New York.
+                 Vovk, V.G.(1993). Alogicofprobability, withapplicationtothefoundationsofstatistics.
+                    J. Roy. Statist. Soc. Ser. B, 55(2):317–351. With discussion and a reply by the author.
+                                                                    19
+       Wald, A. (1945). Sequential tests of statistical hypotheses. Ann. Math. Statistics, 16:117–
+        186.
+       Wald, A. (1947). Sequential Analysis. John Wiley & Sons, Inc., New York.
+       Wasserman, L., Ramdas, A., and Balakrishnan, S. (2020). Universal inference. Proc.
+        Natl. Acad. Sci. U.S.A., 117(29):16880–16890.
+       Waudby-Smith, I. and Ramdas, A. (2024). Estimating means of bounded random vari-
+        ables by betting. J. R. Stat. Soc. Ser. B. Stat. Methodol., 86(1):1–27.
+       Wilks, S. S. (1938). The large-sample distribution of the likelihood ratio for testing
+        composite hypotheses. Ann. Math. Statist, 9:60–62.
+       Williamson, R. E. (1956). Multiply monotone functions and their Laplace transforms.
+        Duke Math. J., 23:189–207.
+       Woody,S., Padilla, O. H. M., and Scott, J. G. (2022). Optimal post-selection inference for
+        sparse signals: a nonparametric empirical Bayes approach. Biometrika, 109(1):1–16.
+                         20
+                         Supplementary Material
+            This supplementary material contains some additional technical details that could
+          not fit in the main paper. In particular, Section 1 offers some new perspectives on the
+          predictive recursion (pr) algorithm in terms of Dawid’s prequential statistics; Section 2
+          offers some further details on the new pre-process proposed in the main paper; Section 3
+          gives a detailed statement of the conditions needed to analyze the pr estimates, along with
+          a proof of the asymptotic growth rate result (Theorem 2) in the main paper; Section 4
+          present some old and new details on the rate of convergence of pr’s estimator; Section 5
+          offers some empirical results to help pin down the magnitude of the “o(n)” error term
+          in Theorem 2’s asymptotic approximation; Section 6 provides a comparison of two e-
+          processes in multivariate settings; and Section 7 proposes a variation on the pre-process
+          presented in the main paper.
+          A Newperspectives on PR
+          Both of us wrote our PhD theses on predictive recursion (pr), viewed as an estimation
+          procedure. That is, the focus of those previous efforts was on large-sample consistency of
+          pr’s estimated mixing and mixture distributions and on applications in high-dimensional
+          inference. The present paper takes a different perspective, focusing on pr in the context of
+          prediction, which, ironically, has not been thoroughly investigated in the literature. This
+          is both interesting and relevant to the main paper, so we collect some of these developing
+          thoughts—potential new lines of research—here in this supplementary material. We
+          specifically would like to thank one of the anonymous reviewers for pointing out some of
+          these connections.
+            First, there are a number of methods available in the machine learning literature for
+          online or sequential prediction, i.e., algorithms that produce a sequence of probability
+          distributions (Q ), t = 1,2,..., where Q is interpreted as the predictive distribution of
+                    t               t
+          X depending on Xt. Like with pr, it is not uncommon to construct these predictive
+           t+1
+          distributions using mixtures. For example, in Devaine et al. (2013), the authors consider
+          applications where there is a fixed, finite number of of experts making forecasts about Xt+1
+          based on previous data Xt, and the proposed algorithm aggregates the experts’ forecasts
+          using mixtures; see also Littlestone and Warmuth (1994) and Bousquet and Warmuth
+          (2002). Devaine et al. (2013) go on to prove non-asymptotic bounds on the regret—
+          prediction performance compared to an oracle—for certain convex loss functions. While
+          the particular algorithms in the above references are different from pr, this connection is
+          relevant for at least two reasons: first, any sequential aggregation algorithm ought to have
+          its own corresponding e-process—an aggree-process, say?—that warrants investigation,
+          just like pr and our proposed pre-process; second, perhaps the theoretical analysis of
+          these alternative algorithms can shed light on, say, how to establish similar regret bounds
+          for pr.
+            Next, and particularly relevant to the details in the present paper, is a connection
+          to Dawid’s prequential approach to and perspective on probability and statistics (e.g.,
+          Dawid 1984, 1991). Even the names are similar: the “prequential” is a combination
+          of the words “predictive” and “sequential,” which clearly has aspects in common with
+                                     21
+          “predictive recursion.” A key difference, however, is that what Dawid has put forward
+          is a general theory or perspective, while pr provides a particular instantiation of it, as
+          we now explain. The sequence (Qt) discussed in the previous paragraph is what Dawid
+          calls a prequential forecasting system, which could take all sorts of different forms, e.g.,
+          from a fully specified joint distribution for the observables to a more ad hoc expert
+          aggregation strategy. pr falls somewhere in between these two extremes: pr has at
+          its core a flexible, nonparametric mixture model for the observables, but it learns from
+          observations and updates in a non-Bayesian/non-probabilistic fashion. Dawid argues, as
+          formulated in his prequential principle, that the quality of a forecasting system should be
+          determined solely based on how well it predicts the actual observations; in other words,
+          this assessment should not take into consideration hypothetical outcomes that were not
+          observed. Our proposed pre-process test in the main paper is exactly in this spirit.
+          Indeed, just as in Dawid (1984, Sec. 7), our pre-process in Equation (6) in the main
+          text, is the ratio of two forecasting systems, each applied to the observed data sequence:
+          the numerator represents the pr-based forecasts and the denominator a summary of the
+          forecasts under the null model P0. Then the proposed test rejects the null model if and
+          only if the ratio exceeds some specified threshold (which does not depend on, say, “null
+          distribution” characteristics, etc). In other words, the null model is rejected if and only
+          if the pr-based forecasting system is significantly “better” than that which assumes the
+          null model. That our pre-process test is consistent with the prequential principle itself is
+          not enough to justify its use. It is precisely for this reason that Theorems 1–2 in the main
+          paper are essential: on the one hand, the pre-process (Epr) stays small forever when P
+                                              n                   0
+          is true and, on the other hand, (under certain conditions) it diverges quickly to infinity
+          when P0 is not true.
+            Dawid (1985) discusses the use of forecasting systems to define an objective, empir-
+          ical notion of probability assigned to observed data sequences, and comments on the
+          implications to the foundations of statistics, probability, and science more broadly; see,
+          also, Vovk (1993). Not just any forecasting system achieves this objective, and Dawid
+          highlights a key calibration condition. Using our present notation, fix a sequence (A ) of
+                                                                n
+          subsets of X and the observations a = 1(X ∈ A ), where 1(·) is the indicator. Spar-
+                                 n    n   n
+          ing some technical details—concerning computable selection rules, essential to properly
+          defining “randomness” in the spirit of von Mises—a forecasting system (Q ) is calibrated
+                                                         n
+          with respect to the observed sequence (a ) if
+                                    n
+                             n
+                           1 X{Q(A)−a}→0, n→∞.
+                           n    t t   t
+                            t=1
+          This has important implications, namely, that any two forecasting systems that are cali-
+          brated to (a ) must be asymptotically equivalent (e.g., Blackwell and Dubins 1962), and
+                 n
+          it is precisely that common “asymptotic probability” that Dawid puts forward as the
+                                                  bpr
+          empirical probability of (a ). For the pr forecasting system (Q ), if X ,X ,... are iid
+                           n                       n    1  2
+                                     22
+                P⋆, then
+                             n                         n
+                         1 X bpr                    1 X bpr              ⋆          ⋆
+                               {Q (A)−a}=                 {Q (A)−P (A)+P (A)−a}
+                         n         t    t     t     n        t    t          t          t     t
+                            t=1                       t=1
+                                                       n                               n
+                                                    1 X bpr              ⋆          1 X ⋆
+                                                 =        {Q (A)−P (A)}+                  {P (A )−a }.
+                                                    n        t    t          t      n            t     t
+                                                      t=1                             t=1
+                It follows from the standard law of large numbers for bounded, mean zero random vari-
+                ables that the second term in the last line above converges to 0 with P⋆-probability 1. If
+                P⋆ is contained in the set Q defined in Section 3.3 of the main paper, and if the conditions
+                in Section 3 below are satisfied, then it follows from Corollary 4.6 in Martin and Tokdar
+                              bpr       ⋆        ⋆
+                (2009) that Qn → P with P -probability 1 in total variation. This implies that the first
+                term in the above display is vanishing as n → ∞ and, consequently, the pr forecasting
+                system is calibrated with respect to the sequence a = 1(X ∈ A ) determined by X∞,
+                                                                          n        n      n
+                for any such X∞ in a set of P⋆-probability 1. This, of course, is an especially simple
+                case; but pr itself is quite flexible, e.g., it does not make use of the iid assumption, so we
+                suspect that calibration can be established more generally.
+                    Finally, under this umbrella of forecasting systems, the idea put forward in Martin
+                and Tokdar (2011) can be given a new, potentially useful twist. They proposed a semi-
+                parametric mixture model wherein the kernel {pu : u ∈ U} used to the define the pr
+                algorithm depends on some parameter θ ∈ T; that is, their kernel is written as pu,θ, with
+                x 7→ pu,θ(x) a probability density function for each (u,θ). At any fixed value of θ, we
+                                                                    n                      pr   n
+                can produce pr’s joint marginal density for X , denoted here as qˆ (X ). Then Martin
+                                                                                           θ
+                                                                                    pr   n
+                and Tokdar (2011) defined the “likelihood” function θ 7→ qˆ (X ) and compared it to
+                                                                                    θ
+                the marginal likelihood function under a Bayesian nonparametric mixture model with a
+                Dirichlet process prior. They then proposed an estimate of θ based on maximizing that
+                                             pr               pr   n
+                                            ˆ
+                pr-marginal likelihood: θ       =argmax qˆ (X ). Unfortunately, despite ample empirical
+                                             n             θ  θ
+                                                                                                           pr
+                                                                                                          ˆ
+                evidence suggesting it, sufÏciently general results on large-sample consistency of θ          have
+                                                                                                           n
+                yet to be established. But one can interpret Martin & Tokdar’s suggestion as a particu-
+                lar instantiation of the “prequential model” in Dawid (1991, Sec. 7.3) which, for each θ,
+                evaluates forecasts for the next observation in light of what has already been observed. If,
+                as conjectured in the previous paragraph, this pr-based prequential model can be shown
+                to have high-level justification in terms of calibration, etc., then it would be meaningful
+                                                pr
+                                               ˆ
+                to assess the properties of θ      relative to the pr-based model. This creates a new and
+                                                n
+                different opportunity to demonstrate the utility of this estimator. Indeed, Dawid (1984,
+                1991) presents a notion of (simple) prequential consistency, in which the predictions of
+                                  bpr       bpr           n      n                                       ⋆
+                Xn+1 based on Q pr and Q ⋆, given X = x , are compared as n → ∞, where θ denotes
+                                    ˆ         θ
+                                   θ
+                                    n
+                the “true” value in the pr-based prequential model. If these predictions are asymptoti-
+                                                              pr
+                                                             ˆ
+                cally equivalent, then Dawid would call θn (simply and prequentially) consistent. Aside
+                from the attractiveness of the prequential perspective, we believe that the aforemention
+                demonstration is within reach. This is also promising too, as Dawid argues, this notion
+                of consistency often holds more broadly than the classical notions of consistency.
+                                                                23
+             B Further PRe-process details
+             The paper’s main text describes and focuses on the use of our proposed pre-process
+             Epr for anytime valid hypothesis testing. But there is more that can be done with the
+              n
+             pre-process and here we briefly describe three such developments.
+                First, given a null model, P0, one can define a corresponding “anytime p-value”
+                                     pr  n            pr  n    −1
+                                    π (X ;P )=1∧E (X ;P ) .
+                                             0               0
+             Just like in Corollary 1 in the main paper, it follows that
+                    sup P{πpr(XN;P ) ≤ α} ≤ α,  all α ∈ [0,1] and all stopping times N.
+                                   0
+                   P∈P0
+             So, as expected, the anytime valid test proposed in the main paper is equivalent to a test
+             that rejects when the above p-value is no more than α.
+                Second, by considering singleton null hypotheses P0 = {P0} and varying P0, the above
+             p-value defines a function P 7→ πpr(Xn;{P }) which, as explained in Martin (2023a),
+                                     0             0
+             determines a data-dependent imprecise probability distribution supported on P, in par-
+             ticular, a necessity–possibility measure pair (e.g., Dubois and Prade 1988; Shafer 1976).
+             This, in turn, determines an anytime valid inferential model (Martin 2022; Martin and
+             Liu 2013, 2015) that provides provably safe and reliable imprecise-probabilistic uncer-
+             tainty quantification about the unknown P. Akin to a Bayesian posterior distribution,
+             this imprecise-probabilistic uncertainty quantification can then be used, e.g., for formal
+             decision-making (Martin 2021a). Indeed, if (a,P) 7→ ℓa(P) quantifies the loss of taking
+             action a when the state of the world is P, then one can find a lower and upper expected
+             loss using a specialization of Choquet’s general theory of integration with respect to ca-
+             pacities (Choquet 1954) to the case of necessity and possibility measures (e.g., Troffaes
+             and de Cooman 2014, Sec. 7.8). From here, one can proceed to, say, minimize the upper
+             expected loss with respect to the action a to obtain an inferential model version of a
+             Bayes rule, and establish bounds on the difference between the inferential model’s up-
+             per expected loss and the oracle loss that knows the true P. Since this is not specific
+             to the pre-process developments in this paper, we will not go into any further details
+             here. But the interested reader might like to see Denœux (2019) for a review of the
+             literature on this brand of generalized Bayes decision theory, and also R. Martin’s ex-
+             tended abstract in the forthcoming Oberwolfach Mathematical Research Institute report
+             (https://www.mfo.de/occasion/2419b).
+                Finally, a more familiar consequence of the anytime validity of the pre-process-based
+             test in the main paper is inverting the test to construct an anytime valid confidence set.
+             Let ϕ : P → Φ be a map that extracts some relevant feature from P ∈ P. For example,
+             ϕ(P) = RXxP(dx) is the mean of P, ϕ(P) = inf{x : P((−∞,x]) ≥ τ} is the τth quantile
+             of P, and ϕ(P) = P is the distribution P itself. For a given ϕ, define the following
+             data-dependent subset of Φ:
+                                 n           pr  n         	
+                            Cα(X ) = ϕ(P):π (X ;{P})>α , α∈[0,1].
+             The set C (Xn) is just the collection of all ϕ(P) corresponding to “null” Ps that the
+                     α
+             pre-process-based test would not reject for data Xn at level α. Then the fact that Epr is
+                                                                                     n
+                                                  24
+                an e-process implies that Cα(·) is an anytime valid 100(1 − α)% confidence set for ϕ(P)
+                in the sense that
+                         supP{C (XN)̸∋ϕ(P)}≤α, any α∈(0,1) and any stopping time N.
+                                   α
+                         P∈P
+                Of course, identifying the set C (Xn) for a given ϕ and a given data set Xn could be a
+                                                    α
+                challenge, but approximations could surely be found if there was sufÏcient desire to do
+                so.
+                C ThePRe-process’s asymptotic growth rate
+                C.1 Setup of Theorem 2
+                There are a few inputs that play key roles in the asymptotic properties of the pr algo-
+                rithm. These include some user-specified inputs, namely, the family of kernel densities
+                {p : u ∈ U} that determine the set of mixtures Q, and pr’s weights (w ) and initial
+                   u                                                                                 i
+                guess Ψ0; two more relevant quantities that are beyond the user’s control are the true
+                distribution P⋆, with density p⋆, and the corresponding Kullback–Leibler projection of
+                  ⋆                                                                                                ⋆
+                P onto the set Q of mixtures. This latter projection is defined as the distribution Q
+                with density q⋆ that satisfies
+                                                ⋆    ⋆          ⋆                  ⋆
+                                           K(P ,Q ) = K(P ,Q) := inf K(P ,Q).                                  (12)
+                                                                         Q∈Q
+                                      ⋆
+                The existence of Q is ensured by various sets of conditions; see, e.g., Liese and Vajda
+                                                                ⋆
+                (1987, Ch. 8). In particular, existence of Q is implied by Condition 1 below, as shown in
+                Lemma3.1 of Martin and Tokdar (2009). The following conditions, on which Theorem 2
+                is based, concern the basic properties of these individual inputs and their interplay.
+                Condition 1. U is compact and u 7→ pu(x) is continuous for almost all x.
+                Condition 2. The pr weight sequence (wi) satisfies
+                                                 ∞                     ∞
+                                                Xw=∞ and Xw2<∞.                                                (13)
+                                                      i                     i
+                                                i=1                    i=1
+                Condition 3. The kernel density pu(x) satisfies
+                                                       Z n        o
+                                                           pu (x) 2
+                                                 sup          1       p⋆(x)dx < ∞                              (14)
+                                               u ,u ∈U     pu (x)
+                                                1  2          2
+                Condition 4. The Kullback–Leibler projection Q⋆ in (12), with density q⋆, satisfies
+                                                 Z n      p⋆(x)o2 ⋆
+                                                      log q⋆(x)    p (x)dx < ∞.                                (15)
+                    Here we offer some explanation and intuition. First, compactness of the mixing dis-
+                tribution support U in Condition 1 is difÏcult to relax, but the fact that U can be taken
+                arbitrarily large means that this imposes effectively no practical constraints on the user.
+                                                                 25
+              Continuity of the kernel can be relaxed, but at the expense of a much more complicated
+              condition; the reader interested in this can consult Equation (7) in Dixit and Martin
+              (2023b) and the relevant discussion. Condition 2 says simply that the weights must be
+              vanishing to ensure convergence but not too quickly since the algorithm needs an oppor-
+              tunity to learn; the requirement in (13) is just right for this. Condition 3 is non-trivial
+              but holds for Gaussian and other exponential family distributions thanks to the compact-
+              ness of U in Condition 1. Finally, Condition 4 concerns the quality of the mixture model
+              itself. One cannot hope to achieve quality estimation/inference in any sense if the “best”
+              member of the mixture model differs considerably from the true density p⋆. Equation
+              (15) is just a particular way to say that p⋆ and q⋆ do not differ by too much.
+                 Once the user makes his/her specification of the mixture model, Condition 3 deter-
+              mines a set of true densities p⋆ for which the pr algorithm will provide consistent estima-
+              tion. Indeed, Theorem 1 in Martin and Tokdar (2011) states that, under Conditions 1–3,
+              the pr estimator qˆ n satisfies K(p⋆,qˆ n) → inf    K(p⋆,q) with P⋆-probability 1 as
+                                 X                  X         q∈Q
+              n → ∞. The user, of course, can vary the mixture model specification to tailor pr
+              toward what they expect p⋆ to look like. But we need more than consistency for our
+              purposes here, and Conditions 4 further restricts the set of true densities to those for
+              which the pr algorithm can give us the “more” that we need.
+              C.2 Proof of Theorem 2
+              As explained in the main text, Theorem 2 is a consequence of the following property of
+              pr:
+                           −1     pr   n     −1     ⋆   n        ⋆
+                          n logqˆ (X ) = n      logp (X )−K(P ,Q)+o(1),        n→∞,            (16)
+              The goal here is simply to show that (16) holds under Conditions 1–4 as stated above.
+              The argument closely follows that in Martin and Tokdar (2011), but we provide the
+              details here for completeness since their context and notation is different from ours.
+                 The strategy of the proof is as follows.   First, simplify the notation by writing
+              qˆ  (X)=qˆ i−1(X ) for each i. Next, define the sequence of random variables
+               i−1  i     X     i
+                                                      n       ⋆
+                                             Kn = 1 Xlog p (Xi) ,
+                                                   n        qˆ (X)
+                                                     i=1     i−1  i
+              which might be interpreted as a sort of empirical Kullback–Leibler divergence. If K⋆ =
+              K(P⋆,Q), then (16) is equivalent to K → K⋆ with P⋆-probability 1 as n → ∞. It is this
+                                                   n
+              latter claim that we will prove below, using a martingale strong law in Teicher (1998).
+                 Towards this, define a sequence of random variables Z as,
+                                                                      i
+                                               p⋆(X )
+                                     Z =log        i  −K(p⋆,qˆ    ),  i ≥ 1.
+                                       i      qˆ  (X)           i−1
+                                               i−1  i
+              Recall that A    =σ(Xi−1), so E ⋆(Z | A     ) = 0 and, therefore, {(Z ,A ) : i ≥ 1} is a
+                           i−1                P    i   i−1                        i  i
+                                                       26
+                zero mean martingale sequence under P⋆. For q⋆ as in (12), we have
+                                            Z               
+                                                      p⋆(x)    2
+                        E ⋆(Z2 | A      ) ≤      log             p⋆(x)dx
+                          P    i     i−1             qˆ   (x)
+                                            Z        i−1                  
+                                                      q⋆(x)          p⋆(x) 2
+                                          =      log          +log            p⋆(x)dx
+                                                     qˆ   (x)        q⋆(x)
+                                              Z      i−1                      Z              
+                                                        q⋆(x)    2                        p⋆(x) 2
+                                          ≤2       log             p⋆(x)dx+2          log          p⋆(x)dx
+                                                       qˆ  (x)                            q⋆(x)
+                                                        i−1
+                                          =2A +2B.
+                                               i
+                Of course, B is a finite constant according to Condition 4. To bound A let us first define
+                                                                                                i
+                X ={x:q⋆(x)<qˆ (x)}. Using basic properties of the logarithm, we get
+                  0                   i−1
+                                    Z               
+                                              q⋆(x)    2
+                              A =        log             p⋆(x)dx
+                                i            qˆ  (x)
+                                    Z  i−1                          Z                
+                                              qˆ   (x) 2                         q⋆(x)    2
+                                 =        log i−1         p⋆(x)dx+          log             p⋆(x)dx
+                                               q⋆(x)                     c      qˆ  (x)
+                                      X                                X         i−1
+                                    Z 0                              Z0                
+                                           qˆ  (x)       2                    q⋆(x)         2
+                                 ≤          i−1    −1 p⋆(x)dx+                        −1 p⋆(x)dx
+                                            q⋆(x)                        c   qˆ  (x)
+                                      X0    "                           X0 # i−1
+                                         Z                           
+                                               qˆ   (x) 2        q⋆(x)    2
+                                 ≤2+             i−1       +                 p⋆(x)dx.
+                                                q⋆(x)           qˆ  (x)
+                                                                 i−1
+                Since both qˆ      and q⋆ in the two numerators in the above display are mixtures of the
+                               i−1
+                kernel pu, we can say that
+                                                                Z npu (x)o2
+                                            A ≤2+2 sup                 1       p⋆(x)dx
+                                              i                      p (x)
+                                                        u ,u ∈U       u
+                                                          1 2          2
+                which is bounded by Condition 3. Therefore, E ⋆(Z2 | A              ) is bounded too. Switching
+                                                                      P    i     i−1
+                from index “i” to the more natural “n,” we have that
+                                             E ⋆(Z2 | A      )
+                                               P    n     n−1 ≲n−2(loglogn) → 0.
+                                               2           −1
+                                              n (loglogn)
+                Therefore, by Markov’s inequality, with P⋆-probability 1 we have,
+                                   ∞                                    ∞              2
+                                  XP⋆ |Z |>            n       A      ≲X(loglogn) <∞.
+                                   n=1        n    loglogn      n−1      n=1      n2              −1Pn
+                From this and Corollary 2 of Teicher (1998)—with his “β = 1”—we get n                       Z →0
+                                                                                                        i=1   i
+                with P⋆-probability 1. Therefore, also with P⋆-probability 1,
+                                    n                                    n                       
+                                1 X        ⋆                    ⋆     1 X        ⋆             ⋆ 
+                          K −          K(p ,qˆ     ) = (K −K )−               {K(p ,qˆ     ) −K } →0.
+                           n    n i=1          i−1       n           n i=1           i−1                   ⋆
+                FromTheorem1inMartinandTokdar(2011)andCesaro’stheorem, wehaveKn−K →
+                0 with P⋆-probability 1.
+                                                                 27
+                C.3 Condition (9) concerning the null model
+                                                                                                         ⋆
+                Theorem 2 in the main paper—see Equation (9)—relies on a particular feature κ (P0) of
+                the null model P0, , namely,
+                                     −1       ⋆   n        n        ⋆                ⋆
+                            liminf n    log{p (X )/pˆ (X )} ≥ κ (P ),        with P -probability 1,          (17)
+                             n→∞                       0                0
+                where pˆ (Xn) = sup           p (Xn) is the maximum likelihood in P . As stated in the
+                         0              p ∈P   0                                           0
+                                         0  0
+                                                          ⋆                                   ⋆
+                main paper, it is easy to check that κ (P0) is bounded above by K(P ,P0). Indeed, by
+                definition of maximum likelihood,
+                           −1       ⋆    n        n       −1       ⋆   n        n
+                          n log{p (X )/pˆ (X )} ≤ n          log{p (X )/p (X )},       for all P ∈ P ,
+                                             0                              0                   0     0
+                and the upper bound converges with P⋆-probability 1 to K(P⋆,P ). This can be made
+                                                                                          0
+                                            ⋆                                                            ⋆
+                arbitrarily close to K(P ,P0) through careful choice of P0 and, therefore, κ (P0) ≤
+                K(P⋆,P ).
+                         0
+                                                                      ⋆              ⋆
+                    Our plan here is to focus on the case where κ (P0) = K(P ,P0), but we first want to
+                emphasize that strict inequality is possible. This corresponds to a particularly unusual
+                case where the maximum likelihood estimator fits the data better, even asymptotically,
+                than the true distribution P⋆ (or the model’s “best representative”). As an illustration,
+                consider the famous Neyman–Scott problem (Neyman and Scott 1948), where data Xn
+                is of the form {(X ,...,X ),...,(X ,...,X }, fully independent throughout, with
+                                     11        1J          n1        nJ
+                X ,...,X       iid N(µ ,σ2), for i = 1,...,n. The point is that there are n-many mean
+                  i1        in         i
+                parameters (µ ,...,µ ) but only one variance parameter σ2. The maximum likelihood
+                                1       n
+                estimators are
+                                      J                                           n   J
+                             µˆi = 1 XXij,       i = 1,...,n    and σˆ2 = 1 XX(Xij−µˆi)2.
+                                   J j=1                                     nJ i=1 j=1
+                What makes this example “famous” is that it is one of the first to demonstrate inconsis-
+                tency of the maximum likelihood estimator. In particular, if σ2 denotes the true variance
+                parameter under P⋆, then σˆ2 → J−1σ2 < σ2 with P⋆-probability 1 as n → ∞ with J
+                                                       J
+                fixed. In this case, using the general notation from above, it can be shown that
+                                          n−1log{p⋆(Xn)/pˆ (Xn)} → log(J−1) < 0,
+                                                             0                 J
+                while the minimum Kullback–Leibler number for this correctly-specified model is 0. This
+                happens because maximum likelihood systematically underestimates the variance, and a
+                modelwithlessspreadaroundtheobservationswilltendtofitbetterinthesenseofhaving
+                                                                                             ⋆              ⋆
+                non-trivially higher likelihood. Our hunch is that strict inequality κ (P0) < K(P ,P0)
+                holds only when the P0-maximum likelihood estimator is inconsistent, but we will not
+                pursue this matter here.
+                    Returning to the general question, we are interested in when
+                              n−1log{p⋆(Xn)/pˆ (Xn)} → K(P⋆,P ),            with P⋆-probability 1.
+                                                 0                    0
+                Of course, if the model is correct in the sense that P⋆ ∈ P , then the right-hand side is 0
+                                                                                0
+                and we would expect that the left-hand would be a limit that also equals 0. Corollary 3.2
+                                                                28
+                in Doss and Wellner (2016) gives a result along these lines for the case of log-concave
+                densities, which was one of the applications in the main paper. The more interesting case
+                for us is when the model is wrong, i.e., K(P⋆,P ) > 0. As is common in the literature
+                                                                       0
+                on model misspecification (e.g., Kleijn and van der Vaart 2006; Patilea 2001), we assume
+                that there exists P† ∈ P0 such that K(P⋆,P†) = K(P⋆,P0). Uniqueness if P† is not
+                                      0                             0                                      0
+                necessary for us here, but it is unique if P is convex, e.g., in the monotone density
+                                                                   0
+                application in the main paper. Then the scaled log-likelihood ratio can be written as
+                     n−1log{p⋆(Xn)/pˆ (Xn)} = n−1log{p⋆(Xn)/p†(Xn)}+n−1log{p†(Xn)/pˆ (Xn)}.
+                                         0                              0                    0        0
+                The law of large numbers implies that the first term on the right-hand side converges to
+                K(P⋆,P )withP⋆-probability1. So, only the second term on the right-hand side requires
+                          0
+                further analysis and, in particular, we would like to know when this would be vanishing as
+                n→∞.Sincepˆ (Xn)≥p†(Xn),itisenoughtoshowthatn−1log{pˆ (Xn)/p†(Xn)} → 0.
+                                  0           0                                             0         0
+                    A general strategy is through the use of a suitable uniform law of large numbers.
+                Consider the following decomposition, with de Finetti’s notation P⋆f for expectation
+                R f dP⋆,                                           n
+                            −1           n    †   n            1 X                        †
+                          n log{pˆ (X )/p (X )} = sup                {logp (X )−logp (X )}
+                                    0         0                n            0   i         0   i
+                                                         P ∈P
+                                                          0   0   i=1
+                                                                  n
+                                                      = sup 1 X{logp0(Xi)−P⋆logp0}
+                                                         P0∈P0 n   i=1
+                                                                       n
+                                                                   −X{logp†(Xi)−P⋆logp†}
+                                                                                0                 0
+                                                                      i=1                           
+                                                                   −n{K(P⋆,P )−K(P⋆,P†)}
+                                                                                  0             0
+                                                                   n                            
+                                                               1 X                     ⋆        
+                                                                                                
+                                                      ≤ sup           {logp0(Xi)−P logp0} +o(1),
+                                                         P ∈P n                                 
+                                                          0   0    i=1
+                                                   −1Pn            †          ⋆      †
+                where “o(1)” corresponds to n            i=1{logp0(Xi) − P logp0}, which is vanishing with
+                P⋆-probability 1 by the law of large numbers. Of course, if logP is a Glivenko–Cantelli
+                                                                                         0
+                class, then of course the upper bound in the above display is vanishing and the desired
+                result holds. If, for example, the densities in P are not bounded away from 0, then this
+                                                                     0
+                naive Glivenko–Cantelli property might fail. In that case, one can restrict the class P0
+                to some better-behaved subset for which the Glivenko–Cantelli property can be estab-
+                lished, then show that the maximum likelihood estimator would be in that restricted P0
+                with probability converging to 1. This is relatively standard from here, so we refer the
+                interested reader to the classical texts on empirical process theory and statistical infer-
+                ence/learning (e.g., Kosorok 2008; van de Geer 2000; van der Vaart 1998; van der Vaart
+                and Wellner 1996).
+                D OnPR’srate of convergence
+                The rate at which pr’s density estimator converges to the true density p⋆ is of general
+                interest and is relevant to questions about the asymptotic growth rate of the pre-process
+                                                                 29
+                under the alternative. Here we review and slightly extend the theoretical analysis in
+                Martin and Tokdar (2009).
+                    Martin and Tokdar (2009) showed that, under the conditions of Theorem 2 in the
+                main paper (see Section C above), if P⋆ is in the interior of the set Q of mixtures and if
+                pr’s weight sequence (w ) has the form w = (i+1)−γ, for γ ∈ (2/3,1], then pr’s density
+                                           i                  i
+                               n             1−γ     ⋆    n              ⋆
+                estimator qˆ     satisfied n    K(p ,qˆ    ) → 0 in P -probability. It is for precisely this
+                             X                          X
+                reason that we take γ = 0.67, just slightly more than 2/3, in our numerical examples—it
+                corresponds to roughly the best rate according to the available theory. Martin & Tokdar
+                argue that their bound on the rate is conservative or worst-case in the sense that it
+                corresponds to a P⋆ arbitrarily close to the boundary of Q; this boundary case is “worst”
+                because pr struggles most to estimate a mixing distribution that does not have a density
+                with respect to the posited dominating measure.
+                    As an aside, a shortcoming of the theoretical analyses of pr published to date is that
+                they apparently are not able to accommodate structural assumptions about P⋆, so the
+                results all are of a “worst-case” form. This makes it difÏcult to assess the performance
+                of pr in natural cases where P⋆ has a sufÏciently smooth density, etc.
+                    It turns out that there is another previously-unknown sense in which pr’s convergence
+                rate is conservative. The following proposition makes this precise.
+                Proposition 1. Under the conditions stated in the second paragraph of this section,
+                                    n1−γ maxK(p⋆,qˆ s) → 0        in P⋆-probability, n → ∞.
+                                          s≥n          X
+                Proof. Martin&Tokdar’sproofleansonademonstrationthatK(p⋆,qˆ n)andn1−γK(p⋆,qˆ n)
+                                                                                             X                     X
+                are what Robbins and Siegmund (1971) call an “almost supermartingale” sequences, and
+                then they apply Robbins & Siegmund’s Theorem 1 to prove that both are vanishing with
+                P⋆-probability 1. But Robbins & Siegmund also prove a maximal inequality for almost
+                supermartingales and the above proposition’s claim is a consequence of their Proposition 2
+                and Martin & Tokdar’s Theorem 4.8. We omit the notation-heavy details here.
+                                                                                    −(1−γ)               ⋆    n
+                    This result implies that Martin & Tokdar’s conservative n               rate for K(p ,qˆ   ) is
+                                                                                                            X
+                moreaccuratelytherateassociatedwiththeobviously-no-smallerquantitymax                      K(p⋆,qˆ s).
+                                                                                                       s≥n         X
+                This is non-trivial because, like supermartingales, almost supermartingale sequences only
+                “tend” to decrease. Unfortunately, it is not clear how this new sense of conservatism in
+                the extant theoretical analyses of pr can be used to pin down a less conservative bound
+                on rate of convergence. But the empirical work below may shed some light on this.
+                E Size of the error term in Theorem 2
+                A question posed in the main paper is: how large is the pre-process’s “o(n)” term in
+                Theorem 2? The theoretical analysis in Martin and Tokdar (2009) and Section D above
+                                                     γ
+                imply a conservative bound of n on the “o(n)” term in Theorem 2 of the main paper,
+                                                                             −γ
+                when pr’s weight sequence (w ) satisfies w = (i + 1)            , for γ ∈ (2/3,1]. So, with the
+                                                   i             i
+                suggested choice of γ ≈ 2/3, a conservative bound on the “o(n)” term would be roughly
+                n2/3. Less conservatively, away from the edge cases, we expect an improved rate, and
+                                                                                             γ/2                1/3
+                the current conjecture is that the o(n) term in question is roughly n           , or roughly n
+                                                                30
+                when γ ≈ 2/3. In this section, we present some simulation results as empirical evidence
+                in support of this conjecture.
+                   Towards this, recall the oracle e-process defined in the main paper as
+                                                              p⋆(Xn)
+                                                  Eor =                    ,
+                                                    n    sup       p (Xn)
+                                                             P ∈P   0
+                                                              0  0
+                whose magnitude can be used to compare the null model P0 to the true distribution
+                P⋆ based on the data Xn. Then the difference between the log-oracle e-process and the
+                log-pre-process is
+                                                                     n        ⋆
+                                       D :=logEor−logEpr =Xlog p (Xi) ,
+                                         n         n          n
+                                                                           qˆ i−1(Xi)
+                                                                    i=1     X
+                which is easy to evaluate numerically and does not depend on the null model. Most
+                important for our present purposes here is that D asymptotically agrees with the o(n)
+                                                                     n
+                term in Theorem 2’s bound. So, if we simulate data and evaluate Dn, then we can model
+                D as a function of n to approximate its growth and, in turn, estimate the size of the
+                  n
+                o(n) error term in Theorem 2.
+                   We simulate 250 data sets for each value of n along the grid 2000,4000,...,30000
+                                                                                ¯
+                and, for each data set, evaluate the difference D . Define D to be the average of D
+                                                                    n            n                          n
+                                                             ¯
+                over the replicates, and then we model logDn as a linear function of logn—the coefÏcient
+                associated with this logn term represents the polynomial order of o(n), which should be
+                much smaller than 1. We also fit a model that includes a loglogn term, but found that
+                the coefÏcient on this term is not significantly different from zero. The specific mixture
+                model under consideration here uses a Gaussian kernel pu(x) = N(x | u,1) mixed over the
+                mean in U = [−5,5]. For the case when P⋆ is in the interior of the convex hull, we take
+                the true mixing distribution to be Beta(3,5), centered and scaled to U. For the boundary
+                P⋆ case, we take the true mixing distribution to be a point mass at 0. These experiments
+                were also carried with location–scale normal mixtures and mixtures of gamma kernels
+                and the results were similar to those here.
+                   Figure 4 shows our simulation-based estimates of the growth of the o(n) error term
+                as a function of n, with Panels (a) and (b) showing the interior- and boundary-P⋆ cases,
+                                                                                ¯
+                respectively. In the interior case, for the linear model logDn ∼ logn stated using R
+                syntax, the estimated coefÏcient on the logn term is 0.325 with standard error 0.002.
+                This is in the ballpark of the conjectured value of 0.33 for this interior-P⋆ case. For the
+                boundary-P⋆ case, the estimated coefÏcient is 0.545 with standard error 0.008, which is
+                a little smaller than the conservative bound from Martin and Tokdar (2009).
+                   Asanaside, the near-2/3 lower bound on pr’s weight sequence parameter γ appears to
+                be an artifact of the proof technique employed in Martin and Tokdar (2009). One would
+                expect that a smaller value of γ, e.g., close to the natural lower bound of 0.5, would be
+                a better choice because the slower the weight sequence decays, the more opportunity an
+                individual data point has to influence pr’s estimator. So, intuitively, one would expect
+                pr to perform better, to make more efÏcient use of the data, with smaller choices of the
+                parameter γ. If true, then there would be a need for a different strategy for analyzing
+                pr, one that could detect its improved performance with smaller weights. To check this
+                intuition, and to see if we could get a smaller bound on the o(n) term in Theorem 2,
+                                                             31
+                                                                                       80
+                                45
+                                                                                       70
+                                40
+                           atio)                                                   atio)60
+                                35
+                                                                                       50
+                           acle to PR r30                                          acle to PR r
+                                                                                       40
+                           log(or                                                  log(or
+                                25                                                     30
+                                20                                                     20
+                                      5000   10000  15000  20000  25000  30000               5000   10000  15000  20000  25000  30000
+                                                       n                                                       n
+                                            (a) Interior-P⋆                                       (b) Boundary-P⋆
+                                              ¯
+                    Figure 4: Plots of Dn versus n for two different simulation settings. In Panel (a), data
+                    are simulated from a P⋆ in the interior of the convex hull Q whereas, in Panel (b), the
+                    data are simulated from P⋆ on the boundary of Q.
+                    we repeated the above experiment with γ = 0.51. Contrary to the above intuition, our
+                    findings revealed that the aforementioned o(n) term is actually significantly larger for
+                    γ = 0.51 than it is for γ = 0.67. This suggests that there may be something fundamental
+                    about the near-2/3 bound in Martin and Tokdar (2009) after all.
+                    F Testing log-concavity: multivariate case
+                    Oneof the applications presented in the main paper was the use of e-processes, in partic-
+                    ular, our proposed pre-process, for testing log-concavity of the underlying density based
+                    on iid observations. There we focused on a comparison between our pre-process-based
+                    test and the universal inference-based e-process test proposed by Gangrade et al. (2023).
+                    This latter e-process is very similar to the pre-process: the only difference is that, in-
+                    stead of using pr to fit a nonparametric mixture density qˆ i−1(Xi) to each Xi based on
+                                                                                                    X
+                    Xi−1, it does so using a standard Gaussian kernel density estimator applied to Xi−1. The
+                    comparisons in the main paper focused on data of dimension d = 1. Our goal here is to
+                    do a similar comparison for d > 1.
+                        First, we need to comment on the computation of the two e-processes when the dimen-
+                    sion is greater than 1. Lets start with the denominators. As in the main paper, for dimen-
+                    sion d = 1, the log-concave maximum likelihood can be found using the logConDens func-
+                    tion from the R package logcondens (Dum¨ bgen and Rufibach 2011); for d ∈ {2,3,4} this
+                    canbedoneusingtheRpackageathttps://github.com/FabianRathke/fmlogcondens.
+                    Next, we discuss computation of the e-process numerators in turn.
+                        • For the kernel-based universal inference, we obtain the d-dimensional kernel density
+                            estimate using the kde function in the R package ks (Duong 2024); the same choice
+                            is made in Gangrade et al. (2023). This can accommodate dimension d ≤ 6. We
+                            use a diagonal, data-driven bandwidth matrix as implemented in the Hpi.diag
+                            function in the same R package. Doing this sequentially, i.e., constructing a kernel
+                                                                              32
+                    density estimator at Xi based on Xi−1 for each i ≥ 1, is quite expensive and, for
+                    this reason, Gangrade et al. (2023) propose a batching scheme. Here we are more
+                    interested in the quality of the e-processes than in the computational efÏciency, so
+                    we did not implement their batched version.
+                  • For pr, implementation is easy when the dimension is low. Here, however, for d-
+                    dimensional data, to fit a multivariate normal mixture, where mixing is over the
+                    mean vector and diagonal covariance matrix, then the dimension of the latent U-
+                    space is 2d. This means we quickly surpass cases where pr’s integration can be done
+                    using simple quadrature rules. It is for precisely these cases that we developed the
+                    prticle filter strategy in Dixit and Martin (2023a), which goes roughly as follows.
+                                                                                            ˆ
+                    Start with a random sample {U : t = 1,...,T} from pr’s initial guess Ψ of the
+                                                    t                                        0
+                    mixing distribution supported on U and, to each U , attach the weight π (U ) ≡ 1.
+                                                                      t                    0  t
+                    As described in Dixit and Martin (2023a, Sec. 3), the weights are sequentially
+                    updated as data points arrive so that the weighted samples after observing Xi−1
+                                                                                             ˆ
+                    can be used to approximate expectations with respect to the pr estimator Ψ   . In
+                    particular, they propose                                                  i−1
+                                                          T
+                                          q˜ i−1(X ) := 1 Xk(X | U )π      (U )
+                                           X      i    T         i   t  i−1  t
+                                                         t=1
+                    as an approximation of pr’s qˆ i−1(X ) = R k(X | u)Ψ      (du). Importantly, the
+                                                  X      i          i      i−1
+                    weight updating scheme requires no integration. With this approximation of pr’s
+                    predictive density, it is straightforward to get the corresponding pre-process.
+                  To compare the two e-processes, we follow the strategy in Section E above. That is,
+              we compare each of the e-processes to the oracle e-process that knows the true density
+              p⋆. In particular, we consider
+                              Dpr = logEor −logEpr and Dui = logEor−logEui,
+                                n         n         n           n        n         n
+              where Epr and Eui are the pre-process and kernel-based universal inference e-process,
+                       n        n
+              respectively. The advantage of this comparison is that it alleviates the computation of
+              the log-concave maximum likelihood estimators and focuses specifically on the aspect
+              that distinguishes the two e-processes, namely, their choice of numerator.
+                  We focus our comparison on the case of d = 3. Since the kernel density estimation
+              scheme can only handle d ≤ 6, we consider the choice d = 3 to be “moderate dimension.”
+              In this case, implementation of pr—fitting a Gaussian mixture model with diagonal
+              covariance matrix—would require integration over a 6-dimensional space, which cannot
+              bedoneusingquadrature. Here, instead, weusetheprticlefilterapproximationdescribed
+              above with T = 20,000 initial particles. This can all be done up to at least dimension
+              d = 5, but all the computations (both kernel and pr) become more expensive. Since the
+              point we want to make is apparent with d = 3, this is where we focus our investigation.
+                  Figure 5 shows the paths n 7→ D□ for the two e-processes, □ ∈ {pr,ui}, under investi-
+                                                 n
+              gation over 50 data sets sampled iid from a true distribution P⋆ that is a two-component
+              mixture of 3-dimensional Gaussian kernels with different means and different diagonal
+              covariance matrices. This means that, in a certain sense, both e-processes are fitting a
+                                                        33
+                                       600
+                                       500
+                                   erence
+                                       400
+                                       300
+                                       200
+                                   log e−process diff
+                                       100
+                                       0
+                                              200      400      600      800     1000
+                                                               n
+               Figure 5: Plots of Dpr (blue) and Dui (pink) versus n for 50 data sets, along with the
+                                    n                n
+               pointwise average.
+               “correctly-specified model” in their respective numerators, just with a different estima-
+               tor: pr versus a kernel density estimator. Since D□ measures the gap between the given
+                                                                  n             □
+               e-process and the idealized oracle e-process, smaller values of D   indicate a smaller gap
+                                                                                n
+               and, hence, a better approximation of that ideal. As is clear from the plot, Dpr tends to
+                                                                                              n
+               be significantly smaller than Dui and far less variable across replications. The take-away
+                                              n
+               messageisthat, while the increased dimension is sure to affect the quality of an e-process’s
+               approximation of the oracle e-process, but the increased dimension has a more significant
+               effect on the kernel-based e-process than it does on the pre-process implemented with the
+               prticle filter. Moreover, although we did not implement the batch procedure suggested
+               in Gangrade et al. (2023), it is worth mentioning that the pre-process’s denominator is
+               much less expensive to compute than the kernel-based e-process’s, despite the fact that
+               the latter is working with a relatively large number of particles. This is because the pr
+               updates are genuinely recursive while a naive implementation of the kernel update, with
+               data-driven bandwidth, requires a look-back at the full data.
+               G Analternative PR-like e-process
+               While there are a number of upsides to the use of a mixture model and pr in the denom-
+               inator of the e-process construction, there are also downsides. One is that it is required
+               to specify the mixture model’s kernel {pu : u ∈ U}. In some cases, this specification is
+               trivial, i.e., one might just adopt a mixture of normals for the sake of flexibility, but in
+               other cases it might not be. A natural question is, if all that one needs is the sequence of
+               one-step-ahead predictive densities at the observations, then why is the mixture model
+               formulation necessary? Can we not just work directly with densities on the sample space?
+               Hahn et al. (2018) considered this question in the context of recursive Bayesian updat-
+               ing, and a proposal they put forward is the following. Their primary focus was on scalar
+                                                           34
+                observations so that is the context we consider here. Like with pr, start with a sequence
+                of weights (wi) and a prior (univariate) predictive density q0 with corresponding distribu-
+                tion function Q . For a sequence of observations X ,X ,..., they suggest the following
+                                  0                                        1   2
+                sequence of predictive densities
+                                                                                         
+                     q (x) = (1 −w )q        (x) +w q       (x)c Q       (x),Q     (X ) ,     x∈X, n≥1,
+                      n               n   n−1         n n−1      ρ   n−1        n−1   n
+                where cρ is the Gaussian copula density,
+                                                              −1       −1
+                                                         N (Φ (u),Φ (v)|0,1,ρ)
+                                          c (u,v) =       2                              ,
+                                           ρ              −1                −1
+                                                      N(Φ (u)|0,1)N(Φ (v)|0,1)
+                with Φ the standard normal distribution function, and N in the numerator the bivariate
+                                                                                2
+                normal density, with zero means and unit variances, depending on a correlation parame-
+                ter ρ ∈ [0,1). Again, the advantage here compared to the original pr is that it does not
+                require specification of a mixture model or the numerical integration to convert pr’s mix-
+                ing distribution estimator into a corresponding mixture density estimator. The recursion
+                is written most naturally in terms of distribution—rather than density—functions, but
+                then numerical differentiation is needed to get the density for the likelihood calculations
+                that follow.
+                    From the predictive updates, one can get a corresponding joint density via multipli-
+                cation:                                            n
+                                                    qrbp(Xn) = Yqi−1(Xi),
+                                                                  i=1
+                where rbp indicates that this is motivated by recursive Bayes predictive updating. Given
+                a null hypothesis P0, one can define the corresponding pr-like e-process as
+                                                                 qrbp(Xn)
+                                                    Erbp =                     .
+                                                      n      sup       p (Xn)
+                                                                 p ∈P   0
+                                                                  0  0
+                    This alternative e-process is interesting, and here are some points that we think war-
+                rant further investigation. First, there is currently no theory available that can be used to
+                investigate the asymptotic growth rate of Erbp, so can anything be said about this? Sec-
+                                                                 n
+                ond, how does this perform empirically compared to the pre-process and other available
+                e-processes? Third, can this be extended naturally—and in a way that can be theoreti-
+                cally analyzed—to handle multivariate observations? A suggestion for handling bivariate
+                data is given in Hahn et al. (2018), along with some brief numerical results, but no general
+                formulation or theory.
+                                                                 35

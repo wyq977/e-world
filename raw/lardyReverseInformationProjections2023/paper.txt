@@ -1,0 +1,1559 @@
+                                                                                                                                                  1
+                    Reverse Information Projections and Optimal
+                                                                 E-statistics
+                                       Tyron Lardy, Peter Grünwald and Peter Harremoës, Member, IEEE
+                                                                           Abstract
+                    Information projections have found important applications in probability theory, statistics, and related areas. In the ﬁeld of
+                hypothesis testing in particular, the reverse information projection (RIPr) has recently been shown to lead to growth-rate optimal
+                (GRO)e-statistics for testing simple alternatives against composite null hypotheses. However, the RIPr as well as the GRO criterion
+                are undeﬁned whenever the inﬁmum information divergence between the null and alternative is inﬁnite. We show that in such
+                scenarios, under some assumptions, there still exists a measure in the null that is closest to the alternative in a speciﬁc sense.
+                Whenever the information divergence is ﬁnite, this measure coincides with the usual RIPr. It therefore gives a natural extension
+                of the RIPr to certain cases where the latter was previously not deﬁned. This extended notion of the RIPr is shown to lead to
+                optimal e-statistics in a sense that is a novel, but natural, extension of the GRO criterion. We also give conditions under which
+                the (extension of the) RIPr is a strict sub-probability measure, as well as conditions under which an approximation of the RIPr
+                leads to approximate e-statistics. For this case we provide tight relations between the corresponding approximation rates.
+                                                                         Index Terms
+                    Reverse Information Projections, Description Gain, Hypothesis Testing, E-variables.
+                                                                     I. INTRODUCTION
+                   E write D(νkλ) for the information divergence (Kullback-Leibler divergence, [1]–[3]) between two ﬁnite measures ν
+           Wandλgivenby
+                                                           Z      dν
+                                               D(νkλ) =  Ωln dλ dν−(ν(Ω)−λ(Ω)), if ν ≪λ;
+                                                           ∞,                                       else.
+           For probability measures the interpretation of D(νkλ) is that it measures how much we gain by coding according to ν rather
+           than coding according to λ if data are distributed according to ν. Many problems in probability theory and statistics, such as
+           conditioning and maximum likelihood estimation, can be cast as minimization in either or both arguments of the information
+           divergence. In particular, this is the case within the recently established and now ﬂourishing theory of hypothesis testing based
+           on e-statistics that allows for optional continuation of experiments (see Section II-C) [4]–[8]. That is, a duality has been
+           established between optimal e-statistics for testing a simple alternative P against a composite null hypothesis C and reverse
+           information projections [4]. Here, the reverse information projection (RIPr) of P on C is — if it exists — a unique measure
+            ˆ                                                                                                        ˆ
+           Q such that every sequence (Q )            in C with D(PkQ ) → inf             D(PkQ) converges to Q in a particular norm [9],
+                                              n n∈N                        n          Q∈C
+                                                                                                                      ˆ
+           [10]. Li [9] showed that whenever C is convex and D(PkC) := infQ∈C D(PkQ) < ∞, the RIPr Q exists and the likelihood
+                                    ˆ
+           ratio between P and Q is an e-statistic (this result is restated as Theorem 1 below). Grünwald et al. [4] showed (restated
+           as Theorem 2 below) that it is even the optimal e-statistic for testing P against C. However, it is clear that the RIPr cannot
+           be deﬁned in this way if the information divergence between P and C is inﬁnite, i.e. D(PkC) = ∞. This leaves a void in
+           the theory of optimality of e-statistics. In this work we remedy this by realizing that even if all measures in C are inﬁnitely
+           worse than P at describing data distributed according to P itself, there can still be a measure that performs best relative to
+         arXiv:2306.16646v3  [cs.IT]  30 Jul 2024
+           the elements of C. To ﬁnd such a measure, we consider the description gain [11] given by
+                                                                ′    Z     dQ′              ′
+                                                 D(PkQ Q)= ln dQ dP−(Q(Ω)−Q(Ω))                                                                 (1)
+                                                                       Ω
+           whenever this integral is well-deﬁned. If the quantities involved are ﬁnite then the description gain reduces to
+                                                         D(PkQ Q′)=D(PkQ)−D(PkQ′).                                                              (2)
+           In analogy to the interpretation of information divergence for coding, the description gain measures how much we gain by
+           coding according to Q′ rather than Q if data are distributed according to P. Furthermore denote
+                                                          D(PkQ C):= sup D(PkQ Q′),
+                                                                               ′
+                                                                             Q∈C
+             T. Lardy and P. Grünwald are afﬁliated with CWI, Amsterdam, and Leiden University, The Netherlands. P. Harremoës is at Copenhagen Business College,
+           Copenhagen, Denmark. CWI is the national research institute for mathematics and computer science in the Netherlands.
+             Aﬁve-page abstract of this paper, containing a subset of the theorems but no proofs, was presented at ISIT 2023, Taipei.
+             This work has been submitted to the IEEE for possible publication. Copyright may be transferred without notice, after which this version may no longer
+           be accessible.
+                                                                                                                                 2
+          where undeﬁned values are counted as −∞ when taking the supremum. If there exists at least one Q∗ ∈ C such that P ≪ Q∗,
+          then D(PkQ   C) is a well-deﬁned number in [0,∞] for any Q ∈ C. This quantity should be seen as the maximum description
+          gain one can get by switching from Q to any other measure in C. Intuitively, if there is a best descriptor in C, nothing can be
+          gained by switching away from it. Indeed, in Proposition 2 we show that infQ∈C D(PkQ   C) is ﬁnite if and only if it is
+          equal to zero.
+          A. Contents and Overview
+            Below, in Section II, we start by giving an overview of existing results on both the reverse information projection and
+          e-statistics, which we deﬁne and brieﬂy motivate, and the growth-rate optimality (GRO) criterion, a natural replacement of
+          statistical power within the context of e-value based hypothesis testing. Section III states Theorem 3, our ﬁrst central result.
+                                                                                     ˆ
+          It shows that — under very mild conditions — there exists a unique measure Q such that every sequence (Q )     in C with
+                                                                                                                   n n∈N
+                                                            D(PkQn C)→0
+                       ˆ
+          converges to Q in a speciﬁc metric which we deﬁne. Thus, Theorem 3 may be viewed as a generalization of Li’s result stated
+                                           ˆ
+          below as Theorem 1. We refer to Q as the RIPr, as it coincides with the original notion of the RIPr whenever the information
+          divergence is ﬁnite. The remainder of Section III provides further discussion of this result, as well as an example showing
+          that our extended notion of the RIPr can be well-deﬁned whereas the RIPr was previously undeﬁned. In the speciﬁc case that
+                                                                                                                       ˆ
+          all initial measures are probability measures, both Li’s original result and ours leave open the possibility that Q may be a
+          strict sub-probability measure, integrating to less than 1. In Sub-Section III-A we give a further example showing that this can
+                                                                                     ˆ
+          indeed be the case, and we provide, via Theorem 4, a condition under which Q is guaranteed to be a standard (integrating to
+          1) probability measure. Sub-Section III-B then extends the greedy algorithm of [12] and [13] for approximating the RIPr in
+          settings where D(PkC) < ∞ to settings where the information divergence might be inﬁnite.
+            In Section IV we turn to e-statistics. It contains our second central result, Theorem 5, which shows that whenever our
+                                       ˆ                                     ˆ
+          extended notion of the RIPr Q exists, the likelihood ratio of P and Q is an optimal e-statistic according to the criterion of
+          Deﬁnition 2, which can be seen as a strict generalization of GRO, the standard optimality criterion for e-statistics. As such,
+          this result may be viewed as a generalization of a result of Grünwald et al. [4] stated below as Theorem 2. After illustrating the
+          result by an example, Sub-Section IV-B provides another technical result, Theorem 6, which relates approximations in terms
+          of information gain, to approximations in terms of e-statisticity: conditions are given under which a sequence Q1,Q2,...
+                        ˆ
+          converging to Q in terms of information gain at a certain rate also satisﬁes that the likelihood ratio between P and Q1,Q2,...
+          converges to an e-statistic, and tight bounds on the corresponding rates are given. After a discussion of related work, the paper
+          ends with a summary and ideas for future work in Section V. All proofs are delegated to Appendix A. Appendix B provides a
+          general method for constructing RIPrs that are strict sub-probability measures. Finally, Appendix C provides a discussion on
+          the assumption of convexity that we will make throughout.
+                                                             II. BACKGROUND
+          A. Preliminaries
+            We work with a measurable space (Ω,F) and, unless speciﬁed otherwise, all measures will be deﬁned on this space.
+          Throughout, P will denote a ﬁnite measure and C a set of ﬁnite measures, such that P and all Q ∈ C have densities w.r.t.
+          a common σ-ﬁnite measure µ. These densities will be denoted with lowercase, i.e. p and q respectively. We will assume
+          throughout that C is convex, i.e. closed under ﬁnite mixtures. In Section IV-A and in more detail in Appendix C we discuss
+          how our results would be affected if we were to adopt stronger notions of convexity like σ-convexity (closed under countable
+          mixtures), or Choquet-convexity(closed under arbitrary mixtures). Furthermore, we assume that there exists at least one Q∗ ∈ C
+          such that P ≪ Q∗. This assumption is needed to ensure that D(PkQ   C) is a well-deﬁned number in [0,∞] for any Q ∈ C.
+          B. The Reverse Information Projection
+            Asmentionedbrieﬂyabove,the reverseinformationprojection is the result of minimizing the information divergence between
+          P and C. If C is an exponential family, this problem is well understood [10], but we focus here on the case that C is a general
+          convex set. In this setting, the following theorem establishes existence and uniqueness of a limiting object for any sequence
+                                                                                                   ˆ
+          (Q )     in C such that D(PkQ ) → D(PkC) whenever the latter is ﬁnite. This limit (i.e. Q in the following) is called the
+             n n∈N                       n
+          reverse information projection of P on C.
+          Theorem 1 (Li [9], Deﬁnition 4.2 and Theorem 4.3). If P and all Q ∈ C are probability measures such that D(PkC) < ∞,
+                                                                         ˆ
+          then there exists a unique (potentially sub-) probability measure Q such that:
+            1) We have that lnq → lnqˆ in L (P) for all sequences (Q )        in C such that lim D(PkQ ) = D(PkC).
+                                n             1                        n n∈N                n→∞          n
+            2) R ln dP dP = D(PkC),
+                 Ω     ˆ
+                     dQ
+            3) R dP dQ≤1 for all Q ∈ C.
+                 Ω ˆ
+                   dQ
+                                                                                                                                      3
+          C. E-statistics and Growth Rate Optimality
+             The e-value has recently emerged as a popular alternative to the p-value for hypothesis testing [5], [8], [14]. Unlike the
+          p-value, it is eminently suited for testing under optional continuation — and more generally, when the rule for stopping or
+          continuing to analyze an additional batch of data is not under control of the data analyst, and may even be unknown or
+          unknowable. It can be thought of as a measure of statistical evidence that is intimately linked with numerous ideas, such as
+          likelihood ratios, test martingales [15] and tests of randomness [16]. Formally, an e-value is deﬁned as the value taken by an
+          e-statistic, which is deﬁned as a random variable E : Ω → [0,∞] that satisﬁes R E dQ ≤ 1 for all Q ∈ C [6]. The set of all
+                                                                                          Ω
+          e-statistics is denoted as EC. Large e-values constitute evidence against C as null hypothesis, so that the null can be rejected
+                                                                                                                                    1
+          when the computed e-value exceeds a certain threshold. For example, the test that rejects the null hypothesis when E ≥ /α
+                                                                                                       1        R
+          has a type-I error guarantee of α by a simple application of Markov’s inequality: Q(E ≥ /α) ≤ α ΩEdQ ≤ α. For all
+          further details, as well as an extensive introduction to the concept, and how it relates to optional stopping and continuation,
+          we refer to [4] and the overview paper [5].
+             In general, the set EC of e-statistics is quite large, and the above does not tell us which e-statistic to pick. This question
+          was studied in [4] and a log-optimality criterion coined GRO (Growth-Rate Optimality) was introduced for the case that the
+          interest is in gaining as much evidence as possible relative to an alternative hypothesis given by a single probability measure
+          P. GRO is a natural replacement of statistical power, which cannot meaningfully be used in an optional stopping/continuation
+          context. This criterion can be traced back to the information-theoretic Kelly betting criterion in [17] and is further discussed
+          at length by [4], [5], [7], to which we refer for more discussion.
+                                                  ˆ
+          Deﬁnition 1. If it exists, an e-statistic E ∈ EC is Growth-Rate Optimal (GRO) if it achieves
+                                                         Z     ˆ             Z
+                                                            lnEdP = sup         lnEdP.
+                                                          Ω            E∈EC Ω
+             The following theorem establishes a duality between GRO e-statistics and reverse information projections. For a limited set
+          of testing problems, it states that GRO e-statistics exist and are uniquely given by likelihood ratios.
+          Theorem 2 (Grünwald et al. [4], Theorem 1). If P and all Q ∈ C are probability measures such that D(PkC) < ∞, p(ω) > 0
+                              ˆ                              ˆ    dP
+          for all ω ∈ Ω, and Q is the RIPr of P on C, then E =      ˆ is GRO with rate equal to D(PkC), i.e.
+                                                                  dQ
+                                                        Z              Z     ˆ
+                                                    sup    lnEdP =        lnEdP =D(PkC).
+                                                   E∈EC Ω               Ω
+                                                 ˜               ˜     ˆ
+          Furthermore, for any GRO e-statistic E, we have that E = E holds P-almost surely.
+                                                III. THE REVERSE INFORMATION PROJECTION
+             In this section, we state a result analogous to Theorem 1 in a more general setting. Rather than convergence of the logarithm
+          of densities in L1(P), we consider convergence with respect to a different metric on the set of measurable positive functions,
+          i.e. M(Ω,R>0) = {f : Ω → R>0 : f measurable}. For f,f′ ∈ M(Ω,R>0) we deﬁne
+                                                      2     ′     1 Z    f       f
+                                                   mP(f,f ) := 2       ln  f   +ln f′ dP,                                           (3)
+                                                                     Ω
+                       (f+f′)
+          where f :=         /2. This is a divergence that can be thought of as the averaged Bregman divergence associated with the
+          convex function γ(x) = x − 1− ln(x). In particular, this means that for Q,Q′ ∈ C such that P ≪ Q and P ≪ Q′, we have
+          that                                               1                  1
+                                                  2     ′                  ¯              ′    ¯
+                                                mP(q,q ) = 2D(PkQ Q)+ 2D(PkQ  Q).                                                   (4)
+          In [18], averaged Bregman divergences are studied in detail for general γ, and they show that the function
+                                                    m2(x,y) = 1γ(x)+ 1γ(y)−γx+y
+                                                      γ         2        2              2
+                                                       ′′   ′′                       ′′    ′′     −2
+          is the square of a metric if and only if ln(γ (x))   ≥0. In our case, ln(γ (x)) = 2x       , so this result holds. This can be
+          used together with an application of the Minkowski inequality to show that the triangle inequality holds for the square root
+          of the divergence (3), i.e. mP, on M(Ω,R>0). It should also be clear that for f,g ∈ M(Ω,R>0) if f = g everywhere,
+          then mP(f,g) = 0. Conversely mP(f,g) = 0 only implies that P(f 6= g) = 0. This prevents us from calling mP a metric
+                                                                    p       p
+          on M(Ω,R>0), and we therefore deﬁne, analogous to L and L spaces, M(Ω,R>0) as the set of equivalence classes of
+          M(Ω,R>0) under the relation ‘∼’ given by f ∼ g ⇔ P(f 6= g) = 0. By the discussion above, mP properly deﬁnes a metric
+          on M(Ω,R>0). In the following we will often ignore this technicality and simply act as if mP deﬁnes a metric on M(Ω,R>0),
+          since we are not interested in what happens on null sets of P.
+                                                                                                                  4
+           Considering convergence with respect to mP will be useful for our analyses in the following. In particular, we will exploit
+         on numerous occasions that mP can be interpreted as a symmetrized version of the description gain, as described in Equation
+         (4). However, other than mathematical convenience, there is no fundamental difference between considering convergence with
+         respect to mP and convergence of the logarithms in L1(P), as considered in Theorem 1. Indeed, Lemma 2 in Appendix A
+         shows that the two types of convergence are equivalent. It is also this result from which the following proposition follows.
+         Proposition 1. The metric space (M(Ω,R>0),mP) is complete.
+           Everything is now in place to state the main result.
+                                                                         ˆ
+         Theorem 3. If infQ∈C D(PkQ   C) < ∞, then there exists a measure Q that satisﬁes the following for every sequence
+         (Q )    in C s.t. D(PkQ   C) → inf    D(PkQ C)asn→∞:
+           n n∈N               n           Q∈C
+           1) q →qˆin m .
+               n         P
+           2) If P′ is a measure such that |infQ∈C D(PkQ   P′)| < ∞, then
+                                                 Z ln dP′ dP = lim Z ln dP′ dP.
+                                                        ˆ      n→∞       dQ
+                                                  Ω   dQ             Ω      n
+           3) For any Q ∈ C,
+                                             Z dP dQ≤P(Ω)+Q(Ω)−liminfQn(Ω).
+                                                  ˆ                     n→∞
+                                              Ω dQ
+           Theorem 1 is a special case of Theorem 3 when P and all Q ∈ C are probability measures such that D(PkC) < ∞. This
+         follows because Equation (2) implies that minimizing D(PkQ   Q′) over Q is equivalent to minimizing D(PkQ) and because
+         convergence of the densities in mP is equivalent to convergence of the logarithms in L1(P) by Lemma 2 in Appendix A-A.
+                            ˆ
+         We therefore refer to Q as the reverse information projection of P on C, thereby extending the deﬁnition of the latter (we
+         refrain from the term ‘generalized RIPr’, because it has already been used for the RIPr whenever it is not attained by an
+                                                                                                                ˆ
+         element of C [10] or when the log score is replaced by another loss function [19]). However, the density of the measure Q is
+         only unique as an element of M(Ω,R>0), since convergence of the densities holds in mP. In the current work this causes no
+         ambiguity, so that we simply refer to it as ‘the’ RIPr.
+           Note that Theorem 3 implies that if there exists a Q ∈ C with D(PkQ   C) = 0, then Q is the RIPr of P on C. This
+         matches with the intuition that the maximum gain we can get from switching away from the ‘best’ code in C should be equal
+         to zero. The following result establishes this more formally.
+         Proposition 2. The following conditions are equivalent:
+           1) There exists a measure P′ such that D(PkP′   C) is ﬁnite.
+           2) There exists a measure Q in C such that D(PkQ   C) is ﬁnite.
+           3) There exists a sequence of measures Qn ∈ C such that D(PkQn   C) → 0 for n → ∞.
+         Consequently, whenever infQ∈C D(PkQ   C) < ∞, it must actually be equal to zero.
+           To show that the reverse information projection exists, it is therefore enough to prove that one of these equivalent conditions
+         holds. Which condition is easiest to check will depend on the speciﬁc setting, as exempliﬁed by the following propositions.
+         Proposition 3. If C is the convex hull of ﬁnitely many distributions, i.e. C = conv({Q1,...,Qn}), then for any probability
+         measure P with P ≪ Qi for at least one i, it holds that D(Pk1 PQi   C) < ∞.
+                                                               n
+         Example 1. Let C be a singleton whose single element Q is given by the standard Gaussian and let P be the standard Cauchy
+         distribution. Since the Cauchy distribution is exponentially heavier-tailed than the Gaussian, we have that D(PkC) = ∞.
+         However, since both distributions have full support, it follows that
+                                              D(PkQ C)=D(PkQ Q)=0.
+         By Theorem 3 (1), Q is therefore the reverse information projection of P on C.
+           This example can be extended to composite C by considering all mixtures of the Gaussian distributions N(−1,1) and
+         N(1,1) with mean ±1 and variance 1. Proposition 3 guarantees the existence of a reverse information projection although the
+         information divergence is still inﬁnite because a Cauchy distribution is more heavy tailed than any ﬁnite mixture of Gaussian
+         distributions. Symmetry implies that the reverse information projection must be equal to the uniform mixture of N(−1,1) and
+         N(1,1), which coincides with the result one would intuitively expect.
+         Proposition 4. Assume that C is a convex set of probability measures that has ﬁnite minimax regret and with normalized
+         maximum likelihood distribution Q∗ ∈ C. Then for any probability measure P that is absolutely continuous with respect to
+         Q∗, it holds that D(PkQ∗   C) < ∞.
+           For an extensive discussion on minimax regret in the present coding context, as well as the normalized maximum like-
+         lihood distribution (also known as Shtarkov distribution), see e.g. [20] or [21]. In short, the minimax regret is deﬁned as
+                                                                                                                                                   5
+                                     q′(ω)
+           infQ∈C sup ′           ln     /q(ω). This quantity is known to be ﬁnite if and only if the normalized maximum likelihood
+                       Q∈C,ω∈Ω
+                           ∗               ∗        supQ∈Cq(ω) R
+           distribution Q , deﬁned as q (ω) =                   /    sup    qdµ , is well-deﬁned. One-dimensional exponential families with
+                                                                 ( Ω    Q∈C     )
+           ﬁnite minimax regret have been classiﬁed in [20].
+           A. Strict sub-probability measure
+              We return now to the familiar setting where P is a probability measure and C a convex set of probability measures. It is
+                                          ˆ
+           easy to verify that the RIPr Q of P on C is then a sub-probability measure. This follows because we know that there exists a
+           sequence (Q )         in C such that q   converges point-wise P-a.s. to qˆ and Fatou’s Lemma tells us
+                         n n∈N                    n
+                                                    Z qˆdµ = Z liminfq dµ ≤ liminfZ q dµ = 1.                                                    (5)
+                                                                    n→∞ n            n→∞         n
+                                                     Ω           Ω                            Ω
+           It is not clear a priori whether this can ever be a strict inequality. For example, if the sample space is ﬁnite, the set of probability
+           measures is compact, so the limit of any sequence of probability measures (i.e. the reverse information projection) will also
+           be a probability measure. The following example illustrates that this is not always the case for inﬁnite sample spaces, and it
+           can in fact already go wrong for a countable sample space with D(PkC) < ∞.
+           Example 2. Let Ω = N and F = 2N. Furthermore, let P denote the probability measure δ concentrated in the point i = 1
+                                                                                                               1
+           and C the set of distributions Q satisfying
+                                                                        ∞
+                                                                       X1q(i)= 1.
+                                                                       i=1 i          2
+           This set is deﬁned by a linear constraint, so that C is convex, and for any Q ∈ C, we have
+                                                                     ∞             ∞
+                                                            q(1) +X1q(i)=X1q(i)= 1,
+                                                                    i=2 i         i=1 i         2
+                                    1                                                                                  n−2          n
+           implying that q(1) ≤ /2. It follows that D(PkQ) = −ln(q(1)) ≥ ln(2). The sequence Qn = 2n−2δ1 + 2n−2δn satisﬁes
+           Qn ∈ C and
+                                                              D(PkQ )=ln2n−2 →ln(2).
+                                                                      n         n−2
+                                                                                                                                             1
+           Consequently, it must hold that D(PkC) = ln(2). The sequence Qn converges to the strict sub-probability measure ( /2)δ1,
+           which must therefore be the RIPr of P on C.
+              Amore general example, which can be seen as a template to create such situations, is given in Appendix B. The common
+           theme is that C is deﬁned using only constraints of the form Pif1(i)q(i) = c, where f1 is some positive function such
+           that lim       f (n) = 0. Since C only contains probability measures, there is the additional constraint that P f (i)q(i) =
+                    n→∞ 1                                                                                                             i 0
+           1, where f0 denotes the constant function f0 ≡ 1. This function f0 dominates all other constraints f1 in the sense that
+                     f (i)
+           lim        1  /f (i) = 0, but is itself not dominated by any of the constraints in the same manner. It turns out that this is the
+               i→∞         0
+           precise condition that dictates whether or not a constraint has to be respected when taking point-wise limits of elements in C.
+           Indeed, as shown in the theorem below, any constraint on C that is dominated by another constraint in the sense described above
+           cannot be violated by taking point-wise limits. Therefore, if we add a restriction to C that dominates the constant function 1,
+           i.e. that is deﬁned by some function f with lim            f (n) = ∞, then the RIPr cannot be a strict sub-probability measure.
+                                                     1          n→∞ 1
+           Theorem 4. Take Ω = N,F = 2N, and let C be a convex set of probability measures. Suppose that for f ,f : N → R                      , we
+                                                                                                                             0   1          >0
+           have that P f (i)q(i) ≤ λ and P f (i)q(i) = λ for all Q ∈ C. If Q denotes a sequence of measures in C that converges
+                         i  0            0         i 1             1                     n
+           point-wise to some distribution Q∗, and f0 dominates f1 in the sense that
+                                                                        lim f1(i) = 0,                                                           (6)
+                                                                       i→∞f0(i)
+           then
+                                                                    Xf(i)·q∗(i)=λ .                                                              (7)
+                                                                         1                1
+                                                                     i
+           B. Greedy Approximation
+              Sofar, we have discussed the existence and propertiesof the RIPr of P on C. However,there will be many situations where it is
+           infeasible to compute this exact projection, as it requires solving a complex minimization problem. For example, if C is given by
+           the convex hull of some parameterized family of distributions, the reverse information projection might be an arbitrary mixture
+           of elements of this family, and the minimization problem need not be convex in the parameters of the family. To this end, Li
+           and Barron [12] propose an iterative greedy algorithm for the case that C is given by the σ-convex hull (all countable mixtures,
+           see Appendix C) of a parameterized family of distributions, i.e. C = σ-conv({Qθ : θ ∈ Θ}), and D(PkC) < ∞. The algorithm
+                                                                                                                                                                  6
+            starts by setting Q := Q , where θ minimizes D(PkQ ), and then iteratively deﬁning Q := (1 − α )Q                                          +α Q ,
+                                   1        θ1            1                        θ1                                         k              k    k−1       k  θk
+                            2       *                                                                                           q   (x)
+            where α = /(k+1) and θ is chosen to minimize D(PkQ ). It is shown that, if sup                                  log θ      /q      is bounded, then
+                      k                      k                                      k                               x,θ ,θ        1      θ (x)
+                                                                                                                       1 2                2
+            D(PkQk) converges to D(PkC) at rate 1/k. Later, Brinda [13] showed that the condition that the likelihood ratio has to be
+            uniformly bounded in x can be relaxed to the condition that (8) below is ﬁnite. In both of these previous works, it is simply
+            assumed that a minimizer in each step exists, though it need not necessarily be unique. We will do likewise in the following,
+            where we give an adaptation of the algorithm that works when the KL divergence is inﬁnite.
+            Algorithm 1 Greedy Approximation of the RIPr
+                         ∗                     R       q∗
+              1: Fix Q ∈ C s.t. |inf              log    /q dP| < ∞
+                                         θ∈Θ Ω             θ
+                                                                               ∗
+              2: Let Q1 = Qθ1, where θ1 = argminD(PkQθ′   Q )
+                                                     θ′∈Θ
+              3: for k = 2,3,... do
+              4:      Choose α = 2 and θ =argmin                        D(Pk(1−α )Q              +α Q ′  Q∗)
+                                 k     k+1         k              θ′∈Θ                 k    k−1       k   θ
+              5:      Let Q =(1−α )Q                 +α Q
+                             k            k    θk−1       k  θk
+            Proposition 5. Suppose that inf             D(PkQ C)<∞,let(Q )                       be the output of Algorithm 1, and let Q be any measure
+                                                   Q∈C                                   k k∈N
+            in C, so that q = P           ′ q  · w (θ) for some probability mass function w               on a countable Θ′ ⊂ Θ. If D(PkQ′   Q′′) is
+                                     θ∈Θ θ        Q                                                    Q
+            ﬁnite for all Q′,Q′′ ∈ C, then it holds that
+                                                                                              b(k)(P)
+                                                                       D(PkQ  Q)≤ Q                    ,
+                                                                                k                 k
+            where b(k)(P) is given by
+                      Q
+                                                    Z                          sup       q !P         ′ q2 · w (θ)
+                                                         1+       sup      log      θ∈Θ θ         θ∈Θ θ       Q      dP ≤
+                                                                       k           q ∗                  q2
+                                                     Ω        θ∗∈{θi}                θ
+                                                                       i=1
+                                                         Z                       q !P ′q2·w (θ)
+                                                    sup        1+ sup log θ               θ∈Θ θ        Q      dP.                                              (8)
+                                                                     ∗          q ∗              q2
+                                                    Q∈C Ω           θ ,θ∈Θ        θ
+               It follows that if b(k) is uniformly bounded over all Q ∈ C, in particular if (8) is ﬁnite, then D(PkQ   C) converges to
+                                     Q                                                                                                    k
+                                                                              1
+            zero, i.e. Qk converges to the RIPr of P on C, at rate /k. The former holds under the strong, but often imposed assumption
+            that the likelihood ratios in C are uniformly bounded; for example when C is given by the σ-convex hull of Gaussian densities
+            restricted to a cube [9, Example 1]. However, (8) might also be ﬁnite under weaker assumptions. For example, consider the
+            set of Gaussian mixtures as in Example 1, that is, C = {w · N(−1,1) + (1 − w) · N(1,1) : w ∈ [0,1]}. It can be seen that
+            bQ(P) < ∞ for all Q ∈ C whenever P has a ﬁnite ﬁrst moment. Moreover, if the latter holds, then bQ(P) is uniformly
+                                         ′           ′                                                                                      1
+            bounded over all Q ∈ C where C = {w ·N(−1,1)+(1−w)·N(1,1) : w ∈ [c,1−c]} for some c ∈ (0, /2).
+               While Proposition 5 is a satisfying theoretical result, we must concede that Algorithm 1 might not be the fastest to implement
+            in practice. This arises from the fact that the objective D(Pk(1 − α )Q                      +α Q ′   Q∗) need not be convex in θ′. One
+                                                                                               k    k−1      k   θ
+            might therefore have to resort to an exhaustive search over a discretization of the parameter space. On top of that, there is no
+            guarantee that the information gain is easily computable. As an alternative for the case that Θ is ﬁnite and D(PkC) < ∞,
+            one might use the iterative algorithm proposed by Csiszár and Tusnády [22, Theorem 5]. A big advantage of the latter is that
+            their recursive update step has an explicit formula, which makes each iteration considerably faster. The downside is that, while
+            convergence in terms of KL is guaranteed, it is unclear at what rate this happens in general. Furthermore, proving convergence
+            of their algorithm in the setting where D(PkC) = ∞ seems far from a straightforward exercise.
+            C. Discussion
+               The results in this section might be regarded as a generalization of large parts of Chapters 3 and 4 in Li’s Ph.D. thesis [9]
+            and in fact the tools in this section were initially developed to clear up some ambiguity around the proof of Theorem 1, Part
+            1 as provided by Li. That is, in [9] it is stated that for all sequences (Q )                   in C such that lim          D(PkQ )=D(PkC)
+                                                                                                   n n∈N                          n→∞             n
+            it holds that lnq     →lnqˆin L (P). However, the proof thereof refers to [9, Lemma 4.3], which only shows existence of one
+                                n                1
+                                                                                  ˆ
+            such a sequence. Then [9, Lemma 4.4] also shows that if Q is such that logq → logqˆ in L (P) for some sequence (Q )
+                                                                                                        n                 1                                n n∈N
+                                                                                                        ˆ
+            that achieves lim           D(PkQ ) = D(PkC), then it must hold that D(PkQ) = D(PkC). However, it is a priori not clear
+                                 n→∞             n
+            whether every sequence (Q )               that achieves lim          D(PkQ )=D(PkC) has such a limit. Moreover, it is never shown
+                                             n n∈N                        n→∞             n
+            that, if it exists, this limit must be the same for every such sequence. Note that it is not at all our intention here to criticize
+            Li’s fundamental and ground-breaking work. Li’s is one of those rare theses that have had a major impact outside of their own
+               *                                                              2              2
+                Li actually proposes to either minimize over α  or use α   = /3 and α = /k for k > 2; the formulation given here is a slight simpliﬁcation by
+                                                              k          2              k
+            Brinda [13].
+                                                                                                                                                        7
+            research area: being a thesis on information-theory, it served as the central tool and inspiration for papers on fast convergence
+            rates in machine learning theory [19], [23], and also for [4], which led to a breakthrough in (e-based) hypothesis testing. Our
+            aim is merely to indicate that Theorem 3 ties up some loose ends in Li’s original, pioneering results.
+                                                                  IV. OPTIMAL E-STATISTICS
+              In this section, we assume that P and all Q ∈ C are probability measures, and we are interested in the hypothesis test with
+            P as alternative and C as null. To this end, Theorem 3 shows that — whenever it exists — the likelihood ratio of P and its
+            RIPr is an e-statistic. A natural question is whether the optimality of the RIPr in terms of describing data distributed according
+            to P carries over to some sort of optimality of the e-statistic, as is true for the GRO criterion in the case that D(PkC) < ∞. It
+            turns out that this is true in terms of an intuitive extension of the GRO criterion. Completely analogously to the coding story,
+            we simply have to change from absolute to pairwise comparisons.
+            Deﬁnition 2. For e-statistics E,E′ ∈ EC, we say that E is stronger than E′ if the following integral is well-deﬁned and
+            non-negative, possibly inﬁnite:
+                                                                         Z lnEdP,                                                                   (9)
+                                                                           Ω      E′
+                                                        0                     c                                                              ∗
+            where we adhere to the conventions ln( /c) = −∞ and ln( /0) = ∞ for all c ∈ R>0. Furthermore, an e-statistic E ∈ EC is a
+            strongest e-statistic if it is stronger than any other e-statistic E ∈ EC.
+              The notion of optimality in Deﬁnition 2 comes down to the simple idea that if one e-statistic E is stronger than another
+            e-statistic E′, then repeatedly testing based on E eventually becomes more powerful than repeatedly testing based on E′ in
+            the sense that there is a higher probability of rejecting a false null-hypothesis. Let us explain in more detail what we mean by
+            this. Suppose that we conduct the same experiment N times independently to test the veracity of the hypothesis C, resulting
+            in outcomes ω1,...,ωN. For any given e-statistic E ∈ EC, we have that QN E(ωi) is still an e-statistic, not just for ﬁxed
+                                                                                                  i=1
+            N but even if N is a random (i.e. data-dependent) stopping time. So, as indicated before, it can be used to test C with Type-I
+            error guarantees. Yet, for two e-statistics E,E′ ∈ EC, the law of large numbers states that if P is true, it will almost surely
+            hold that
+                                                       Q                      Z                          
+                                                          n   E(ω )                       E
+                                                          i=1      i
+                                                       Q              =exp n         ln         dP +o(n) .
+                                                         n    E′(ω )                      E′
+                                                         i=1       i               Ω
+            It follows that if the integral R  ln  E dP is positive then with high probability E will, for large enough n, give more evidence
+                                             Ω     E′
+            against C than E′ if the alternative is true, i.e. a test based on E will asymptotically have more power than a test based on E′.
+              Since we assume throughout that there exists a Q∗ ∈ C such that P ≪ Q∗, it follows that for any e-statistic E we must
+            have P(E = ∞) = 0, which simpliﬁes any subsequent analyses greatly.
+            Proposition 6. Assume that C is a set of probability measures and that P is a probability measure. If there is an E′ ∈ EC
+                                  R     E ′
+            such that sup            ln( /E )dP < ∞, then a strongest e-statistics exists. Furthermore, if E               and E are both strongest
+                           E∈EC Ω                                                                                        1        2
+            e-statistics then E = E holds P-a.s.
+                                1      2
+              The strongest e-statistic in Deﬁnition 2 can be seen as a generalization of the GRO e-statistic, because if R lnE dP
+                 R       ′                                                                                                           R        Ω
+                                                                                                                                            E ′
+            and ΩlnE dP are both ﬁnite, (9) can be written as the difference between the two logarithms, i.e.                         Ωln( /E )dP =
+            R lnEdP −R lnE′dP. In this case, ﬁnding the strongest e-statistic therefore corresponds to maximizing R lnEdP over
+             Ω               Ω                                                                                                          Ω
+            all e-statistics, thus recovering the original GRO criterion. As an extension of that case, we prove that whenever the RIPr
+            exists, it always leads to the strongest e-statistic.
+                                                                                                                                               ˆ
+            Theorem 5. Suppose that both P and all Q ∈ C are probability measures and that infQ∈C D(PkQ   C) < ∞. If Q denotes
+                                          ˆ    dP    ˆ
+            the RIPr of P on C, then E =          /dQ is the strongest e-statistic.
+              The likelihood ratio between P and its RIPr is in fact the only e-statistic in the form of a likelihood ratio with P in the
+            numerator, as the following proposition shows. Though the statement is more general, the proof is completely analogous to
+            part of the proof of Lemma 4.1 in [9].
+            Proposition 7. Suppose that C is a set of probability measures and that P is a probability measure. If there exists a measure
+              ∗                 dP     ∗                       ∗                    ∗
+            Q ∈C such that         /dQ ∈EC, then D(PkQ   C)=0, i.e. Q is the RIPr of P on C.
+              We now return to Example 1, where the GRO criterion is not able to distinguish between e-variables, but we are able to do
+            so with Deﬁnition 2 and Theorem 5.
+            Example 1 (continued). In the case that P is the standard Cauchy and C = {Q}, where Q is the standard Gaussian, it is
+            straightforward to see that the likelihood ratio between P and Q is an e-statistic, i.e.
+                                                                    Z dP dQ=Z dP =1.
+                                                                     Ω dQ            Ω
+                                                                                                                                                    8
+           However, for the growth rate it holds that
+                                                             Z     dP
+                                                                ln   dQ dP =D(PkQ)=∞.
+                                                              Ω
+           The same argument can be used to show that for any 0 < c ≤ 1, we have an e-statistic given by cdP/dQ, which still has
+           inﬁnite growth rate. The GRO criterion in Deﬁnition 1 is not able to tell which of these e-statistics is preferable. However,
+                                                                                dP
+           since Q is the RIPr of P on C, it follows from Theorem 5 that           /dQ is the strongest e-statistic, and in particular it is stronger
+           than cdP/dQ for all 0 < c < 1.
+           A. Convexity
+              In the discussion above, the null hypothesis C is assumed to be convex, which does not hold for many of the null hypotheses
+           commonly employed in statistics, such as the set of all Gaussian distributions with varying mean and/or variance. However,
+           it follows from the Fubini-Tonelli theorem that the set of e-statistics on C equals the set of e-statistics on the convex hull
+           of C. The same is true if the convex hull is replaced by the σ-convex hull where countable mixtures are allowed or by the
+           Choquet-convex hull where arbitrary mixtures are allowed (see Appendix C for precise deﬁnitions). Therefore, if there exists a
+           strongest e-statistic for testing the alternative P against any of these notions of the convex hull, then that is also the strongest
+           e-statistic for testing P against the original null hypothesis, regardless of whether that was convex. It follows from Theorem 5
+           that, to ﬁnd the strongest e-statistic, it sufﬁces to ﬁnd the RIPr of P on any of the notions of the convex hull. In particular,
+           if RIPrs exists on more than one of these, they must coincide; on the other hand, none of the three RIPrs may exist, and our
+           results also do not rule out the possibility that the RIPr exists on just one or two of the three convex hulls. To witness, in
+           Appendix C we give an example (Example 4) in which the RIPr of P on the σ-convex hull exists, while the RIPr of P on
+           the convex hull does not. At the same time, there are constraints here: Theorem 7 in Appendix C implies that if the RIPr on
+           the convex hull of C exists, then the RIPr on the σ-convex hull of C also exists (and then they must be equal).
+                                                                    ˆ
+              Things become much more clear-cut if the RIPr Q of P on a certain notion of the convex hull exists and is an element of
+                                   ˆ
+           that set. In that case, Q is also the RIPr of P on any stronger notion of the convex hull. Indeed, the different levels of convex
+           hulls are nested, and their corresponding sets of e-statistics coincide, so this follows directly from Proposition 7:
+           Corollary 1. Let C denote a set of probability measures (not necessarily convex) and let P denote a probability measure. If
+                                                                               ˆ                    ˆ
+           the RIPr of P on the convex hull of C exists and is given by Q ∈ conv(C), then Q is also, (a) the RIPr of P on the σ-convex
+                                                                         ˆ                                                             ˆ
+           and, (b), on the Choquet-convex hull of C. Similarly, if Q ∈ σ-conv(C) is the RIPr of P on σ-conv(C), then (c) Q is also the
+           RIPr of P on the Choquet-convex hull of C.
+              Further details regarding convexity are presented in Appendix C. In particular, Theorem 7 in the latter gives an analogous
+           result to Corollary 1, Part (a), for the case that P and C are not restricted to be probability measures, and the RIPr is not
+           assumed to be attained in the set.
+           B. Approximation
+              In Section III-B, we discussed an algorithm that provides an approximation of the RIPr for scenarios where it is not possible
+           to explicitly compute the latter. However, the convergence guarantee given by Proposition 5 is in terms of the information
+           gain. That is, if Qk is the approximation of the projection after k iterations, then under suitable conditions it holds that
+                                                                                                                                                 p
+           D(PkQ  C)→0. This is not enough if we want to use such an approximation for hypothesis testing: we need that /q
+                    k                                                                                                                               k
+           gets closer and closer to being an e-statistic. The following theorem gives a condition under which this is true. For p ∈ (0,∞]
+                                                                                                               
+                                                                                                   R            1
+                                           p                                                              p      /p
+           we use kfkp to denote the L (Ω,P) norm of a function f ∈ M(Ω,R>0), i.e.                   Ω(f) dP       .
+           Theorem 6. Assume that infQ∈C D(PkQ   C) < ∞, ﬁx Q,Q′ ∈ C, set δ := D(PkQ   C) and suppose that there exists
+                                    q′                                     ′
+           β ∈ (0,∞] such that k /qk1+β < ∞. If β ≤ 1 or D(PkQ   C) ≤ Kδ, then it holds that
+                                                  Z p       ′   Z q′                         β 
+                                                        dQ =           dP =1+O C ·δ1+β as δ →0,                                                 (10)
+                                                      q             q                   β
+                                                    Ω            Ω
+                            ′                                  β−1    ′
+           where C = kq/qk           if β ≤ 1 and C = K2(1+β)kq/qk             otherwise.
+                     β          1+β                   β                   1+β
+              Explicit values for the constants in (10) can be found in the proof in the appendix. In particular, Theorem 6 implies the
+                                                             q′                      ′
+           following: if there are C,δ0 > 0 such that k /qk2 ≤ C for all Q ∈ C and all Q ∈ C with D(PkQ   C) ≤ δ0, then any
+                                                                                   R                       1
+                                                                                      q′                    /2
+           sequence Q ,Q ,... with D(PkQ   C) → 0 will have sup ′                       /q dP = 1+O(δ ), where δ = D(PkQ  C). This
+                        1   2                    k                            q ∈C Ω      k                k             k             k
+                                                                         p
+           gives an easy to check condition for the convergence of /q to an e-statistic. This square-root rate of convergence cannot be
+                                                                            k
+                                                                                                                    q′
+           improved in general without an extra assumption, even if all likelihood ratios are bounded, i.e. k /qk∞ < ∞. This can be seen
+                                                                                 1       1
+           by taking P and Q to be Bernoulli distributions with parameter /2 and /2+ǫ respectively, C the set of Bernoulli distributions
+                                 1   3           ′           1                                    2                 R q′
+           with parameters in [ /4, /4] and Q Bernoulli /4. Then δ = D(PkQ   C) = 2ǫ (1+o(1)) yet Ω /qdP = 1+4ǫ(1+o(1)).
+                                                                                                                                                  9
+           But if likelihood ratios are bounded and we additionally consider Q′ in a ‘neighborhood’ of Q (i.e. D(PkQ′   C) ≤ Kδ),
+           then a linear rate is possible as shown in Theorem 6 by letting β tend to inﬁnity; the rate then interpolates between δ1/2 and δ
+           depending on the largest β for which the (1+β)-th moment exists. Furthermore the following example shows that in general
+           bounds on the integrated likelihood ratios are necessary for the convergence to hold at all.
+           Example 3. Let Q represent the family of geometric distributions on Ω = N0 and let C = conv(Q). The elements of Q are
+           denoted by Q with density q (n) = θn(1 − θ), where θ ∈ [0,1) denotes the probability of failure. For simplicity, assume
+                          θ                 θ
+           that P ∈ Q so that the reverse information projection of P on C is equal to P. Take for example P = Q1 , then for any
+                                                                                                                                  /2
+           θ,θ′ ∈ [0,1)
+                                          Z               ∞                      ( 1       1 1−θ′
+                                                                  ′  n         ′                            ′
+                                              q ′        X 1θ          11−θ              θ′ ·       ,   if θ < 2θ;
+                                               θ                                      1−     2 1−θ
+                                                  dP =                           =       2θ                                                   (11)
+                                              q                2 θ     2 1−θ
+                                            Ω θ          n=0                         ∞,                 otherwise;
+           whereas
+                                    ∞                                                      ∞                            ∞ 
+                                             n+1                                                        n+1                          n+1
+                                   X                                                   1    X                        1      X
+                     D(PkQ )=            1       (−nlog(2θ)−log2(1−θ)) =log /2 ·                 n 1         +log /2 ·            1
+                             θ           2                                              θ           2              1−θ            2
+                                   n=0                                                      n=1                             n=0
+                                         1           1
+                                =log /2 +log /2,
+                                       1−θ            θ
+                                        1                                           1
+           Now consider a sequence /3 < θ1 < θ2 < θ3... that converges to /2. Then by the above,
+                                                                D(PkQθi) →0=D(PkC).
+           We also see that for all i and all θ′ ∈ [2θi,1), we have
+                                                                      Z q ′
+                                                                           θ dP = ∞,
+                                                                          q
+                                                                        Ω θi
+                                              R q ′
+           i.e. for all i we have sup ′            θ /q dP =∞.
+                                      θ ∈[0,1)        θ
+                                                Ω      i
+           C. Related Work
+              The results on the existence of optimal e-statistics displayed in this section bear similarities with work concurrently done
+           by Zhang et al. [24]. In particular, they show that if C is a convex polytope, then there exists an e-statistic in the form of a
+           likelihood ratio between two unspeciﬁed measures. Since a convex polytope contains the uniform mixture of its vertices, which
+           can be shown to have ﬁnite information gain, this also follows from our Proposition 3. However, the techniques used to prove
+           their results appear to be of a completely different nature than the ones used in this paper, as they rely mostly on classical
+           results in convex geometry together with results on optimal transport (and with these techniques, they provide various other
+           results incomparable to ours).
+              In the case of compact alternative they furthermore discuss a property which they refer to as nontrivial e-power. That is,
+           if the alternative is a convex polytope A, then at least one of their e-statistics in the form of a likelihood ratio satisﬁes
+           infP∈AR lnEdP > 0. We now show that the existence of such an e-statistic also follows from our results. In fact, if A
+                     Ω
+           is any convex set (not just a polytope) such that infP∈A D(PkC) < ∞, then (as [24] point out) a similar result is already
+           implied by Grünwald et al. [4] as long as the inﬁmum is achieved on the left. Indeed, they show that the likelihood ratio of
+           the distribution that achieves the inﬁmum and its RIPr is an e-statistic that has nontrivial e-power. This leaves the case that
+           infP∈AD(PkC) = ∞. Indeed, the current work implies that also in this case, an e-statistic with nontrivial (in fact, inﬁnite)
+           e-power exists, as long as A is a convex polytope. That is, if we use P∗ to denote the uniform mixture of the vertices of A,
+           then for any vertex P ∈ C, we have that
+                                                  Z      dP∗         Z      1dP
+                                                      ln      dP ≥       ln n     dP ≥D(PkC)−ln(n),
+                                                           ˆ∗                 ˆ∗
+                                                    Ω    dQ            Ω    dQ
+                   ˆ∗                          ∗                           R      dP∗
+           where Q denotes the RIPr of P . It follows that infP∈A Ωln              ˆ∗ dP = ∞, so that the e-statistic given by the likelihood
+                      ∗                                                           dQ
+           ratio of P   to its RIPr has “nontrivial e-power”. However, more work is needed to determine whether such constructions are
+           in any way optimal and whether the restriction that A is a convex polytope can be relaxed.
+              Second, after the ﬁrst version of this paper was made available online, a follow-up paper appeared by Larsson et al. [25].
+           They show that, under no conditions on P and C whatsoever, there exists an e-statistic E∗ that is the strongest e-statistic in
+                                                                                                                      ∗              ∗           ∗
+                                                                                                                                  dQ          1
+           the sense of Deﬁnition 2. This e-statistic, which they call ‘the numeraire’, gives rise to a measure Q such that           /dP = /E .
+           Whenever the conditions of Theorem 3 hold, Q∗ coincides with the reverse information projection of P on C, so that it provides
+           (in their words) “[...] a natural deﬁnition of the RIPr in the absence of any assumptions on C or P.” We refer to their work [25]
+           for all further details.
+                                                                                                                                            10
+                                                          V. SUMMARY AND FUTURE WORK
+             We have shown that, under very mild conditions, there exists a measure that achieves the minimax description gain over
+           a convex set of measures C relative to a measure P. Whenever the information divergence between P and C is ﬁnite, this
+           measure coincides with the reverse information projection of P on C. As such, it provides a natural extension of the reverse
+           information projection to cases where the the minimax description gain is ﬁnite, while the information divergence is inﬁnite.
+           In the context of hypothesis testing, this extended notion of the RIPr can be used to deﬁne an e-statistic for testing the simple
+           alternative P against the composite null C. This e-statistic is optimal in a sense that is a natural, but novel extension of the
+           previously known GRO optimality criterion for e-statistics. We have shown an example where GRO is unable to differentiate
+           between e-statistics, while our novel criterion can, so that it is a strict extension. Additionally, we discussed an algorithm that
+           can be used to approximate the reverse information projection in scenarios where it is not explicitly computable and show
+           under what circumstances this also leads to an approximation of the optimal e-statistic.
+             The results presented thus far suggest various avenues for further research of which we discuss two. First, Theorem 3 is
+           formulated for general measures so one may ask for an interpretation of the RIPr in the case that P and C are not probability
+           measures. If Ω is ﬁnite and λ is a measure on Ω, then we may deﬁne a probability measure Po(λ) as the product measure
+           Po(λ) = N        Po(λ(ω)), where Po(λ(ω)) denotes the Poisson distribution with mean λ(ω). With this deﬁnition we get
+                        ω∈Ω
+                                                   D(PkQ Q′)=D(Po(P)kPo(Q) Po(Q′)).
+                                                             ˆ                                                         ˆ
+           Furthermore, it can be shown that if the RIPr Q of P on C exists and is an element of C, then Po(Q) is also the RIPr of
+                                             ′                                       Po(P)     ˆ                                             ′
+           Po(P) on the convex hull of C := {Po(Q)|Q ∈ C}. Consequently,                  /Po(Q) can be thought of as an e-statistic for C .
+           More work is needed to determine whether this interpretation has any applications and if it can be generalized to arbitrary Ω.
+             Second, even if D(PkC) = ∞, the Rényi divergence Dα(PkQ) (see e.g. [21]) may be a well-deﬁned non-negative real
+           number for α ∈ (0,1) and Q ∈ C. These Rényi divergences are jointly convex in P and Q [21] and for each 0 < α < 1 one
+                                                    ˆ
+           may deﬁne a reverse Rényi projection Qα of P on C [26]. If it exists, it can be shown that this distribution will satisfy
+                                                                 Z         
+                                                                       dP     α
+                                                                         ˆ      dQ≤1
+                                                                   Ω dQα
+                               dP    ˆ  α                                                        ˆ
+           for all Q ∈ C, i.e. (  /dQ ) is an e-statistic. We conjecture that the projections Q      will converge to the RIPr for α tending
+                                      α                                                           α
+           to 1, which might lead to further applications.
+                                                                                                                                                                          11
+                                                                                    REFERENCES
+              [1] S. Kullback and R. Leibler, “On information and sufﬁciency,” Ann. Math. Statist., vol. 22, pp. 79–86, 1951.
+              [2] I. Csiszár, “Eine informationstheoretische Ungleichung und ihre Anwendung auf den Beweis der ergodizität von Markoffschen Ketten,” Publ. Math. Inst.
+                   Hungar. Acad., vol. 8, pp. 95–108, 1963.
+              [3] F. Liese and I. Vajda, Convex Statistical Distances.   Leipzig: Teubner, 1987.
+              [4] P. Grünwald, R. de Heide, and W. Koolen, “Safe testing,” Journal of the Royal Statistical Society Series B: Statistical Methodology, p. qkae011, 03
+                   2024. [Online]. Available: https://doi.org/10.1093/jrsssb/qkae011
+              [5] A. Ramdas, P. Grünwald, V. Vovk, and G. Shafer, “Game-Theoretic Statistics and Safe Anytime-Valid Inference,” Statistical Science, vol. 38, no. 4, pp.
+                   576 – 601, 2023. [Online]. Available: https://doi.org/10.1214/23-STS894
+              [6] V. Vovk and R. Wang, “E-values: Calibration, combination and applications,” Ann. Stat., vol. 49, no. 3, pp. 1736–1754, 2021.
+              [7] G. Shafer, “Testing by betting: A strategy for statistical and scientiﬁc communication,” J. Roy. Stat. Soc.: Series A (Stat. in Soc.), vol. 184, no. 2, pp.
+                   407–431, 2021. [Online]. Available: https://doi.org/10.1111/rssa.12647
+              [8] A. Henzi and J. F. Ziegel, “Valid sequential inference on probability forecast performance,” Biometrika, vol. 109, no. 3, pp. 647–663, 2022.
+              [9] J. Li, “Estimation of mixture models,” Ph.D. dissertation, Yale University, New Haven, CT, 1999.
+             [10] I. Csiszár and F. Matús, “Information projections revisited,” IEEE Trans. Inform. Theory, vol. 49, no. 6, pp. 1474–1490, 2003.
+             [11] F. Topsøe, “Information theory at the service of science,” in Entropy, Search, Complexity, ser. Bolyai Society Mathematical Studies, I. Csiszár,
+                   G. O. H. Katona, and G. Tardos, Eds.       János Bolyai Mathematical Society and Springer-Verlag, 2007, vol. 16, pp. 179–207. [Online]. Available:
+                   http://www.math.ku.dk/~topsoe/aspects.pdf
+             [12] J. Li and A. Barron, “Mixture density estimation,” Advances in neural information processing systems, vol. 12, 1999.
+             [13] W. D. Brinda, “Adaptive estimation with Gaussian radial basis mixtures,” Ph.D. dissertation, Yale University, 2018.
+             [14] P. Grünwald, A. Henzi, and T. Lardy, “Anytime valid tests of conditional independence under model-X,” J. Am. Stat. Assoc., pp. 1–12, 2023. [Online].
+                   Available: https://doi.org/10.1080/01621459.2023.2205607
+             [15] J. Ville, “Étude critique de la notion de collectif,” Bull. Amer. Math. Soc., vol. 45, no. 11, p. 824, 1939.
+             [16] L. A. Levin, “Uniform tests of randomness,” in Doklady Akademii Nauk, vol. 227, no. 1.        Russian Academy of Sciences, 1976, pp. 33–35.
+             [17] J. L. Kelly, “A new interpretation of information rate,” IRE Trans. Inf. Theory, vol. 2, pp. 185–189, 1956.
+             [18] P. Chen, Y. Chen, and M. Rao, “Metrics deﬁned by Bregman divergences,” Commun. Math. Sci., vol. 6, no. 4, pp. 915–926, 2008. [Online]. Available:
+                   http://projecteuclid.org/euclid.cms/1229619676
+             [19] P. D. Grünwald and N. A. Mehta, “Fast rates for general unbounded loss functions: from ERM to generalized Bayes,” The Journal of Machine Learning
+                   Research, vol. 21, no. 1, pp. 2040–2119, 2020.
+             [20] P. Grünwald and P. Harremoës, “Finiteness of redundancy, regret, Shtarkov sums, and Jeffreys integrals in exponential families,” in
+                   Proceedings for the International Symposium for Information Theory, Seoul, 2009.               IEEE, June 2009, pp. 714–718. [Online]. Available:
+                   http://www.harremoes.dk/Peter/subm2009f.pdf
+             [21] T. van Erven and P. Harremoës, “Rényi divergence and Kullback-Leibler divergence,” IEEE Trans. Inform. Theory, vol. 60, no. 7, pp. 3797–3820,
+                   2014. [Online]. Available: http://arxiv.org/pdf/1206.2459v1.pdf
+             [22] I. Csiszár and G. Tusnády, “Information geometry and alternating minimization procedures,” Statistics and Decisions, vol. Supplementary Issue 1, pp.
+                   205–237, 1984.
+             [23] T. van Erven, P. D. Grünwald, N. A. Mehta, M. D. Reid, and R. C. Williamson, “Fast rates in statistical and online learning,” Journal of Machine
+                   Learning Research, vol. 16, pp. 1793–1861, 2015.
+             [24] Z. Zhang, A. Ramdas, and R. Wang, “When do exact and powerful p-values and e-values exist?” 2023, arXiv preprint arXiv:2305.16539. [Online].
+                   Available: https://arxiv.org/abs/2305.16539
+             [25] M. Larsson, A. Ramdas, and J. Ruf, “The numeraire e-variable and reverse information projection,” 2024, arXiv preprint arXiv:2402.18810. [Online].
+                   Available: https://arxiv.org/abs/2402.18810
+             [26] M. A. Kumar and I. Sason, “Projection theorems for the Rényi divergence on α-convex sets,” IEEE Trans. Inform. Theory, vol. 62, no. 9, pp. 4924–4935,
+                   2016.
+                                                                                                                                                12
+                                                                       APPENDIX A
+                                                                          PROOFS
+           A. Proofs for Section III
+              Before giving the intended results, we note that we introduced mP as the averaged Bregman divergence associated with
+           γ(x) = x−1−ln(x). For the proof, it will be useful to also deﬁne the Bregman divergence associated with γ(x) = x−1−ln(x)
+           itself, which is the so-called Itakura-Saito divergence. For f,g ∈ M(Ω,R>0), it is given by
+                                                          ISP(f,g) = Z f −1−ln fdP.
+                                                                          Ω g              g
+           By deﬁnition, it holds that
+                                                      2          1     f+g 1  f+g
+                                                    mP(f,g) = 2IS f,         2      +2IS g, 2            .
+           Furthermore, for Q ∈ C, we have ISP(q,p) = D(PkQ). We now state some auxiliary results before giving the proofs for
+           Section III.
+           Lemma 1. For x,y ∈ R>0, we have
+                                                              |ln(x) − ln(y)| = g(m2(x,y)),
+                                                                                      γ
+           where g denotes the function
+                                                                                               1 
+                                                        g(t) = 2t + 2ln 1+(1−exp(−2t))/2 .
+           The function g is concave and satisﬁes g(t) ≥ 2t.
+           Proof. Let m = x+y. Our goal is to determine the function g function such that
+                               2
+                                                              |ln(x) − ln(y)| = g(m2(x,y)).
+                                                                                      γ
+           We ﬁrst rewrite the right-hand side
+                                                          2                       1          1       
+                                                     g(mγ(x,y)) = g ln(m)− 2 ln(x)− 2 ln(y)
+                                                                   =g1ln m2 
+                                                                         2      x·y
+                                                                        m2
+                                                                          1        y
+                                                                                      
+                                                                   =g       ln
+                                                                       2  x 
+                                                                                   y
+                                                                        1+x2
+                                                                                     y
+                                                                          1         2
+                                                                                        
+                                                                   =g       ln                 .
+                                                                       2  x 
+                                                                                     y
+           Plugging this back in and replacing x by w leads to
+                                                   y
+                                                                                          !!
+                                                                            1       1+w 2
+                                                             |ln(w)| = g      ln      2
+                                                                            2         w
+           Then we solve the equation
+                                                                                 !
+                                                                   1        1+w 2
+                                                                     ln      2        =t,
+                                                                   2         w
+           which gives
+                                                                                                     1
+                                                     w=2exp(2t)−1+2·(exp(4t)−exp(2t))/2
+                                                                                                      1 
+                                                 g(t) = ln 2exp(2t)−1+2·(exp(4t)−exp(2t))/2
+                                                                                                       1 
+                                                      =2t+ln 2−exp(−2t)+2·(1−exp(−2t))/2
+                                                                                        1 
+                                                      =2t+2ln 1+(1−exp(−2t))/2 .
+                                                                                                                                                   13
+              The derivatives of g are
+                                                                            −1
+                                                           (1 −exp(−2t)) /2exp(−2t)                      2
+                                            g′(t) = 2 + 2                                   =
+                                                                                     1
+                                                                                      /2                         1/2
+                                                               1+(1−exp(−2t))                   (1 −exp(−2t))
+                                                                t
+                                            g′′(t) = −exp(−/2) .
+                                                                 3
+                                                       1          /2
+                                                     2/2(sinht)
+           We see that g′′(t) < 0 and conclude that g is concave. Finally, we have
+                                                                                              1 
+                                                      g(t) = 2t + 2ln 1+(1−exp(−2t))/2 ≥ 2t,
+           because 1−exp(−2t) ≥ 0.
+           Lemma 2. Let (f )           be a sequence of elements of M(Ω,R          ), then
+                               n n∈N                                             >0
+                                                                                                     
+                                                                                        Z          
+                                                                                               fm 
+                                                limsupmP(fm,fn)=0⇔limsup                   ln        dP =0.
+                                                m,n→∞                          m,n→∞ Ω         fn    
+           Proof. By Lemma 1, we have for m,n ∈ N,
+                                                             m2(fn,fm) =Z m2(fn,fm)dP
+                                                               P                    γ
+                                                                               Ω
+                                                                                             
+                                                                                Z          
+                                                                              1         fm 
+                                                                           ≤       ln        dP,
+           as well as                                                         2 Ω       fn   
+                                                                     
+                                                        Z                   Z
+                                                                fn                   2
+                                                           ln         dP =      g(mγ(fn,fm))dP
+                                                         Ω     fm             Ω
+                                                                                                     
+                                                                            ≤g Z m2(fn,fm)dP
+                                                                                        γ
+                                                                                   Ω
+                                                                                  2           
+                                                                            =g mP(fn,fm) .
+           The result then follows by continuity of g.
+           Lemma 3. For Q1,Q2 ∈ C such that P ≪ Qi for i ∈ {1,2}, we have
+                                                     m2(q ,q ) ≤ D(PkQ1   C)+D(PkQ2  C).
+                                                       P 1 2                           2
+                        ¯
+           Proof. Let Q denote the midpoint between Q1 and Q2. Then we have
+                                D(PkQ  C)+D(PkQ  C)                      sup      D(PkQ1  Q)+sup               D(PkQ2  Q)
+                                         1                   2        =      Q∈C                          Q∈C
+                                                 2                                                  2
+                                                                                       ¯                    ¯
+                                                                      ≥ D(PkQ1  Q)+D(PkQ2 Q) =m2(q ,q ).
+                                                                                           2                         P 1 2
+           Proof of Proposition 1. This follows as a direct corollary of Lemma 2.
+              We now deviate slightly from the order of the results in Section III and ﬁrst state the proof of Proposition 2, so that we can
+           use its results in the proof of Theorem 3.
+           Proof of Proposition 2. The implications (3) → (2) → (1) are obvious, so we show here only the implication (1) → (3).
+           Assume that P′ is a measure such that −∞ < D(PkP′   C) < ∞. Then there exists a sequence of measures Qn ∈ C such
+           that
+                                                             D(PkP′  Q )→D(PkP′ C)
+                                                                            n
+           for n → ∞. Without loss of generality we may assume that −∞ < D(PkP′   Qn) < ∞ for all n. The result follows
+           because
+                                                   D(PkP′  C)=D(PkP′ Q )+D(PkQ  C)
+                                                                                      n              n
+           and all involved quantities are ﬁnite.
+           Proof of Theorem 3 (1). Let (Q )           denote a sequence in C such that
+                                               n n∈C
+                                                       lim D(PkQn  C)= inf D(PkQ C)=0,
+                                                      n→∞                       Q∈C
+                                                                                                                                                                                                 14
+               where the last equality follows from Proposition 2. Without loss of generality, we may assume that D(PkQn   C) < ∞ for
+               all n, so that P ≪ Qn for all n. It then follows from Lemma 3 that for m,n ∈ N we have
+                                                                    m2(q ,q )≤ D(PkQm  C)+D(PkQn C).
+                                                                       P m n                                       2
+               It follows that (q )              is a Cauchy sequence with respect to m , so that (q )                                 converges to some function qˆ in m . The
+                                       n n∈N                                                               P                 n n∈N                                                        P
+               latter follows from the completeness of (M(Ω,(0,∞)),mP), i.e. Proposition 1.
+                  Furthermore, suppose that (Q′ )                      is another sequence in C such that
+                                                             n n∈C
+                                                                                       lim D(PkQ′  C)=0.
+                                                                                      n→∞                 n
+               Then, by the same reasoning as before, Q1,Q′,Q2,Q′,Q3,Q′,... is also a Cauchy sequence that converges and since a
+                                                                                   1           2           3
+               Cauchy sequence can only converge to a single element this implies the desired uniqueness.
+               Proof of Theorem 3 (2). The equality
+                                                                                 Z ln p′ dP = lim Z ln p′ dP
+                                                                                           qˆ          n→∞              q
+                                                                                   Ω                             Ω       n
+               follows from Theorem 3 (1) together with the fact that convergence of q                                       in m       implies convergence of the logarithms in
+                                                                                                                          n         P
+               L1(P).
+               Proof of Theorem 3 (3). Let (Q )                        denote a sequence in C such that
+                                                             n n∈C
+                                                                                       lim D(PkQn  C)=0.
+                                                                                      n→∞
+               Without loss of generality, we may assume that D(PkQ   C) < ∞ for all n and that q                                                    converges to qˆ P-almost surely.
+                                                                                                 n                                                n
+               The latter is valid, because convergence in mP implies convergence of the logarithms in L1(P) by Lemma 2, which gives the
+               existence of an almost surely converging sub-sequence.
+                         ˜
+                  Let Q = (1 − t)Q1 + tQ for ﬁxed Q ∈ C and ﬁxed 0 < t < 1. Let Qn,s denote the convex combination Qn,s =
+                                        ˜                                                                                                      ˆ
+               (1 −s )Q +s Q and s ∈ [0,1]. By Theorem 3 (1), we know that there exists some Q such that q → qˆ in m .
+                        n     n       n            n                                                                                                             n                 P
+                  Since Qn,s ∈ C by convexity, we have that D(PkQn   Qn,s) ≤ D(PkQn   C). We also have
+                                                                                                    ˜
+                                             D(PkQ  Q )=s D(PkQ  Q)+s IS (q˜,q )+(1−s )IS (q ,q )
+                                                         n         n,s        n             n                n     P        n,s               n       P n n,s
+                                                                                                    ˜
+                                                                         ≥s D(PkQ  Q)+s IS (q˜,q ).
+                                                                              n             n                n     P        n,s
+               Hence
+                                                                                        ˜
+                                                                 s D(PkQ  Q)+s IS (q˜,q )≤D(PkQ  C).
+                                                                   n            n                n     P        n,s                   n
+               Division by sn gives
+                                                                                        ˜                             D(PkQn  C)
+                                                                    D(PkQ  Q)+IS (q˜,q )≤                                                    .
+                                                                                n                  P        n,s                 s
+                                                                                                                                 n
+                                                            1
+               Choosing sn = D(PkQn   C)/2, this gives
+                                                                                                                                 1
+                                                                                                 ˜                               /2
+                                                                             D(PkQ  Q)+IS (q˜,q )≤s .
+                                                                                         n                  P        n,s         n
+               Then we get
+                                                                                                                                    1
+                                                                                                                ˜                   /2
+                                                                                IS (q˜,q         ) ≤ D(PkQ  Q )+s .
+                                                                                    P       n,s                           n         n
+                                                               Z  q˜               q                                                         1
+                                                                                      n,s                           ˜                           /2
+                                                                      q      +ln q           dP ≤P(Ω)+Q(Ω)−Qn(Ω)+sn .
+                                                                 Ω     n,s             n
+                                    q    −s q˜
+               Writing q        as n,s       n , we see
+                            n          1−s
+                                           n
+                                                                                q                 q
+                                                                            ln n,s = ln            n,s
+                                                                                               q    −s q˜
+                                                                                 q              n,s    n
+                                                                                  n              1−s
+                                                                                                      n
+                                                                                                                  q     −s q˜
+                                                                                       =ln(1−s )−ln n,s                       n
+                                                                                                       n               q
+                                                                                                                        n,s
+                                                                                                                               q˜  
+                                                                                       =ln(1−sn)−ln 1−snq
+                                                                                                                               n,s
+                                                                                       ≥ln(1−s )+s q˜ .
+                                                                                                       n        nq
+                                                                                                                    n,s
+                                                                                                                                                 15
+           Hence                                                  Z     q˜                                       1
+                                                                                            ˜                    /2
+                                          ln(1 −sn)+(1+sn)            q    dP ≤P(Ω)+Q(Ω)−Qn(Ω)+sn .
+                                                                    Ω n,s
+           As lim        s =0, taking the limit inferior as n → ∞ on both sides gives
+                   n→∞ n
+                                                          Z    q˜                  ˜
+                                                  liminf           dP ≤P(Ω)+Q(Ω)−liminfQn(Ω).
+                                                   n→∞        q                              n→∞
+                                                           Ω n,s
+           An application of Fatou’s lemma gives
+                                                      Z dP ˜                   ˜
+                                                            ˆ dQ ≤ P(Ω)+Q(Ω)−liminfQn(Ω).
+                                                        Ω dQ                             n→∞
+                   ˜
+           Since Q = (1−t)Q1 +tQ we get the inequality
+                                         Z dP d((1−t)Q1+tQ)≤P(Ω)+(1−t)Q1(Ω)+tQ(Ω)−liminfQn(Ω),
+                                              ˆ                                                                n→∞
+                                          Ω dQ
+                                (1 −t)Z dP dQ1+tZ dP dQ≤P(Ω)+(1−t)Q1(Ω)+tQ(Ω)−liminfQn(Ω).
+                                              ˆ                ˆ                                               n→∞
+                                          Ω dQ             Ω dQ
+           Finally we let t tend to one and obtain the desired result.
+                                                                                                      n                    P
+           Proof of Proposition 3. Let Q ∈ C arbitrarily. Then there exists a sequence (w )                in [0,1] with       w = 1 such that
+                                                                                                    i i=1                     i  i
+                 P
+           Q= n wQ.Itfollowsthat
+                    i=1  i  i
+                                                     1X                 ! Z         PwQ
+                                                                                       i  i  i
+                                                 D Pkn         Qi  Q = Ωln 1PiQi dP
+                                                             i                       n
+                                                                              Z     max w P Q
+                                                                                         i   i   i  i
+                                                                           ≤ Ωln        1 PiQi        dP
+                                                                                        n
+                                                                           =ln(n)+ln(maxw )≤ln(n).
+                                                                                            i    i
+           The proposition follows by taking the supremum over Q on both sides.
+           Proof of Proposition 4. Since Q∗ is the normalized maximum likelihood distribution we have sup sup ln dQ < ∞. In
+                                                                                                                        Q      ω      ∗
+           particular                                                                                                              dQ
+                                                     supD(PkQ∗  Q)= supZ ln dQ dP
+                                                    Q∈C                       Q∈C Ω      dQ∗
+                                                                           ≤supsupln dQ (ω)<∞.
+                                                                              Q∈C ω       dQ∗
+           Proof of Proposition 5. We can write
+                                                 D(PkQ  Q∗)=D(PkQ  Q)+D(PkQ Q∗).
+                                                          θ                     θ
+           Byassumptionall terms are ﬁnite so that minimising D(PkQθ   Q∗) over θ must be equivalent to minimising D(PkQθ   Q)
+           over θ. The same argument holds for step 5 in Algorithm 1. The result then follows from [13, Theorem 3.0.13]. While the
+           algorithm described there works by choosing θ to minimise R log((1−α )q                  +α q )dP, the proof relies on [9, Lemma
+                                                              k               Ω             k  θk−1     k θ
+           5.9], which indeed uses minimisation of D(Pk(1 − α )Q               +α Q  Q)asdescribed here.
+                                                                     k    θk−1     k   θ
+           Proof of Theorem 4. For any a ∈ R we have
+                                                                                             f1(i)
+                                                        f0(i) + a · f1(i) = f0(i) ·   1+a·f (i) .                                             (12)
+                                                                                               0
+                                                                                                                                                   16
+                  f (i)
+           Since 1      →0fori→∞wehavethatf (i)+a·f (i)≥0 for i sufﬁciently large. Therefore, we can apply Fatou’s lemma
+                  f (i)                                   0           1
+                   0
+           to the function and obtain
+                               Xf0(i)·q∗(i)+a·Xf1(i)·q∗(i)=X(f0(i)+a·f1(i))·q∗(i)
+                                                                         =Xliminf(f (i)+a·f (i))·q (i)
+                                                                                 n→∞ 0                1       n
+                                                                         ≤liminfX(f (i)+a·f (i))·q (i)
+                                                                             n→∞          0           1       n
+                                                                                     i
+                                                                                    X                        X                 !
+                                                                         =liminf          f (i) · q (i) + a ·     f (i) · q (i)
+                                                                             n→∞           0      n                1      n
+                                                                                       i                       i
+                                                                         =liminf(λ +a·λ )=λ +a·λ .
+                                                                             n→∞ 0             1       0        1
+           Hence
+                                                   a·Xf (i)·q∗(i)−λ ≤λ −Xf (i)·q∗(i).                                                         (13)
+                                                              1               1       0         0
+           This inequality should hold for all a ∈ R, which is only possible if
+                                                                 Xf(i)·q∗(i)−λ =0.
+                                                                       1               1
+                                                                       Xf(i)·q∗(i)=λ .
+                                                                             1               1
+           B. Proofs for Section IV
+           Proof of Proposition 6. Assume that E ,E ,E ,... is a sequence of e-variables such that
+                                                      1    2   3
+                                                          Z     E                  Z    E
+                                                              ln    n   dP →sup         ln        dP
+                                                            Ω      E′            E    Ω      E′
+           for n → ∞. Then E          =(E +E )/2 are also e-variables and by convexity
+                                  n,m       m       n
+                                                        Z     E                    Z     E
+                                                            ln    m,n    dP →sup         ln        dP ,
+                                                          Ω       E′              E    Ω     E′
+           which implies that m2(E ,E ) → 0 for m,n → ∞. By completeness E converges to some e-variable E . Using Lemma
+                                   γ   m n                                                  n                                    ∞
+           2 we see that m (E ,E ) → 0 implies that
+                             γ    n   ∞
+                                                              Z    E              Z     E 
+                                                                 ln     m dP →          ln    ∞ dP
+                                                               Ω      E′              Ω      E′
+           so that
+                                                               Z    E            Z     E 
+                                                          sup     ln        dP =       ln    ∞ dP.
+                                                           E    Ω      E′            Ω      E′
+           Hence
+                                                             Z      E 
+                                                         sup     ln  E      dP =0
+                                                          E    Ω       ∞
+           Therefore E      is a strongest e-statistic.
+                         ∞
+                                                                                                                                ¯
+              Assume that both E and E are strongest e-variables. Then they are both stronger than the average E = (E +E )/2.
+                                    1         2                                                                                          1     2
+           Hence
+                                                                        Z   ¯             ¯ 
+                                                0 ≤ m2(E ,E ) = 1            ln   E +ln E              dP ≤0.
+                                                        γ   1   2     2           E            E
+                                                                                    1            2
+           Therefore E = E P-almost surely.
+                         1     2
+                                                  ˆ                                                ˆ                          ′                  ′
+           Proof of Theorem 5. Firstly, since E > 0 holds P-almost surely, we have that E is stronger than any E ∈ EC with P(E =
+           0) > 0.
+                                                                                                                                             17
+             Secondly, let E ∈ EC be an e-statistic for which E > 0 holds P-almost surely. Furthermore, let Qn be a sequence of measures
+           in C such that D(PkQ   C) → 0. We can deﬁne a sequence of sub-probability measures R by R (F) = R EdQ , which
+                                   n                                                                         n      n         F       n
+                    dRn
+           satisﬁes     /dQ =E. We see
+                            n
+                                        Z      ˆ!           Z           
+                                            ln  E dP =         ln   dQn dP +D(PkR )+(P(Ω)−R (Ω))
+                                                E                     ˆ                   n                 n
+                                          Ω                  Ω      dQ
+                                                            Z    dQn
+                                                         ≥     ln     ˆ    dP.
+                                                             Ω      dQ
+                                                                           ˆ
+           The last expression goes to zero as n → ∞, so we see that E is stronger than E.
+           Proof of Proposition 7. Using the fact that ln(x) ≤ x − 1 for x > 0, we see
+                                   D(PkQ∗  Q)=Z ln dQ dP ≤Z  dQ −1dP =Z dP dQ−1≤0,
+                                                        Ω    dQ∗           Ω dQ∗                  Ω dQ∗
+                                                                  dP    ∗
+           where the last inequality follows from the fact that     /dQ is an e-statistic.
+                                                                            R q′
+           Proof of Theorem 6. Without loss of generality, assume that Ω /qdP = 1 + ǫ for some ǫ > 0. For the sake of brevity, we
+                         q′   1+β
+           write cβ := k /qk1+β. We now deﬁne a function g : [0,1] → R≥0 as
+                                                         g(α) := D(Pk(1−α)Q+αQ′  C).
+           Notice that g(0) = δ and g(α) ≥ 0, since (1 − α)Q + αQ′ ∈ C. This function and its derivatives will guide the rest of the
+           proofs, and we now list some properties that we will need:
+                                                      g′(α) := d g(α) = Z           q −q′      ′ dP,                                       (14)
+                                                                dα           Ω (1−α)q+αq
+           so that
+                                                       ′       Z       q′
+                                                      g (0) =       1− q dP =−ǫ,                                                           (15)
+                                                                Ω
+                                                                             Z                   
+                                                                  2                     ′           2
+                                                     g′′(α) := d g(α) =                q −q           dP,                                  (16)
+                                                                   2                             ′
+                                                                dα            Ω (1−α)q+αq
+           so that
+                                                               Z          
+                                                                        q′   2
+                                                      g′′(0) =      1−        dP =1−2(1+ǫ)+c
+                                                                         q                            1
+                                                                Ω
+           and
+                                                0 ≤ g′′(α) ≤       1     g′′(0).                                                           (17)
+                                                                       2
+                                                               (1 −α)
+           We now prove (10). We start with the case β = 1 and will use the result for β = 1 to prove the case for β < 1. The proof
+           for the case β > 1 comes later; it requires a completely different proof.
+             Case β = 1. The general idea is simple: at α = 0 the function g(α) is equal to δ and has derivative −ǫ. Its second derivative
+                                                          ′′                      1
+           is positive and bounded by constant times g (0) ≤ c1 for all α ≤ /2. Thus, if ǫ is larger then a certain threshold, g(α) will
+                                           1
+           become negative at some α ≤ /2, but this is not possible since g is a description gain and we would arrive at a contradiction.
+           The details to follow simply amount to calculating the threshold as a function of δ.
+                                                              1
+             By Taylor’s theorem, we have for any α ∈ [0, /2] that
+                                                                                           ′′ ◦
+                                                                        ′                g (α ) 2
+                                                      g(α) = g(0)+g (0)α+ max                    α
+                                                                                    ◦
+                                                                                 0≤α ≤α     2
+                                                                        ′          ′′    2
+                                                            ≤g(0)+g(0)α+2g (0)α
+                                                                            2
+                                                            ≤δ−ǫα+2α c1,
+                                                                                                    ∗         ǫ     1
+           where we use the properties derived above. This ﬁnal expression has a minimum in α = min{ /4c1, /2}. By non-negativity of
+                                                                            1
+                                    ∗      ∗2                                /2                   ∗    ǫ       1
+           g, we know that δ −ǫα +2α c1 ≥ 0. This gives ǫ ≤ (8c1δ)             in the case that α = /4c1 < /2, and ǫ ≤ 2δ +c1 otherwise.
+                                                 ǫ
+           In the latter case, it holds that c1 < /2, so the bound can be loosened slightly to ﬁnd the simpliﬁcation ǫ ≤ 4δ. This concludes
+           the proof for β = 1, which we now use to prove Case β < 1.
+                                                                                                                                                18
+              Case β < 1. For any a > 0, it holds that
+                                                  Z q′ dP = Z q′1 q′            dP +Z q′1 q′           dP.                                    (18)
+                                                      q             q { /q≤a}              q { /q>a}
+                                                    Ω            Ω                      Ω
+           We write q′′ := q′1 ′          and we will bound the ﬁrst term on the right-hand side of (18) using the proof above with Q′
+                                 {q /q≤a}
+           replaced by Q′′. Since Q′′ is not necessarily an element of C, we need to verify non-negativity, which follows because for
+           each α ∈ (0,1), we have that D(Pk(1−α)Q+αQ′′   C) ≥ D(Pk(1−α)Q+αQ′   C) ≥ 0. Furthermore, it holds that
+                                                                   Z  
+                                                              ′′ 2          ′′ 2
+                                                           q             q
+                                                               =               dP
+                                                            q 2    ZΩ q         
+                                                                           q′′ 1+β q′′ 1−β
+                                                                   =       q          q        dP
+                                                                       Ω
+                                                                   ≤a1−βc
+                                                                            β
+           The results above therefore give
+                                                        Z q′′                                1
+                                                               dP ≤1+max{(8a1−βc δ)/2,2δ}.
+                                                            q                            β
+                                                         Ω
+           For the second term on the right-hand side of (18), we use a Markov-type bound, i.e.
+                                                    Z                       Z          
+                                                         ′                       ′  q′    β
+                                                        q                      q     /q
+                                                          1 q′       dP ≤                  1 q′      dP
+                                                        q { /q>a}               q    a       { /q>a}
+                                                      Ω                      Ω
+                                                                         ≤a−βc .
+                                                                                 β
+           Putting this together gives
+                                                   Z q′                                 1
+                                                         dP ≤1+max{(8a1−βc δ)/2,4δ}+a−βc .
+                                                       q                            β                   β
+                                                    Ω
+           Since this holds for any a, we now pick it to minimize this bound. To this end, consider
+                                                                                        1
+                                         d                               (1 −β)(8c δ) /2
+                                                        1                           β         (1+β)
+                                           (8a1−βc δ) /2 +a−βc =                           a−     /2 − βa−(1+β)c .
+                                        da          β              β             2                                 β
+           Setting this to zero, we ﬁnd
+                                                                                           2
+                                                                               1       !1+β
+                                                                            βc/2
+                                                               a∗ =            β             .
+                                                                                    1
+                                                                       (1 −β)(2δ) /2
+           The proof is concluded by noting that
+                                                                                                     
+                                                                                                         1
+                                                                                               1−β       /2
+                                                                                   1       !21+β
+                                                                                 βc/2
+                                                       1−β      1                 β                  
+                                                  (8a∗     c δ) /2 =    8                          c δ
+                                                            β                          1           β 
+                                                                            (1 −β)(2δ) /2
+                                                                                                     1−β
+                                                                        1          β       β 1+β
+                                                                   =2c/(β+1)(2δ) /(β+1)
+                                                                        β                   1−β
+           and
+                                                                                          −2β
+                                                                                1       !1+β
+                                                                             βc/2
+                                                          a∗−βc =               β             c
+                                                                 β                   1         β
+                                                                        (1 −β)(2δ) /2
+                                                                                        −2β
+                                                                       1      β 1+β            β
+                                                                   =c/(β+1)                 (2δ) /(1+β).
+                                                                       β        1−β
+              Case β > 1. We now prove the result for β ∈ (1,∞); the proof for β = ∞ follows by a minor modiﬁcation of (20). If
+           ǫ ≤ 0 there is nothing to prove, so without loss of generality we can write ǫ = γδ for some γ > 0; we will bound γ. Whereas
+           the previous proof exploited the fact that the second derivative g′′(α) was bounded above in terms of δ and hence ‘not too
+           large’, the proof below uses the condition that cβ is ﬁnite to show ﬁrst, (a), that g′′(α) can also be bounded below in terms of
+                                                                                                 ∗
+           (γ,δ). Therefore, if ǫ exceeds a certain threshold, as α moves away from the α at which g(α) achieves its minimum in the
+                                                               ∗    1                            ∗    1
+           direction of the furthest boundary point (i.e. if α < /2, we consider α ↑ 1, if α ≥ /2 we consider α ↓ 0), g(α) will become
+           larger than Kδ or δ respectively, and we arrive at a contradiction. (b) below gives the detailed calculation of this threshold.
+                                                                                                                                                                                                                                                19
+                       Proof of (a). Fix some 0 ≤ α˜ < 1 (we will derive a bound for any such α˜ and later optimize for α˜; for a sub-optimal yet
+                                                                   1                                                                                                            1        2 ′′       ◦                                  ◦
+                  easier derivation take α˜ = /2). By Taylor’s theorem, we have 0 ≤ g(α˜) = δ − α˜ǫ + ( /2)α˜ g (α ) for some 0 ≤ α ≤ α˜.
+                  Plugging in ǫ = γδ we ﬁnd that
+                                                                                                               ′′     ◦          2
+                                                                                                             g (α ) ≥              2(α˜γ −1)δ.
+                                                                                                                                α˜
+                                                                          ′′     ◦                        ◦
+                  This gives a lower bound on g (α ) for some α in terms of (γ,δ). We now turn this into a weaker lower bound on all α.
+                                                                    ◦
+                  First, using (17) and then α ≤ α˜ and then the above lower bound, we ﬁnd
+                                                                                        ′′                                     2 ′′                          ◦ 2 ′′         ◦
+                                                                                      g (0) ≥ max (1−α) g (α) ≥ (1−α ) g (α )
+                                                                                                     α∈[0,α˜]
+                                                                                                                   2 ′′       ◦
+                                                                                                 ≥(1−α˜) g (α ) ≥ 2fα˜(γ,δ),                                                                                                                (19)
+                                                                          2                                                                                                                                                ′′
+                  where fα˜(γ,δ) := ((1−α˜)/α˜) (α˜γ −1)δ is a function that is linear in γ and δ. We have now lower bounded g (0) in terms
+                  of γ,δ. We next show that, under our condition that cβ < ∞, this implies a (weaker) lower bound on g′′(α) for all α. For
+                  this, ﬁx any C > 1. We have for all 0 < α ≤ 1:
+                                                                                         Z                                                    
+                                                                                                                           q′ − q                 2
+                                                                           ′′
+                                                                         g (α) ≥               1q′≤Cq ·                                      ′      dP
+                                                                                            Ω                      (1 −α)q +αq
+                                                                                         Z                                                      
+                                                                                                                            q′ − q                  2
+                                                                                     ≥         1q′≤Cq ·                                                dP
+                                                                                            Ω                      (1 −α)q +αCq
+                                                                                         Z                                   
+                                                                                                                   q′ − q        2                         1
+                                                                                     =         1q′≤Cq ·                             dP ·                                 2
+                                                                                            Ω                          q                     (1 +α(C −1))
+                                                                                                                                        Z                                              !
+                                                                                                      1                                                           q′            2
+                                                                                                                           ′′
+                                                                                     ≥                             2     g (0)−               1q′>Cq ·                 −1 dP
+                                                                                          (1 +(C −1))                                      Ω                      q
+                                                                                           1                               1−β        
+                                                                                     ≥ C2 2fα˜(γ,δ)−C                             cβ ,                                                                                                      (20)
+                  where in the fourth line we used the deﬁnition of g′′(0), and in the ﬁfth line we used (19) and a Markov-type bound on the
+                                                                 R         ′              ′              2
+                  integral, i.e. we used that                      Ω1q >Cq ·(q /q −1) dP is bounded by
+                                                                         Z                                            Z                          
+                                                                                                    ′    2                      q′        β−1             ′    2
+                                                                                                  q                                /q                   q                       1−β
+                                                                               1q′>Cq ·                     dP ≤                                  ·              dP =C                 cβ.
+                                                                           Ω                       q                      Ω       C                      q
+                                                                                                                                                                                  1−β                          4
+                  By differentiation we can determine the C that maximizes the bound (20). This gives C                                                                                   =fα˜(γ,δ)( /cβ(1+β)). and with
+                  this choice of C, (20) becomes
+                                                                                               ′′                           (β+1)/(β−1) 2/(1−β)
+                                                                                             g (α) ≥ fα˜(γ,δ)                                    cβ            h(β)                                                                         (21)
+                                                                  2/(β−1)
+                  where h(β) = (4/(1+β))                                        · 2(β − 1)/(1 + β). We are now ready to continue to:
+                                                           ∗                                                                                                                            ∗          1
+                       Proof of (b). Let α                     ∈ [0,1] be the point at which g(α) achieves its minimum. If α                                                                 ≤ /2, a second-order Taylor
+                                                                            ∗
+                  approximation of g(1) around α gives that
+                                                                                                                       1              ∗ 2                    ′′
+                                                                                             Kδ≥g(1)≥ (1−α ) min g (α)
+                                                                                                                                                    ∗
+                                                                                                                       2                    α∈[α ,1]
+                                                                                                          1                (β+1)/(β−1) 2/(1−β)
+                                                                                                    ≥ 8fα˜(γ,δ)                                cβ             h(β),
+                  so that after some manipulations
+                                                                                                        (1+β)/(β−1)                     ′  2/(β−1)                  −1
+                                                                                         fα˜(γ,δ)                             ≤8Kcβ                      · h(β)          δ,                                                                 (22)
+                               ′                    ∗       1                                                                                                                                                                       ∗
+                  with K = K. If α > /2, we perform a completely analogous second-order Taylor approximation of g(0) around α , which
+                  will then give (22) again but with K′ replaced by 1. We thus always have (22) with K′ = max{K,1}. Unpacking fα˜ in (22)
+                  and rearranging gives:
+                                                                                                              γ ≤            α˜         · V + 1
+                                                                                                                                     2
+                                                                                                                       (1 −α˜)                      α˜
+                  with
+                                                                                                                                                β−1
+                                                                                                                2/(1+β)  8K′ 1+β                        −2
+                                                                                                    V =cβ                     ·                        δ1+β.
+                                                                                                                                   h(β)
+                                                                                                                                                                                                                              2
+                  We now pick the α˜ that makes both terms on the right equal, so that the right-hand side becomes equal to /α˜. This is
+                                                                        α˜             2
+                  the solution to the equation ( /(1−α˜)) V = 1 which must clearly be obtained for some 0 < α˜ < 1, so this α˜ satisﬁes our
+                  assumptions. Basic calculation gives
+                                                                                                                      2              1               
+                                                                                                             γ ≤          =2· V /2+1
+                                                                                                                     α˜
+                                                                                                                                                  20
+           and unpacking V we obtain
+                                                                              ∗     β
+                                                                  ǫ = γδ ≤ c ·δ1+β +2δ.
+           where
+                                                                                           β−1
+                                                               c∗ = c1/(1+β) ·  8K′ 2(1+β).
+                                                                      β           h(β)
+           Unpacking h(β) gives the desired result.
+                                                                        APPENDIX B
+                                                       RIPR STRICT SUB-PROBABILITY MEASURE
+              In this appendix, we discuss a general way to construct a measure P and convex set of distributions C such that the reverse
+           information projection of P on C is a strict sub-probability measure. For simplicity, we take Ω = N and F = 2N, though the
+           idea should easily translate to more general settings.
+           Proposition 8. Let g : N → R>0 be a function, and let C denote the set of measures {Q : P g(i)q(i) ≤ ν} for some ν > 0.
+                                                                                                                 i
+                                                                      g(i)
+           Then for any P that is not in C we have that E(i) =           /ν is the optimal e-statistic.
+           Proof. The extreme points in C are the measure with total mass 0 and measures of the form             ν δ , i.e. measures concentrated
+                                                                                                                g(i) i
+           in single points. An e-statistic E must satisfy
+                                                                   XE(j) ν δi(j)≤1
+                                                                     j       g(i)
+                                    ν                     g                                  g
+           or, equivalently, E(i)g(i) ≤ 1. Hence E ≤ /ν so the optimal e-statistic is /ν.
+              Let g : N → R>0 be any function that satisﬁes
+                                                                        lim g(n) = 0.
+                                                                       n→∞
+           Furthermore, let P denote a probability measure on the natural numbers such that
+                                                                         Xp(i) =c
+                                                                          i  g(i)
+           for some c ∈ R>0. For ν ∈ (0,1/c) and let Cν denote the set of measures {Q : Pig(i)q(i) ≤ ν}. Note that we do not yet
+           require all measures in Cν to be probability measures so that the set Cν is compact. It follows that there exists a unique element
+           of C that minimizes P p(i)ln(p(i)/q(i)).
+                                     i                                                   ˆ
+                                                 g
+              The optimal e-statistic is E = /ν, and we may deﬁne the measure Q by
+                                            ν                                              ν
+                                                                qˆ (i) = p(i) = νp(i)/g(i),
+                                                                 ν       E (i)
+                                                                           ν
+                                     ˆ                 ˆ              P
+           and we can check that Qν ∈ C. Hence Qν minimizes              i p(i)ln(p(i)/q(i)).
+              This is a strict sub-probability measure:
+                                                                   Xqˆ (i) = νXp(i)
+                                                                         ν             g(i)
+                                                                     i              i
+                                                                              =νc
+                                                                              <1,
+                                     1
+           where we use that ν < /c.
+              The next step is to prove that the information projection does not change if we restrict to the set of probability measures in
+              ∗                         ˜ ∗                                          ∗                 P                 ∗                         ∗
+           C , which we denote by C . To this end, note ﬁrst that for ν < ν , we have that                g(i)q (i) < ν , so that for all ν < ν
+             ν                           ν                                                                      ν
+           there exists nν ∈ N such that the probability measure deﬁned by
+                                                                        X 
+                                                                                       
+                                                              q (i) +    1−       q (j) δ (i)
+                                                               ν                   ν       n
+                                                                                             ν
+                                                                               j
+                                                                                                                                               21
+                              ˜ ∗
+           is an element of Cν . Hence
+                                                                    
+                                                           X
+                                             
+                                 ˜                                  
+                          D(PkC)≤D P Q + 1−                     q (i)   δ
+                                                 λ               ν       n
+                                                                          ν
+                                             
+                                       X                   j      p(i)                 
+                                                                                      
+                                    =      p(i)ln
+                                                    Q (i)+ 1−P             q (j) δ    (i)
+                                       i∈N            ν                     ν      n
+                                                                       j∈N          ν
+                                                                                                      ! ∞                    
+                                                    p(nν)                             p(nν)                  X             p(i)
+                                    =−p(nν)ln q (n ) +p(nν)ln q (n )+1−P                          q (j)   +      p(i)ln q (i) .
+                                                     ν   ν                   ν   ν           j∈N ν           i=1           ν
+           The ﬁrst term can be written as
+                                                            p(nν)                p(nν)     p(nν) 
+                                                   p(n )ln              =q (n )            ln
+                                                       ν      q (n )        ν   ν q (n )       q (n )
+                                                               ν   ν                ν   ν       ν   ν
+                                                                        =q (n )g(nν) lng(nν)
+                                                                            ν   ν    ν           ν
+           Then notice that for ν → ν∗, we must have that nν → ∞. Using that cln(c) → 0 for c → 0 we see the ﬁrst term tends to 0
+           for ν → ν∗. Similarly, the second term can be written as
+                                    p(nν)            !
+              p(nν)ln q (n )+1−P               q (j)    =
+                          ν   ν            j∈N ν
+                                                               X                     p(nν)                              p(nν)             !
+                                                                                         P                                   P
+                                                 q (n )+1−          q (j)                                ×ln                                  .
+                                                  ν   ν              ν      q (n )+1−             q (j)         q (n )+1−             q (j)
+                                                                j∈N          ν   ν            j∈N ν              ν   ν           j∈N ν
+           We also have
+                                                                        p(nν)
+                                                                q (n )+1−Pq (i) →0
+                                                                 ν   ν             ν
+           for ν → ν∗ and using that cln(c) → 0 for c → 0 we get the second term tends to 0 for ν → ν∗. Therefore we see
+                                                                                                 ! !
+                                                                                        X
+                                                         ˜                
+                                                  D(PkC)≤ lim D P Q + 1−                     q (i) δ
+                                                                           ν                 ν       n
+                                                              ν→ν∗                                     ν
+                                                                                         i
+                                                              X p(i) 
+                                                           ≤      p(i)ln
+                                                                           q ∗(i)
+                                                                i           ν
+                                                                   X p(i)
+                                                           = inf       p(i)ln         .
+                                                              Q∈C               q(i)
+                                                                    i
+           The inequality trivially also holds the other way around, so we ﬁnd that
+                                                                  ˜         X p(i)
+                                                           D(PkC)= inf           p(i)ln         .
+                                                                        Q∈C               q(i)
+                                                                              i
+           It follows that Qν∗ is a strict sub-probability measure, and at the same time it is the reverse information projection of P onto
+            ˜ ∗
+           Cν .
+                                                                       APPENDIX C
+                                                                       CONVEXITY
+              One of the main assumptions made throughout the main text is that the set of measures C is convex, i.e. closed under ﬁnite
+           mixtures. However, one can also consider stronger notions of convexity, such as σ-convexity and Choquet-convexity. In this
+           appendix, we investigate whether considering different levels of convexity can change the reverse information projection.
+                                                                                                                P
+           Deﬁnition 3. A set C′ of measures is said to be σ-convex if Q ,Q ,Q ··· ∈ C′ implies that               ∞ wQ ∈C′ when w ≥0
+                                                                              1    2    3                          i=1   i  i              i
+                P
+           and    ∞ w =1. The σ-convex hull of a set of measures C, denoted by σ-conv(C), is the smallest σ-convex set containing
+                  i=1   i
+           C.
+              In order to avoid topological complications we will restrict the discussion of Choquet-convexity to Polish spaces, i.e. spaces
+           for which there exists a complete metric that generates the topology. That is, assume that Ω is a Polish space equipped with
+           the Borel σ-algebra. Let Θ be another Polish space and let {Qθ : θ ∈ Θ} denote a parameterized set of probability measures
+                                                                                                                                22
+          on Ω such that θ → R f dQθ is Borel measurable for any measurable function f : Ω → R. Then for any probability measure
+                               Ω
+          ν on Θ the Choquet-convex mixture µν can be deﬁned by
+                                                                               
+                                                       Z fdµν =Z       Z fdµθ dν,
+                                                        Ω           Θ    Ω
+          for any measurable function f : Ω → R.
+          Deﬁnition 4. A set C′ of measures is said to be Choquet-convex if it is closed under Choquet convex mixtures. The Choquet-
+          convex hull of a set of measures C is the smallest Choquet-convex set that contains C.
+            So far, we have assumed that all of the measures in C are ﬁnite. However, a countable or Choquet convex mixture of ﬁnite
+          measures may not be ﬁnite. It follows that our results on the existence of the RIPr might not be applicable to the σ-convex and
+          Choquet-convex hull of C. We therefore assume for the remainder of this section that all involved measures are sub-probability
+          measures, in which case this issue does not arise. With all of this in place, it is relatively straightforward to construct examples
+          where the RIPr of P on a convex set does not exist, while the RIPr of P on its σ-convex hull does exist.
+          Example 4. Let P denote a geometric distribution on N0 and let C denote the set of probability measures on N0 with ﬁnite
+          support. Then D(PkQ   C) = −∞ for any Q ∈ C. Therefore the reverse information projection of P on C is not deﬁned
+          according to the deﬁnitions given in this paper. However, the σ-convex hull of C consists of all probability measures on N0,
+          which implies that the reverse information projection on the σ-convex hull is well-deﬁned and equals P.
+            However, as the following results show, if the RIPr of P on C does exist, then it must coincide with the RIPr of P on
+          σ-conv(C).
+          Lemma 4. Let P and Q be sub-probability measures and let Q1,Q2,... be a sequence of sub-probability measures such that
+          D(PkQ Q )>−∞,andlet w ,w ,w ,... be a sequence of positive numbers with sum 1. Then
+                       1                   1   2  3
+                                                    Pn                            ∞         !
+                                                           w ·Q                    X
+                                                        i=1  i   i            
+                                          D P Q  P                    →D P Q             w ·Q
+                                                          n                              i   i
+                                                               w               
+                                                           i=1  i                     i=1
+          for n → ∞.
+          Proof. Firstly, note that
+                                                         P                  P
+                                                       d   n+1w Q         d    n  wQ
+                                                     ln    i=1   i  i ≥ ln     i=1  i i
+                                                            dQ                 dQ
+          and
+                       Z      P                 Z
+                            d   n   wQ                dw Q
+                          ln    i=1   i i dP ≥     ln    1 1 dP = D(PkQ  Q )+lnw +(Q (Ω)−Q(Ω))>−∞.
+                                 dQ                     dQ                       1       1      1
+                        Ω                        Ω
+            Since Pn w q →P∞ w q pointwise, applying the monotone convergence theorem to the sequence
+                     i=1  i i      i=1  i i
+                                                     dPn wQ               dw Q 
+                                                      ln     i=1  i  i −ln    1  1
+                                                             dQ              dQ     n∈N
+          gives that
+                                 Z     dPn wQ            dw Q           Z    dP∞ wQ             dw Q
+                                    ln     i=1  i  i −ln    1  1 dP →      ln     i=1  i i −ln     1  1 dP.
+                                  Ω         dQ             dQ            Ω        dQ              dQ
+          We get
+                                              Z      P                  Z      P
+                                                    d   n  wQ                 d   ∞ wQ
+                                                 ln     i=1  i  i dP →     ln     i=1  i  i dP
+                                               Ω         dQ              Ω        dQ
+          for n → ∞. Finally, we see that
+                                       P             Z         P                                        n
+                                           n                         n
+                                              w ·Q              d      wQ                                X
+                                           i=1  i    i               i=1  i  i
+                                          P
+                            D P Q                       =     ln              dP −(Q (Ω)−Q(Ω))−ln            w
+                                             n                                         n                       i
+                                                w                   dQ
+                                             i=1   i        Ω                                             i=1
+                                                           Z     dP∞ wQ
+                                                        → ln         i=1  i  i dP −(Q (Ω)−Q(Ω))
+                                                                      dQ               ∞
+                                                             Ω
+                                                        =D(PkQ Q∞),
+                        P                             P
+          where Q    :=    ∞ wQ andwe use that ln        n  w →0andQ (Ω)→Q (Ω). To see the latter, note that
+                  ∞        i=1  i i                      i=1  i           n         ∞
+                                                               Z Pn q(ω)w
+                                                                     i=1 i     i
+                                                     Qn(Ω) =         P          dµ(ω),
+                                                                       n   w
+                                                                Ω      i=1  i
+                                                                                                                                                                                                   23
+                           Pn q(ω)w Pn                       q (ω)
+                                    i      i         w ≤ ∞ /w ,wheretheRHSintegrates,sothatthedesiredconvergencefollowsfromthedominated
+               and0 ≤         i=1           / i=1 i                     1
+               convergence theorem.
+               Theorem 7. Let P be a ﬁnite measure and C a convex set of sub-probability measures such that D(PkQ   C) = 0. If
+               Q1,Q2,... is a sequence of measures in C such that D(PkQn   C) → 0, then D(PkQn   σ-conv(C)) → 0.
+                                                                                                         P
+                                  ∗                                  ∗                            ¯          ∞
+               Proof. Fix Q ∈ C such that D(PkQ   C) ≤ ε and let Q =                                              wQ ∈σ-conv(C) arbitrarily. Let s ∈ (0,1) and consider
+                                                                                                             i=1     i   i
+                ˜               ∗                    ¯       P∞                                         ∗
+               Q := s · Q + (1 − s) · Q =                             w˜ Q , where Q := Q , w˜ = s and w˜ = (1 − s) · w for i = 1,2,.... Note that
+                                                                 i=0     i   i               0                 0                   i                      i
+               D(PkQ∗  Q0)=0, so it follows from Lemma 4 that
+                                                                                              P                 
+                                                                                                    n
+                                                                                                        w˜ Q
+                                                                                        ∗           i=0     i   i                    ∗
+                                                                                                 P                                         ˜
+                                                                     lim D P Q                        n              =D(PkQ  Q).
+                                                                   n→∞                                    w˜
+                                                                                                      i=0    i
+                                                                          ∗                                 Pn w˜ Q Pn                                                            ∗       ˜
+                                                                                                                      i  i
+               The left hand side is, by deﬁnition of Q , bounded by ε since                                   i=0        /        w˜  ∈C, so that we ﬁnd D(PkQ   Q) ≤ ε.
+                                                                                                                              i=0    i
+               Furthermore, by concavity of the log,
+                                                    ∗       ˜                       ∗                                         ∗      ¯                                ∗       ¯
+                                  ε ≥ D(PkQ  Q)≥s·D(PkQ  Q0)+(1−s)·D(PkQ  Q)=(1−s)·D(PkQ  Q).
+                                                                             ∗       ¯                                                                                              ¯
+               Taking the limit of s → 0, we see D(PkQ   Q) ≤ ε. Finally, the result follows by taking the supremum over Q.
+                  Weconjecture that if C is a σ-convex set of sub-probability measures and C′ is the Choquet-convex hull of C then D(PkQ  
+               C) = D(PkQ C′) for any sub-probability measures P and Q such that P,Q, and the sub-probability measures in C all have
+               densities with respect to a common σ-ﬁnite measure.

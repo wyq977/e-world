@@ -1,0 +1,1182 @@
+                 Post-hoc α Hypothesis Testing and the Post-hoc p-value
+                                                                Nick W. Koning
+                              Econometric Institute, Erasmus University Rotterdam, the Netherlands
+                                                               December 3, 2025
+           Abstract                                                             a p-value larger than the pre-specified α cannot be
+                                                                                claimed as a discovery. This makes such findings sub-
+           In traditional hypothesis testing one must pre-specify the           stantially less likely to be published or even pursued for
+           significance level α to bound the ‘size’ of the test:       its      publication. This is known as the file-drawer problem,
+           probability to falsely reject the hypothesis.       Indeed, a        as these findings are often indefinitely relegated to a
+           data-dependent selection of α would generally distort the            file-drawer (Rosenthal, 1979). As a consequence, the
+           size, possibly making it larger than the specified level α.          scientific literature often contains a biased selection of
+           Weexplore hypothesis testing with a data-dependent choice            all the collected evidence.
+           of α by guaranteeing that there is no such size distortion in
+           expectation, even if the level α is arbitrarily selected based     • p-hacking. The use of a pre-specified α incentivizes ‘p-
+           on the data. Unlike regular p-values, resulting ‘post-hoc            hacking’: the practice of modifying the analysis based
+           p-values’ allow us to ‘reject at level p’ and still provide          on the data in order to push a p-value below the pre-
+           this guarantee. Interestingly, we find that p is a post-hoc          specified α (Simonsohn et al., 2014).
+           p-value if and only if 1/p is an e-value, a recently intro-
+           duced measure of evidence. While often treated as different        These problems and their downstream effects, combined
+           paradigms, this reveals e-values are simply p-values under       withpervasivemisinterpretation, haveledtotheradicalpro-
+           a stronger error guarantee, thinly veiled by the reciprocal      posal to abandon traditional hypothesis testing altogether
+           p = 1/e. Moreover, we extend classical optimal testing           (Amrhein and Greenland, 2018; Amrhein et al., 2019; Mc-
+           to optimal post-hoc testing. Finally, we apply our work          Shane et al., 2019; Wasserstein et al., 2019). Unfortunately,
+           to close Markov’s inequality into a post-hoc α equality,         doing so would simultaneously discard a guarantee on the
+           and we study more general forms of post-hoc testing that         probability of making a false discovery.
+           require us to generalize beyond e-values.                          Westudyafundamentalsolution to these problems: test-
+                                                                            ing under a data-dependent selection of the level α. Select-
+           Keywords: p-values, e-values, p-hacking, data-dependent          ing the level α based on the data causes a distortion of
+           level.                                                           the size compared to the selected level. We quantify this
+                                                                            size distortion using the ratio size/α and develop a theory
+           1     Introduction                                               of post-hoc α hypothesis testing under the guarantee that
+                                                                            this size distortion is at most 1 in expectation for any data-
+           Testing hypotheses is the cornerstone of the modern scien-       dependent choice of the level α. Traditional hypothesis tests
+           tific method. An unfortunate feature of traditional hypoth-      only offer this guarantee for pre-specified (or independently
+           esis testing is that one must pre-specify a significance level   specified) levels α.
+           ‘α’ to bound the size or Type I error: the probability to          If we intend to make the most powerful claim possible,
+        arXiv:2312.08040v10  [math.ST]  2 Dec 2025falsely reject a true hypothesis. This pre-specification of αthen we should use the smallest data-dependent level α for
+           has shaped empirical scientific discourse over the past cen-     which we reject: the p-value. We call the p-value of a post-
+           tury, and has led to several widely known problems:              hoc α hypothesis test a post-hoc p-value. Such post-hoc
+                                                                            p-values are also p-values in the traditional sense, but their
+             • α-hacking. The process of specifying the level α is          corresponding rejection decisions offer a much stronger error
+                typically not publicly observed, so that outsiders can-     guarantee.
+                not verify whether it was truly pre-specified or secretly     Indeed, we can truly ‘reject at level p’ when using a post-
+                selected post-hoc: after seeing the data. To protect        hoc p-value p, and have the guarantee that there is no size
+                against accusations of such ‘α-hacking’, it is therefore    distortion in expectation. The claim associated with a tra-
+                near-universal practice to use a standardized level such    ditional p-value is much weaker: we can only interpret it as
+                as α = .05.                                                 ‘the smallest level at which we would have rejected, had we
+                                                                            pre-specified α = p’, if we want to maintain its guarantee.
+             • File-drawer and publication bias. A finding with               Amajor side-benefit is that post-hoc p-values from mul-
+                                                                          1
+           tiple studies are easily combined. In particular, multiplying   1.1    Contributions to the literature
+           independent post-hoc p-values together yields another post-
+           hoc p-value. Moreover, a harmonic average of post-hoc p-        Preceding work on the post-hoc selection of a level may be
+           values is still a post-hoc p-value. Traditional p-values are    found in Katsevich and Ramdas (2020); Xu et al. (2024);
+           much less straightforward to combine.                           Wang and Ramdas (2022); Grun¨ wald (2024). In particular,
+             Post-hoc p-values and tests are surprisingly easy to de-      the fact that e-values yield a type of post-hoc valid deci-
+           rive. In particular, we find that p is a post-hoc p-value if    sions was also recently observed in multiple testing (Katse-
+           and only if the expectation of its reciprocal is at most one:   vich and Ramdas, 2020; Xu et al., 2024; Wang and Ramdas,
+           E1/p ≤ 1 under our hypothesis. This means that p is a           2022). However, this work notably does not cover the ne-
+           post-hoc p-value when its reciprocal is an e-value: a re-       cessity of e-values for this kind of post-hoc α testing, nor
+           cently proposed measure of evidence (Howard et al., 2021;       does it explore its use when testing a single hypothesis: it
+           Shafer, 2021; Vovk and Wang, 2021; Grun¨ wald et al., 2024;     only considers error bounds in multiple testing. The closest
+           Ramdasetal.,2023). Manysuche-valueshavealreadybeen precursor is the work of Grun¨ wald (2024), who does connect
+           developed, constituting a rich source of post-hoc p-values.     e-values to the problem of testing with a data-dependent α.
+             While e-values and p-values are often presented as en-        However, he considers a very different perspective on post-
+           tirely different paradigms, the above relationship reveals a    hoc decisions, notably missing the connection to p-values
+           deep connection. Indeed, it shows that e-values are p-values    as well as the necessity of e-values for post-hoc testing: we
+           under a stronger error guarantee, thinly veiled by a recip-     show every (non-dominated) post-hoc test is of the form
+           rocal operation: e = 1/p. This offers a very precise answer     e 7→ I{e ≥ 1/α}. In Appendix A we discuss the connection
+           to the often-posed question of what e-values have to offer      to this work.
+           compared to traditional p-values. Moreover, this provides         Ontop of these differences, we bring five broad contribu-
+           a decision-theoretic foundation for the e-value in the con-     tions to this literature. First, we derive a novel integrative
+           text of a binary hypothesis testing problem. In addition,       framework of post-hoc testing that consolidates prior the-
+           as p-values are familiar to all statisticians, we believe this  ory. Here, we build testing with data-dependent levels from
+           connection may make e-values more palatable to a wider          the ground-up, starting from traditional hypothesis testing.
+           audience, who may be hesitant to adopt a new paradigm           Perhaps the key observation here is that one must choose
+           without understanding what is gained compared to an ex-         how to handle size distortions, and we motivate and focus
+           isting paradigm.                                                on the option that leads to the e-value. Second, while the
+             Adownsideofpost-hoc p-values is that they are generally       preceding literature presents the e-value and p-value as two
+           larger than traditional p-values. This is a direct consequence  opposing paradigms, we show that e-values are p-values de-
+           of the fact that the post-hoc error guarantee is stronger than  rived under a stronger data-dependent-level Type I error
+           the traditional error guarantee.                                guarantee, thinly veiled by the reciprocal e = 1/p. This
+                                                                           concretely answers the open question in the e-value liter-
+             Interestingly, there does not seem to be a unique notion of   ature of what e-values offer compared to p-values. Third,
+           post-hoc power, as the traditional notion of power does not     we show how to capture optimality in the context of post-
+           generalize. Indeed, we would naively like to maximize the       hoclevel testing, using a utility-based framework that yields
+           rejection probability under the alternative at the selected     a risk-reward trade-off for rejections across different levels.
+           data-dependent level. Moreover, we would like to use the        Fourth, we nest post-hoc hypothesis testing in a more gen-
+           smallest data-dependent level at which we reject: the post-     eral theory of evidence, beyond e-values. Finally, we con-
+           hoc p-value. However, since we always reject at this level,     nect post-hoc α testing to Markov’s inequality, revealing a
+           there is no rejection probability left to maximize.             “Markov’s equality”. As concentration inequalities gener-
+             The natural replacement of power is to make the post-         ally rely on Markov’s inequality, we show how this may be
+           hoc p-value ‘small’ under the alternative. This comes with      used to produce ‘concentration equalities’, which we apply
+           a lot of flexibility: we can choose whether we want a mod-      to Ville’s-type inequalities.
+           erately small p-value with high probability or gamble for a       In the appendix, we further explore what lies beyond a
+           tiny p-value with very small probability, depending on the      single testing problem, exploring post-hoc α sequential test-
+           application. We tackle this by using the “Neyman-Pearson        ing and multiple testing. Based on earlier versions of this
+           lemma for e-values” recently derived in Koning (2024). We       manuscript, Hartog and Lei (2025) recently continued work
+           also recover the classical Neyman-Pearson lemma as a spe-       onthepost-hocFamilywiseErrorRate, andXuetal.(2025)
+           cial case, replacing randomization by a rejection at a larger   applied these ideas to general multiple testing problems. In
+           post-hoc level.                                                 addition, we also introduce a notion of double post-hoc p-
+             We also include two technical sections. In Section 8, we      values which are p-values that are post-hoc valid under the
+           show how our theory can be used to tighten Markov’s in-         hypothesis and have a reciprocal that is post-hoc valid un-
+           equality to a “Markov’s equality”; in fact, this was the orig-  der the alternative. An example of such a double post-hoc
+           inal inspiration of this work. In Section 7, we discuss the     p-value is a likelihood ratio and its composite generaliza-
+           abstract theory underlying post-hoc testing.                    tion (the ‘numeraire e-value’) recently introduced by Lars-
+                                                                         2
+            son et al. (2025). Similar double interpretations have been             In practice, we often have access to an entire family or
+            attributed to likelihood ratios before, in the context of Bayes       function ϕ of tests, where each test ϕ(α) is labeled by some
+            factors (Jeffreys, 1935, 1998; Kass and Raftery, 1995).               level α > 0. For example, it is common to have a test
+              Our work has recently been applied in Hemerik and Kon-              function ϕ of a threshold form ϕ(α) = I{T > c(α)}, which
+            ing (2024) to provide a solution to the danger of having              rejects the hypothesis when some test statistic T exceeds a
+            multiple ‘standard’ significance levels in a single field of lit-     critical value c(α). By tuning the level α, we can select a
+            erature. Combining traditional p-values by taking their har-          test of the desired level.
+            monic mean was recently suggested by Wilson (2019). Our                 We can extend the notion of a valid test to entire test
+            post-hoc p-values seem deeply related to this operation, as           functions, and call ϕ valid if the size is below α for every α:
+            their harmonic mean is still a post-hoc p-value.
+                                                                                                    size(ϕ(α)) ≤ α,      for all α.               (1)
+            2     Traditional hypothesis testing                                  Thismeansthatwhicheverαwepre-specify,thecorrespond-
+                                                                                  ing test ϕ(α) is valid.
+            2.1     The problem                                                     It is typical to use a test function ϕ for which a smaller
+                                                                                  level α yields a more conservative test. For example, for
+            Any statistical problem starts with observing some data.              a threshold-based test function I{T > c(α)}, the critical
+            The goal of statistical inference is to learn properties of the       value typically increases as the level α decreases. More ab-
+            process that generated this data. Hypothesis testing is a             stractly, we will assume throughout that our test functions
+            specific statistical inference problem. There, we formulate           are non-decreasing in α, in the sense that if ϕ(α−) rejects
+            a hypothesis about the data generating process and test               then ϕ(α+) also rejects whenever α+ ≥ α−. Moreover, we
+            whether it is true.                                                   assume that given the data, there always exists some small-
+              Unfortunately, we do not directly observe the data gener-           est α at which ϕ(α) jumps from 0 to 1, eliminating test
+            ating process: we only observe the data. This means that a            functions that equal 0 or 1 for every α. A consequence of
+            test must somehow use the data to decide whether the hy-              these assumptions is that ϕ is an indicator function in α, as
+            pothesis is true. We model such a test as a binary decision           illustrated in Figure 1. In the context of post-hoc α validity,
+            τ : data → {0,1}, where a 1 means that our test rejects the           the non-decreasing assumption is without loss of generality
+            hypothesis and 0 that it does not reject the hypothesis.              under the weak assumption that a user prefers rejecting for
+              Making mistakes is inherent to hypothesis testing. To               a smaller value of α; see Remark 4.
+            quantifysuchmistakes, itiscustomarytomeasurehowoften
+            a test τ rejects our hypothesis when it is actually true. This
+            probability of rejecting the hypothesis if it is true is also
+            known as the size of the test:                                        2.3     p-values
+                                  size(τ) := P(τ = 1),                            Under the specified conditions, a test function ϕ is com-
+                                                                                  pletely summarized by the point at which the jump hap-
+            sometimes also called the False Positive Rate or Type I er-           pens. This point is known as the p-value of ϕ (Lehmann
+                                                                              1
+            ror, where P denotes the probability under the hypothesis.            and Romano, 2022):
+              The standard strategy is to use a test with a very small
+            size, so that if the hypothesis is true, then it would be im-                             p = min{α : ϕ(α) = 1}.                      (2)
+            plausible that the test rejects it.
+                                                                                  All tests ϕ(α) labeled by a level α < p do not reject, and
+            2.2     Test functions                                                all tests with a level α ≥ p do reject. This means that for a
+                                                                                  p-value p, its corresponding test function ϕ can be written
+            Wetypically want to use a test τ with a certain confidence            as α 7→ I{p ≤ α}, where I{p ≤ α} denotes the indicator
+            guarantee expressed by a level α > 0. In particular, say              function of the event p ≤ α.
+            that a test is valid at a level α if its probability of rejecting       Ap-value is said to be valid if its associated test function
+            the hypothesis when it is true, the size, is at most α:               is. That is, its probability of being below α is bounded by
+                                                                                  α:
+                                size(τ) = P(τ = 1) ≤ α.                                    size(I{p ≤ α}) ≡ P(p ≤ α) ≤ α,         for all α.      (3)
+            It is common to call a test exactly valid if this holds with
+            equality.
+               1Our results and definitions extend to composite hypotheses, by    Remark1. Sometimes, (3) is used as the definition of a p-
+            replacing P with a supremum over the distributions that satisfy the   value. Our results still go through if this definition is taken
+            hypothesis.                                                           as the starting point.
+                                                                                3
+                               ϕ(α)                                           a data-dependent level, the natural definition of size is the
+                                                                              conditional probability to falsely reject the hypothesis, given
+                               1                                              that the data-dependent level αe equals a:
+                                                                                         P(ϕ(αe) = 1 | αe = a) ≡ P(p ≤ αe | αe = a).
+                                                                              This can be interpreted as the actual rejection probability
+                                                      α                       underthehypothesisifarejectionisclaimedatlevela, when
+                                             p                                using the data-dependent level αe.
+                                                                                 For a pre-specified level αe = α, this simply reduces to
+             Figure 1: Realization of a test function and its p-value.        the original definition of the size: P(ϕ(α) = 1 | α = a) =
+                                                                              P(ϕ(a) = 1) ≡ P(p ≤ a).
+           2.4     Relative size distortion                                   Example 1 (α-hacking). Let us consider a data-dependent
+                                                                              level αe, which claims significance at the 1% level if p ≤ .01,
+           If the size and the level α do not match, we speak of a            but otherwise claims significance at the 5% level:
+           size distortion. At a given level α, we can measure the size                               (
+           distortion by the ratio between the size and the level:                               αe =   .01, if p ≤ .01,
+                      size(ϕ(α))     P(ϕ(α) = 1)      P(p ≤ α)                                          .05, if p > .01.
+                           α      ≡        α       ≡      α     .       (4)   This mimics a type of ‘α-hacking’, as αe is conveniently low-
+           Atest (function) or p-value is valid at α if its size distortion   ered to .01 if the p-value happens to fall below it.
+           is at most 1.                                                         Suppose we use an exactly valid test function ϕ, which
+              Thisrelative measure of size distortion conveniently scales     means that p ∼ Unif(0,1]. Then, the size at a = .01 equals
+           with the value of α. For example, suppose that α = .01 and                 P(p ≤ αe | αe = .01) = P(p ≤ .01 | p ≤ .01) = 1,
+           size = .02, then the size distortion equals .02/.01 = 2. This
+           is much larger than the desired value 1. At the same time, if      since we only choose αe = .01 if our p-value falls below .01.
+           α=.10 and size = .11, the size distortion is much smaller:         This size of 1 is much larger than the selected level a = .01.
+           .11/.10 = 1.1.                                                     Indeed, the size distortion at a = .01 equals 1/.01 = 100.
+           Remark 2. We stress that this way of measuring the size               At a = .05 the size equals
+           distortion is a choice. For example, we could alternatively          P(p ≤ αe | αe = .05) = P(p ≤ .05 | p > .01) = 4/99 ≈ .04.
+           measure the size distortion with size(ϕ(α)) − α. However,
+           this difference does not scale well with the value of α. In-       Interestingly, the size here is roughly .04, which is lower
+           deed, the level α = .01 and size = .02 would then yield            than the selected level a = .05, so that the size distortion is
+           the same size distortion as α = .10 and size = .11. In             below 1: (4/99)/.05 = 80/99 ≈ .81.
+           practice, we believe the former is usually considered much
+           more problematic, as expressed in using our relative notion
+           of size distortion. For completeness, we also develop a no-        3.2     Validity for a data-dependent level α
+           tion of post-hoc α testing starting from this notion of size       As seen in Example 1, the size distortion caused by using a
+           distortion in Example 8.                                           data-dependent level αe may be above or below 1, depending
+                                                                              on the realization of the data-dependent level αe. In order
+           3     Testing with data-dependent α                                to define a notion of validity of a test function ϕ or p-value
+                                                                              p for a data-dependent level αe, we must choose how we
+           3.1     Generalizing size to data-dependent α                      weigh these different distortions. This choice is overlooked
+                                                                              in preceding work on testing with data-dependent αe.
+           Valid test functions and valid p-values are convenient, be-           While we discuss more options in Section 7, we focus on
+           cause they produce a valid test for each desired level α.          two options here: controlling the maximum size distortion
+           However, this ease of use also facilitates misuse: it becomes      and the expected (relative) size distortion.        Both these
+           tempting to consider a data-dependent level αe. For exam-          options are a generalization of the notion of size distortion
+           ple, an analyst may secretly first look at the p-value, and        for pre-specified levels α. Indeed, if αe can only take on a
+           then conveniently select the level based on this p-value. Un-      single value α, then both the maximum and expected size
+           fortunately, such a procedure may have a size much larger          distortion reduce to (4).
+           than the selected level, as we illustrate in Example 1.
+              To study such a data-dependent selection of the level, we       Maximum size distortion. Perhaps the most obvious
+           generalize the notion of size to data-dependent levels. For        choice would be to demand that the size at a is below a
+                                                                            4
+           for all a, or at least for all a in the support of αe. That       3.3    Examples
+           is, we say that a test function ϕ or p-value is valid for a       We have constructed a variety of examples in which we il-
+           data-dependent level αe under the maximum size distortion         lustrate the expected and maximum size distortion.
+           if:
+                   P(ϕ(αe) = 1 | αe = a) ≡ P(p ≤ αe | αe = a) ≤ a,           Example 2 (A conservative data-dependent level αe). In
+                                                                             this example, we show that control of the maximum size dis-
+           for all a in the support of αe. Formulated in terms of the size   tortion even bans conservative choices of the data-dependent
+           distortion, this is equivalent to demanding that the maxi-        level αe. In particular, suppose that instead of a fixed α =
+           mumsize distortion over a is at most 1:                           .01, we choose a data-dependent αe that reports a rejection
+                                                                             at a conservatively large level of .02 whenever p ≤ .01, and
+                           sup      P(ϕ(αe) = 1 | αe = a) ≤ 1,               otherwise equals 0.01:
+                       a∈support(αe)         a                                                       (
+                                                                                                αe =   .02,   if p ≤ .01,
+           where support(αe) contains all the values αe may take. This                                 .01,   if p > .01.
+           is also known as its essential supremum.
+                                                                             Regardless of the distribution of the p-value, the size at .02
+              While control over the maximum size distortion may             equals P(p ≤ αe | αe = .02) = 1 and at .01 it equals P(p ≤
+           superficially seem ideal, it is too strict to develop a mean-     αe | αe = .01) = 0. As a consequence, the maximum size
+           ingful theory of testing with data-dependent α. Indeed, it        distortion is 1/.02 = 50 ≫ 1, suggesting the αe is too liberal,
+           even bans clearly conservative choices of αe (see Example 2).     despite the fact that this data-dependent αe is clearly more
+           Moreover, it suffers from undesirable discontinuities (see        conservative than the fixed level .01.
+           Example 3), due to the fact that the supremum over the              Onthe other hand, for an exact p-value, the expected size
+           support of a random variable is a very fragile operation: it      distortion equals .01×50+.99×0 = .5 ≤ 1, which properly
+           can strongly depend on events with near-zero probability.         expresses that this αe is conservative.
+           For completeness, we study what post-hoc α hypothesis             Example 3 (Discontinuity of maximum size distortion).
+           testing would look like with this condition as a starting         The point of this example is to show that even if a data-
+           point in Appendix D. There, we indeed find it is equivalent       dependent level αe is ‘close to ok’, the maximum size distor-
+           to requiring p ≥ 1 or ϕ(α) = 0 for all 0 ≤ α ≤ 1, leaving no      tion may still be large. Suppose that, for a given constant
+           room for a useful theory.                                         c > 0, we choose the data-dependent level
+           Expected size distortion. As the maximum size distor-                                      (c,      if p ≤ c,
+           tion is problematic, we propose to define validity through                           αe =
+                                                                                                  c     .05,   if p > c.
+           the expected size distortion. This permits some distortions,
+           as long as they are controlled in expectation.
+                                                                             If c = .05, then we are in the data-independent setting with
+           Definition 1 (Validity for data-dependent level αe). A test       a fixed α = .05. An exact p-value or test function is clearly
+           function ϕ or p-value p is valid for a data-dependent level       valid for such a data-independent choice of α.
+           αe, if the expected size distortion is at most 1:                   However, let us now consider choosing a constant c < .05
+                 E P(ϕ(αe) = 1 | αe) ≡ E P(p ≤ αe | αe) ≤ 1.             that is close to .05. Then, we find that the maximum size
+                   αe         αe             αe       αe                     distortion is large. In particular, the limit as c ↗ .05 does
+                                                                             not coincide with the choice c = .05:
+              The interpretation is that if we use the data-dependent                                  P(ϕ(αec) = 1 | αec = a)
+           level αe many times, then on average the size distortion is               lim      sup                              =20,
+           below 1.                                                                 c↗.05a∈support(αec)           a
+              The expected size distortion can actually be very con-         because P(ϕ(αe ) = 1 | αe = c) ≡ P(p ≤ c | p ≤ c) = 1, for
+           cisely written as the expectation of ϕ(αe)/αe ≡ I{p ≤ αe}/αe,                    c         c
+           as shown in Proposition 1. While less interpretable, this ex-     all c < .05. This has to do with the fact that αec has two
+                                                                             points of support for every c < .05, namely c and .05.
+           pression is mathematically more convenient to work with.            Ontheother hand, the limit of the expected size distortion
+           Proposition 1. We have                                            as c ↗ .05 equals 1: the same value as if we had set c = .05.
+               Eαe P(ϕ(αe) = 1 | αe) = Eϕ(αe) ≡ EI{p ≤ αe}.            Example 4 (Size distortion when α-hacking). Continuing
+                           αe                 αe              αe             from Example 1, the maximum size distortion equals 100.
+                                                                             However, we also see that the size distortion at a = .05 is
+           Proof. This follows from the fact that P(ϕ(αe) = 1 | αe)/αe =     below 1. This averages out to an expected size distortion
+           E(ϕ(αe) | αe)/αe = E(ϕ(αe)/αe | αe), and then taking the expec-   of .01 × 100 + .99 × 80/99 = 1.8. This shows that with an
+           tation over αe.                                                   exactly valid test function, this type of α-hacking-like αe is
+                                                                           5
+           problematic both in terms of the maximum and expected size        Theorem 1. A post-hoc valid test function is valid. Equiv-
+           distortion.                                                       alently, a post-hoc p-value is also valid.
+           Example 5 (Rejecting at level p). An extension of Exam-           Proof. Note that (1) can be equivalently written as
+           ple 1 is the extreme form of α-hacking, where we use the
+           smallest level αe for which our test function rejects. That is,            supP(ϕ(α) = 1)/α = supE(ϕ(α)/α) ≤ 1.
+           we claim rejection at level αe = p.                                          α                      α
+              In this case we always reject, so that the size distortion     The result then follows from the observation that
+           equals 1/a, for each possible realization a of αe. As a conse-                                                    ϕ(αe)
+           quence, both the maximum and expected size distortion are              supE(ϕ(α)/α) ≤ E(supϕ(α)/α) = supE                  ,
+           unbounded: supa1/a = ∞ and E1/p = log(1)−log(0) = ∞.                    α                    α               αe      αe
+           This illustrates that ‘rejecting at level p’ is indeed highly     and invoking Proposition 1.
+           problematic with traditional valid p-values and test func-
+           tions.
+                                                                             4.1    Post-hoc p-values: a simplification
+           Example 6 (Valid ‘α-hacking’). The point of this example
+           is to show that there exist settings in which a test function ϕ   While the expression of the definition of post-hoc α validity
+           controls the expected but not the maximum size distortion.        in (5) seems complicated to work with, Theorem 2 yields an
+           Suppose we again consider the αe from Example 1. But now          exceptionally clean representation of the post-hoc p-value.
+           we use a conservative test function ϕ(α) = I{p ≤ α} based         The key insight of the proof is that the p-value itself is the
+           on a valid p-value that is not uniform on (0,1]:                  smallest data-dependent level for which we reject.
+                            p ∼ (Unif(0,1),    w.p. 1/2,                     Theorem 2. p is a post-hoc p-value if and only if
+                                  1,           w.p. 1/2.                                               E1/p≤1.
+           Then, the expected size distortion equals .9. This shows that     Proof. By Proposition 1,
+           by using a more conservative test function we can control the                    P(p ≤ αe | αe)          I{p ≤ αe}
+           expected size distortion.                                                 supEαe                  =supE                 .
+              On the other hand, the maximum size distortion equals                   αe            αe           αe        αe
+           100 at a = .01, since P(ϕ(αe) = 1 | αe = .01) = 1 > .01.          This latter term equals                
+                                                                                                         I{p ≤ α}
+           4     Post-hoc α hypothesis testing                                                    E sup       α      ,
+                                                                                                       α
+           In the previous section, we defined a notion of validity of a     as the supremum in the expectation can arbitrarily depend
+           test function and p-value for a single data-dependent level       on the data. Evaluating this supremum yields
+           αe. In this section, we discuss test functions and p-values                                            
+           that are valid for every data-dependent choice of the level                          E I{p≤p} =E 1 .
+           αe. That is, the level α can be chosen post-hoc.                                            p             p
+           Definition 2 (Post-hocαvalidity). We say that a test func-
+           tion ϕ or p-value is post-hoc (α valid) if its expected size
+           distortion is at most 1 for every data-dependent level αe:          Theorem 2 shows that to find a post-hoc p-value, we
+                   P(ϕ(αe) = 1 | αe)          P(p ≤ αe | αe)             merely need to find a non-negative random variable with
+             supE                      ≡supE                     ≤1, (5) expectation at most 1, and take its reciprocal. A post-
+              αe            αe             αe          αe                    hoc valid test function can then be recovered as ϕ(α) =
+           where the supremum is over every data-dependent level (ran-       I{p ≤ α}. Conversely, starting with a post-hoc valid test
+                                                                             function ϕ, a post-hoc p-value can be constructed using
+           dom variable) αe.                                                 p = inf{α : ϕ(α) = 1}.
+              If we use a post-hoc α valid test function ϕ, then whatever      Post-hoc p-values inherit two useful merging properties
+           data-dependent level αe we use, we still have the guarantee       from the definition of an expectation, which we capture in
+           that the expected size distortion is at most 1 in expectation.    Proposition 2 and 3.
+              Post-hoc α validity is a stronger guarantee than validity,     Proposition 2. A product of independent post-hoc p-values
+           as captured in Theorem 1. This means that if we use a             is a post-hoc p-value.
+           post-hoc valid test function ϕ, we also have the original
+           guarantee that the test ϕ(α) has a size smaller than α for        Proposition 3. A weighted harmonic mean of post-hoc p-
+           any pre-specified level α.                                        values is a post-hoc p-value.
+                                                                           6
+           Remark 3 (Domain of post-hoc p-values). We should ex-             p-value. To obtain the cleanest-looking results, we define
+           pect ‘useful’ post-hoc p-values to sometimes take value above     the utility function on the 1/p-scale, maximizing
+           1 under the null hypothesis. Indeed, as their reciprocal is at                              Q
+           most 1 in expectation, a post-hoc p-value that is only sup-                               E [U(1/p)],
+           ported on (0,1] must almost surely equal 1 under the null         over post-hoc valid p-values, where Q is some alternative dis-
+           hypothesis.   Of course, we want a post-hoc p-value to be
+           much smaller than 1 under the alternative hypothesis.             tribution. For example, for U(1/p) = log(1/p) = −log(p)
+              This may be unsettling at first sight as valid traditional     wevalue a smaller p-value linearly in its order of magnitude:
+           p-values typically don’t take values above 1. However, we         p = 0.01 has twice the utility of p = 0.1.
+           stress that the p-value corresponds to the level, and not the       In Theorem 3, we show how the Neyman-Pearson lemma
+           size of the test. Indeed, the size of a test is at most 1 since   for e-values of Koning (2024) connects to post-hoc testing,
+           it is a probability, but the level has no such restrictions.      by using it to characterize expected-utility optimal post-hoc
+                                                                             p-values. Here, we let f and f      denote the density under
+                                                                                                      P       Q
+           Remark 4 (Non-decreasing test function without loss of            the null and alternative, respectively, with respect to some
+           generality). Note that post-hoc α validity only restricts the     dominating measure (which always exists).
+           behavior of a test function ϕ at the smallest level at which we
+           reject: the p-value. This means that in the context of post-      Theorem 3 (Koning (2024)). Let U : [0,∞] → [−∞,∞] be
+           hoc α validity, the restriction to non-decreasing test func-      upper-semicontinuous, concave and non-decreasing. If p∗ is
+           tions is effectively without loss of generality: if we intend     optimal then
+           to make the most powerful claim possible, then we might                        fP
+           as well reject for larger levels, too. That is, every post-hoc               λf ∈∂U(1/p∗), Q-almost surely,                   (6)
+           valid test family that is not a non-decreasing test function                    Q
+           is dominated by one that is.                                      for some normalization constant λ ≥ 0.
+                                                                             Corollary 1 (Differentiable utility). If U is differentiable,
+           5     Post-hoc α power                                            then an optimizer p∗ satisfies
+                                                                                     1/p∗ = (U′)−1(λf /f ),       Q-almost surely,
+           5.1     Generalizing traditional power?                                                      P   Q
+           It remains to discuss what should constitute a good post-hoc      where (U′)−1(y) = inf{x ≥ 0 : U′(x) ≤ y} is the generalized
+           p-value or post-hoc valid test function. Indeed, the constant     inverse.
+           1 is also a post-hoc p-value, but completely uninformative.
+                                                                             Corollary 2 (Log-optimal). If U = log, then p∗ = f /f .
+           Instead, we would like to use a post-hoc p-value that is                                                                  P   Q
+           ‘small’ if our hypothesis is false: if the alternative hypothesis   A general condition for an optimizer to exist is that a
+           holds.                                                            normalization constant λ exists such that a solution p       to
+              In traditional hypothesis testing, it is common to choose                     P                                          λ
+                                                                             (6) satisfies E [1/p ] = 1 or λ = 0 (Koning, 2024). Some
+           the test that maximizes the rejection probability (power)                             λ
+           under the alternative hypothesis among tests that are valid       sufÏcient conditions are: (1) the sample space is finite, (2)
+                                                                               ′                                              P
+           at the pre-specified level α. We can certainly also maximize      U (x)xisboundedfromabove,(3){U(1/p) : E [1/p] ≤ 1}is
+           the power at a pre-specified α under the restriction that         uniformly integrable, (4) U is bounded from above (implies
+           the test function it comes from is post-hoc valid, which we       (2) if differentiable and (3)).
+           explore in Section 5.3. However, we would preferably de-          Example 7 (Log-optimal post-hoc test function). Let us
+           fine a post-hoc notion of power that performs well at the                                     ∗
+           data-dependent level p. Curiously, this is not possible be-       consider U = log, so that p = dN(0,1)/dN(1,1) by Corol-
+                                                                             lary 2. Its test function equals
+           cause we always reject the hypothesis at the data-dependent                                                               
+           level p, by definition of a p-value. Hence, we instead aim to     ϕ(α) = I    dN(0,1)(X) ≤ α =I dN(1,1)(X)≥1/α .
+           ‘minimize’ the p-value under the alternative, with the goal                   dN(1,1)                    dN(0,1)
+           to provide the strongest possible certificate on our rejection                                                                (7)
+           decision.
+                                                                               The representation in (7) permits a clean comparison to
+           5.2     Expected-utility                                          the likelihood ratio test. At any pre-specified level α, this test
+                                                                             function yields a lower power than the likelihood ratio test.
+           To describe optimal post-hoc p-values, we use the connec-         For example, at α = .05, the critical value of the likelihood
+           tion to e-values and leverage the “Neyman-Pearson lemma           ratio roughly equals 3.14, whereas the same statistic is com-
+           for e-values” recently introduced in Koning (2024).               pared in (7) with the much larger critical value 1/α = 20.
+              In particular, we consider a utility function U that defines     Of course, the benefit of a post-hoc α hypothesis test is
+           our preference for each possible realization of the post-hoc      that we need not pre-specify α.
+                                                                           7
+           5.3     Nesting classical power                                   7     Beyond e-values
+           An interesting question is what happens if we consider the        This section is intended for readers who are interested in the
+           post-hoc test function ϕ that maximizes the power at a pre-       abstract theory underlying post-hoc testing and e-values.
+           specified level α∗. As we only care about its behavior at α∗,     In the preceding, we focused on a specific (arguably reason-
+           its form is actually easy to predict. Indeed, given the most      able) way to measure the size distortion that leads to the
+           powerful test τ∗ at level α∗, we have ϕ(α) = 0 for α < α∗         e-value, mentioning other options in passing. In this sec-
+           and ϕ(α) = τ∗ for α ≥ α∗. The corresponding p-value is            tion, we study a more general framework that nests such
+            ∗     ∗     ∗           ∗          ∗
+           p =α if τ =1 and p =∞ if τ =0.                                    alternative choices, leading us beyond the e-value.
+              In a continuous setting, τ∗ is the likelihood ratio test,
+           according to the classical Neyman-Pearson lemma. In a
+           general setting, this is only true if we admit randomized         7.1    Abstract evidence
+           decisions, which we do not allow here (see Appendix E for
+           randomized post-hoc testing). Surprisingly, we may still re-      We start by abstractly quantifying evidence. For this pur-
+           cover the classical Neyman-Pearson lemma by replacing ran-        pose, we introduce an “evidence space” D, which is a de-
+           domization by rejection at a level larger than α∗, using the      cision space that is totally ordered with respect to some
+           “Neyman-Pearson utility function U(x) = x ∧ 1/α∗. This            binary order relation ≾. Here, we interpret ‘larger’ values
+           utility function expresses that we do not care for rejections     as indicating more evidence than smaller values. We assume
+           at levels smaller than α∗. We cover this result in Corollary      that D has a bottom element “0” := inf D and a top element
+           3.                                                                “∞”:=supD.
+                                                                               In the context of classical hypothesis testing, we may
+           Corollary 3 (Post-hoc level Neyman-Pearson). If U(x) =            think of D to contain the decisions to reject the hypoth-
+           x∧1/α∗ then an optimizer exists and satisfies                     esis at different significance levels:
+                                   ∗                  ∗                           D={notreject,reject at α ,reject at α ,...},
+                                  α      if fP/fQ < c ,                                                        1             2
+                                                      α
+                            p∗ =                       ∗
+                                    k     if fP/fQ = c ,
+                                                      α                     where we couple the bottom element “0” to the decision not
+                                                      ∗
+                                    ∞ iffP/fQ >c ,
+                                                       α                     to reject. The order relation ≾ then captures the idea that
+           for some constants k ∈ [α∗,∞], c∗ ≥ 0.                            a rejection at a smaller level is a stronger claim: “reject at
+                                               α                             level 0.05” ≾ “reject at level 0.01”.
+                                                                               Abstracting the notion of both a p-value and an e-value,
+                                                                             we introduce an evidence variable
+           6     Connection to e-values
+                                                                                                      ε : X → D,
+           The reciprocal 1/p of a post-hoc p-value is a non-negative        where X is our sample space. We abstractly define a test
+           random variable with an expectation at most 1. A non-             ϕ(d), d ∈ D, as a ‘binary’ evidence variable
+           negative random variable with expectation at most 1 is also
+           known as an e-value, which is a recently popularized sta-                             ϕ(d) : X → {“0”,d},
+           tistical object (Howard et al., 2021; Shafer, 2021; Vovk and
+           Wang, 2021; Grun¨ wald et al., 2024; Ramdas et al., 2023).        returning either no evidence “0” or d evidence. We defer
+                                                                             discussions of measurability to Appendix G.
+           Definition 3 (Original). e is a valid e-value if Ee ≤ 1.
+              With e-values, it is standard to use the test function         7.2    Abstract post-hoc level testing
+           α 7→ I{e ≥ 1/α}, which is valid due to Markov’s inequal-          To discuss post-hoc testing, we assume D is (Dedekind)
+           ity. For the post-hoc p-value p = 1/e, this test function
+           simply equals α 7→ I{p ≤ α}. Based on this link, our The-         complete, meaning that every subset has a supremum and
+           orem 2 shows this e-value-based test function is not just         infimum in D element. For a given test function ϕ, we then
+           valid, but also post-hoc valid. Importantly, it also implies      define its post-hoc evidence variable as εϕ := supd∈D ϕ(d).
+           its converse: any post-hoc α valid test function is of the form   This returns the strongest evidence returned by any of the
+           α7→I{e≥1/α}.                                                      tests ϕ(d), d ∈ D.
+              A consequence is that the literature on e-values has un-         This already yields the core result underlying post-hoc
+           knowingly been studying post-hoc α hypothesis testing and         level testing.
+           post-hoc p-values. Indeed, many post-hoc p-values have al-
+           ready been developed, just thinly disguised by the operation      Theorem4. For a given test function ϕ, ε = sup            ϕ(d)
+                                                                                                                          ϕ        d∈D
+           1/·.                                                              is an evidence variable. Every evidence variable ε is the
+                                                                           8
+             post-hoc evidence variable of the test function                             where E may be viewed as the expectation under the null
+                                           (                                             hypothesis, and we assume L(D) to be interval-valued to
+                                ϕ (d) :=     d,       if d ≾ ε,                          ensure this is well-defined.
+                                  ε          “0”,     otherwise.
+                                                                                         Remark 6. We can generalize the certainty equivalent
+             Proof. For the first claim, since D is Dedekind complete,                               −1  P          
+                                                                                         ρP(ε) = L        E [L(ε)] to a composite hypothesis H by us-
+             εϕ = sup        ϕ(d) is D-valued and hence an evidence vari-                ing the certainty equivalent ρ (ε) := sup               ρ (ε).
+             able.      d∈D                                                                                                  H             P∈H P
+                For the second claim, note that {ϕε(d) : d ∈ D} = {d ∈
+             D:d≾ε}. Hence, supd∈Dϕε(d) = sup{d ∈ D : d ≾ ε} = 7.4                                e-values, p-values and tests
+             ε.
+                                                                                         To show that e-values, p-values and tests are all special ev-
+             Remark 5. The supremum of any collection of evidence                        idence variables, we consider D = [0,∞].
+             variables is an evidence variable.                                             Taking D = [0,∞], the e-values and p-value now (su-
+                                                                                         perficially) diverge, depending on whether we (arbitrarily)
+             7.3     Certainty equivalence and validity                                  choose to couple large or small numerical values to strong
+                                                                                         evidence. In particular, the e-value emerges if we identify ≾
+             To define an abstract notion of validity, we introduce a cer-               with ≤, couple “0” to 0 and “∞” to ∞. The p-value emerges
+             tainty equivalent ρ : ∆ → D, where ∆ = DX denotes the                       if we instead consider its order dual, identifying ≾ with ≥,
+             space of evidence variables. Such a certainty equivalent may                andcoupling “0” to ∞ and “∞” to 0. Equipping [0,∞] with
+             be interpreted to return an amount of evidence d ∈ D that                   scalar multiplication, we may swap between scales by tak-
+             is of ‘equivalent value’ as ε.                                              ing the reciprocal map: e = 1/p, recovering the reciprocal
+                A first axiom we assume ρ to satisfy is idempotence: if                  duality between e-values and p-values from Section 6.
+             ε ≡ d then ρ(ε ) = d. This calibrates ρ to certain out-                        The classical validity condition of an e-value corresponds
+              d                  d
+                                                                     −          +        to taking the identity loss function L : x 7→ x, and normal-
+             comes. Moreover, we assume monotonicity: ε (x) ≾ ε (x)
+                                        −          +                                                                                    3
+             for every x =⇒ ρ(ε ) ≾ ρ(ε ). This may be viewed as izing the current evidence to 1 so that
+             compatibility with ≾. Combined, these two axioms are eas-                                              −1
+             ily shown to already imply a notion of ‘internality’: if D is                                ρ(e) = L     (E[L(e)]) = E[e] ≤ 1.
+             complete then inf ε ≾ ρ(ε) ≾ supε.                                          Taking the loss L(x) = 1/x and identifying ≾ with ≥, this
+                Using a certainty equivalent, we can define a notion of                  may be equivalently expressed in terms of a (post-hoc) p-
+             validity of an evidence variable ε by comparing it to some                                     −1
+             benchmark b ∈ D amount of evidence:                                         value: ρ(p) = L       (E[L(p)]) = 1/E[1/p] ≥ 1. These are the
+                                                                                         same underlying evidence variables, merely expressed using
+                                            ρ(ε) ≾ b.                                    a different representation.
+             If we assume D has some identity element “1” and we equip                      Alevel α test ϕ(α) is classically viewed as a {0,1}-valued
+                                                                                         map, using 0 for “0”, α as an evidence benchmark and 1
+             it with an invertible binary operator × (extended pointwise                 for the decision to reject at level α, and said to be valid
+             to ∆), then we can always normalize the benchmark b and                     if E[ϕ(α)] ≤ α. To facilitate the comparison across lev-
+             ourevidencevariable and define validity with respect to “1”:                els, Koning (2024) alternatively views level α tests ϕ(α) as
+                                          ρ(ε) ≾ “1”.                             (8)    {0,1/α}-valued, so that 1/α represents the decision to reject
+                                                                                         at level α. This frees 1 to be used as a universal benchmark,
+                An interesting class of certainty equivalents that we con-               so that a test is valid if E[ϕ(α)] ≤ 1, highlighting that tests
+                                                                                         are nothing more than ‘binary’ e-values. Alternatively, we
+             sider in the remainder of this section are those based on                   could equivalently describe level α tests as {α,∞}-valued,
+             the quasi-arithmetic mean (Kolmogorov, 1930; De Carvalho,                   making them valid if 1/E[1/ϕ(α)] ≥ 1, showing that tests
+                    2
+             2016).      In particular, we use a monotone loss function                  are also binary (post-hoc) p-values.
+             L:D→[−∞,∞]todefine the certainty equivalent                                    Classical validity of a p-value may be viewed as instead
+                                               −1                                        bounding the certainty equivalent ρ(p) = supαE[I{p ≤
+                                    ρ(ε) = L      (E[L(ε)]),                      (9)
+                                                                                         α}/α] by 1.        In the context of the above, this can be
+                2Predating his axiomatization of probability, Kolmogorov (1930)          viewed as the validity of the family ϕ of evidence variables
+             shows in a simplified setting that idempotence and monotonicity,            ϕ(α) = I{p ≤ α}/α, rather than validity of p itself.
+             alongside replacement and continuity axioms characterize such cer-
+             tainty equivalents.   In Appendix G, we generalize the replacement
+             axiom to total orders, showing that it is equivalent to assuming the           3We may equivalently express this in terms of a post-hoc p-value,
+             existence of a ‘conditional’ certainty equivalent given a sub-information   taking the loss L : x 7→ x−1 and identifying ≾ with ≥: ρ(p) =
+                                                                                          −1
+             structure. We leave characterizing a form such as (9) to future work.       L (E[L(p)]) = 1/E[1/p] ≥ 1, which is equivalent to E[1/p] ≤ 1.
+                                                                                       9
+           7.5     Generalized-mean validity                                   The following two results show how the merging prop-
+           In this section, we generalize beyond the classical e-value       erties of e-values generalize to h-valid e-values. We omit
+           and post-hoc p-value using different certainty equivalents        the proofs, as they are simple but take up a considerable
+           than ρ = E. In particular, we focus on the class of equiv-        amount of space.
+           ariant certainty equivalents on D = [0,∞] under multiplica-       Proposition 6. A (weighted) h-mean of h-valid e-values is
+           tion. Equivariance is the property that permits us to nor-        an h-valid e-value.
+           malize the benchmark to 1, as in (8).
+              The class of equivariant quasi-arithmetic means on [0,∞]       Proposition 7. The product of independent h-valid e-
+           is the h-generalized means (Hardy et al., 1934). The h-           values is h-valid.
+           generalized mean (henceforth ‘h-mean’) ρ        of an evidence
+                                                        h                    Remark 7 (Sequential testing and equivariance). The
+           variable ε is defined as
+                                                                            class of h-valid e-values seems particularly useful in se-
+                              h hi1/h                                      quential settings, as the equivariance permits sequential re-
+                          
+                           E (ε)           ,    if h ̸= 0,|h| < ∞,
+                          
+                                                                            normalization of the current evidence to 1.
+                          
+                  ρh(ε) =    exp(E[log(ε)]),     if h = 0,
+                          
+                          
+                             esssupε,            if h = ∞,
+                          
+                                                                            7.6    Examples
+                          
+                             essinf ε,           if h = −∞,                  Example 8 (Harmonic e-values). We say e is a harmonic
+           where esssup and essinf return the supremum and infimum                                                        −1 −1
+           of the support of a random variable. This may be seen as          e-value if it is h = −1 valid: ρ−1(e) ≡ (E[e    ])   ≤1.
+                                                                               Harmonic e-values have a surprising connection to Re-
+                                     h
+           using the loss L(x) = x and taking limits for the −∞, 0           mark 2, where we consider the option to measure the size
+           and ∞ cases. The choices h = 1, 0 and −1 yield the arith-         distortion through the size difference:
+           metic, geometric and harmonic mean, respectively, which
+           are jointly known as the Pythagorean means.                                    P(ϕ(αe) = reject at αe | αe = a) − a.
+              Note that we may apply ρ to both e-values and p-values,
+                                         h                                   Bounding this by 0 for all a is equivalent to bounding the
+           as ρ (e) ≤ 1 is equivalent to ρ    (p) ≥ 1 for p = 1/e. But to
+               h                           −h                                maximum size distortion. However, bounding the expected
+           avoid ambiguity in the remainder of this section, we focus
+           on the e-value scale.                                             size difference leads to another notion of post-hoc validity:
+              Using the equivariance of ρ to normalize the benchmark
+                                          h                                           supE [P(ϕ(αe) = reject at αe | αe) − αe] ≤ 0,    (10)
+           evidence to 1, we generalize the validity of the classical e-               αe   αe
+           value in Definition 4. The classical e-value is recovered for
+           h=1.                                                              where we restrict αe to those that lead to a rejection. The fol-
+           Definition 4 (h-validity). We say that an e-value is h-valid      lowing result captures the connection to harmonic e-values.
+           if ρ (e) ≤ 1.                                                     Its proof is found in Appendix F.2.
+               h
+              Wenowdiscuss several properties of h-valid e-values. We        Proposition 8. The test function ϕ is post-hoc valid in the
+           start by relating the validity conditions for different choices   sense of (10) if and only if its e-value e is harmonic.
+           of h.                                                             Example 9 (Geometric e-values). We say e is a geometric
+                                    +     −            +                     e-value if ρ (e) ≡ exp{Eloge} ≤ 1. A remarkable property
+           Proposition 4. Let h       ≥h . If e is h      valid, then it is              0
+            −                      −                        +                of geometric e-values is that one may use multiplication to
+           h valid. If e is not h    valid, then it is not h   valid.
+           Proof. This follows directly from the generalized-means in-       merge both arbitrarily dependent and independent geometric
+                                                                             e-values, as shown in Proposition 9.
+           equality: ρ −(e) ≤ ρ +(e).
+                       h         h                                             While maximizing the geometric expectation of an e-value
+              Proposition 5 shows that h = 1 is the smallest value of h      under the alternative hypothesis has been widely considered
+           for which h-validity ensures that the induced test family ϕe      in the e-value literature, we believe we are the first to con-
+           is (classically) valid. Equivalently, within the h-mean class,    sider it as a notion of validity and to describe this property.
+           the condition E[1/p] ≤ 1 is the weakest condition that still      Proposition 9. The product of geometric e-values is a ge-
+           guarantees that the p-value is valid in the classical sense.
+           We stress that this does not disqualify them to be used           ometric e-value
+           as evidence variables; they merely satisfy a weaker validity      Proof. Let e ,...,e be n geometric e-values. Then,
+           condition. Its proof is found in Appendix F.1.                                 1      n
+                                                                                          (       n    )     n
+           Proposition 5. Let h ≤ 1. If e is 1-valid, then the test                   exp ElogYe         =Yexp{Eloge}≤1.
+           function ϕ is valid. Conversely, for every h < 1 there exists                              i                     i
+                      e                                                                          i=1        i=1
+           an e-value e that is h-valid but for which the test function
+           ϕe is not valid.
+                                                                          10
+           Example 10 (Max e-values). We say that an e-value is a        8.2    Markov’s equality
+           max e-value if ρ∞(e) = esssupe ≤ 1. Written in terms of       Starting with the deterministic Markov’s inequalities (11),
+           the p-value, this corresponds to essinf p ≥ 1, which coin-    we obtain an equality if we divide each term by c and take
+           cides with the notion of maximum size distortion discussed    the supremum over c.
+           in Section 3.2 and covered in detail in Appendix D.
+                                                                         Lemma 2 (Deterministic Markov’s Equality). We have
+           8    Markov’s equality                                                    sup⌊cX ∧1⌋/c = supX ∧1/c = X.               (12)
+                                                                                      c>0              c>0
+           Theoriginal inspiration for this work came from an attempt
+           to close the gap in Markov’s inequality, resulting in a kind  Proof. Define b = 1/c. The outer terms are equal because
+           of “Markov’s equality”. We believe this equality may be of    ⌊cX ∧1⌋ = I{X ≥ 1/c} and
+           independent interest, so we dedicate a section to this topic.
+             To the best of our knowledge, all concentration inequali-       supI{X ≥1/c}/c = supI{X ≥ b}b = sup b = X.
+           ties (implicitly) rely on Markov’s inequality in some step of     c>0                  b>0               0<b≤X
+           their derivation. Replacing Markov’s inequality by Markov’s   The inner term is squeezed to equality by the outer terms.
+           equality may pave the way to ‘concentration equalities’. We
+           showcase this in an application to Ville’s inequality.
+                                                                           By applying the expectation operator to the outer terms
+           8.1    Deterministic inequalities                             of (12), we obtain our “Markov’s equality”:
+           Let us assume throughout that X is some integrable non-                      E[supI{X ≥ 1/c}/c] = E[X].
+           negative random variable, X ≥ 0. To start, let us consider                      c>0
+           the following simple inequalities,                            Markov’s inequality follows from sup      E[·] ≤ E[sup    ·].
+                                                                                                               c>0              c>0
+                            ⌊cX ∧1⌋ ≤ cX ∧1 ≤ cX.                  (11)  In Proposition 10, we present a reformulation of this equal-
+                                                                         ity by using Proposition 1.
+           These inequalities follow from the simple fact that taking
+           the minimum with 1 and rounding down are non-decreasing       Proposition 10 (Markov’s Equality).
+           operations.                                                                       P(X ≥1/ec | ec)
+             Weenjoy referring to these inequalities as the “determin-                 supE                     =E[X].
+           istic Markov’s inequalities”, as variants of Markov’s equal-                ec>0 ec        ec
+           ity follow directly from applying the expectation operator    Remark8. Analogous results may be obtained by replacing
+           to each term, as described in Lemma 1. Indeed, Markov’s       the expectation operator with some other order-preserving
+           inequality compares the first and final terms                 operation. One such example is the supremum over expec-
+                                                                                          P
+                                                                         tations sup     E over some collection H of probabilities,
+                            P (X ≥1/c)≤cE [X],                                      P∈H
+                              X                X                         which is frequently encountered in hypothesis testing.
+           the randomized Markov’s inequality of Ramdas and Manole
+           (2023) compares the second and third                          8.3    Application: Ville’s equality
+                           P    (X ≥U/c)≤cE [X],                         Ville’s  inequality  is  a   concentration   inequality  for
+                            X,U                  X
+                                                                         martingale-like non-negative stochastic processes (M )     :
+           and the inequality comparing the first and second term                                                              t t≥0
+                                                                                               P(M ≥1/α)
+                                                                                       supsup       τ         ≤E[M ],
+                          PX(X ≥1/c)≤EX[cX∧1],                                                       α               0
+                                                                                        α   τ
+           can be viewed as a tighter non-integrable Markov’s inequal-   where the supremum ranges over all stopping times τ
+           ity, which is (implicitly) studied by Wang and Ramdas         adapted to the same filtration as (M )    , under some con-
+           (2025) in a sequential setting.                                                                    t t≥0
+                                                                         ditions on the stochastic process (M )   . It is often applied
+                                                                                                             t t≥0
+           Lemma 1 (Markov-Ramdas-Manole-Wang inequalities).             as a tool to derive other concentration inequalities, and it
+                                                                         has also played a central role in the recent renaissance in
+                   P (X ≥1/c)≤P         (X ≥U/c)≤cE [X].                 sequential testing.
+                    X                X,U                 X
+                                                                           In Proposition 11, we showcase Markov’s equality by de-
+           Proof. This follows from observing ⌊cX ∧1⌋ = I{X ≥ 1/c}       riving versions of “Ville’s equality” for martingales, super-
+           and cX∧1=PU(X ≥U/c), for U ∼Unif[0,1] independent martingales and e-processes. Ville’s inequality for such pro-
+           of X, and applying the expectation operator E       to each   cesses follows as a corollary, by restricting the supremum to
+                                                            X
+           term.                                                         data-independent α.
+                                                                       11
+           Proposition 11 (Ville’s equalities). Let (M )        be a non-   M. De Carvalho. Mean, what do you mean? The American
+                                                          t t≥0
+           negative stochastic process adapted to some filtration.      If     Statistician, 70(3):270–274, 2016.
+           (M )     is a martingale, then
+              t t≥0                                                         P. Grun¨ wald, R. de Heide, and W. Koolen. Safe testing.
+                               P(M ≥1/αe|αe)                                 Journal of the Royal Statistical Society Series B: Statis-
+                       sup E         τ              =E[M ],
+                             αe         αe                 0                   tical Methodology, 86(5):1091–1128, 2024.
+                        αe                                                  P. D. Grun¨ wald.   Beyond neyman–pearson: E-values en-
+           for every bounded stopping time τ adapted to the filtration.        able hypothesis testing with a data-driven alpha. Pro-
+           If (M )     is a supermartingale, then
+                 t t≥0                                                         ceedings of the National Academy of Sciences, 121(39):
+                                 P(M ≥1/αe|αe)                               e2302098121, 2024.
+                     supsup E          τ              =E[M ],
+                               αe         αe                  0
+                      αe  τ                                                 G. Hardy, J. Littlewood, and G. P´olya. Inequalities. Cam-
+           where the stopping time τ ranges over all stopping times            bridge University Press, 1934.
+           adapted to the filtration. If (Mt)t≥0 is an exact e-process      W. Hartog and L. Lei. Family-wise error rate control with
+           starting at M0 with respect to a possibly composite hypothe-        e-values. arXiv preprint arXiv:2501.09015, 2025.
+           sis H, then                                                      J. Hemerik and N. W. Koning. Choosing alpha post hoc:
+                                P(M ≥1/αe|αe)                                the danger of multiple standard significance thresholds.
+                              P        τ                      P
+                supsupsup E                           =supE [M ].
+                              αe          αe                       0           arXiv preprint arXiv:2410.02306, 2024.
+                 αe  τ  P∈H                             P∈H
+           Proof. Doob’s optional stopping theorem for non-negative         S. R. Howard, A. Ramdas, J. McAuliffe, and J. Sekhon.
+           martingales gives E[M ] = E[M ], for every bounded stop-            Time-uniform, nonparametric, nonasymptotic confidence
+                                   τ         0                                 sequences. The Annals of Statistics, 49(2):1055 – 1080,
+           ping time. Applying Markov’s equality to Mτ then yields             2021. doi: 10.1214/20-AOS1991.
+                              P(M ≥1/αe|αe)
+                       supE         τ               =E[M ],          (13)   H. Jeffreys. Some tests of significance, treated by the theory
+                            αe          αe                 τ
+                        αe                                                     of probability. In Mathematical proceedings of the Cam-
+           which yields the first result. For non-negative supermartin-        bridge philosophical society, volume 31, pages 203–222.
+           gales we instead have E[M ] ≤ E[M ] for every stop-                 Cambridge University Press, 1935.
+                                          τ           0
+           ping time. The second claim is then obtained by observ-          H. Jeffreys. The theory of probability. OuP Oxford, 1998.
+           ing that the stopping time τ ≡ 0 attains equality so that        R. E. Kass and A. E. Raftery. Bayes factors. Journal of the
+           sup E[M ] = E[M ], and subsequently applying Markov’s
+               τ     τ          0                                              american statistical association, 90(430):773–795, 1995.
+           equality.  The final claim follows directly from applying
+           Markov’s equality to the definition of an exact e-process:       E. Katsevich and A. Ramdas.              Simultaneous high-
+                          P                  P
+           sup sup       E [M ] = sup       E [M ].
+               τ    P∈H       τ        P∈H       0                             probability bounds on the false discovery proportion in
+                                                                               structured, regression and online settings. The Annals of
+           9     Acknowledgements                                              Statistics, 48(6):3465–3487, 2020.
+                                                                            A. Kolmogorov. Sur la notion de la moyenne. G. Bardi, tip.
+           We thank the participants of the joint CWI / CMU “e-                della R. Accad. dei Lincei, 1930.
+           readers” seminar and the International Seminar on Selective      N. W. Koning. Continuous testing: Unifying tests and e-
+           Inference for their input. In particular, we thank Aaditya          values. arXiv preprint arXiv:2409.05654, 2024.
+           Ramdas, Chen Zhou, Glenn Shafer, Jesse Hemerik, Patrick
+           Forr´e, Peter Grun¨ wald, Ruben van Beesten, Ruodu Wang          W.M.KoolenandP.Grun¨ wald. Log-optimal anytime-valid
+           and Sam van Meer for fruitful discussions.                          e-values. International Journal of Approximate Reason-
+                                                                               ing, 141:69–82, 2022.
+           References                                                       M. Larsson, A. Ramdas, and J. Ruf. The numeraire e-
+                                                                               variable and reverse information projection. The Annals
+           V. Amrhein and S. Greenland.           Remove, rather than          of Statistics, 53(3):1015–1043, 2025.
+             redefine, statistical significance.    Nature Human Be- E.LehmannandJ.P.Romano. Testing Statistical Hypothe-
+             haviour, 2(1):4–4, 2018. ISSN 2397-3374. doi: 10.1038/            ses. Springer Nature, 2022.
+             s41562-017-0224-0.
+                                                                            B. B. McShane, D. Gal, A. Gelman, C. Robert, and J. L.
+           V. Amrhein, S. Greenland, and B. McShane. Scientists rise           Tackett. Abandon statistical significance. The Ameri-
+             upagainst statistical significance. Nature, 567(7748):305–        can Statistician, 73(sup1):235–245, 2019. doi: 10.1080/
+             307, 2019.                                                        00031305.2018.1527253.
+                                                                          12
+     A. Ramdas and T. Manole. Randomized and exchangeable
+      improvements of markov’s, chebyshev’s and chernoff’s in-
+      equalities. arXiv preprint arXiv:2304.02611, 2023.
+     A. Ramdas, J. Ruf, M. Larsson, and W. Koolen. Admissible
+      anytime-valid sequential inference must rely on nonnega-
+      tive martingales. arXiv preprint arXiv:2009.03167, 2022.
+     A. Ramdas, P. Grun¨ wald, V. Vovk, and G. Shafer. Game-
+      theoretic statistics and safe anytime-valid inference. Sta-
+      tistical Science, 38(4):576–601, 2023.
+     R. Rosenthal. The file drawer problem and tolerance for
+      null results. Psychological bulletin, 86(3):638, 1979.
+     G. Shafer. Testing by betting: A strategy for statistical and
+      scientific communication. Journal of the Royal Statistical
+      Society Series A: Statistics in Society, 184(2):407–431,
+      2021.
+     U. Simonsohn, L. D. Nelson, and J. P. Simmons. P-curve: a
+      keytothefile-drawer. Journal of experimental psychology:
+      General, 143(2):534, 2014.
+     V. Vovk and R. Wang. E-values: Calibration, combination
+      and applications. The Annals of Statistics, 49(3):1736–
+      1754, 2021.
+     H.WangandA.Ramdas.Theextendedville’sinequalityfor
+      nonintegrable nonnegative supermartingales. Bernoulli,
+      31(4):2723–2746, 2025.
+     R. Wang and A. Ramdas. False discovery rate control with
+      e-values. Journal of the Royal Statistical Society Series
+      B: Statistical Methodology, 84(3):822–852, 2022.
+     R.L.Wasserstein, A. L. Schirm, and N. A. Lazar. Moving to
+      a world beyond p < 0.05. The American Statistician, 73
+      (sup1):1–19, 2019. doi: 10.1080/00031305.2019.1583913.
+     D. J. Wilson. The harmonic mean p-value for combining
+      dependent tests. Proceedings of the National Academy of
+      Sciences, 116(4):1195–1200, 2019.
+     Z. Xu, R. Wang, and A. Ramdas. Post-selection inference
+      for e-value based confidence intervals. Electronic Journal
+      of Statistics, 18(1):2292–2338, 2024.
+     Z. Xu, A. Solari, L. Fischer, R. de Heide, A. Ramdas,
+      and J. Goeman. Bringing closure to false discovery rate
+      control: A general principle for multiple testing. arXiv
+      preprint arXiv:2509.02517, 2025.
+                               13
+           A Connection to Grun¨ wald (2024) B                                     Double post-hoc α validity
+                                                                            In this section, we observe that we can have a p-value p
+           In this section,    we contrast our work to Grun¨ wald that is post-hoc if our hypothesis is true, with a reciprocal
+           (2024).    Written in our notation from Section 7, we 1/p that is post-hoc if the hypothesis is false. Such a p-
+           specialize Proposition 1 of Grun¨ wald (2024) to the test-       value is interesting, because it is a single number that has
+           ing setting in Theorem 5, which describes the link a guarantee in both directions.
+           he establishes between post-hoc testing and e-values.            Definition 5. A p-value is double post-hoc if it is post-hoc
+           Instead of using a separate evidence space for each under the hypothesis, and its reciprocal is post-hoc under the
+           test  ϕ(α),   we use the joint evidence space D              = alternative.
+           {not reject,reject at level α1,reject at level α2,...}.   This
+           joint evidence space allows us to write his result in this          Anatural example of a double post-hoc p-value is a like-
+           setting using a single loss function ℓ : D → [0,∞], not to be    lihood ratio, as formalized in Theorem 6. Likelihood ra-
+           confused with the loss L from the quasi-arithmetic mean.         tios were already extensively considered in the context of
+                                                                            e-values, as they maximize the geometric mean under the
+                                                                            alternative: see e.g. Koolen and Grun¨ wald (2022) Grun¨ wald
+           Theorem 5 (Grun¨ wald (2024)). We say that ϕ is type-I           et al. (2024) and Larsson et al. (2025). Theorem 6 gives an
+           risk safe if                                                     alternative motivation for looking at likelihood ratios in the
+                                                                          context of e-values. The result generalizes to the composite
+                                E supℓ(ϕ(α)) ≤1.                     (14)   likelihood ratios studied by Larsson et al. (2025).
+                                    α                                          The result means that we can simultaneously interpret a
+           Then, we have that ϕ is type-I risk safe if and only if          likelihood ratio and its reciprocal as a post-hoc p-value for
+           sup ℓ(ϕ(α)) is a valid e-value.                                  the hypothesis and the alternative. Such a double interpre-
+               α                                                            tation was already argued for likelihood ratios in the context
+                                                                            of Bayes factors (Jeffreys, 1935, 1998; Kass and Raftery,
+             While superficially related to our work, this result is of     1995). In this setting, Theorem 6 implies that we can inter-
+           a different nature. In particular, Grun¨ wald (2024) treats e-   pret such a Bayes factor as a double post-hoc p-value.
+           values as loss-valued: living on the same scale as the loss ℓ.   Theorem 6. Consider the hypothesis {P0} and alternative
+           In our framework, e-values are decision-valued: D-valued.        {P }. If P and P are mutually absolutely continuous, then
+                                                                               1       0       1
+                                                                            the likelihood ratio dP /dP is a double post-hoc p-value.
+             Anadvantageourdecision-theoretic definition of evidence                               0    1
+           is that it covers perfectly reasonable variants of post-hoc      Proof. The result follows from Theorem 2, as EP0dP /dP =
+                                                                              P                                                   1    0
+           testing that do not involve classical e-values. Indeed, in Ex-   E 1dP /dP =1.
+                                                                                   0    1
+           ample 8 we find that post-hoc testing under the size differ-     Remark 9. Note that the constant 1 is also a double post-
+           ence of Remark 2 naturally leads to evidence variables that      hoc p-value, so that double post-hoc validity is not sufÏcient
+                       −1 −1
+           satisfy (E[e   ])  ≤1, not using classically valid e-values.     for a post-hoc p-value to be useful. It is merely an interesting
+             Another notable difference is that Grun¨ wald (2024) does      additional guarantee that we may want a post-hoc p-value to
+           not show the necessity of e-values to post-hoc testing, while    satisfy.
+           we show any (non-dominated) and {0,1}-valued post-hoc
+           test function is of the form ϕ(α) = I{e ≥ 1/α}. We believe       C Post-hoc Multiple testing
+           that this is also the reason that misses the duality between
+           e-values and p-values.
+             We suspect the underlying reason that the framework of         C.1     Post-hoc anytime validity
+           Grun¨ wald (2024) does not recover these ideas is due to the     Post-hoc hypothesis testing naturally generalizes to a se-
+           adoptionoftheusualnon-decision-theoretic definition of the       quential setting, where we want to test while new data is
+           e-value inside an otherwise decision-theoretic framework.        still arriving. To model this, we consider a process of test
+           Using our decision-theoretic definition of the e-value of a      functions (ϕ )     indexed by a time t. This can be inter-
+                                                                                         t t∈N
+           test function ϕ from Section 7.2, and making the mild as-        preted as observing test functions ϕ ,ϕ ,... over time.
+                                                                                                                  1   2
+           sumption that ℓ is non-decreasing and lower semicontinuous          Toenforce the directionality of time, we additionally con-
+           in the order topology, (14) becomes                              sider a collection of stopping times T with respect to an
+                                                                          underlying filtration that specifies the available information
+                                                                            at each moment in time. A process of test functions (ϕ )
+                          E ℓ(supϕ(α)) ≡E[ℓ(e )] ≤ 1,                                                                                 t t∈N
+                                                   ϕ                        is said to be anytime valid with respect to T if
+                                α
+           so that eϕ is generally not a classically valid e-value, unless                     supsupEϕ (α)/α≤1.
+                                                                                                           τ
+           ℓ(x) = x.                                                                            α τ∈T
+                                                                          14
+                  Such a test process induces a p-process (pt)t∈N, defined at                                               the mild condition that it still attains both 0 and 1. This
+                  each t as the smallest value of α for which ϕ (α) = 1. We                                                 is satisfied, for example, if we consider a finite number of
+                                                                                                t
+                  say that this p-process is valid if its underlying test process                                           tests. We can then equivalently say that the family of test
+                  is valid, which coincides with the definition of a p-process                                              functions (ϕi)i∈I controls the (post-hoc) familywise error
+                  given by Ramdas et al. (2022).                                                                            rate if ϕ is (post-hoc) valid. Moreover, as ϕ is assumed to be
+                      Generalizing to post-hoc anytime validity, we say that a                                              atestfunction, it has a p-value p. We can then formulate the
+                  test process is post-hoc anytime valid if                                                                 familywise error rate in terms of this p-value, as captured
+                                                                                                                            in Theorem 7.
+                                                 supE supϕ (α)/α ≤ 1.
+                                                                     τ                                                      Theorem 7. The family of test functions (ϕ )                                             controls
+                                                τ∈T        α>0                                                                                                                                             i i∈I
+                                                                                                                            the (post-hoc) familywise error rate if p is a (post-hoc) valid
+                  Written in terms of the expected size distortion, this is equal                                           p-value.
+                  to
+                                                        P(ϕ (αe) = 1 | αe)                                                C.3          Post-hoc false discovery rate
+                                       supsupE                   τ                         ≤1.
+                                         αe   τ∈T                       αe                                                  We can weaken the familywise error rate by replacing the
+                                                                                                                            supremum sup in Section C.2 by an expectation E over
+                      We say that a p-process is post-hoc anytime valid if its                                                                       i                                                                  eι
+                  underlying test process is.                       Equivalently, we can directly                           a random index eι on I. This yields an expected multiple
+                  define post-hoc anytime validity through a p-process.                                                     testing error bound:
+                                                                                                                                                             supEE ϕ (α)/α ≤ 1.
+                  Definition 6. A p-process is post-hoc anytime valid with                                                                                     α         eι  eι
+                  respect to T if                                                                                           If I is non-empty and finite, and eι is uniform on I, then
+                                                                                                                                               P
+                                                        supE1/p ≤1.                                                                                |I|
+                                                                        τ                                                   E ϕ (α) =                    ϕ (α)/|I| is also called the false discovery
+                                                       τ∈T                                                                    eι  i                i=1 i
+                                                                                                                            proportion of the tests (ϕ (α))                           .
+                                                                                                                                                                        i       i∈I
+                      This is precisely the reciprocal of an e-process (Ramdas                                                  Apost-hoc variant is obtained by moving sup inside the
+                                                                                                                                                                                                              α
+                  et al., 2022, 2023). These definitions generalize to the con-                                                                                                          e
+                                                                                                                            outermost expectation. Moreover, ϕ := E ϕ is a random-
+                  tinuous time setting.                                                                                                                                                              eι  eι
+                                                                                                                            ized test function, as it takes value in [0,1] (see Appendix
+                                                                                                                            E). Such a randomized test function has an associated p-
+                  C.2          Post-hoc familywise error rate                                                               function pe, so that post-hoc expected multiple testing er-
+                                                                                                                            rors can be equivalently formulated as pe being a post-hoc
+                  Dropping the directionality of time in Section C.1 yields the                                             p-function.
+                  so-called familywise error rate (Ramdas et al., 2022). Let us                                             Theorem 8. Leteι be some data-independent random index
+                  nowwrite (ϕi)i∈I for the family of test functions, where I is                                             onI. Then, (ϕi)i∈I controls the (post-hoc) expected multiple
+                  someindexset, where we use i instead of t to emphasize this                                               testing error with respect to eι if and only if pe is a (post-hoc)
+                                                                                                         e
+                  is typically not a time dimension. Moreover, let I denote                                                 valid p-function.
+                  the collection of random indexes that can depend on (ϕ )                                             .
+                                           e                                                                  i i∈I             Clearly, the expectation with respect to eι can be replaced
+                  The collection I replaces the collection of stopping times T                                              by other functions of (ϕ )                        to obtain other types of (post-
+                  in the sequential setup.                                                                                                                           i i∈I
+                      The family of test functions is then said to control the                                              hoc) multiple testing errors. Related definitions appear in
+                  familywise error rate if                                                                                  Wang and Ramdas (2022), Katsevich and Ramdas (2020)
+                                                                                                                            and Wang and Ramdas (2022).
+                                supsupEϕ (α)/α ≡ supEsupϕi(α)/α ≤ 1.
+                                  α       e       eι                 α        i∈I
+                                      eι∈I                                                                                  D Post-hoc max size distortion
+                      The familywise error rate easily generalized to the post-
+                  hoc familywise error rate, by moving the supremum over α                                                  In this section, we return to the control of the maximum size
+                  inside the expectation.                                                                                   distortion, as in Section 3.2. In Theorem 9, we show that
+                                                                                                                            it is unfortunately impossible to do meaningful post-hoc α
+                  Definition 7. A collection of test functions (ϕ )                                          is said
+                  to control the post-hoc familywise error rate if i i∈I                                                    hypothesis testing without having any size distortion at any
+                                                                                                                            realization of the data-dependent level αe. This result shows
+                                supEsupϕ (α)/α ≡ Esupsupϕ (α)/α ≤ 1.                                                        that only uninteresting test functions and p-values would
+                                                  eι                                  i                                     satisfy such a guarantee.
+                                   e       α                            α i∈I
+                                eι∈I                                                                                            The underlying issue is that the maximum size distortion
+                      In order to write this in terms of p-values, let us consider                                          only considers the worst case value that αe may take, even if
+                  the maximum test function ϕ, defined as ϕ(α) = supiϕi(α)                                                  it is extremely unlikely. This makes control of the maximum
+                  andassumethatitisindeedatestfunction,whichitisunder size distortion overly conservative.
+                                                                                                                        15
+           Theorem 9. The following statements are equivalent:               and only then apply external randomization. In some sense,
+              • A test function ϕ controls the maximum size distortion       this is not truly post-hoc selection of α, since the selection
+                                                                             is followed by something else. However, it is post-hoc in the
+                for every data-dependent level αe,                           sense that the selection is made with full knowledge of the
+              • ϕ(α) = 0 for all α ∈ (0,1),                                  data.
+                                                                               Wecan, of course, also study randomized testing in a way
+              • its p-value p satisfies p ≥ 1.                               that the randomization takes place before the final selection
+                                                                             of α, so that α can also be based on the external random-
+           Proof of Theorem 9. The equivalence of the second and             ization. In fact, this simply reduces to the setting discussed
+           third statement follows from the definition of the p-value.       in the main text, by viewing the external randomization as
+              Next, we show that the first statement implies the third.      part of the data.
+           Suppose that ϕ controls the maximum size distortion for
+           every data-dependent level αe. A potential data-dependent         E.1     p-functions
+           level would be the smallest level at which it rejects: αe = p.
+           This choice yields                                                It is necessary to go beyond p-values if we are inter-
+                sup     P(ϕ(p) = 1 | p = a)/a                                ested in randomized testing. The issue is that unlike non-
+            a∈support(p)                                                     randomized test functions, a randomized test function can-
+                        =      sup      E(1 | p = a)/a                       not be losslessly converted into a p-value: the smallest value
+                           a∈support(p)                                      of α for which they hit 1. This is because a randomized test
+                                                                             function is not an indicator function in α. This is illustrated
+                        =      sup      1/a = 1/inf{a : a ∈ support(p)}      in the first plot in Figure 2.
+                           a∈support(p)                                        For randomized testing we generalize p-values to p-
+                        ≤1                                                   functions, which we illustrate in the second plot in Figure
+           This implies p ≥ 1. Since p is the smallest data-dependent        2.
+           level at which ϕ rejects, it cannot reject for α < 1.             Definition 8 (p-function). For a (randomized) test func-
+              Finally, suppose that ϕ(α) = 0 for all α ∈ (0,1). This              e                                                 e
+           implies P(ϕ(αe) = 1 | αe = a) = 0 ≤ a for all a ∈ (0,1), for      tion ϕ, we say that peis a p-function if pe(u) = inf{α : ϕ(α) ≥
+           any data-dependent level αe. Moreover, P(ϕ(αe) = 1 | αe =         u}. A p-function is non-randomized if pe(u) = pe(1) for all
+           a) ≤ a for all a ≥ 1, since P(ϕ(αe) = 1 | αe = a) ≤ 1 as it       u∈(0,1]. If not, it is randomized.
+           is a probability. Hence, P(ϕ(αe) = 1 | αe = a) ≤ a for all          The value pe(u) can be interpreted as the smallest level at
+           a > 0.                                                            which the test would have rejected with probability u, had
+                                                                             we chosen the level pe(u). This means that p(1) is a p-value,
+           E Randomized post-hoc validity                                    which coincides with the definition of a p-value for a ran-
+                                                                             domized test that is used by Lehmann and Romano (2022).
+                                                                                                                                        e
+           (Potentially) randomized tests τe take value in [0,1], rather     Amore technical interpretation is that a test function ϕ is
+           than {0,1}. The value of a randomized test can be inter-          a CDF, and its p-function pe is the corresponding quantile
+           preted as the conditional rejection probability, given the        function.
+           data.   We can convert a randomized test into a binary              To convert a p-function into a binary decision, we can
+           decision by rejecting if U ≤ τe, where U ∼ Unif(0,1] in-          reject if p(U) ≤ α, where U ∼ Unif(0,1] independently.
+           dependently.    This is ‘reversible’ by integrating out U:        Hence, p(U) can be interpreted as an explicitly randomized
+           τe = E I{U ≤ τe}.                                                 p-value.
+                 U                                                             Ap-function of a non-randomized test is non-randomized,
+              In some of the results in this section, it is relevant to      and therefore coincides with a p-value. This is shown in
+           distinguish between simple hypotheses which only contain          Proposition 12.
+           a single distribution, and composite hypotheses which may
+           contain multiple. For this reason, we explicitly derive our                              e
+                                                    H                 P      Proposition 12. If ϕ is a non-randomized test function,
+           results under composite hypotheses: E 0 := sup           E .                           e
+                       e                                       P∈H0          then pe(u) = inf{α : ϕα = 1} = pe(1) for all u.
+              We say ϕ : R+ → [0,1] is a randomized test function if                   e
+           e                                                                 Proof. If ϕ(α) ∈ {0,1} for all α, then for u > 0 we have:
+           ϕ(α) is cadlag, not constant and non-decreasing in α. As          e                        e
+           with non-randomized tests, such a function is commonly            ϕ(α) ≥ u if and only if ϕ(α) = 1. Substituting this into the
+                                       H0e                                   definition of a p-function yields the result.
+           said to be valid if supα E    ϕ(α)/α ≤ 1. We extend post-
+           hoc validity to randomized test functions, by saying that           Ap-function can be translated back into a test function.
+                                            H           e
+           such a function is post-hoc if E 0 supα>0ϕ(α)/α ≤ 1.
+                                                                             In particular, first observe that pe is callal (the reverse of
+                                                                                                                     e
+           Remark10(Orderofrandomization and α selection). We cadlag) and non-decreasing, because ϕ is cadlag and non-
+           assume throughout this section that we first select the level α   decreasing. In fact, if viewed as functions in α and u, these
+                                                                          16
+                  ϕ(α)                      p(u)                             E.3     Randomizing post-hoc p-values
+                  1                                                          In Theorem 11, we show that any post-hoc p-value charac-
+                                                                             terizes and is characterized by a special post-hoc p-function.
+                                                                             Theorem11. pisapost-hocp-value if and only if pedefined
+                                                                             as pe(u) = up is a post-hoc p-function.
+                                                                                                H                        H −1
+                                                                             Proof. We have E 0 sup          u/(up) = E 0p      .
+                                        α                         u                                    u∈(0,1]
+                                 p(1)                        1                 An implication of this result is that any non-randomized
+                                                                             post-hoc p-function can be trivially improved by a random-
+           Figure 2: Illustration of (realized) test family (left) and its   ized post-hoc p-function. This is easiest to see when ex-
+           associated p-family (right). We can see the relationship be-      plicitly randomizing. In particular let U ∼ Unif(0,1] inde-
+           tweentestfamiliesandp-familiesbyswappingthehorizontal             pendently of a post-hoc p-value p, then Up is almost surely
+           and vertical axes.                                                smaller than p. Hence the explicitly randomized p-value Up
+                                                                             is almost surely smaller than p. Equivalently, for a post-hoc
+                                                                                           e
+                                                  e                          test function ϕ, ϕ(Up) is valid.
+           functions form a Galois connection: ϕ(α) ≥ u if and only if         The same result can also be expressed in terms of an e-
+           pe(u) ≤ α. This shows that we can convert a p-function back       value and post-hoc test function, as captured in Corollary 5.
+           into a test function through the map pe 7→ sup{u : pe(u) ≤        This result improves a recent result by Ramdas and Manole
+                                                          e
+           α} = supu∈(0,1]uI{pe(u) ≤ α}. Moreover, if ϕ is continuous        (2023) who show that α 7→ αe∧1 is a valid test function.
+                                         e
+           and strictly increasing then ϕ and its p-function are inverses    Corollary 5. e is an e-value if and only if α 7→ αe∧1 is a
+                           e                   e
+           of each other: ϕ(pe(u)) = u and pe(ϕ(α)) = α.                     post-hoc test function.          P
+                                                                             Proof. We     have    sup      E sup      (αe ∧ 1)/α         =
+           E.2     Post-hoc p-functions                                                P               P∈H0        α>0 P
+                                                                             sup      E sup      (e ∧ 1/α) = sup       E e.
+           We say that a p-function is post-hoc if its underlying test          P∈H0         α>0                 P∈H0
+           family is post-hoc. Alternatively, a post-hoc p-function can      E.4     Merging post-hoc p-functions
+           also be defined in a standalone manner, as shown in Theo-
+           rem 10.                                                           Aweighted harmonic mean of post-hoc p-functions is post-
+              Another consequence of Theorem 10 is that there is no re-      hocvalid. This property extends to (data-independent) har-
+           ciprocal duality between e-values and post-hoc p-functions:       monic mixtures of possibly infinitely many p-functions.
+           for a post-hoc p-function pe, 1/peis not necessarily an e-value.  Theorem 12. A weighted harmonic mean of post-hoc p-
+           Redefining an e-value as such a reciprocal, as suggested          functions is a post-hoc p-function.
+           in Section 6, would recover this duality and make e-values
+           meaningful objects in the randomized testing setting.             Proof. Suppose we have n p-functions pe, i = 1,...,n, and
+                                                                                              P                        i
+                                                                             weights w ≥ 0,     n   w =1. Then,
+           Theorem 10. pe is a post-hoc p-function if and only if                      i        i=1   i
+             H
+           E 0supu∈(0,1]u/pe(u) ≤ 1.                                                       n                        n
+                                                                              H           X             −1     H X                       −1
+                                                                             E 0 sup u        w(pe(u))     ≤E 0       w sup u(pe(u))
+           Proof. We have                                                                       i  i                    i           i
+                                                                                  u∈(0,1] i=1                      i=1   u∈(0,1]
+                                                                                                               n
+                          e                                                                                   X H                       −1
+                     supϕ(α)/α = sup sup uI{pe(u) ≤ α}/α                                                   ≤      wE 0 sup u(pe(u)) .
+                     α>0            α>0u∈(0,1]                                                                     i               i
+                                  = sup supuI{pe(u) ≤ α}/α                                                    i=1        u∈(0,1]
+                                    u∈(0,1]α>0                               Here, the final term is bounded by Pn         wi = 1 as each
+                                                                                                                       i=1
+                                  = sup u/pe(u).                             pe is post-hoc. The same reasoning extends from weighted
+                                    u∈(0,1]                                  averages to mixtures, replacing the weighted sum by an ex-
+                                                                             pectation.
+              Corollary 4 shows post-hoc p-functions give rise to post-        The product of an arbitrary collection of independent
+           hoc p-values.                                                     post-hoc p-functions is not necessarily post-hoc valid. How-
+                                                                             ever, if they are individually all ‘not too randomized’, then
+           Corollary 4. If pe is a post-hoc p-function then pe(1) is a       we do have that the product is post-hoc valid. We can ex-
+           post-hoc p-value.                                                 press this in terms of a condition on the shape of the indi-
+                                                                             vidual p-functions. We describe this in Theorem 13, which
+           Proof. This follows from Theorem 10 as EH01/pe(1) ≤ generalizes the result that the product of post-hoc p-values
+             H
+           E 0supu∈(0,1]u/pe(u).                                             is post-hoc valid.
+                                                                          17
+                                                                                                    ∗
+               The p-value result is recovered by setting pe (u) = pe (1)          the fact that u is not necessarily the optimizer, we have
+                                                                  i         i
+            for all u ∈ (0,1], and i = 1,...,n. To see that Theorem                              1 ≥ sup sup EPsupuY(pe(u))−1
+            13 improves the non-randomized result, we can for example                                                           i
+                               1/n                                                                    I⊆BP∈H0        u    i∈I
+            choose p (u) = u       p (1), for all i = 1,...,n. Since, u ≤ 1,
+                      i             i                                                                                  Y
+            this dominates choosing p (u) = p (1) for all u ∈ (0,1].                                              P ∗           ∗  −1
+                                          i        i                                               ≥sup sup E u           (pe (u ))   .
+                                                                                                                            i
+                                                                                                      I⊆BP∈H0          i∈I
+            Theorem 13. Suppose we have n independent post-hoc p-
+            functions pe , i = 1,...,n. Suppose that they jointly satisfy          Now, rewriting the final term yields
+                         i Q
+            the property     npe (1)/pe (u) ≤ 1/u for all u ∈ (0,1]. Then,
+                             i  i      i                                                                   Y
+                            Qn                                                                        P ∗           ∗  −1
+            their product         pe is also a post-hoc p-function.                       sup sup E u         (pe (u ))
+                              i=1 i                                                                             i
+                                                                                          I⊆BP∈H0          i∈I        Y
+            Proof. We have                                                                                          P       ∗ 1/|I|     ∗   −1
+                                                                                                     =sup sup E          (u )      (pe (u ))   .
+                                                                                                                                     i
+                                                                                                        I⊆BP∈H
+                                 n                          n                                                    0    i∈I
+                     P          Y          −1            P Y          −1
+               sup E    sup u      (p (u))     ≤ sup E        (p (1))
+              P∈H                     i           P∈H            i                 Next, by the i.i.d assumption we can further rewrite it as
+                  0    u∈(0,1]  i=1                   0    i=1                                       Y
+                              n                   n
+                             Y P           −1    Y           P        −1                           P       ∗ 1/|I|      ∗  −1
+                                                                                        sup sup E        (u )     (pe (u ))
+                    = sup       E (p (1))      ≤      sup E (p (1))      ≤1,                                        i
+                                      i                         i                       I⊆BP∈H
+                       P∈H0                          P∈H0                                        0   i∈I
+                             i=1                 i=1                                                            Y
+                                                                                                                     P   ∗ 1/|I|      ∗  −1
+                                                                                                  =sup sup          E (u )      (pe (u ))
+            where the final inequality follows from Corollary 4, the sec-                                                         i
+            ond equality from independence, and the first inequality                                 I⊆BP∈H0i∈I
+                                                                                                                                            
+            from the assumption.                                                                                       P   ∗ 1/|I|     ∗  −1 |I|
+                                                                                                  = sup          sup E (u )       (pe(u ))       .
+                               Q                                                                     1≤|I|≤∞ P∈H0
+               The condition      npe (1)/pe (u) ≤ 1/u limits how ‘random-
+                                  i  i      i                                      Restricting ourselves to infinite sets, we have
+            ized’ the p-functions can be for large n. To see this, sup-
+                                                                                                                                        
+            pose that all pe are of the same shape, then it imposes                                                                        |I|
+                              i                                                                                     P  ∗ 1/|I|     ∗  −1
+            pe (1)/pe (u) ≤ u1/n.     Moreover, pe(1)/pe(u) ≥ 1 as pe(u)                     1 ≥    sup      sup E (u )       (pe(u ))
+             i      i                               i      i                i                               P∈H
+            is non-decreasing in u by construction. As a consequence,                            1≤|I|≤∞        0
+                                            1/n        1/n                                                                           
+            wehave1≤pe(1)/pe(u) ≤ u             . As u     ≈1forlargen, we                                                              |I|
+                            i      i                                                                             P   ∗ 1/|I|    ∗   −1
+            have that pe (u) ≈ pe (1) for all u ∈ (0,1] if n is large. That                    ≥ sup      sup E (u )       (pe(u ))
+                         i         i                                                             |I|=∞ P∈H
+            is, for large n, this condition is essentially only satisfied if                                  0
+                                                                                                                            
+            the p-functions are non-randomized.                                                                  P     ∗  −1 |I|
+               We formalize the importance of non-randomization for                            = sup      sup E (pe(u ))
+                                                                                                 |I|=∞ P∈H0
+                                                                                                                      
+            product-merging in Theorem 14. This result states that                                        P     ∗   −1 ∞
+            essentially only non-randomized post-hoc p-functions can                           = sup E (pe(u ))            ,
+            be arbitrarily multiplied together.                                                    P∈H0
+               Here, we say that a p-family is ‘properly’ randomized                       ∗
+                                          P       −1                               since u ∈ (0,1].
+            (with respect to H ) if E (p(1))          is bounded away from
+              P     ∗  −1         0                             ∗                                     ∗               P     ∗  −1       P       −1
+            E (p(u ))      uniformly in P ∈ H0, for some u ∈ (0,1].                  As pe(1) > pe(u ), we have E (pe(u ))         >E (pe(1))       for
+                                                                                   every P ∈ H . This observation allows us to finish the case
+                                                                                                 0
+                                                                                   that H is finite. In particular, as H is finite, its supremum
+            Theorem 14. Suppose we have at most countably in-                             0                               P0    ∗   −1      P       −1
+            finitely many i.i.d. copies of a randomized p-function pewith          is attained. As a consequence if E (pe(u ))         >E (pe(1))
+              H        −1
+            E 0(pe(1))     =1. If every product of these copies is post-hoc        for every P ∈ H0, we have that
+            valid, then the p-functions are not properly randomized.                                 P     ∗  −1            P       −1
+               If we additionally assume that H0 is finite, then the p-                       sup E (pe(u ))      > sup E (pe(1))       =1.       (15)
+            functions are non-randomized.                                                    P∈H0                   P∈H0
+                                                                                   As a consequence,
+            Proof of Theorem 14. The strategy is to assume the p-                                                           
+            function is randomized, and then show that this is in con-                                          P     ∗   −1 ∞
+            tradiction with the assumption that they are post-hoc valid.                           1 ≥   sup E (pe(u ))          =∞,
+                                                                                                         P∈H0
+            We only assume proper randomization at the very end, to
+            handle the supremum over a possibly infinite H .                       which is a contradiction.
+                                                                   0
+                                                                               ∗
+               As the p-function pe is randomized, there exists some u               For the case that H0 is infinite, it is insufÏcient for (15)
+            such that pe(1) > pe(u∗). Let B index the collection (pe )             to assume that pe(u∗) > pe(1). However, the result is recov-
+            of i.i.d. copies of the p-function.                           i i∈B                            P    ∗                               P
+                                                                                   ered as we assume E pe(u ) is bounded away from E pe(1),
+               First, by the post-hoc validity of the product and the by           uniformly in P ∈ H .
+                                                                                                         0
+                                                                                18
+           F Proofs                                                         Proof. By I-measurability, εi is constant on every cell C ∈
+           F.1     Proof of Proposition 5                                   C(I), and so the supremum is as well.
+           Proof. The first claim is equivalent to Theorem 1.               Remark 11. The notion of I-measurability here can be
+                                                                            viewed as classical measurability with respect to the σ-
+             For the second claim, fix h < 1 and q ∈ (0,1), and let         algebra ΣI of unions of information cells C ∈ C(I), which
+           e = M > 1 with probability q and 0, otherwise. Then is the atomic σ-algebra with the information cells as atoms.
+           ρh(e) = (qMh)1/h = q1/hM. The induced level-α test is            If ε is I-measurable in our sense, then for any σ-algebra
+           ϕe(α) = α−1I{e ≥ 1/α}. Now, since e ∈ {0,M} we have ΣD on D the map ε : (X,ΣI) → (D,ΣD) is classically mea-
+           E[ϕ (α)] = 0 if α < 1/M and E[ϕ (α)] = q/α if α ≥ 1/M,           surable. Conversely, if Σ    separates points, then classical
+               e                               e              −1/h                                     D
+           so that sup E[ϕ (α)] = qM. Choosing M = q                gives   measurability of ε implies it is constant on information cells,
+                       α     e
+           ρ (e) = 1 and sup E[ϕ (α)] = qM = q1−1/h > 1, since and hence I-measurable in our sense.
+            h                  α     e
+           1−1/h<0. Hence, e is h-valid but ϕe is not valid.
+                                                                            G.2 Conditioning
+           F.2     Proof of Proposition 8                                   Usingthisnotionofmeasurability, wecancapturetheaxiom
+           Proof.                                                           of replacement of Kolmogorov (1930). To our surprise, this
+                                                                            axiom may be viewed as defining a concept of conditional
+                 supE [P(ϕ(αe) = reject at αe | αe) − αe]                   expectation on total orders, which in itself may be seen as
+                  αe  αe                                                    defining a notion of compatibility across information struc-
+                 =supE [E[I{ϕ(αe) = reject at αe} | αe] − αe]               tures.
+                     αe  αe                                                   Given two I-measurable evidence variables ε,η and A ∈
+                 =supE [E[I{ϕ(αe) = reject at αe}−αe | αe]]
+                     αe  αe                                                 I, we define their A-mixture as
+                 =supE[I{ϕ(αe) = reject at αe}−αe]                                                        (ε(x),    x∈A,
+                     αe                                                                   (ε ⊕A η)(x) :=
+                 =E"         sup       I{ϕ(α) = reject at α}−α#                                             η(x),   x̸∈ A.
+                       α:ϕ(α)=reject at α                                   The resulting mixture ε ⊕ η of evidence variables is again
+                                                                                                       A
+                 =E[1−inf{α:ϕ(α)=reject at α}] = E[1−p].                    I-measurable for A ∈ I.
+                                                                              Let S ⊆ I be a sub-information-structure of I. A cer-
+           Hence, ϕ is post-hoc valid in this sense if and only if E[p] ≥   tainty equivalent kernel for S is a mapping (ε,x) 7→ ρ(ε |
+           1. Equivalently, its e-value e = 1/p is harmonic.                S)(x) such that, for every I-measurable evidence variable
+                                                                            ε, the map x 7→ ρ(ε | S)(x) is S-measurable, and for ev-
+           G Measurability and conditioning                                 ery x ∈ X, the map ε 7→ ρ(ε | S)(x), restricted to S-
+                                                                            measurable evidence variables, is an idempotent and mono-
+                                                                            tone certainty-equivalent operator.
+           G.1 Measurability                                                  Wearenowreadytointroduce an order-theoretic version
+                                                                            of the replacement axiom of Kolmogorov (1930). The term
+           We define measurability with respect to an information           ‘replacement’ comes from the fact that we replace ε on a set
+                            X
+           structure I ⊆ 2 . To define this, we write x ∼        y if and
+                                                              I             Abyanaggregation ρ(ε | S).
+           only if for every A ∈ I we have x ∈ A ⇐⇒ y ∈ A. For
+           each x ∈ X, we call                                                  Replacement
+                            C (x) := {y ∈ X : y ∼ x}                            There exists a unique certainty equivalent kernel ρ(· |
+                              I                     I                           S) for S so that for every I-measurable evidence vari-
+           the information cell of x induced by I. The family of such           able ε,
+           information cells C(I) partitions X.                                         ρ(ρ(ε | S) ⊕  ε) = ρ(ε), for every A ∈ S.
+                                                                                                    A
+           Definition 9 (Measurability). We say ε is I-measurable             We leave it to future work to explore sequential testing
+           if it is constant on each information cell: x,y ∈ C       =⇒ ontotal orders under information-structure filtrations.
+           ε(x) = ε(y), for every C ∈ C(I).
+             Under this notion of measurability, we need not worry
+           about the measurability of a supremum of measurable evi-
+           dence variables.
+           Lemma 3. The supremum sup ε of a collection of mea-
+                                             i i
+           surable evidence variables is measurable.
+                                                                         19

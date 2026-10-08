@@ -1,0 +1,1818 @@
+                                             Testing exchangeability:
+                           fork-convexity, supermartingales, and e-processes
+                                          1               2                  3                    4
+                         Aaditya Ramdas , Johannes Ruf , Martin Larsson , Wouter M. Koolen
+                     1 Departments of Statistics and Machine Learning, Carnegie Mellon University
+                               2 Department of Mathematics, London School of Economics
+                           3 Department of Mathematical Sciences, Carnegie Mellon University
+                                       4 Machine Learning Group, CWI Amsterdam
+                                          {aramdas,martinl}@andrew.cmu.edu
+                                          wmkoolen@cwi.nl, j.ruf@lse.ac.uk
+                                                       July 26, 2021
+                                                          Abstract
+                        Suppose we observe an inﬁnite series of coin ﬂips X ,X ,..., and wish to sequentially test the null
+                                                                 1  2
+                     that these binary random variables are exchangeable. Nonnegative supermartingales (NSMs) are a
+                     workhorse of sequential inference, but we prove that they are powerless for this problem. First, utilizing
+                     a geometric concept called fork-convexity (a sequential analog of convexity), we show that any process
+                     that is an NSM under a set of distributions, is also necessarily an NSM under their “fork-convex hull”.
+                     Second, we demonstrate that the fork-convex hull of the exchangeable null consists of all possible laws
+                     over binary sequences; this implies that any NSM under exchangeability is necessarily nonincreasing,
+                     hence always yields a powerless test for any alternative. Since testing arbitrary deviations from
+                     exchangeability is information theoretically impossible, we focus on Markovian alternatives. We
+                     combine ideas from universal inference and the method of mixtures to derive a “safe e-process”, which
+                     is a nonnegative process with expectation at most one under the null at any stopping time, and is
+                     upper bounded by a martingale, but is not itself an NSM. This in turn yields a level α sequential
+                     test that is consistent; regret bounds from universal coding also demonstrate rate-optimal power. We
+                     present ways to extend these results to any ﬁnite alphabet and to Markovian alternatives of any order
+                     using a “double mixture” approach. We provide an array of simulations, and give general approaches
+                     based on betting for unstructured or ill-speciﬁed alternatives. Finally, inspired by Shafer, Vovk, and
+       arXiv:2102.00630v4  [math.ST]  23 Jul 2021Ville, we provide game-theoretic interpretations of our e-processes and pathwise results.
+                Keywords: Anytime-valid sequential inference; composite Snell envelope; game-theoretic probability; method
+                of mixtures; optional stopping; universal coding.
+                                                             1
+                     Contents
+                     1 Testing exchangeability                                                                                           3
+                         1.1   Safe e-processes and anytime-valid p-processes         . . . . . . . . . . . . . . . . . . . . . . . .     3
+                         1.2   Convex hulls and de Finetti’s theorem . . . . . . . . . . . . . . . . . . . . . . . . . . . . .            4
+                         1.3   Time-homogeneous Markovian alternatives            . . . . . . . . . . . . . . . . . . . . . . . . . .     5
+                         1.4   Wald’s sequential likelihood (or probability) ratio test . . . . . . . . . . . . . . . . . . . .           6
+                         1.5   Nonnegative supermartingales (NSMs) and an impossibility result              . . . . . . . . . . . . .     6
+                         1.6   Apowerful Q-safe e-process that is not a Q-NSM . . . . . . . . . . . . . . . . . . . . . . .               7
+                         1.7   Asummary of this paper’s contributions . . . . . . . . . . . . . . . . . . . . . . . . . . . .             8
+                     2 Jeﬀreys’ mixture meets maximum likelihood                                                                         8
+                         2.1   Dealing with the composite null via maximum likelihood . . . . . . . . . . . . . . . . . . .               8
+                         2.2   Dealing with the composite alternative using a Jeﬀreys’ mixture            . . . . . . . . . . . . . .     9
+                         2.3   Combining Jeﬀreys’ mixture with maximum likelihood . . . . . . . . . . . . . . . . . . . .               10
+                         2.4   Apathwise theorem on the power of (Rt) . . . . . . . . . . . . . . . . . . . . . . . . . . .             10
+                         2.5   Extension to higher-order Markovian alternatives and context trees . . . . . . . . . . . . .             12
+                         2.6   Double-mixtures for a countable sequence of alternatives . . . . . . . . . . . . . . . . . . .           13
+                         2.7   Handling generic alternatives via non-anticipating likelihoods and betting . . . . . . . . .             13
+                     3 Fork-convexity and Q-Snell envelopes                                                                             14
+                         3.1   Asequential analog of convexity        . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   14
+                         3.2   No power against fork-convex hulls . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .         15
+                         3.3   Composite Snell envelopes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .        16
+                         3.4   The inadequacy of NSMs for testing exchangeability . . . . . . . . . . . . . . . . . . . . .             17
+                     4 Numerical simulations and some extensions                                                                        18
+                         4.1   Sanity check 1: no power against an i.i.d. Bernoulli sequence          . . . . . . . . . . . . . . . .   19
+                         4.2   Sanity check 2: power against a ﬁrst-order Markov alternative . . . . . . . . . . . . . . . .            20
+                         4.3   Power against a time-varying Markov alternative . . . . . . . . . . . . . . . . . . . . . . .            20
+                         4.4   Power against a change point alternative . . . . . . . . . . . . . . . . . . . . . . . . . . . .         21
+                         4.5   Power on a real-world data set       . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   23
+                         4.6   An equivalent viewpoint based on conﬁdence sequences . . . . . . . . . . . . . . . . . . . .             24
+                         4.7   Calibrated p-processes and adjusted e-processes for not losing capital . . . . . . . . . . . .           24
+                     5 Summary and discussion                                                                                           25
+                         5.1   From convex hulls to fork-convex hulls . . . . . . . . . . . . . . . . . . . . . . . . . . . . .         25
+                         5.2   The powerlessness of test supermartingales, and a powerful e-process . . . . . . . . . . . .             26
+                         5.3   Vovk’s approach based on conformal prediction . . . . . . . . . . . . . . . . . . . . . . . .            26
+                         5.4   Agame-theoretic protocol and reinterpretation of Theorem 7 . . . . . . . . . . . . . . . .               27
+                     6 References                                                                                                       28
+                     A Additional technical concepts and deﬁnitions                                                                     31
+                         A.1 Reference measures and local absolute continuity . . . . . . . . . . . . . . . . . . . . . . .             31
+                         A.2 Essential supremum . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .           32
+                     B Omitted proofs                                                                                                   32
+                                                                               2
+                             1        Testing exchangeability
+                             Suppose we observe a sequence of binary coin ﬂips X ,X ,... one at a time. Consider the fundamental
+                                                                                                                  1     2
+                             problem of testing if our data (X )                          form an exchangeable sequence:
+                                                                                  t t≥1
+                                                                                     H :X ,X ,... are exchangeable.
+                                                                                        0      1     2
+                             For the unfamiliar reader, (X )                         is exchangeable if and only if for every t and every permutation σ of
+                                                                            t t≥1
+                             the ﬁrst t indices, (X ,...,X ) has the same distribution as (X                                         , . . . , X     ). If we ﬁnd enough evidence
+                                                              1           t                                                    σ(1)             σ(t)
+                             against the null, we would like to stop collecting data and reject the null as soon as possible. Let Q
+                             represent the set of all exchangeable distributions over inﬁnite binary sequences. Then, we can rephrase
+                             the null as H : the data are generated from some Q ∈ Q.
+                                                  0
+                                   Let (Ft)t≥0 represent the canonical ﬁltration of the data, where F0 is the trivial sigma algebra and
+                             F =σ(X ,...,X ). All martingale statements in this paper will implicitly refer to this canonical ﬁltration.
+                                t           1            t
+                             Alevel α sequential test for Q (that is, for H ) is any stopping time τ                                           such that
+                                                                                                     0                                      α
+                                                                                               sup Q(τ <∞)≤α,                                                                                (1)
+                                                                                                            α
+                                                                                               Q∈Q
+                             meaning that with probability 1−α, we never stop under the null. In this paper, we will design powerful
+                             sequential tests for exchangeability, and prove their consistency, and in some cases rate-optimality, against
+                             Markovian alternatives.
+                                   Despite nonnegative supermartingales (NSMs) being a central object in sequential testing [12, 13], the
+                             nontriviality of our contribution stems from the following: Theorem 17 proves that every NSM under
+                             exchangeability must be a nonincreasing process and thus powerless. The way out is to look beyond NSMs,
+                             at an object called a safe e-process, which we introduce next. Safe e-processes are intimately related to
+                             NSMs — all NSMs are safe e-processes, and all admissible safe e-processes are inﬁma of NSMs [22] — but
+                             the two concepts are diﬀerent, and our paper seeks to explore this gap in detail and exploit it successfully.
+                             1.1        Safe e-processes and anytime-valid p-processes
+                             Wedeﬁne a Q-safe e-process to be a nonnegative sequence of adapted random variables (E )                                                             such that
+                                                                                                                                                                         t t≥0
+                                                                                               sup sup EQ[Eτ] ≤ 1,                                                                           (2)
+                                                                                               Q∈Q       τ
+                             where the second supremum is over all stopping times τ, possibly inﬁnite. Above, we interpret E∞ :=
+                             limsup             Et to accommodate potentially inﬁnite stopping times. (As mentioned earlier, the ﬁltration
+                                        t→∞
+                             (Ft) deﬁned previously is ﬁxed and implicit.) Howard et al. [12] do not use the term e-process, but they
+                             study exponential processes that are upper bounded by composite nonnegative supermartingales, which is
+                             a characterizing property of e-processes. Related notions have been studied by Shafer et al. [31], Grünwald
+                             et al. [10], Ramdas et al. [22], Vovk and Wang [37], amongst others.
+                             Remark 1 (on terminology). An ‘e-variable’ is a nonnegative random variable that has expectation
+                             at most one under the null [37]; in other words Et is an e-variable for every t, while we call (Et) as
+                             an e-process due to the additional property (2) that insists that stopped e-processes are also e-variables,
+                             meaning that Eτ is an e-variable for any stopping time τ. The value realized by an e-variable will be
+                             called an e-value. While recent works in this rapidly evolving area have sometimes blurred the distinctions
+                             between e-processes, e-variables and e-values, we believe that our choices of terminology may be more
+                             suitable to emphasize sequential problem setups involving stopping times.
+                                   Large e-values encode evidence against the null, and it is easy to check that the stopping time
+                                                                                          κα := inf t ≥ 1 : Et ≥ 1                                                                         (3)
+                                                                                                                                α
+                                                                                                               3
+                   results in a level α sequential test by applying Markov’s inequality to the stopped e-process. More details
+                   can be found in [22], who also show that the sequence (p ) deﬁned by p := inf     1/E is an anytime-valid
+                   (or Q-valid) p-process, meaning that                     t             t       s≤t    s
+                                                   sup sup Q(p ≤ α) ≤ α, for all α ∈ [0,1].                                (4)
+                                                                τ
+                                                   Q∈Q   τ
+                   Here the second supremum is taken over all stopping times τ. Following the above remark, a p-variable is
+                   a random variable whose distribution is stochastically larger than uniform under the null. Thus, a stopped
+                   p-process is a p-variable, and we call its realization as a p-value (a number between 0 and 1).
+                       Since such Q-safe e-processes yield both sequential tests and anytime-valid p-processes, we focus on
+                   constructing e-processes for the rest of this paper. As a matter of convention, we always use κ  to denote
+                                                                                                                  α
+                   the above stopping time, that is the one that thresholds a safe e-process at level 1/α, while τ denotes a
+                   generic stopping time.
+                   Power one and consistency. We call an e-process powerful if the corresponding test is powerful, and
+                   of course we desire a test that is consistent, meaning that its power goes to one with the sample size.
+                   Formally, a level α sequential test τ  has asymptotically power one against some family P ⊃ Q if
+                                                        α
+                                                               inf  P(τ <∞)=1.
+                                                                       α
+                                                             P∈P\Q
+                   (Henceforth, if we mention some alternative P, it is understood that we desire power against P\Q.)
+                       A Q-safe e-process (E ) is said to be consistent, or power one, if its associated sequential test κ
+                                              t                                                                              α
+                   from (3) is asymptotically power one at any level, meaning that
+                                                    for all α ∈ (0,1),   inf  P(κ <∞)=1,                                  (5a)
+                                                                                 α
+                                                                       P∈P\Q
+                    or equivalently,
+                                              limsupE =∞, P-almost surely, for every P ∈ P\Q.                             (5b)
+                                                       t
+                                               t→∞
+                   1.2    Convex hulls and de Finetti’s theorem
+                   Let the null set Q consist of all product distributions Ber(p)∞ for some p ∈ [0,1]. Note that Q is a rich
+                   composite class of parametric distributions, whose convex hull is Q, which is a result well known as de
+                   Finetti’s theorem [17].
+                       Any sequential test for Q is also valid for Q, a fact that we record below, proved in [22].
+                   Proposition 2. The properties of type-1 error control (1) and safety are closed under the convex hull,
+                   meaning that any Q-safe e-process is also Q-safe, and any level α sequential test for Q is also valid for Q.
+                       As a consequence, we may restrict our attention to developing a Q-safe e-process, and invoke the above
+                   fact to step from the i.i.d. setting to the exchangeable setting. This will be our approach in the rest of
+                   this paper. Another consequence is that testing the null Q against the alternative Q is futile; safe and
+                   consistent e-processes do not exist and neither do valid, power-one tests.
+                   Remark 3. To avoid confusion, we note that the convex combination of Q,Q0 ∈ Q must be carefully
+                                                              ∞        0            ∞                           0
+                   interpreted. For example, if Q = Ber(0.3)     and Q = Ber(0.7)      then a draw from (Q + Q )/2 produces
+                   either a sequence with 70% zeros or a sequence with with 70% ones, each with probability half, while it
+                   produces a sequence with equal number of zeros and ones with probability zero. Contrast this with the fact
+                                                              ∞
+                   that a draw from ((Ber(0.3) +Ber(0.7))/2)     is equally likely to produce a zero or a one at every point in
+                   time, and thus produces a sequence with equal zeros and ones with probability one. Thus, one must take
+                                                                          ∞                                             0
+                   care to diﬀerentiate between ((Ber(0.3) + Ber(0.7))/2) , which is not in the convex hull of Q and Q , and
+                   (Q+Q0)/2, which is. Later, we will see that the former lies in the closed fork-convex hull of Q and Q0.
+                                                                        4
+                                                                                i.i.d. Ber(p) 
+                                                        Exchangeable laws:                !
+                                                          convex hull of !      sequences                                                  k-th order 
+                                                                                                         First order 
+                                                                                                                   "                                "
+                                                                !             Constants #                 Markov      1                     Markov     k
+                                                                                                                                 …
+                                                                          All binary laws: closed fork   ˜
+                                                                               convex hull of !          !
+                           Figure 1: Various classes of distributions over inﬁnite binary sequences encountered in this paper. See
+                           Proposition 4 and Theorem 17 for the proof of the displayed set inclusions.
+                                It is impossible to have a powerful test for Q against its complement Qc, since the alternative is too
+                           rich and consists of too many distributions that are too close to Q, meaning that there are too many ways
+                           to violate exchangeability. For example, it should be apparent to the reader that if the ﬁrst coin has bias p
+                                                                                                                                                                               1
+                           and every other coin has bias p 6= p , then the resulting sequence is not exchangeable but we would never
+                                                                             1
+                           be able to reliably detect this deviation. This example relies on ensuring that the information required
+                           to detect a deviation from the null is exhausted early on in the sequence. To avoid such pathologies
+                           it is necessary to restrict the alternative class in some meaningful way. Markovian alternatives are an
+                           attractive choice, balancing the needs of relevant practical motivation, tractable mathematical structure,
+                           succinct probabilistic description, and intuitive aesthetic appeal.
+                           1.3       Time-homogeneous Markovian alternatives
+                          Wefocus on the setting of ﬁrst-order Markov alternatives P , and return to address higher-order (and
+                                                                                                                  1
+                           even more general) alternatives later. To describe P more formally, each P ∈ P represents a time-
+                                                                                                         1                                         1
+                           homogeneous ﬁrst-order Markov process with parameters p                                and p       . Here we abbreviate p              =1−p
+                                                                                                              1|0         1|1                                 0|0            1|0
+                           and p       =1−p . For arbitrary k ∈ N, we will also consider P , the set of k-th order Markov processes.
+                                   0|1            1|1                                                                 k
+                                Let C represent the distributions that result in constant sequences (X ), i.e., where X = X = ....
+                                                                                                                                      t                      1        2
+                           These include, of course, the distributions of deterministic sequences 0∞ and 1∞. The class C also includes
+                           their mixtures, which are distributions that ﬁrst set X ∼ Ber(p) for some p and then set X = X for all
+                                                                                                        1                                                    t       1
+                           t > 1. In other words, conditional on X , the remaining observations are i.i.d. X ∼ Ber(X ).
+                                                                                    1                                                          t             1
+                           Proposition 4. For any {0,1}-valued stochastic process (X ), the following two conditions are equivalent:
+                                                                                                                t
+                              (i) (X ) is k-th order Markov (with respect to its natural ﬁltration) for some k ∈ N and exchangeable.
+                                       t
+                             (ii) (X ) is either constant (as a function of time) or i.i.d.
+                                       t
+                          Said diﬀerently, Q∩P = Q∪C for any k ∈ N.
+                                                           k
+                                This relation and more are illustrated in Figure 1. The proof and some additional remarks can be
+                           found in Appendix B.
+                                                                                                     5
+                      1.4     Wald’s sequential likelihood (or probability) ratio test
+                      Let the likelihood under a particular Q ∈ Q, where Q = Ber(p)∞, be represented by
+                                                                                                 n0 n1
+                                                            Q ≡Q (X ,...,X ):=(1−p) p ,
+                                                              t      p   1         t
+                     where n = n (t) and n = n (t) represent the number of zeros and ones seen up to time t. The likelihood
+                               0     0          1      1
+                      associated to P ∈ P , say, for simplicity with P(X = 1) = 1/2, is given by
+                                            1                                  1
+                                                                                 t
+                                                                              1 Y                  1 n      n    n    n
+                                         P ≡P            (X ,...,X ) :=             p          = p 0|0p 1|0p 0|1p 1|1.
+                                           t     p  ,p      1        t               X |X
+                                                  1|0 1|1                     2        s  s−1      2 0|0    1|0  0|1  1|1
+                                                                                s=2
+                      Here n1|0 ≡ n1|0(t) denotes the total number of ones following zeros up to time t, etc. (We omit the
+                      dependence on t to ease notational load.)
+                          For a point null Q ∈ Q and point alternative P ∈ P1 with P 6= Q, Wald’s sequential likelihood (or
+                      probability) ratio test (SLRT or SPRT) [40] yields a power-one test. The likelihood ratio process, i.e.,
+                     (P /Q ), is a Q-martingale starting at one and thus a Q-safe e-process, and the resulting sequential test
+                        t   t
+                      inf{t ≥ 0 : P /Q ≥ 1/α} is a level α test under Q that is known — up to a discrete-time issue called
+                                     t   t
+                     “boundary overshoot” — to have the smallest expected stopping time under P [42].
+                          For composite nulls and alternatives, the SLRT cannot be directly applied. The mixture SLRT
+                      integrates over the alternatives using a “prior” distribution (or, more appropriately, mixture distribution,
+                      to avoid any Bayesian interpretations of our frequentist statements). However, this only works for
+                      composite alternatives, since mixing over the null set does not yield a safe e-process or the desired type-1
+                      error control property in (1). (We note here that, interestingly, the GROW e-variables of [10] are ratios
+                      of mixtures, though they are safe only for a ﬁxed sample size.) The generalized SLRT maximizes the
+                      likelihood under both null and alternative, but this also does not yield a martingale or a safe e-process. In
+                      both cases, it is diﬃcult to ﬁnd a threshold for the resulting process that achieves type-1 error control
+                      in (1), since the SLRT’s choice of 1/α does not suﬃce. For a discussion of techniques and results for this
+                      approach we refer to [16, 33].
+                      1.5     Nonnegative supermartingales (NSMs) and an impossibility result
+                      Despite the above apparent diﬃculties in generalizing the SLRT to yield an e-process, it has been recently
+                      established that nonnegative (super)martingales play a fundamental role in the design of admissible
+                      sequential tests (and the construction of admissible safe e-processes), even for composite nonparametric
+                      nulls [12, 22]. In anticipation of the results to follow, it is useful to set up some relevant notation. In what
+                      follows, a process (M )        will be called a Q-NM if it is a nonnegative martingale with initial value one,
+                                              t t≥0
+                      that is, (M ) is adapted to (F ), M = 1 and E [M |F ] = M ≥ 0 for any s ≤ t. Such processes are called
+                                  t                     t     0            Q   t   s       s
+                      test martingales by Shafer et al. [31]. If (M ) is a Q-NM simultaneously for every Q ∈ Q, then we will call
+                                                                       t
+                      it a Q-NM. If the equality above is replaced by an inequality ≤, then we will call it a Q-NSM or Q-NSM
+                     (nonnegative supermartingale).
+                          Anappropriate variant of the optional stopping theorem [7] implies that for any Q-NSM (Mt) and any
+                      stopping time τ (potentially inﬁnite), the stopped process has expectation at most one, or in other words
+                                                                       supsupE [M ] ≤ 1,
+                                                                                 Q    τ
+                                                                       Q∈Q τ
+                     where the second supremum is over all stopping times τ, potentially inﬁnite [22, Section 3]. Indeed,
+                      for any Q-NSM, M          := lim       M is a well deﬁned random variable, and sup                 E [M ] ≤ 1. The
+                                             ∞         t→∞ t                                                        Q∈Q Q      ∞
+                      correspondence with the deﬁnition of a safe e-process (recall (2)) is not coincidental — to construct a
+                      Q-safe e-process, it suﬃces to construct a Q-NSM. However, we claim the following.
+                      Proposition 5. Every Q-NSM is also a P -NSM (recall that Q and P contain all i.i.d. and ﬁrst-order
+                                                                        1                               1
+                     Markov distributions respectively). In fact, every Q-NSM is also a P -NSM for every k ∈ N, and is also a
+                                                                                                    k
+                      P-NSM for any set P. In other words, any Q-safe e-process with nontrivial power cannot be a Q-NSM,
+                     since the latter is powerless against any alternative P by virtue of being a P-NSM.
+                                                                                 6
+                      This proposition will follow from Theorem 17. This paper is as much about understanding the above
+                   negative result, as about providing a positive result. In other words, this result probes at the “gap”
+                   between a Q-safe e-process and a Q-NSM. The former is a much weaker property than the latter. While
+                   the latter suﬃces for the former, it is by no means necessary, as recently observed in a more abstract
+                   setup [22]. Indeed, a Q-NSM (N ) satisﬁes the much stronger “conditional” property that
+                                                   t
+                                           E [N |F ] ≤ N     for every Q ∈ Q and stopping time τ,
+                                            Q  τ   s     τ∧s
+                   which implies the earlier mentioned optional stopping result. In fact, the above property is satisﬁed if and
+                   only if (N ) is a Q-NSM, but the e-process property (2) can be satisﬁed even by processes that are upper
+                            t
+                   bounded by Q-NSMs for each Q ∈ Q, but are not themselves Q-NSMs. It is exactly this gap that we will
+                   exploit going forward.
+                      Weprovide a geometrical characterization of the above phenomenon: essentially, we will show that the
+                   above proposition is true because P lies within the “fork-convex hull” of Q, and we prove that this hull
+                                                      k
+                   preserves the NSM property of a process. In fact, Theorem 17 proves that the fork-convex hull of Q is
+                   all-encompassing, containing every law over binary sequences. Thus, a Q-NSM yields a powerless test
+                   against P since it is automatically and unintentionally safe under the alternative as well as under the
+                            k
+                   null. Along the way, we will encounter other friends from martingale theory, such as the Snell envelope,
+                   which previously has not played a prominent role in the mathematical treatment of sequential testing.
+                   1.6    Apowerful Q-safe e-process that is not a Q-NSM
+                   Ramdas et al. [22] show that any Q-safe e-process is dominated by a Q-safe e-process (E ) of the form
+                                                                                                           t
+                                                               E := inf MQ,
+                                                                 t    Q∈Q   t
+                   where (MQ) is a Q-NM. As mentioned before, each limiting variable MQ is well deﬁned and has expectation
+                            t                                                         ∞
+                   at most one, and thus, E∞ := limsupt→∞Et also has expectation at most one. The safety property
+                   immediately holds at inﬁnite times as well, meaning that sup    E [E ] ≤ 1 and sup      sup E [E ] ≤ 1,
+                                                                               Q∈Q Q ∞                 Q∈Q    τ  Q  τ
+                   where the second supremum is over all stopping times τ. To avoid too much suspense before we get into
+                   these subtle new concepts, we ﬁrst present our solution immediately, and delay its derivation to the next
+                   section. To this end, deﬁne
+                                                1           1          1          1 .         
+                                       Γ n    + Γ n + Γ n + Γ n +                             n n1 n n0
+                               R :=        0|0  2      0|1   2     1|0   2      1|1  2          1       0     ,        (6)
+                                t        2Γ 14Γ(n0|0 +n1|0 +1)Γ(n0|1 +n1|1 +1)                t       t
+                                              2
+                   where Γ denotes the usual gamma function.
+                   Theorem 6. The process (R ) is a Q-safe e-process, and thus thresholding it at level 1/α yields a level α
+                                                t
+                  sequential test κ  for exchangeability.
+                                   α
+                      The ﬁrst three subsections of Section 2 is devoted to the justiﬁcation of the above theorem (its proof
+                   is implicit in its derivation). Later, Theorem 7 proves that this test has power one for ﬁrst-order Markov
+                   alternatives, i.e., (5a) holds, and quantiﬁes the rate of growth. Above, (Rt) is not itself a Q-NSM, but
+                   is nevertheless upper bounded by a (diﬀerent!) Q-NM for every Q ∈ Q, resulting in it being a Q-safe
+                   e-process. This idea is enabled by bringing together the method of mixtures (using Jeﬀreys’ prior) for
+                   combining the composite alternative, with the maximum likelihood under the composite null. Beyond
+                   showing that it has power one, one can quantify that it has rate-optimal power by utilizing a regret bound
+                   from universal coding. The next section, among others, proves the above theorem, after which we turn
+                   to deﬁning fork-convexity. Then we provide some numerical simulations and conclude with a discussion
+                   about this paper’s approach compared to other possible approaches to the problem.
+                                                                      7
+                      1.7     Asummary of this paper’s contributions
+                     This paper proposes a nontrivial and powerful test for exchangeability, a fundamental and easy-to-state
+                      problem that exposes rich geometric and probabilistic structure. The most directly related work is that of
+                     Vovk [36], who proposed a very diﬀerent approach based on conformal prediction, discussed in Section 5.3.
+                          The problem of testing exchangeability also serves as a test-bed to carefully examine the gap between
+                      processes that are composite NSMs, and processes that are composite safe e-processes. The former is a
+                      special case of the latter and the latter is a necessary ingredient for the former [22], but the diﬀerence
+                      between these concepts has remained somewhat implicit in past work [12]. This work constitutes the ﬁrst
+                      detailed investigation of a problem where nontrivial NSMs do not exist (Proposition 5, Theorem 17) but
+                      powerful safe e-processes do exist (Theorem 6, Theorem 7).
+                          In the process, we prove many results that are of independent interest. For example, the NSM property
+                      is closed under “fork-convex combinations” of distributions (Lemma 12, Theorem 13). We prove that a
+                      composite safe e-process can be improved upon by a composite NSM only if the set of distributions is
+                      fork-convex, and this improvement is given by a composite Snell envelope (Theorem 14, Corollary 16).
+                          Section 4 examines the empirical behavior of our safe e-process in a simulation suite that includes
+                      both basic sanity checks and rather subtle and nontrivial alternatives. Finally, Section 5.4 suggests a way
+                      to interpret our e-process in the language of game-theoretic protocols of Shafer and Vovk [30].
+                      2     Jeﬀreys’ mixture meets maximum likelihood
+                     As brieﬂy mentioned earlier, if the null set was a singleton, say corresponding to Ber(p)∞, and the
+                      alternative was also a singleton, such as when (X ) deterministically alternates between 0 and 1, then
+                                                                                t
+                     Wald’s sequential likelihood ratio test [40] would immediately yield a solution to the problem at hand. To
+                      elaborate, let f denote the probability mass function of a Ber(p) random variable and let L                 denote the
+                                       p                                                                                       01
+                      likelihood function under the alternative:
+                                                                       (1     if (X ,X ,...) = (0,1,0,1,...);
+                                                L (X ,...,X ) :=                    1   2
+                                                  01    1        t       0    otherwise.
+                     Then, for any point null (indexed by p) deﬁne the following likelihood ratio:
+                                                                        (        1                       ∞                 bt/2c        dt/2e
+                             L (X ,...,X )                                 bt/2c     dt/2e with Ber(p) -probability p           (1 −p)       ;
+                      Rp :=    01    1        t ,    which equals         p     (1−p)
+                        t      Qt     f (X )                              0 with Ber(p)∞-probability 1−pbt/2c(1−p)dt/2e.
+                                  s=1 p     s
+                                                    p              ∞                            ∞
+                      It is easy to check that (R ) is a Ber(p)      -NM, and thus a Ber(p) -safe e-process, and κ from (3) yields
+                                                    t                                                                      α
+                      a valid level α sequential test that coincides with Wald’s original proposal [40]. The question is how to
+                      generalize this approach to deal with a composite null and a composite alternative in a computationally
+                      tractable and statistically powerful manner.
+                          The following observation deals the ﬁrst blow: the only process that is a nonnegative martingale under
+                      every i.i.d. Bernoulli sequence is one that is constant. In other words, the only Q-NM is such that M = 1
+                                                                                                                                         t
+                      for all t ∈ N . This obviously results in a powerless test. So we then turn our attention to constructing a
+                                   0
+                      Q-NSM, or a test supermartingale. Unfortunately this approach is dealt a fatal blow by Proposition 5. As
+                      alluded to in the introduction, we cannot employ mixtures in both numerator and denominator because
+                      it violates safety by lowering the denominator too much, and we cannot maximize the likelihood in the
+                      numerator and denominator because it violates safety by raising the numerator too much.
+                          Our proposal combines a suitably chosen mixture in the numerator with maximum likelihood in the
+                      denominator, thus avoiding both pitfalls.
+                      2.1     Dealing with the composite null via maximum likelihood
+                     To start, let us return to the point alternative described above (alternating 0 and 1), and just handle the
+                      composite null using maximum likelihood estimation, as proposed in universal inference [43]. To elaborate,
+                                                                                 8
+                       observe that                                           likelihood under the point alternative
+                                                    RML:= inf Rp =
+                                                       t       p∈[0,1]   t     maximum likelihood under the null
+                                                                                                              ∗ ∞                         ∗
+                       is a Q-safe e-value. Indeed, suppose the data truly comes from Ber(p )                       for an unknown p . Then, it is
+                                          ML        p∗                                            ∗ ∞
+                       obvious that R         ≤Rt , where the latter process is a Ber(p ) -NM. Thus, for any Q ∈ Q (corresponding
+                                          t
+                       to some p∗ ∈ [0,1]) and any stopping time τ, we have
+                                                                                               ∗
+                                                                          E [RML] ≤ E [Rp ] ≤ 1,
+                                                                            Q   τ         Q   τ
+                                                                                                                  ∗ ∞            p∗
+                       where the last step invokes the optional stopping theorem for the Ber(p ) -NM (Rt ).
+                            To see that the resulting test has good power, note that under the alternative, p = 1/2 uniquely
+                       achieves the above inﬁmum at any even time t ∈ 2N, in which case the denominator equals (1/2)t and the
+                       numerator equals one. Thus, RML = 2t at even times, and the test inf{t ≥ 0 : RML ≥ 1/α} is a valid level
+                                                              t                                                            t
+                       α sequential test that stops either at time dln(1/α)/ln(2)e or at time dln(1/α)/ln(2)e + 1.
+                            To recap, despite the fact that we cannot ﬁnd a Q-NM, (RML) is a powerful Q-safe e-process against
+                                                                                                      t
+                       the considered point alternative. This test takes the ratio of the likelihood under the alternative to the
+                       maximum likelihood under the null. Next, we detail how to handle the composite alternative P when
+                       testing a point null in Q.
+                       2.2      Dealing with the composite alternative using a Jeﬀreys’ mixture
+                       Astandard way of dealing with composite alternatives is to “mix” over them by choosing an appropriate
+                       mixture distribution. This is sometimes called the Laplace method, pseudo-maximization, or Robbins’
+                       method of mixtures [25, 23, 27, 24, 26]. It was ﬁrst utilized successfully primarily in parametric settings,
+                       but has recently re-emerged as a powerful tool for nonparametric inference [5, 13, 16, 44]. This mixture
+                       is sometimes called a “prior”, but it must be made clear that this is not a prior in the Bayesian sense —
+                       any other distribution also suﬃces to serve as a mixture in terms of maintaining safety, and no extra
+                       assumption is made on the true data when such a “working prior” is employed. The choice of mixture
+                       does not aﬀect safety, but it does aﬀect computability and power. In the following, we work with a very
+                       particular choice of mixture because it yields closed-form expressions, and it yields small constants in
+                       regret bounds from the universal coding literature (which has implications for power).
+                                                                                                                p
+                            Taking independent Jeﬀreys’ priors (with densities w(θ) := 1/(π                        θ(1−θ))) for p          and p     , we
+                       obtain the mixture likelihood                                                                                  1|0         1|1
+                                           P      (X ,...,X ) := Z P                  (X ,...,X )w(p          )w(p     )d(p    , p   )
+                                             w×w     1          t             p   ,p      1         t      1|0      1|1     1|0   1|1
+                                                                               1|0 1|1
+                                                                                    1              1             1              1
+                                                                        Γ n      + Γ n + Γ n + Γ n +
+                                                                   =         0|0    2        0|1    2       1|0    2        1|1    2 .
+                                                                            2Γ 14Γ(n0|0 +n1|0 +1)Γ(n0|1 +n1|1 +1)
+                                                                                 2
+                       Here we have taken the mixture over all ﬁrst-order Markov distributions P                             , under which {X = 1}
+                                                                                                                    p   ,p                         1
+                       has probability 1/2.                                                                          1|0  1|1
+                            Thus, for any point null represented by Ber(p)∞, we can deﬁne the mixture likelihood ratio
+                                                         P      (X ,...,X )          Jeﬀreys’ mixture over the alternative
+                                              RJP,p := w×w          1         t  =                                                  .                  (7)
+                                                t            Qt     f (X )               likelihood under the point null
+                                                                s=1 p     s
+                                                                                                                  JP,p                ∞
+                       Using Fubini’s theorem to swap integrals, it is easy to check that Rt                            is a Ber(p) -NM, and the
+                       corresponding sequential test is Wald’s usual mixture SLRT [41]. Note that it is the very particular form
+                       of this mixture that yields a closed form expression and thus a computationally feasible test. However, we
+                       do not use this mixture just for computational reasons; as we detail soon, combining it with the earlier
+                       maximum likelihood idea also yields a statistically near-optimal power.
+                                                                                        9
+                     2.3    Combining Jeﬀreys’ mixture with maximum likelihood
+                     Using, as in the previous example, that the likelihood under the null is maximised at p = n /t, where it
+                                                                                                                          1
+                     evaluates to (n /t)n1 (n /t)n0, we ﬁnd that
+                                     1         0
+                                                      R := Jeﬀreys’ mixture over the alternative
+                                                        t     maximum likelihood under the null
+                     reduces to the expression in (6). This is a Q-safe e-value by combining the arguments used for the safety
+                     of (RJP,p) and (RML): swapping the maximum likelihood with the (unknown) true likelihood, and then
+                          t             t
+                     employing Fubini’s theorem.
+                        Weremark that any prior above would have yielded a Q-safe e-value, and in fact any Beta prior would
+                     have yielded one in closed form, but the Jeﬀreys’ mixture above allows us to invoke an appropriate optimal
+                     regret bound from the universal coding literature [20] to Markov sources (see [34] for a discussion of the
+                     resulting optimality):
+                                                                                   
+                                          n               n                n                n
+                                 n         1|0    n         0|0    n        1|1     n        0|1
+                           1       1|0             0|0              1|1              0|1
+                           2   n +n             n +n            n +n             n +n                 1               1
+                                1|0  0|0         1|0  0|0         1|1  0|1        1|1   0|1         −2ln(n1|0+n0|0)−2 ln(n1|1+n0|1)−O(1)
+                     Rt ≥                              n n1  n n0                             ×e
+                                                        1       0
+                                                        t       t
+                        = maximum likelihood of Markov model ×e−lnt−O(1).                                                           (8)
+                           maximum likelihood of Bernoulli model
+                    That is, (Rt) starts gathering evidence against the null if the maximum likelihood for the ﬁrst-order
+                     Markov chain outperforms the maximum likelihood for the Bernoulli model by a factor of order t. Note
+                     that this is a small hurdle to overcome, as the ﬁrst term is growing exponentially fast in t when the data
+                     are explained better by a Markov model, as argued next.
+                     2.4    Apathwise theorem on the power of (R )
+                                                                                       t
+                    Although our main focus is on ﬁrst-order Markov alternatives, (R ) actually has power under much more
+                                                                                            t
+                     general alternatives. Consider any binary sequence for which the following limits exist:
+                                                        α:= lim n1|1,         β := lim n0|0,                                       (9a)
+                                                              t→∞ t                 t→∞ t
+                                           γ := lim n1|0 = lim n0|1,          p := lim n1 = lim n1|1 +n0|1.                        (9b)
+                                                t→∞ t         t→∞ t                t→∞ t       t→∞        t
+                    The theorem that follows is a “pathwise” result, holding for any sequence where the above limits exist
+                     and satisfy an additional weak condition, described later. These limits exist, for example, under any k-th
+                     order Markov alternative (but may be random unless suitable irreducibility properties hold). Note that
+                     the equality of the two expressions for γ follows from the fact that n1|0 and n0|1 can diﬀer by at most one.
+                     Similarly, n1 diﬀers from n1|1 + n0|1 by at most one, which explains why the two expressions for p are
+                     equal. Moreover, note that one has the relations
+                                                                                            p
+                                                       p = α+γ = 1−β−γ =                     1|0    ,
+                                                                                         p   +p
+                                                                                          1|0    0|1
+                    where we deﬁne
+                                                p   := α,     p   := γ,    p    :=    γ , p := β .
+                                                 1|1    p      0|1    p      1|0    1−p        0|0    1−p
+                     Here we use the convention 0/0 := 1. In the ﬁrst-order Markov case these parameters are simply the
+                     transition probabilities.
+                        Within the class of ﬁrst-order Markov chains, the special case of i.i.d. Bernoulli data is characterized
+                     by the restriction p    =p (andhence p           =p ), or equivalently
+                                          1|1    1|0               0|1    0|0
+                                                                      α(1−p)=γp                                                    (10)
+                                                                             10
+                  (and hence γ(1−p) = βp). For more general models, such as higher-order Markov chains, the restriction
+                   α(1−p)=γpnolonger characterizes the i.i.d. Bernoulli case. This is illustrated in Example 9, where it
+                   is also shown that (Rt) can be powerless against such alternatives (that is, under higher-order Markov
+                   alternatives that appear to be Bernoulli when summarized by only ﬁrst order transition parameters).
+                   Nonetheless, as explained in Remark 8 below, in the suitably ergodic non-Bernoulli k-th order Markov
+                   case one still has α(1 − p) 6= γp generically, and therefore achieves power against such alternatives thanks
+                   to the following theorem.
+                   Theorem 7. For any data sequence, if the limits α,β,γ,p in (9) exist, then lim       lnR /t = r∗, where
+                                                                                                t→∞      t     
+                          r∗ := p  ln 1 −p    ln 1 −p ln 1          +(1−p) ln 1 −p ln 1 −p ln 1
+                                      p    0|1   p       1|1  p                   1−p      0|0   p       1|0  p
+                                                  1|0          1|1                                0|0          0|1
+                             =γln γ +βln β +αlnα+γlnγ −plnp−(1−p)ln(1−p).                                              (11)
+                                    1−p         1−p          p        p
+                   Note that the second expression is a diﬀerence in entropies between ﬁrst-order Markovian and Bernoulli
+                   sources with the corresponding parameters. Furthermore, if α(1−p) 6= γp we have r∗ > 0, that is, (R )
+                                                                                                                          t
+                   increases to inﬁnity exponentially fast. In fact, r∗ = 0 if and only if α(1 − p) = γp. Finally, whenever the
+                   exchangeability null is true, lim   R =0almost surely, in addition to (R ) being Q-safe.
+                                                  t→∞ t                                       t
+                      Note that whenever the null is true, we necessarily have r∗ = 0. However, r∗ = 0 does not by itself
+                   characterize power or consistency; it only characterizes when (R ) grows exponentially. It is possible
+                                                                                     t
+                   to construct certain “borderline” examples where r∗ = 0, but (Rt) still increases to inﬁnity (our test is
+                   powerful and consistent), albeit at a subexponential rate. We describe and explore such an example in the
+                   numerical simulations in Section 4.3.
+                      In the case of a non-Bernoulli ﬁrst-order Markov alternative, the condition of the theorem is satisﬁed
+                   for almost every realization of the data (that is, with probability one), provided the chain does not have
+                   any absorbing states. Indeed, with no absorbing states the Markov chain is recurrent and hence the
+                   ergodic theorem applies. This condition is necessary for a power one test, because if (say) 1 is an absorbing
+                   state then there is positive probability of seeing only ones (unless, of course, the Markov chain starts at 0
+                   with probability one). This is indistinguishable from a realization of an i.i.d. Ber(1) sequence.
+                   Remark 8. Any k-th order Markov chain is characterized by its transition probabilities p   ∈[0,1] where
+                                                                                                           1|s
+                   s ranges over all preﬁxes of length k. Note that this determines p     =1−p ,which we thus do not
+                                                                                      0|s        1|s
+                   count as separate parameters. The quantities α,β,γ,p deﬁned previously, when they are deterministic,
+                   are real analytic functions of the transition probabilities. This implies that the condition α(1 − p) 6= γp
+                   of Theorem 7 holds “generically” (in the topological sense, i.e., for an open dense set of parameters).
+                   Indeed, a real analytic function is either identically zero, or nonzero on an open dense set, and we know
+                   that α(1−p) = γp does not hold identically (i.e., for all choices of parameters p  ). This conﬁrms that
+                   α(1−p)6=γp must hold generically.                                               1|s
+                   Proof of Theorem 7. Let `(t) denote the logarithm of the ratio between the maximum likelihood for the
+                   ﬁrst-order Markov model and the maximum likelihood for the Bernoulli model. We then have
+                                      `(t)   n         n          n         n          n         n
+                                          = 1|0 ln       1|0   + 0|0 ln       0|0   + 1|1 ln       1|1
+                                       t      t     n1|0 +n0|0     t     n1|0 +n0|0     t     n1|1 +n0|1
+                                               n0|1      n0|1       n    n     n     n
+                                            +      ln            − 1ln 1 − 0 ln 0.
+                                                t     n1|1 +n0|1     t    t     t     t
+                   Sending t → ∞ the right-hand side converges to
+                                     γln    γ   +βln β +αlnα+γlnγ −plnp−(1−p)ln(1−p),
+                                          1−p         1−p          p        p
+                   which is precisely (11). Since `(t) − lnt + O(1) ≤ lnR ≤ `(t) by (8) we deduce that t−1lnR converges
+                                                                         t                                      t
+                   to r∗ as claimed. Re-arranging (11) we get
+                          ∗     1 γ 1−p α p                               1        β     1−p        γ     p
+                        r =p lnp − p ln γ         − p ln α    +(1−p) ln1−p−1−pln β −1−plnγ .                           (12)
+                                                                      11
+                       If α(1 −p) = γp then one easily veriﬁes that r∗ = 0. Next, suppose α(1−p) 6= γp. Since α+γ = p,
+                   we may bound the ﬁrst parenthesized expression in (12) using Jensen’s inequality,
+                                          ln 1 − γ ln 1 − p − α ln p > ln 1 −lnγ 1−p + α p = 0,
+                                            p    p      γ      p   α       p        p   γ      p α
+                   where the inequality is strict because (1 − p)/γ 6= p/α. By the same token, the second parenthesized
+                   expression in (12) is strictly positive as well. In particular, r∗ > 0. Finally, if the exchangeability null is
+                   true, (Rt) converges to zero almost surely because it is dominated by the likelihood ratio corresponding to
+                   two singular distributions on the sequence space.
+                   Example 9. Here we construct a non-exchangeable 2nd-order Markov chain (X ) where the above test
+                                                                                                        t
+                   does not have power one, i.e., (R ) does not converge to inﬁnity, but instead to zero. This chain satisﬁes
+                                                      t
+                   p = 1/2 and α = γ, hence does not yield a counterexample to Theorem 7 but illustrates the importance of
+                   the condition α(1 − p) 6= γp. To this end, set p       =p        =1and p         =p        =0. To visualize
+                                                                    1|(0,0)  1|(0,1)          1|(1,0)   1|(1,1)
+                   this 2nd-order Markov chain, note that it alternates between two consecutive zeros and two consecutive
+                   ones. For large t we then have n     ≈n ≈n ≈n ≈t/4whichyields for large t the bound
+                                                     0|0    0|1     1|0    1|1
+                                                                         4          4
+                                                          R ≤Γ(t+1) =            (t!)   .
+                                                            4t     Γ(2t)2     (2t −1)!2
+                   By Stirling’s approximation of factorials, Rt tends to zero as t tends to inﬁnity.
+                       The above example motivates the following extension, which we only address brieﬂy as a proof-of-
+                   concept since the details are conceptually straightforward but tedious.
+                   2.5     Extension to higher-order Markovian alternatives and context trees
+                   The aforementioned discussion derived a safe e-process and sequential test for exchangeability of a binary
+                   sequence, in particular targeting ﬁrst-order Markovian alternatives. Neither the binary observations nor
+                   the ﬁrst-order alternatives were particularly critical; these were adopted for clarity of exposition and
+                   simplicity of formulae.
+                       Extensions to Markov sources of order k > 1 or alphabet sizes d > 2 are immediate. We may treat
+                                                           k
+                   each k-th order context x ∈ {1,...,d} as an independent d-ary prediction problem, and by mixing with
+                   independent Jeﬀreys’ (which are Dirichlet(1/2,...,1/2)) priors (or equivalently, composing independent
+                   Krichevsky-Troﬁmov estimators), we obtain a computationally attractive e-process with regret bounded
+                         k                                                                             k,d
+                   by (d (d − 1)/2)lnt + O(1). In other words, we get a closed-form e-process Rt          —whose details are
+                   tedious, despite being explicit, and thus omitted — such that
+                                                                                            k                      
+                            Rk,d ≥ maximum likelihood of order k Markov model ·exp −d (d−1) lnt−O(1) .
+                              t          maximum likelihood of Bernoulli model                     2
+                   The (near)-optimality of this approach is discussed by Takeuchi et al. [34]. The e-process (Rt) from (6)
+                   can be interpreted as (R1,2).
+                                             t
+                       Further computationally attractive extensions include alternatives that consist of Markov sources of
+                   varying orders k = 1,2,... (see the discussion on the mixture method for unions below). The even more
+                   general Context Tree models have the length of the context that should be taken into account depend on
+                   that very context [46].
+                       Asimilar calculation to the k = 1,d = 2 case done previously shows that Rk,d → ∞, P–almost surely
+                                                                                                     t
+                   for any alternative P ∈ P \Q, where P is the set of Markovian distributions with order at most k. These
+                                             k             k
+                   developments lead naturally to the following subsection.
+                                                                        12
+                      2.6     Double-mixtures for a countable sequence of alternatives
+                      Let P ,P ,P ... be a countable sequence of alternatives, that may or may not be nested. Suppose for
+                            1   2    3
+                      every k ∈ N one can design a safe e-process (Ek) for testing Q against P such that it has power one,
+                                                                             t                              k
+                      meaning that for any P ∈ P \Q, we have
+                                                      k
+                                                               limsupEk =∞, P–almost surely.
+                                                                t→∞      t
+                     Then, one can design a safe e-process for Q against S               P such that for any P ∈ S           Pk\Q, we have
+                                                                                    k∈N k                               k∈N
+                                                               limsupE =∞, P–almost surely.
+                                                                         t
+                                                                t→∞
+                     The proof of the above claim is simple. We can, for example, deﬁne the “double mixture”
+                                                                               ∞
+                                                                       Et := X 6 Ek,
+                                                                                   π2k2 t
+                                                                              k=1
+                     which is a countable mixture over the base e-processes (that might have been already mixed using
+                      Jeﬀreys’ prior). It is straightforward to check that (Et) is a safe e-process under Q, by invoking monotone
+                      convergence and linearity of expectation. To analyze its power, once an alternative P has been picked, let
+                      P ∗ be the ﬁrst element of the nested sequence that contains P. Since limsup                     Ek∗ = ∞, P–almost
+                       k                                          ∗                                               t→∞ t
+                      surely, the same property holds for (Ek /k∗2), and thus transfers to (Et) since e-processes are nonnegative.
+                                                                 t
+                     The computational challenge of calculating (Et) remains, but this can be reduced by instead calculating
+                      the Q-safe e-process                                      t
+                                                                        e     X 6 k
+                                                                       Et :=             E .
+                                                                                   π2k2 t
+                                                                              k=1
+                                               ∗   e                                               k∗
+                     At the (ﬁnite) time k , Et begins to include to required term E                  , and thus inherits its property of
+                                                                                                   t P            P
+                      approaching inﬁnity almost surely (consistency). Replacing the sum                t    by      f(t) for any increasing
+                                                                                                        k=1          k=1
+                      function f that grows to inﬁnity, possibly with sublinear growth (such as ln(·)), can further save computation
+                     without losing the consistency property.
+                      2.7     Handling generic alternatives via non-anticipating likelihoods and betting
+                      If the alternative to exchangeability is not clearly speciﬁed, then a diﬀerent approach to the one above
+                      may be more suitable, as inspired by the recent work on universal inference by Wasserman et al. [43]. It
+                      involves a non-anticipating likelihood in the numerator, combined with an MLE in the denominator:
+                                                RNA := non-anticipating likelihood under the alternative.
+                                                  t               maximum likelihood under the null
+                      Here, the numerator is simply given by
+                                                                             t
+                                                                            Yg(X),
+                                                                                 s   s
+                                                                            s=1
+                     where gs is any “non-anticipating” probability mass function, meaning that it is speciﬁed before seeing
+                      X , but can be learnt using the ﬁrst s − 1 data points; in other words, (g ) is predictable with respect to
+                        s                                                                                 t
+                     (F ). One example would be to choose g as the (smoothed) maximum likelihood estimator under the
+                        t                                            s
+                      alternative using the ﬁrst s − 1 samples, but other approaches inspired by machine learning or time series
+                      modeling may also be employed. Note that any Bayesian mixture (including ours with Jeﬀreys’ prior) is
+                      of this non-anticipating form, with g being the associated predictive distribution.
+                                                                s
+                          It is easy to prove that (RNA) is a Q-safe e-process: each term can be veriﬁed to have conditional mean
+                                                       t
+                      at most one by swapping the denominator for the (unknown) true null likelihood. The major strength
+                      of the above approach is that arbitrarily ﬂexible nonparametric or model-free update rules can be used
+                                                                                 13
+                   without sacriﬁcing validity, thus opening up the potential for power against loosely speciﬁed alternatives
+                   or even the discovery of temporal patterns from the observed data. For example, one may employ a
+                   complex Bayesian working model that outputs the posterior predictive probability of observing a zero
+                   or one at the next step, and this would not violate any of our theoretical guarantees regardless of the
+                   choice of priors or working model. Despite such a strong validity guarantee, the current drawback of this
+                   approach is that for generic update rules, there may not be an existing regret bound that we may use to
+                   convince ourselves of its power. (Of course, such regret bounds would be available for speciﬁc update
+                   rules and speciﬁc alternatives, and the online learning literature is rapidly expanding the scope and types
+                   of available regret bounds for individual sequence prediction.)
+                      As a ﬁnal remark, this non-anticipating likelihood is closely related to the “predictable-mixture”
+                   approach recently explored by [44], and has its roots in Wald [41, Eq. 10:10]. In this vein, it is also closely
+                   related to testing hypotheses by betting, as popularized by Shafer and Vovk [28, 30]; speciﬁcally (gt) can
+                   be viewed as a sequence of bets on the following outcome.
+                   3    Fork-convexity and Q-Snell envelopes
+                   Forgetting for a moment some of the earlier claims made without proof, one of the main questions we seek
+                   to answer in this section is:
+                         Whenis a Q-safe e-value simply a Q-NM or Q-NSM in disguise? In other words, is any Q-safe
+                         e-value always improved (or recovered) by some Q-NM or Q-NSM?
+                   Such a question was also asked in the latest preprint on safe testing by Grünwald et al. [10]. The necessity
+                   and suﬃciency results of Ramdas et al. [22] imply that the answer in the singleton Q = {Q} case is: always
+                   (via the Doob decomposition of the Snell envelope). The answer in the composite setting is: sometimes.
+                   Wenowqualify the ‘sometimes’ by delving into the rich probabilistic structure underlying safe e-values,
+                   examining its relationship to convex null sets, a concept called ‘fork-convexity’, and a process that we call
+                   a ‘composite’ Snell envelope, known from the mathematical theory of risk measures [6].
+                      Most of this section does not depend on our observations being binary, and we allow the data (X ) to
+                                                                                                                        t
+                   take values in a more general space X. Some of the technical notions required below, such as local absolute
+                   continuity, likelihood ratio (or density) processes, and essential suprema, are reviewed in Appendix A.
+                   3.1    Asequential analog of convexity
+                   Weﬁrst review the concept of fork-convexity, which can be viewed as a sequential version of convexity.
+                   Deﬁnition 10. Fix a reference measure R on the sequence space XN.
+                      1. A fork-convex combination of two locally dominated laws Q,Q0 with likelihood ratio processes (Z ),(Z0)
+                                                                                                                      t    t
+                         is another law Q00 with likelihood ratio process
+                                                               
+                                                               
+                                                        Z00 :=   Zt,              Z0   t ≤ s                            (13)
+                                                          t                       t
+                                                                 hZ +(1−h)Z         ,  t > s
+                                                                    t           sZ0
+                                                                                   s
+                         for some s ∈ N0 and some Fs-measurable random variable h in [0,1] with h = 1 on {Z0 = 0}. The
+                                                                                                                s
+                         latter condition ensures that (Z00) is well-deﬁned and an R-martingale, as required for a likelihood
+                                                         t
+                         ratio process.
+                      2. A set Q of probability measures is called fork-convex if every fork-convex combination of elements
+                        of Q still belongs to Q.
+                      Fork-convexity was ﬁrst introduced by Žitković [39]. It is closely related to a concept in the literature on
+                   risk measures called m-stability, due to Delbaen [6]. A similar notion called rectangularity was introduced
+                   by Epstein and Schneider [8] to describe intertemporal preferences with multiple priors. Rectangularity
+                                                                      14
+                   has then been used extensively in the operations research literature in connection with robust Markov
+                   decision processes; see e.g. [14, 45, 32].
+                      Note that fork-convexity implies convexity. To see this, observe that any (usual) convex combination
+                               0                                                                          00                0
+                   aQ+(1−a)Q isalsoafork-convexcombination; just take s = 0 and h = a in (13) to get Z = aZ +(1−a)Z ,
+                                                                                                          t      t          t
+                   which is the likelihood ratio process of Q00 := aQ + (1 − a)Q0.
+                      Aset {Q} that consists of a single law is clearly fork-convex. A set {Q1,Q2} consisting of two distinct
+                   laws will not be fork-convex; it is not even convex. However, one can form its “fork-convex hull”. Here is
+                   the general deﬁnition.
+                   Deﬁnition 11 (The fork-convex hull and its closure).
+                      1. The intersection of all fork-convex sets that contain a given set Q0 is called the fork-convex hull of
+                         Q0. (Note that there is at least one fork-convex set containing Q0, namely the set of all laws.)
+                      2. The closed fork-convex hull of Q is the closure of the fork-convex hull of Q with respect to L1(R)
+                         convergence of the likelihood ratio processes at each ﬁxed time t ∈ N, where we recall R is the assumed
+                         reference measure.
+                      Just as for usual convex hulls, the fork-convex hull of Q0 consists of all ﬁnite fork-convex combinations
+                   of elements in Q0. Here a ﬁnite fork-convex combination of some distributions Q1,...,Qn ∈ Q0 is a
+                   distribution obtained by iteratively performing (13) a ﬁnite number of times on Q1,...,Qn, on their
+                   fork-convex combinations, on their fork-convex combinations, and so on. Closed fork-convex hulls play an
+                   important role in Theorem 13 below.
+                      To provide some intuition for the deﬁnitions as applied to the null Q considered in this paper, one
+                   can imagine a more “algorithmic” process of producing distributions in the closed fork-convex hull. First
+                   pick any p ∈ [0,1] and observe X ∼ Ber(p ). Then, after observing X , pick any p , and observe
+                              1                         1         1                             1             2
+                   X ∼Ber(p ). Continue this process indeﬁnitely. Then, the sequence (p ) is (F )-predictable and the
+                     2         2                                                               t      t
+                   resulting binary sequence has a law that is contained in the closed fork-convex hull of Q.    µ
+                      It may be instructive to consider another simple example. For a ﬁxed µ ∈ [0,1], deﬁne Q as the set
+                   of product distributions Q over inﬁnite [0,1]-valued sequences (X ) such that E [X |F      ] = E [X ] = µ,
+                               eµ                                                     t             Q   t  t−1     Q   t
+                   and deﬁne Q as the set of distributions Q (not necessarily of product form) over inﬁnite [0,1]-valued
+                                                                        µ                                       e
+                   sequences (X ) such that E [X |F      ] = µ. Then Q is not fork-convex if µ ∈ (0,1) but Q is, and the
+                                 t             Q   t  t−1
+                   latter is the closed fork-convex hull of the former. The problem of sequentially estimating µ in this setup
+                   has been recently studied by Waudby-Smith and Ramdas [44].
+                   3.2    No power against fork-convex hulls
+                   Consider a null set Q locally dominated by a reference measure R. We now establish the interesting fact
+                   that e-processes based on Q-NSMs are powerless against any alternative in the closed fork-convex hull of
+                   Q. We state this formally in Theorem 13 below, but the underlying reason is contained in the following
+                   lemma.
+                   Lemma 12. If (Lt) is a supermartingale under two laws Q,Q0, then (Lt) is also a supermartingale under
+                   every fork-convex combination Q00 of Q and Q0.
+                   Proof. Note that Q,Q0 are dominated by R := (Q + Q0)/2. Fix any s ∈ N0 and Fs-measurable random
+                   variable h in [0,1], and let Q00 be the fork-convex combination of Q,Q0 given in (13). In compliance with
+                   the deﬁnition, we restrict h to satisfy h = 1 on {Z0 = 0}. Suppose (L ) is a supermartingale under Q and
+                                                                      s                  t
+                   Q0. Equivalently, (Z L ) and (Z0L ) are supermartingales under R. Thus for t ∈ {1,...,s} we have
+                                       t t         t t
+                                          E [Z00L | F    ] = E [Z L | F    ] ≤ Z    L    =Z00 L      .
+                                           R  t  t    t−1     R  t  t   t−1      t−1 t−1     t−1 t−1
+                   For t ≥ s +1 we have                                                       
+                                                                                     Z0   
+                                 E [Z00L | F    ] = hE [Z L | F     ] + (1 − h)Z E     t L F     ≤Z00 L      .
+                                  R  t  t    t−1      R   t t   t−1             s R  Z0 t t−1        t−1 t−1
+                                                                                       s
+                   Thus (Z00L ) is an R-supermartingale, or equivalently, (L ) is a Q00-supermartingale.
+                           t  t                                              t
+                                                                       15
+                                The following theorem refers to the closed fork-convex hull of Q. Recall that this is the closure of the
+                                                                                                      1
+                           fork-convex hull of Q, understood in the sense of L (R) convergence of the likelihood ratio processes at
+                           each ﬁxed time t ∈ N.
+                                                        e                                                                                                     e
+                           Theorem 13. Let Q be the closed fork-convex hull of Q. Then every Q-NSM is in fact a Q-NSM. Thus
+                                                                                               e
+                           a test based on a Q-NSM is powerless against Q\Q.
+                           Proof. The fork-convex hull of Q consists of all ﬁnite fork-convex combinations of elements of Q. Therefore,
+                           thanks to Lemma 12, every Q-NSM remains an NSM under every law Q in the fork-convex hull of Q. To
+                                                                                                     e                                             n
+                           extend this to the closure, pick any element Q ∈ Q. Then there is a sequence (Q ) in the fork-convex
+                           hull of Q such that Qn → Q. This means that Zn → Zt in L1(R) for all t ∈ N, where (Zn) and (Zt) are
+                                                                                                 t                                                         t
+                           the likelihood ratio processes of Qn and Q, respectively. By passing to a subsequence, we may assume
+                           that Zn → Zt, R-almost surely, for all t ∈ N. Let (Lt) be any Q-NSM and hence a Qn-NSM for all n.
+                                     t
+                           Equivalently, (ZnLt) is an R-NSM for all n. By the R-supermartingale property and the conditional version
+                                                  t
+                           of Fatou’s lemma, we get
+                                                              h                        i
+                                E [Z L | F           ] = E       lim ZnL F               ≤liminfE [ZnL | F                  ] ≤ liminf Zn L               =Z L .
+                                  R    t  t     t−1         R   n→∞ t t t−1                   n→∞ R t t                t−1        n→∞ t−1 t−1                  t−1 t−1
+                                                                                                              e
+                           This completes the proof that every Q-NSM is in fact a Q-NSM.
+                                The ﬁrst part of the above theorem asserts that the NSM property is preserved under taking closed
+                           fork-convex hulls, but note that this is not true for safe e-values in general. Indeed, (Et) being Q-safe
+                                                                                                      e
+                           implies that it is conv(Q)-safe, but not necessarily Q-safe.
+                           3.3       Composite Snell envelopes
+                           For a single law Q ∈ Q and an e-process (Et), the Q-Snell envelope is the smallest Q-NSM that dominates
+                           (Et). It is natural to ask whether, in contrast to this pointwise construction, one can directly construct a
+                           “composite Q-Snell envelope”, i.e., a smallest Q-NSM that dominates (Et).
+                                It turns out that the ability to deﬁne such a Q-Snell envelope of an e-process depends heavily on the
+                           property of fork-convexity. The following result states that if the null set Q is locally dominated and
+                           fork-convex, then a Q-Snell envelope of a given e-process (E ) exists, is safe, and improves upon (E ).
+                                                                                                                  t                                                        t
+                           Theorem 14. Let Q be locally dominated and fork-convex. Let (E ) be a Q-safe e-process. Then the
+                                                                                                                               t
+                           process
+                                                                             L := esssup E [E | F ],                  t ∈ N ,
+                                                                               t                   Q    τ      t             0
+                                                                                      Q∈Q,τ≥t
+                           where τ ranges over all ﬁnite stopping times, is the smallest Q-NSM that dominates (E ) and satisﬁes
+                                                                                                                                                            t
+                           L ≤1. Hence, (L ) is the Q-Snell envelope of (E ). In particular, by the optional stopping theorem, (L )
+                             0                        t                                            t                                                                            t
+                           is a Q-safe e-process.
+                                In this theorem, Lt is deﬁned as the essential supremum of the family of random variables EQ[Eτ | Ft]
+                           indexed by τ and Q. This means that Lt is the smallest random variable that almost surely dominates
+                           this family. The details of this deﬁnition are reviewed in Appendix A, along with some key properties. In
+                           particular, the proof of the theorem in Appendix B will make use of Proposition 20.
+                           Remark 15. We caution the reader that ‘essential supremum’ is used outside of this work with a diﬀerent
+                           meaning: the essential supremum of a (single) random variable X is deﬁned as the smallest constant c
+                           such that X ≤ c almost surely. This notion is diﬀerent from the one used here, and does not arise in this
+                           paper.
+                                The process (L ) above is what we call the Q-Snell envelope. Note that the Q-Snell envelope of (L ) is
+                                                     t                                                                                                                      t
+                           almost surely equal to (Lt) itself. In short, the above theorem claims that if Q is fork-convex, then the
+                           Q-Snell envelope of any Q-safe e-process exists and is safe.
+                                To construct a powerful and valid test that dominates a safe e-process (Et), one might be inherently
+                           interested in the largest Q-NSM (L ) that dominates (E ) and satisﬁes L ≤ 1. However, we are not aware
+                                                                             t                             t                      0
+                                                                                                     16
+                    of a systematic way to obtain such a process. Nevertheless, even the smallest Q-NSM that dominates
+                   (Et), namely the Q-Snell envelope, still tends to improve its power.
+                       For a given Q, can there be more than one process that is considered a Q-Snell envelope (of some
+                    other process), and amongst these, is there a largest one? In general, the answer is yes for the ﬁrst
+                    question and (typically) no for the second. Every Q-NSM is its own Snell envelope and there always
+                    exist uncountably many Q-NSMs, namely the constant and nonnegative decreasing processes starting
+                    at one. In particular, the constant process is also a Q-NM albeit a powerless one. In fact, there may be
+                    uncountably many Q-NSMs, with none of these processes dominating the others, and at the same time
+                    there may not exist any non-constant Q-NMs (that don’t use independent external randomization, which
+                    involves expanding the ﬁltration). For this paper’s choice of Q, we later show that every Q-NSM is almost
+                    surely nonincreasing, and hence the constant process equaling one dominates all Q-NSMs, and indeed the
+                    only Q-NM almost surely equals one.
+                       Taken together, Theorems 13 and 14 lead to the following corollary, which tells us that in certain
+                    situations one has to move beyond composite NSMs to achieve powerful tests. We continue to let Q be
+                                                         e
+                    any locally dominated null set and Q its closed fork-convex hull.
+                    Corollary 16. Let (Et) be a Q-safe e-process. Then (Et) is dominated by (or equals) some Q-NSM (Lt)
+                                                                            e                                         e
+                   with L0 ≤ 1 if and only if (Et) already happens to be Q-safe (and therefore powerless against Q \ Q).
+                    Proof. To prove the forward implication, assume (Et) is dominated by some Q-NSM (Lt) with L0 ≤ 1.
+                                                         e                                 e
+                    By Theorem 13, (Lt) is in fact a Q-NSM. It follows that (Et) is Q-safe as claimed, because we have
+                                                              e
+                    E [E ] ≤ E [L ] ≤ L ≤ 1 for every P ∈ Q and each ﬁnite stopping time τ.
+                     P  τ      P  τ      0
+                                                                                         e
+                       To prove the reverse implication, assume that (E ) is actually Q-safe. An application of Theorem 14
+                                                                           t
+                                          e                e
+                   (with Q replaced by Q) then gives a Q-NSM (Lt) with L0 ≤ 1 that dominates (Et). This completes the
+                    proof of the corollary.
+                       The above result suggests that we must look beyond NSMs for designing sequential tests for exchange-
+                    ability, and we next show that this fact holds regardless of the class of alternatives considered.
+                    3.4    The inadequacy of NSMs for testing exchangeability
+                   Wenowreturn to the main focus of this paper, which is binary sequences; thus X = {0,1}. In this case,
+                                                                                                     ∞
+                    any law P is locally dominated by the i.i.d. Bernoulli(1/2) law R := Ber(1/2)      and the likelihood ratio
+                    process of P is
+                                   t
+                                t Y
+                         Z =2        D, where D :=q(X ,...,X               )1       +(1−q(X ,...,X          ))1             (14)
+                           t           i              i    i   1        i−1  {Xi=1}          i   1       i−1    {Xi=0}
+                                 i=1
+                                                 t−1
+                    for some functions qt: {0,1}     →[0,1] such that, R-almost surely,
+                                                  q (X ,...,X      ) = Q(X = 1 | X ,...,X       ).
+                                                   t   1        t−1        t        1        t−1
+                                                                                                              ∞
+                    In particular, taking q = p ∈ (0,1) for all t gives the likelihood ratio process of Ber(p)   with respect to
+                                           t
+                    R. The following theorem shows that any likelihood ratio process of the form (14) can be approximated
+                    by a ﬁnite fork-convex combination of likelihood ratio processes corresponding to i.i.d. Bernoulli laws.
+                   The closed fork-convex hull of this set is therefore very large: it contains all laws over binary sequences.
+                   Theorem 17. Every law P over the space of binary sequences belongs to the closed fork-convex hull of
+                                 ∞
+                    Q={Ber(p) : p ∈ (0,1)}. Thus, the process (M ) with M = 1 for all t is the only Q-NM, and every
+                                                                        t         t
+                    Q-NSM must be nonincreasing, and hence these never exceed one and always have zero power for any
+                    α∈(0,1).
+                    Proof. Fix an arbitrary law P and let (Zt) be its likelihood ratio process as in (14). We will show by
+                    induction that for each s ∈ N0 there exists an element Q(s) in the fork-convex hull of Q whose likelihood
+                    ratio process (Z(s)) satisﬁes Z(s) = Z for all t ≤ s. This is clearly true for s = 0 since every likelihood
+                                    t              t       t
+                                                                         17
+                                                                      ������-NSM   ⟹ ������-safe
+                                                                         ⟺                ⟺
+                                                                      ������-NSM    ⟹ ������-safe
+                                                                         ⟺                ⟹
+                                                                     ������ -NSM ⟹ ������-safe
+                                                                        1 ⟺              1
+                                                                                          ⟹
+                                                                     ������ -NSM ⟹ ������-safe
+                                                                        k                k
+                                                                      ˜⟺                ˜⟹
+                                                                      ������-NSM    ⟹ ������-safe
+                      Figure 2: A summary of some of the implications related to Q-NSMs and Q-safety (recall Figure 1 for the
+                                                                        e
+                      deﬁnitions of the classes Q, Q, P , P , and Q). We would like to design a Q-safe e-process that is powerful
+                                                           1   k
+                      against P . Theorem 17 proves that a Q-NSM is non-viable since it unintentionally results in P -safety
+                                 k                                                                                                    k
+                      and thus no power against P . The single non-implication sign above opens a door to constructing a
+                                                        k
+                      non-NSM based Q-safe e-process that is consistent against P . An example for such an e-process is
+                                                                                               k
+                      precisely the construction in (6).
+                      ratio process is equal to one at time zero. Suppose it is true for some particular s. Consider a law Q0
+                     whose likelihood ratio process (Z0) satisﬁes Z0           /Z0 = 2D        , where D       is deﬁned in (14). We can
+                                                             t              s+1   s        s+1             s+1
+                                0                                                        s                                  ∞
+                      choose Q from the fork-convex hull of Q by mixing the 2 Bernoulli laws Ber(q                     (y ))    with weights
+                                                                                                                   s+1   k
+                     1      (X ,...,X ) at time s, where y ,...,y s lists all binary strings of length s. Taking the fork-convex
+                       {y }    1        s                       1        2
+                         k
+                      combination of Q(s) and Q0 at time s with h = 0 gives a law Q(s+1) in the fork-convex hull of Q whose
+                      likelihood ratio process satisﬁes Z(s+1) = Z(s) = Z for t ≤ s, and Z(s+1) = 2Z(s)D                         = Z       for
+                                                               t          t         t                     s+1          s    s+1       s+1
+                      t = s +1. Thus Q(s+1) satisﬁes the induction assumption with s+1 instead of s.
+                          Thus, by induction, for each s ∈ N0 there exists an element Q(s) in the fork-convex hull of Q whose
+                      likelihood ratio process (Z(s)) satisﬁes Z(s) = Z for all t ≤ s, as required. Now, it is clear that for each
+                                                    t                t       t
+                                      (s)            1
+                      ﬁxed t ∈ N, Zt     →Zt in L (R) as s → ∞. This shows that P belongs to the closed fork-convex hull of Q
+                      as claimed in the ﬁrst part of the theorem.
+                          It remains to prove that every Q-NSM (Lt) must be nonincreasing, which implies in particular that
+                      the only Q-NM is the constant process equal to one. Fix any binary sequence ω0 and let P be the law
+                      such that P({ω }) = 1. By the ﬁrst part of the theorem, P belongs to the closed fork-convex hull of Q
+                                       0
+                      and hence, by Theorem 13, (L ) is a P-NSM. Thus L (ω ) = E [L ] ≤ E [L                  ] = L     (ω ) for every t ∈ N.
+                                                        t                         t  0      P   t      P  t−1       t−1   0
+                      Since ω0 was arbitrary, this shows that (Lt) must be nonincreasing.
+                          In other words, not only are Q-NSMs inadequate against Markovian alternatives, they are incapable
+                      of detecting any deviation from exchangeability. We include an overview of the relations we have shown
+                      in Figure 2.
+                      4     Numerical simulations and some extensions
+                      Recall that it is impossible to detect all deviations from exchangeability. For example, if only the ﬁrst bit
+                      of the data is a Ber(0.1) and the rest is Ber(0.2), there is simply not enough information available to reject
+                      the null. The informal reason is that the deviation from the null is temporary and ﬂeeting, not sustained,
+                                                                                 18
+                  and thus easily ascribed to chance. Motivated by this, the primary focus of the paper has been to detect
+                  Markovian alternatives. In this section, we will examine the power of our approach against three types of
+                  alternatives: (a) the one it was designed primarily for — a ﬁrst- (and low-) order Markov alternative, (b)
+                  a time-inhomogeneous Markov alternative, and (c) a completely diﬀerent type of alternative that we were
+                  not intending to have power against: a change point alternative.
+                  Remark 18. The last setting should especially not be confused with change point detection, which has
+                  diﬀerent goals, such as minimizing ‘detection delay’ (informally, expected diﬀerence between the stopping
+                  time and the changepoint, when the procedure stops after the changepoint) subject to a prespeciﬁed lower
+                  bound on the ‘average run length’ (expected stopping time when there is no changepoint). To be clearer,
+                  in order for change point detection algorithms to have a small detection delay, they must pay the price
+                  of stopping under the ‘null’ as well, and one typically studies the tradeoﬀs between those two metrics.
+                  However, we will remain still in the realm of sequential testing, where we do not wish to ever stop if the
+                  null is true, and the metrics of Type I error and power are rather diﬀerent from the above. Below, we will
+                  focus on measuring evidence using e-processes, where we wish to maximize wealth (or its rate of growth)
+                  under the alternative, subject to an upper bound on expected wealth under the null.
+                     Wealso reinterpret our test in terms of sequential estimation via conﬁdence sequences in Section 4.6,
+                  and Section 4.7 demonstrates the use of calibrators to construct an e-process that approximately tracks
+                  the maximum wealth thus far.
+                  4.1    Sanity check 1: no power against an i.i.d. Bernoulli sequence
+                  Westart with a sanity check, namely that our evidence measure does not report any evidence against
+                  Bernoulli sources (which are exchangeable). Theorem 7 predicts that when the null is true, (Rt) should
+                  decay to zero almost surely, meaning that (lnRt) decays to minus inﬁnity. Further, Jensen’s inequality
+                  implies that at any stopping time τ, lnR has nonpositive expectation; hence sup    sup E [lnR ] ≤ 0,
+                                                          τ                                      Q∈Q     τ Q     τ
+                  wherethesecondsupremumisoverallstoppingtimesτ. Figure3illustrates that indeed the evidence decays
+                  from the start, as expected. The lower bound from (8) predicts that lnR could decay logarithmically in
+                                                                                        t
+                  time (but not faster), meaning that lnR & −lnt, and that seems particularly tight in the ﬁgure below.
+                                                         t
+                                     (a) Bernoulli(0.5)                             (b) Bernoulli(0.2)
+                  Figure 3: The blue line shows the evolution of lnRt under two Bernoulli sources. The green line is the
+                  lower bound −ln(t) following from (8). The decay is consistent with Theorem 7, which predicts that
+                  lnR →−∞almostsurely.
+                      t
+                     Having established that the predictions under the null are accurate, we now estimate the power against
+                  Markovian alternatives. We ﬁrst consider a ﬁxed Markov alternative, which the test targets. Then we
+                  consider a time-varying Markov alternative, which the test does not explicitly target.
+                                                                   19
+                   4.2    Sanity check 2: power against a ﬁrst-order Markov alternative
+                   Here we evaluate the evidence measure (6) in the well-speciﬁed case where data come from a ﬁrst-order
+                   Markov process. Figure 4 illustrates that the asymptotics given by Theorem 7 kick in early, as evidenced
+                   by the (log)-evidence growing linearly with the sample size.
+                                      (a) Markov(0.1, 0.9)                            (b) Markov(0.4, 0.6)
+                   Figure 4: Blue: the evolution of lnRt, under a Markov process that is relatively far from Bernoulli (left)
+                   and one that is closer (right). Red: the linear approximation with slope r∗ from Theorem 7.
+                   4.3    Power against a time-varying Markov alternative
+                   Recalling (9), one might conjecture that if a sequence has equal zeroth and ﬁrst-order frequency limits,
+                   then our test will be powerless. Here, we show that this is not necessarily the case. Namely, we show that
+                   it is possible for a sequence to have frequency limits lim     n /t = lim      n /n =lim          n /n
+                                                                             t→∞ 1           t→∞ 1|0    0       t→∞ 1|1    1
+                   (this happens almost surely under a Bernoulli source) while (R ) still diverges to inﬁnity, meaning that we
+                                                                                 t
+                   reject the exchangeability null at any conﬁdence level. We will consider a time-varying Markov source with
+                   symmetric transition probabilities p  (t) = p  (t) = 1/2 +δ , for some decreasing sequence δ tending to
+                                                       0|0      1|1            t                                t
+                   0. To make the example interesting, we need two properties of the “repetition bias” δ :
+                                                                                                         t
+                      • We aim to pick δt small enough so that the above limit frequencies are 1/2. In particular, this
+                                         P
+                         requires lim       t   δ /t = 0. For example, δ := 1/tα for α > 0 would do for this purpose.
+                                     t→∞    s=1 s                       t
+                      • We aim to pick δ large enough so that lnR → ∞. To this end, we can use the Law of the
+                                           t                            t                                   √
+                         Iterated Logarithm to conclude that after t rounds n0 and n1 are both t/2 ± O( tlnlnt) while
+                                                      P               √
+                         n   and n     are both t/4+    t   δ /2±O( tlnlnt). Let us write `(t) for the likelihood ratio of
+                          0|0      1|1                  s=1 s
+                         the Markov maximum likelihood and the Bernoulli maximum likelihood, as we did in the proof of
+                         Theorem 7. Abbreviating the binary entropy to h(p) := −plnp−(1−p)ln(1−p) and using that
+                         h(1/2+δ)=ln2−2δ2+O(δ3) reveals that
+                                                                                                               !
+                                                                                   t                     2
+                                             n1     n0    n0|0     n1    n1|1         2   X          √
+                              `(t) = t h     t   − t h     n    − t h     n        ≈ t        δs ±O( tlnlnt)      .     (15)
+                                                            0               1             s=1
+                         To have the lower bound lnR ≥ `(t)−lnt−O(1) from (8) diverge, we need to ensure
+                                                       t
+                                                                                 !
+                                                             t                 2
+                                                         1 X            √
+                                                     2  √      δs −O      lnlnt     −lnt→∞.
+                                                          t s=1
+                                                                                   P          p
+                         This reveals that the threshold for divergence is around    t   δ = t/(2lnt) (this being forced
+                                                                     √               s=1 s
+                         by the lnt term on the right, not by the      lnlnt term inside the square). To investigate the
+                                                                      20
+                           behaviour ever so slightly above this threshold, we ended up picking δ := F(t + 1) − F(t) for
+                                              √                                                             t
+                           F(t) := min{t/2,     tln(1 +t)}, where the min ensures that δ ≤ 1/2 from t = 1 without aﬀecting
+                                                                                               t
+                           the order of growth. The results are displayed and discussed in Figure 5.
+                        (a) Markov(1/2−δ , 1/2+δ ). This source is “sticky”,   (b) Bernoulli(1/2+δ ) = Markov(1/2+δ , 1/2+δ ).
+                                           t       t                                                t                   t        t
+                         in that it slightly favours repeating the previous     This source is one-sided, in that it slightly favours
+                         outcome. The evidence against the null diverges.       ones. No evidence against the null accumulates.
+                         Red is the approximation (15) with the constant        The green line is the lower bound −ln(t) following
+                         in O(·) taken to be 1, while green is (15) with the    from (8).
+                         constant in O(·) as −1 and ln(t) subtracted.
+                     Figure 5: The evolution of our evidence (lnR ) for a time-varying Markov process. On the left the transition
+                                                                    t                                                    √
+                     probabilities are p   (t) = p   (t) = 1/2 +δt for δt := F(t + 1) − F(t) with F(t) := min{t/2,         tln(1+t)}.
+                                        1|1       0|0
+                     On the right, we perform a sanity check with p         (t) = p    (t) = 1/2 +δ instead, which renders this a
+                                                                          1|1       1|0              t
+                     time-varying Bernoulli process. As predicted, on the left the log-evidence diverges, growing at a logarithmic
+                     rate (which is far slower than the linear rate of Figure 4). The right picture conﬁrms that this is due to
+                     the Markovian aspect of the source, and not due to the changing probabilities.
+                        Despite the generality and pathwise nature of Theorem 7, this experiment points towards the possibility
+                     of strengthening it even further. Indeed, Theorem 7 has a very natural suﬃcient condition for consistency,
+                     but this experiment shows that even when this condition does not hold (meaning that the limits (9) exist
+                     and the condition (10) fails), then our safe e-process can still be consistent in certain subtle settings. These
+                     subtleties were apparent to us when designing this example, but we are not yet sure how to formalize
+                     these observations in a general fashion, and thus leave this to future work.
+                        Another such example that demonstrates the unexpected power of our approach is examined next.
+                     4.4    Power against a change point alternative
+                    We consider a somewhat counterintuitive example to show that a ﬁrst-order Markov alternative to
+                     exchangeability is perhaps more powerful than one may believe at ﬁrst sight. Consider a length 2n
+                     sequence of coin ﬂips sampled from Ber(p)nBer(q)n for some p 6= q. To match the setup of this example
+                    with our initial problem set up, one could potentially extend this to an inﬁnite sequence in an arbitrary
+                    way, for example just continuing as Ber(q) after time 2n.
+                        This sequence is clearly not exchangeable. It is, however, not clear whether our proposed ﬁrst-order
+                     Markov alternative would detect (much) evidence against the null, as the sequence is not Markov, but
+                     is more like a change point alternative. Detecting evidence is not a given; the outcomes are in fact
+                     independent (albeit not identically distributed). Hence there is no ﬁrst-order dependency structure for
+                     the Markov model to exploit. And on top of that, there seems to be only one problematic time-point,
+                     precisely half-way through the sequence. So even if the Markov model somehow exploited this, how could
+                     it gain an amount of evidence growing with the length n of the sequence?
+                                                                             21
+                                                                                       5000       5000
+                   Figure 6: The process (lnR ) on a sequence sampled from Ber(.1)         Ber(.4)    . On the ﬁrst half, we
+                                                t
+                   see (Rt) decays as 1/t, which is due to the overhead of Jeﬀreys’ mixture for the Markov model over the
+                   maximum likelihood Bernoulli parameter. After the change point, we see (R ) increasing fast on the
+                                                                                                    t
+                   exponential scale. Recalling (4) for those more familiar with the p-value scale, the corresponding anytime
+                   p-process dips below 10−20 towards the end.
+                      Wenowshowthat the above arguments are all misguided, and that the process (Rt) from (6) gains an
+                   amount of evidence against the exchangeable null that grows exponentially with t, between time n and 2n.
+                   The evolution of (R ) on a typical run of this process is shown in Figure 6.
+                                       t
+                      Initially, (Rt) loses steam and tends towards zero at a rate 1/t before time n since the null is true and
+                   there is a price to pay for the Jeﬀreys’ mixture over the alternative. To calibrate what to expect after the
+                   change point, think of n as being relatively large so that we can reason about empirical frequencies of
+                   zeros and ones with more ease. Let us compute the maximum likelihood parameters for typical sequences
+                   with frequency (tending to) p in the ﬁrst half and q in the second half. For the Bernoulli model, we ﬁnd
+                   pˆ = (p + q)/2. For the ﬁrst-order Markov model we ﬁnd that
+                                                     2    2
+                                           pˆ   = p +q          and     pˆ   = (1−p)p+(1−q)q.
+                                            1|1      p+q                 1|0      (1 −p)+(1−q)
+                   The main observation here is that the best Markov model is i.i.d. if pˆ   =pˆ    =pˆ, which occurs if and
+                                                                                          1|1    1|0
+                   only if p = q. The fact that an exploitable ﬁrst-order Markov dependency structure arises can perhaps
+                   be best observed in the extreme case p = 0 and q = 1. As this comparison does not really depend on
+                   n, we ﬁnd that for all other parameter settings with p 6= q, the Markov model will gain overall evidence
+                   exponentially growing with t between time n and 2n. (Technically, the exponential growth does not start
+                   immediately at time n+1, but it does so eventually.) However, as t grows even further — say beyond
+                        2         n
+                   t = n or t = 2 — (R ) will decrease once more towards zero. This is because the sequence eventually is
+                                          t
+                   dominated by i.i.d. Ber(q) coin ﬂips, and the MLE under the null explains the data very well.
+                      Thus, for this example, we do not get a power one test, nor should we expect a single change point away
+                   from an i.i.d. model to yield power one for a test designed to be powerful against Markovian alternatives.
+                   However, if the initial pattern repeats itself after 2n steps, meaning that we keep alternating between
+                   Ber(p) and Ber(q) models, then (R ) does have power one, and this is interesting because (R ) is designed
+                                                      t                                                         t
+                   for ﬁrst-order Markov alternatives, but it is consistent against these 2n-th order Markov alternatives.
+                      In fact, one can argue that it is information theoretically impossible to design any power one test,
+                   including tests that are tuned to detect a single change point. To see why, think of very small n, like n = 2,
+                   to make the reason intuitively transparent. How can a test possibly have enough evidence with just two
+                   coin ﬂips before the change point, to know with probability one a change actually did occur? Naturally,
+                   the larger the time n of the change point, the higher the power could be of any such test (as it is for our
+                   test also), but no test can possibly have power one since there is always some small probability (vanishing
+                   with n) that the distribution of the ﬁrst n coin ﬂips looks similar to the post-change distribution.
+                      Nevertheless, this simple example illustrates the point that our proposed e-process (Rt) for evidence
+                   against exchangeability is actually powerful even in scenarios that are not (close to) Markov.
+                                                                       22
+                  Deriving other e-processes targeted towards change point alternatives. For readers explicitly
+                  interested in powerful tests to detect change point alternatives in the setting of this paper, we brieﬂy
+                  describe a powerful test (albeit not a power one test, as already explained above). Essentially, one can
+                  combine the ideas in Remark 2.6 with those in Section 2.7. We let P denote the alternative in which the
+                                                                                   k
+                                                                     k
+                  change point is hypothesized to occur at time n = 2 , though other increasing functions of k may also
+                  suﬃce. We will deﬁne an e-process (Ek) for each k and then use a countable mixture over k as the ﬁnal
+                                                       t
+                  e-process.
+                     Now, we describe an e-process for a ﬁxed k. Deﬁne (g−)n       to be a smoothed non-anticipating
+                                                                             s s=1
+                  maximum likelihood estimator, calculated using data from time 1 to s−1. The smoothing step is simple:
+                  add a single fake observation worth half a heads (or half a tails) to the counts when determining the
+                  MLE. The smoothing leads to a slight regularization that can be viewed as the maximum-a-posteriori
+                  estimate using a Beta(1/2,1/2) prior, analogous to Krichevsky-Troﬁmov betting [20]. Similarly, deﬁne
+                    + ∞
+                  (gs )     to be the same smoothed non-anticipating maximum likelihood estimator, but calculated using
+                      s=n+1                                                                                     −
+                  data from time n+1 to s−1. In both cases, the smoothing also leads to a well-deﬁned function g   and
+                   +                                                                                            1
+                  g   , which are eﬀectively treated as a Ber(1/2) model. Finally, deﬁne the e-process (Ek) as the ratio
+                   n+1                                                                                  t
+                  of Qn∧t g−(X )Qt         g+(X ) to the maximum likelihood under the i.i.d. null. In other words, the
+                       s=1 s   s    s=(n+1) s   s
+                  denominator is identical to one of Rt, but the numerator has changed because the targeted alternative is
+                  now diﬀerent.
+                     Recalling Section 2.7 (and the ﬁnal section of Wasserman et al. [43]), it is easy to see that (Ek) is a
+                                                                                                                t∗
+                  Q-safe e-process. If a change point occurs at time n∗ (and let k∗ := bln n∗c), the e-processes Ek and
+                                                                                        2                       t
+                    k∗+1                                     ∗       ∗
+                  Et     will grow exponentially between time n and 2n . Even with the countable weighting of Remark 2.6,
+                  their exponential growth washes out the inverse polynomial weights, to yield a powerful e-process (E ).
+                                                                                                                   t
+                     Naturally, many permutations and combinations of these ideas (see e.g. the literature on switching
+                  experts [18]) can be used to derive a variety of tests against diﬀerent kinds of alternatives. See Section 5.3
+                  and [38] for an approach based on conformal prediction. We leave further exploration of these variants to
+                  future work.
+                  4.5    Power on a real-world data set
+                  We conclude the empirical evaluation with a jovial yet practical question: if we track the days on
+                  which it rains in London, do we get an exchangeable sequence? Three of us having lived there deemed
+                  this hypothesis unlikely yet not implausible, but a Markovian alternative certainly seems a-priori more
+                  plausible. To answer our question, we obtained daily areal rainfall data for North London from https:
+                  //data.london.gov.uk/dataset/daily-areal-rainfall, spanning the 4404 days between 01/01/2007
+                  to 21/01/2019. We binarised the data by comparing the daily total millimeters to zero, resulting in 59%
+                  rainy days overall. As is clear from Figure 7, the null hypothesis can be safely rejected.
+                  Figure 7: The process (lnRt) accumulating evidence against the hypothesis that daily rain in North
+                  London is an exchangeable process.
+                                                                   23
+                        4.6     An equivalent viewpoint based on conﬁdence sequences
+                        It is possible to view our sequential test — rejecting the null if (R ) ever exceeds 1/α — in terms of
+                                                                                                               t
+                                                                                                                               ∞
+                        sequential estimation using conﬁdence sequences [2, 13, 22]. Denoting Qp := Ber(p) , a (1−α)-conﬁdence
+                        sequence for p is a sequence of conﬁdence sets (C )                   such that Q (∃t ≥ 1 : p ∈/ C ) ≤ α. Recalling (7),
+                        deﬁne                                                          t t≥1                 p                  t
+                                                                          Ct := q : RJP,q < 1.
+                                                                                          t        α
+                       To see that (C ) is a conﬁdence sequence for p, note that p ∈/ C if and only if RJP,p ≥ 1/α, but Ville’s
+                                          t                                                              t                     t
+                        inequality yields that Q (∃t ≥ 1 : RJP,p ≥ 1/α) since RJP,p is a Q -NM.
+                                                     p              t                        t           p
+                            Based on the above argument, Theorems 6 and 7 together imply the following:
+                            • Rejecting the null as soon as (Ct) becomes empty is identical to rejecting if (Rt) ever exceeds 1/α:
+                                                                 inf{t ≥ 1 : C = ∅} = inf t ≥ 1 : R ≥ 1.                                            (16)
+                                                                                 t                            t    α
+                               This is because R = inf               RJP,q, making the decision rules identical.
+                                                     t        q∈[0,1]  t
+                            • If the data X ,X ,... are exchangeable, then with probability at least 1−α, C is always nonempty.
+                                               1    2                                                                            t
+                               Indeed, it is possible to argue that Ct will shrink to a single point with probability ≥ 1 − α. Indeed,
+                               a single draw from Q ∈ Q is simply an i.i.d. Ber(p)∞ sequence for some p; and for any q 6= p, RJP,q
+                                                                                                                                                       s
+                               will eventually exceed 1/α because Jeﬀrey’s mixture likelihood (a mixture over all ﬁrst-order Markov
+                               chains, including the special case that recovers an i.i.d. Ber(p) sequence) will explain the data much
+                               better than the Ber(q) likelihood. This can be formalized via the regret bound (8) but this simple
+                               argument is omitted for brevity.
+                            • Since Ct contains the aforementioned p under the null (simultaneously for all t with probability at
+                                                                    T            n                              o
+                               least 1−α), we can infer that          ∞ Ct ≡ q:sup              RJP,q < 1/α is also nonempty with probability
+                                                                      t=1                   t≥1   t           T
+                               at least 1 − α. This means that the decision rule inf{t ≥ 1 :                     s≤tCs = ∅} yields a valid level α
+                               sequential test that could potentially halt sooner than (16). (The advantage is only expected to be
+                               slight in practice.)
+                            • For any sequence of observations where the limits in (9) exist but (10) fails to hold, C will become
+                                                                                                                                           t
+                               empty at some point (deterministically). As explained around Theorem 7, the aforementioned failure
+                               of (10) happens with probability one under ﬁrst-order Markovian alternatives, for example.
+                        Figure 8 illustrates these points using the running intersection T                    Cs on synthetic and real-world data.
+                                                                                                         s≤t
+                        4.7     Calibrated p-processes and adjusted e-processes for not losing capital
+                       While (R ) is a Q-safe e-process, (max               R ) is not. In other words, we are only allowed to measure our
+                                   t                                    s≤t    s
+                        performance based on the wealth accumulated thus far and not the highest wealth that we reached at
+                        some point in the process. The same is not true for p-processes: (1/R ) is a Q-valid p-process, and so is
+                                                                                                                t
+                       (1/max         R ), the latter being the running inﬁmum of the former. In game-theoretic terminology, the
+                                 s≤t    s
+                        gambler can decide to stop playing the game (betting against the null) according to any stopping rule
+                        τ, but once they have stopped, only the ﬁnal wealth R of the gambler matters, and a nearly bankrupt
+                                                                                             τ
+                        gambler cannot point to their past wealth as a measure of their proﬁciency. This subtle point particularly
+                        manifests itself in the above change point example, because with a single change point, (Rt) rises to some
+                                              20
+                        amount (above 10         in the ﬁgure) and then will shrink back to zero, so if we happen to stop too late, then
+                        Rτ could provide only meagre evidence even though it was once astronomically large.
+                            So how can we get around this worrisome issue? We take inspiration from Shafer et al. [31] and use
+                       “calibrated p-processes” as our e-processes. (As a matter of terminology, our use of calibration here can
+                        be seen as an E → P → E process, but if we skip the middle step entirely, the E → E direct method
+                                                                                        24
+                      (a) The rain dataset from Section 4.5. At all α consid-   (b) Ber(0.2) (as in Section 4.1). Here the null is true,
+                      ered, the conﬁdence interval becomes empty, meaning       and indeed all conﬁdence intervals stay non-empty.
+                      that we reject the null.
+                     Figure 8: The conﬁdence sequence (anytime-valid conﬁdence interval) T                 Cs for p is depicted by its
+                                                                                                       s≤t
+                     lower and upper boundaries as a function of t, at various coverage probabilities α ∈ (0,1). The running
+                     average of the data is displayed in black. As predicted, the conﬁdence sequence becomes empty when the
+                     null is false (left), while it stays non-empty when the null is true (right).
+                     has been called “adjustment” by Dawid et al. [4, 3], Koolen and Vovk [19]. We will present it from both
+                     angles below to tie some loose ends in the literature together.)
+                        Deﬁnep :=1/max            R , so that (p ) is a Q-valid p-process that satisﬁes (4). Let f be a calibrator [31,
+                                 t            s≤t   s            t          R1
+                     22], which is a nonincreasing function f such that 0 f(u)du = 1. Then (f(pt)) is a Q-safe e-process. It is
+                     not hard to check that f(p ) ≤ R , so there is some price to pay for being able to take the best possible
+                                                  t       t
+                     wealth into account. One possible choice for f is given by
+                                                                 f(u) := 1−u+ulnu ;
+                                                                             u(−lnu)2
+                     also see Vovk and Wang [37, Eq. (2)].
+                        In order to do things more directly, let F be an adjuster [31, 3], which is an increasing function F
+                     such that R∞F(y)y−2dy = 1. Deﬁning A := F(max                  R ) yields that (A ) is a Q-safe e-process, and
+                                 1                                 t            s≤t   s                  t
+                     indeed as before At ≤ Rt. One possible choice for F is given by
+                                                                               y2ln2
+                                                               F(y) := (1+y)(ln(1+y))2.
+                     Thus, even if (Rt) rises sharply and then decreases to zero eventually, (At) does not since it is nondecreasing.
+                                                                                                                                       2
+                     In fact, using the F given above in our example with a single change point, and noting that F(y)  y/(lny)
+                                                           17
+                     for large y, we see that A      ≈10 even though R            =0. Of course, if R → ∞ then so does F(R ),
+                                                  ∞                            ∞                         t                            t
+                     meaning that it does not lose the consistency property against Markovian alternatives.
+                        Thus, at a (squared) logarithmic price to the overall capital, one can be protected against future losses,
+                     and for this reason we recommend using At = F(Rt) as an e-process if we are uncertain about how close
+                     our alternative might be to the idealized Markovian case studied here.
+                     5     Summary and discussion
+                     5.1    From convex hulls to fork-convex hulls
+                     The celebrated theorem of de Finetti — for which many proofs exist including based on elementary
+                     arguments [17] — states that all exchangeable binary sequences are mixtures of i.i.d. sequences (this was
+                                                                             25
+                  generalized much beyond the binary setting by Hewitt and Savage [11]). In fact, for any exchangeable
+                                                             P
+                  sequence, the empirical measure P := (1/t)   t   δ   converges in distribution to a measure µ supported
+                                                   t           s=1 Xs
+                  on [0,1], and this is the so-called “de Finetti mixing measure” alluded to in the previous sentence. The
+                  crux of the matter is that the convex hull of all i.i.d. distributions over inﬁnite binary sequences is precisely
+                  the set of exchangeable distributions. Since the convex hull preserves properties like safety (of e-processes)
+                  and validity (of sequential tests and p-processes), one can develop tests for the i.i.d. setting, which is itself
+                  a nontrivial composite null, and invoke de Finetti’s theorem to extend the result to the exchangeable
+                  setting.
+                      In this paper, we go several steps further: we prove that the set of Markovian sequences lies inside
+                  the “fork-convex hull” of all exchangeable (or i.i.d.) sequences. In fact, Theorem 17 shows that the closed
+                  fork-convex hull is so large that every law over binary sequences is contained in it!
+                      The fork-convex hull of a set of distributions can be informally thought of as a “predictable mixture
+                  of these distributions” (here, we borrow the terminology of predictable mixtures from Waudby-Smith
+                  and Ramdas [44], where it was applied to processes). Speaking informally in language inspired from
+                  game-theoretic probability, if Reality wanted to draw an inﬁnite sequence from the fork-convex hull of Q,
+                  it would pick Q1 and draw (only) X from it, then based on that the outcome, Reality would pick Q2 and
+                                                     1
+                  draw (only) X from its conditional distribution given X , and so forth ad inﬁnitum, each time using the
+                                2                                        1
+                  observed data to pick the next (conditional) distribution as it wishes.
+                      Fork-convexity was a central object in this paper, and one of its primary roles was in dealing a fatal
+                  blow to tests based on constructing nonnegative supermartingales, as summarized next.
+                  5.2    The powerlessness of test supermartingales, and a powerful e-process
+                  Theorem 13 shows that the nonnegative supermartingale (NSM) property is preserved not just by taking
+                  the convex hull of a set of distributions, but also when taking the (much larger) fork-convex hull. Using
+                  composite Snell envelopes, Corollary 16 shows that if a safe test for Q is upper bounded by a Q-NSM, then
+                  it must have already been safe for the fork-convex hull of Q (and thus powerless). Together, these results
+                  show that any NSM under exchangeable distributions is also an NSM under Markovian distributions,
+                  and in fact it is an NSM under every distribution over binary sequences. In other words, test statistics
+                  that are NSMs (or “test supermartingales”) are nonincreasing sequences, rendering them powerless to
+                  distinguish non-exchangeable distributions from exchangeable ones.
+                      We get around the above hurdles by designing a safe e-process (Rt) in (6) that is upper bounded
+                  by some nonnegative martingale for every exchangeable distribution, despite not being an NSM itself.
+                  (The idea of designing a process that is upper bounded by an NSM, despite not being one itself, also
+                  appears elsewhere in the sequential testing literature [12], but for diﬀerent reasons.) Our safe e-process
+                  uses the method of mixtures with Jeﬀreys’ prior to handle the composite alternative, along with the
+                  maximum likelihood under the null, to ultimately yield a computationally eﬃcient closed-form e-process.
+                  This e-process not only has the desired safety properties at arbitrary stopping times (Theorem 6), but we
+                  prove that it has power one against any ﬁrst-order Markovian alternative, and also a generic dense set of
+                  higher-order Markovian alternatives (Theorem 7). For ﬁrst-order alternatives, the e-process also grows at
+                  an optimal rate, as implied by a regret bound (8) borrowed from the universal coding literature.
+                      Section 2 also describes how to derive other e-processes that work for higher-order Markovian alterna-
+                  tives, and ﬁnally also for even more general, loosely speciﬁed alternatives by combining the method of
+                  predictable mixtures [44] and betting [28], along with universal inference [43].
+                  5.3    Vovk’s approach based on conformal prediction
+                  An alternate approach towards testing exchangeability was recently expounded by Vovk [36], which is
+                  based on conformal prediction. It replaces the canonical ﬁltration (F ) by a poorer ﬁltration (G ) formed
+                                                                                     t                         t
+                  by conformal p-values. (We refer to their paper for the technical details.) Vovk then produces a sequence
+                  of independent p-variables under the null, which are converted to e-processes by appropriate calibration,
+                  which are in turn combined to form a martingale with respect to (G ). This is particularly interesting
+                                                                                      t
+                                                                    26
+                     because, despite the only martingales with respect to (Ft) being constants, Vovk is able to identify
+                     nontrivial martingales with respect to an appropriately impoverished ﬁltration (G ).
+                                                                                                                   t
+                         Our approaches based on Jeﬀreys’ mixture and the nonanticipating likelihood (or predictable mixture)
+                     can be seen as providing two alternatives to Vovk’s methodology. Vovk’s algorithm seems particularly
+                     powerful for change point alternatives, making them most similar to the extensions discussed in Section 4.4,
+                     while our paper focuses more on Markov alternatives. Further, since Vovk’s martingale property only
+                     holds with respect to (Gt), so are the set of stopping times for which his method has the safety property.
+                     In other words, the algorithm is not allowed to look at the raw data and decide when to stop; it must
+                     only look at the sequence of p-variables. In contrast, our method is safe with respect to a much larger
+                     class of stopping times, indeed all possible stopping times (with respect to (Ft), the canonical ﬁltration).
+                     However, in the end, the details of both works appear to be very diﬀerent, and the conceptual principles
+                     by which the methods are derived also diﬀer signiﬁcantly.
+                         Aﬁnal, alternate approach to this problem could utilize reverse martingales and exchangeable ﬁltrations.
+                                                                                                      ∞
+                     To elaborate, the exchangeable ﬁltration is the reverse ﬁltration (E )                where E := σ({X ,X ,...}),
+                                                                                                    t t=0           0           1   2
+                     and for all t ≥ 1, E denotes the σ-algebra generated by all real-valued Borel-measurable functions
+                                             t
+                     f(X ,X ,...) which are permutation-symmetric in their ﬁrst t arguments, so that E ⊇ E ⊇ E .... It
+                          1    2                                                                                        0     1     2
+                                                                                                                        P
+                     is known that if the data are exchangeable, then the empirical measure P := (1/t)                     t   δ    forms a
+                                                                                                            t                   X
+                                                                                                                           s=1    s R
+                     measure-valued reverse martingale with respect to the exchangeable ﬁltration, in the sense that ( gdPt),
+                     is a reverse martingale for any bounded and Borel-measurable function g [15]. In fact, the converse of
+                     this statement also holds true if the sequence (X ) is stationary [1]. This fact has recently been exploited
+                                                                             t
+                     to develop conﬁdence sequences and sequential tests in other contexts [21]. We hope to explore in more
+                     detail whether this approach can lead to powerful tests for exchangeability in the future.
+                     5.4     Agame-theoretic protocol and reinterpretation of Theorem 7
+                     Despite our work being grounded in measure theory, it has some implications for game theoretic probability,
+                     as developed by Shafer and Vovk, amongst others. Due to lack of space, we presume the reader has some
+                     general familiarity with their setup and refer to their latest book [30] for details. We recall from Shafer
+                     [28] the basic protocol of testing by betting:
+                            Askeptic begins with initial wealth of one, K0 := 1.
+                            for t = 1,2,...
+                           —Aforecaster announces a distribution Q for X .
+                                                                             t       t
+                           —Askeptic announces a bet S : {0,1} → R+ such that E                  [S (X )] ≤ 1.
+                                                               t                              Q    t   t
+                                                                                                t
+                           —Reality announces the outcome xt.
+                           —Theskeptic’s wealth gets updated as K := K                 · S (x ).
+                                                                            t      t−1    t  t
+                     At any point in time, the skeptic’s wealth K acts as a measure of evidence against the forecaster. Instead
+                                                                       t
+                     of announcing a single distribution Q , the forecaster could announce a set of distributions Q , in which
+                                                                t                                                               t
+                     case the bet S must satisfy the constraint that sup                 E [S (X )] ≤ 1. While this protocol is very
+                                      t                                           Q ∈Q Q t t
+                                                                                    t   t   t
+                     general, the setup for the current paper is better understood using the following protocol.
+                            Aforecaster F announces a set of distributions Q for the entire sequence.
+                            Askeptic S wishes to challenge F, and observes that Q = conv(S                   Qm), for some set M,
+                            where Qm is itself a set of distributions.                                 m∈M
+                            S requests F to play a diﬀerent game for each m ∈ M, starting each with one dollar, Km := 1.
+                                                                                                                              0
+                            Faccepts the request, as long as the Skeptic’s net wealth is measured by its worst performance
+                            across all games, that is, K := inf           Km.
+                            for t = 1,2,...                t       m∈M t
+                           —Foreachm∈M,SkepticplacesabetSm :{0,1}→R+suchthatsup m                                 mE m[Sm(X )]≤1,
+                                                                          t                                 Q ∈Q      Q     t    t
+                                                                                                             t    t    t
+                                     m             m        t−1               m      m         m         m     m      m
+                            where Q (X ) := Q (X |X             ) for each Q    ∈Q andQ :={Q :Q ∈Q }.
+                                     t     t            t                                      t         t
+                           —Reality announces the (common across games) outcome xt.
+                           —Theskeptic’s wealth in the m-th game gets updated as Km := Km ·Sm(xt).
+                                                                                                 t       t−1    t
+                                                                                27
+                       In this paper, of course, M := [0,1], m := p, and Qm := {Ber(p)∞} is a singleton. The skeptic’s
+                   wealth K := inf        Km would be the game-theoretic instantiation of an e-process (while in the earlier
+                             t       m∈M t
+                    setup, it would have been a supermartingale). Even though we do not employ the added generality, it is
+                   worth noting that both the above protocols are just special cases of the following protocol that aﬀords the
+                    forecaster more ﬂexibility.
+                          S and F agree to play a set of games indexed by m ∈ M, starting each with one dollar,
+                          Km:=1. The Skeptic’s net wealth is measured by K := inf             Km.
+                           0                                                     t      m∈M t
+                          for t = 1,2,...
+                         —Foreach m∈M,Forecaster announces a set of distributions Qm on X .
+                                                                                              t       t
+                         —Foreachm∈M,SkepticplacesabetSm :X →R+suchthatsup m                         mE m[Sm(X )]≤1.
+                                                                    t    t                     Q ∈Q      Q    t    t
+                         —Reality announces the (common across games) outcome x ∈ X . t              t    t
+                                                                                         t    t
+                         —Theskeptic’s wealth in the m-th game gets updated as Km := Km ·Sm(xt).
+                                                                                        t       t−1   t
+                       The reader may also refer to Chapter 10 of Shafer and Vovk [30] for related ideas that are presented
+                    somewhat diﬀerently there.
+                       Wenowreinterpret our main theorem in a game-theoretic language, inspired by the original results of
+                   Ville’s PhD thesis [35], which gave a gambling interpretation to measure-zero sets. In particular, Ville
+                    proved that for any event of measure zero (say, under Ber(1/2)∞), one can design a betting strategy (a
+                    nonnegative martingale) whose wealth increases to inﬁnity whenever that event occurs; see Proposition 8.14
+                    in Shafer and Vovk [29]. Inspired by this result, and the fact that Theorem 7 is a pathwise statement that
+                    holds true for every path, we can restate it in the spirit of Ville’s work. To this end, deﬁne the set
+                                        ∞
+                       A:={ω∈{0,1} : either the limits in (9) do not exist, or they exist and condition (10) holds}.
+                    Note that the set A satisﬁes infQ∈QQ(A) = 1, meaning that for an exchangeable sequence, the aforemen-
+                    tioned limits (almost) always hold and the corresponding condition is (almost) always satisﬁed. In other
+                   words, its complement satisﬁes sup       Q(Ac) = 0. Then, Theorem 7 states that our process (Rt) increases
+                                          c            Q∈Q
+                    to inﬁnity whenever A occurs. The safety property of (R ) corresponds to it being a valid betting strategy
+                                                                              t
+                    under the second (and third) game-theoretic protocol presented above. Thus, informally, (Rt) could be
+                    seen as an explicitly constructed “witness” to Ville’s theorem in the above context.
+                       Deriving a fully general, ‘robust’ version of Ville’s theorem that holds for composite nulls Q (and yet
+                    recovers Ville’s original theorem for singleton nulls) appears to be an important open direction.
+                    Acknowledgments
+                   ARacknowledges NSF DMS grant 1916320. The authors also thank the reviewers for insightful feedback
+                    that led to signiﬁcant improvements to the paper.
+                    6    References
+                     [1] Martin Bladt.     Characterisation of exchangeable sequences through empirical distributions.
+                        arXiv:1903.07861, 2019. 27
+                     [2] D. A. Darling and Herbert Robbins. Conﬁdence sequences for mean, variance, and median. Proceedings
+                        of the National Academy of Sciences, 58(1):66–68, July 1967. ISSN 0027-8424, 1091-6490. 24
+                     [3] A Philip Dawid, Steven de Rooij, Peter Grunwald, Wouter M Koolen, Glenn Shafer, Alexander Shen,
+                        Nikolai Vereshchagin, and Vladimir Vovk. Probability-free pricing of adjusted American lookbacks.
+                        arXiv preprint arXiv:1108.4113, 2011. 25
+                     [4] A. Philip Dawid, Steven de Rooij, Glenn Shafer, Alexander Shen, Nikolai Vereshchagin, and Vladimir
+                        Vovk. Insuring against loss of evidence in game-theoretic probability. Statistics & Probability Letters,
+                        81(1):157–162, 2011. ISSN 0167-7152. 25
+                                                                         28
+         [5] Victor H. de la Peña, Michael J. Klass, and Tze Leung Lai. Pseudo-maximization and self-normalized
+           processes. Probability Surveys, 4:172–192, 2007. ISSN 1549-5787. 9
+         [6] Freddy Delbaen. The structure of m-stable sets and in particular of the set of risk neutral measures.
+           In In Memoriam Paul-André Meyer: Séminaire de Probabilités XXXIX, volume 1874 of Lecture Notes
+           in Math., pages 215–258. Springer, Berlin, 2006. 14, 33
+         [7] Rick Durrett. Probability: Theory and Examples. Cambridge University Press, 5a edition, 2017. 6
+         [8] Larry G. Epstein and Martin Schneider. Recursive multiple-priors. J. Econom. Theory, 113(1):1–31,
+           2003. ISSN 0022-0531. 14
+         [9] Hans Föllmer and Alexander Schied. Stochastic Finance, volume 27 of De Gruyter Studies in
+           Mathematics. Walter de Gruyter & Co., Berlin, extended edition, 2004. 32
+         [10] Peter Grünwald, Rianne de Heide, and Wouter Koolen. Safe testing. arXiv:1906.07801, 2019. 3, 6, 14
+         [11] Edwin Hewitt and Leonard J Savage. Symmetric measures on cartesian products. Transactions of
+           the American Mathematical Society, 80(2):470–501, 1955. 26
+         [12] Steven R. Howard, Aaditya Ramdas, Jon McAuliﬀe, and Jasjeet Sekhon. Time-uniform Chernoﬀ
+           bounds via nonnegative supermartingales. Probability Surveys, 17:257–317, 2020. 3, 6, 8, 26
+         [13] Steven R. Howard, Aaditya Ramdas, JonMcAuliﬀe, andJasjeetSekhon. Time-uniform, nonparametric,
+           nonasymptotic conﬁdence sequences. The Annals of Statistics, 2021. 3, 9, 24
+         [14] Garud N. Iyengar. Robust dynamic programming. Math. Oper. Res., 30(2):257–280, 2005. ISSN
+           0364-765X. 15
+         [15] Olav Kallenberg. Probabilistic Symmetries and Invariance Principles. Springer Science & Business
+           Media, 2006. 27
+         [16] Emilie Kaufmann and Wouter Koolen. Mixture martingales revisited with applications to sequential
+           tests and conﬁdence intervals. arXiv:1811.11419, 2018. 6, 9
+         [17] Werner Kirsch. An elementary proof of de Finetti’s theorem. arXiv:1809.00882, 2018. 4, 25
+         [18] Wouter M. Koolen and Steven de Rooij. Universal codes from switching strategies. IEEE Transactions
+           on Information Theory, 59(11):7168–7185, 2013. doi: 10.1109/TIT.2013.2273353. 23
+         [19] Wouter M Koolen and Vladimir Vovk. Buy low, sell high. Theoretical Computer Science, 558:144–158,
+           2014. 25
+         [20] Raphail E. Krichevsky and Victor K. Troﬁmov. The performance of universal encoding. IEEE
+          Transactions on Information Theory, 27(2):199–207, March 1981. 10, 23
+         [21] Tudor Manole and Aaditya Ramdas. Sequential estimation of convex divergences using reverse
+           submartingales and exchangeable ﬁltrations. arXiv:2103.09267, 2021. 27
+         [22] Aaditya Ramdas, Johannes Ruf, Martin Larsson, and Wouter Koolen. Admissible anytime-valid
+           sequential inference must rely on nonnegative martingales. arXiv:2009.03167, 2020. 3, 4, 6, 7, 8, 14,
+           24, 25
+         [23] Herbert Robbins. Statistical methods related to the law of the iterated logarithm. The Annals of
+           Mathematical Statistics, 41(5):1397–1409, October 1970. ISSN 0003-4851, 2168-8990. 9
+         [24] Herbert Robbins and David Siegmund. Iterated logarithm inequalities and related statistical proce-
+           dures. In Mathematics of the Decision Sciences, Part II, pages 267–279. American Mathematical
+           Society, Providence, 1968. 9
+                               29
+         [25] Herbert Robbins and David Siegmund. Boundary crossing probabilities for the Wiener process and
+           sample sums. The Annals of Mathematical Statistics, 41(5):1410–1429, October 1970. ISSN 0003-4851,
+           2168-8990. 9
+         [26] Herbert Robbins and David Siegmund. A class of stopping rules for testing parametric hypotheses.
+           The Regents of the University of California, 1972. 9
+         [27] Herbert Robbins and David Siegmund. The expected sample size of some tests of power one. The
+           Annals of Statistics, 2(3):415–436, May 1974. ISSN 0090-5364, 2168-8966. 9
+         [28] Glenn Shafer. The language of betting as a strategy for statistical and scientiﬁc communication (with
+           discussion). Journal of the Royal Statistical Society, Series A, 2020. 14, 26, 27
+         [29] Glenn Shafer and Vladimir Vovk. Probability and ﬁnance: it’s only a game!, volume 491. John Wiley
+           &Sons, 2005. 28
+         [30] Glenn Shafer and Vladimir Vovk. Game-Theoretic Foundations for Probability and Finance, volume
+           455. John Wiley & Sons, 2019. 8, 14, 27, 28
+         [31] Glenn Shafer, Alexander Shen, Nikolai Vereshchagin, and Vladimir Vovk. Test martingales, Bayes
+           factors and p-values. Statistical Science, 26(1):84–101, February 2011. ISSN 0883-4237, 2168-8745. 3,
+           6, 24, 25
+         [32] Alexander Shapiro. Rectangular sets of probability measures. Operations Research, 64(2):528–541,
+           2016. ISSN 0030-364X. 15
+         [33] Jaehyeok Shin, Aaditya Ramdas, and Alessandro Rinaldo. Nonparametric iterated-logarithm exten-
+           sions of the sequential generalized likelihood ratio test. IEEE Journal on Selected Areas in Information
+          Theory, 2(2):691–704, 2021. doi: 10.1109/JSAIT.2021.3081105. 6
+         [34] Jun’ichi Takeuchi, Tsutomu Kawabata, and Andrew R. Barron. Properties of Jeﬀreys mixture for
+           Markov sources. IEEE Trans. Inf. Theory, 59(1):438–457, 2013. 10, 12
+         [35] J Ville. Étude Critique de la Notion de Collectif. Gauthier-Villars, Paris, 1939. 28
+         [36] Vladimir Vovk. Testing randomness online. Statistical Science, 2021. 8, 26
+         [37] Vladimir Vovk and Ruodu Wang. E-values: Calibration, combination, and applications. The Annals
+           of Statistics, 2021. 3, 25
+         [38] Vladimir Vovk, Ivan Petej, Ilia Nouretdinov, Ernst Ahlberg, Lars Carlsson, and Alex Gammerman.
+           Retrain or not retrain: Conformal test martingales for change-point detection. arXiv:2102.10439,
+           2021. 23
+         [39] Gordan Žitković. A ﬁltered version of the bipolar theorem of Brannath and Schachermayer. Journal
+           of Theoretical Probability, 15(1):41–61, 2002. ISSN 0894-9840. 14
+         [40] Abraham Wald. Sequential tests of statistical hypotheses. Annals of Mathematical Statistics, 16(2):
+           117–186, 1945. 6, 8
+         [41] Abraham Wald. Sequential Analysis. John Wiley & Sons, New York, 1947. 9, 14
+         [42] Abraham Wald and J Wolfowitz. Optimum character of the sequential probability ratio test. Annals
+           of Mathematical Statistics, 19(3):326–339, 1948. 6
+         [43] Larry Wasserman, Aaditya Ramdas, and Sivaraman Balakrishnan. Universal inference. Proceedings
+           of the National Academy of Sciences, 2020. ISSN 0027-8424. 8, 13, 23, 26
+         [44] Ian Waudby-Smith and Aaditya Ramdas. Estimating means of bounded random variables by betting.
+           arXiv:2010.09686, 2020. 9, 14, 15, 26
+                               30
+                    [45] Wolfram Wiesemann, Daniel Kuhn, and Berç Rustem. Robust Markov decision processes. Mathematics
+                         of Operations Research, 38(1):153–183, 2013. ISSN 0364-765X. 15
+                    [46] F. Willems, Y. Shtarkov, and T. Tjalkens. The context-tree weighting method: basic properties.
+                         IEEE Transactions on Information Theory, 41:653–664, 1995. 12
+                    A Additional technical concepts and deﬁnitions
+                    A.1 Reference measures and local absolute continuity
+                    Consider a probability space with a ﬁltration (Ft)t∈N . Let R be a particular probability measure on F∞;
+                                                                             0
+                    we think of R as a reference measure. We now explain the concept of local domination and how it allows
+                    us to unambiguously deﬁne conditional expectations.
+                        • If P is a probability measure on F∞ and τ is a stopping time, we write P|τ for the restriction of P to
+                          F . (This is simply the probability measure on F deﬁned by P| (A) = P(A), A ∈ F . Think of this
+                            τ                                                 τ               τ                    τ
+                          as the ‘coarsening’ of P that only operates on events observable up to time τ.)
+                        • P is called locally dominated by R (or locally absolutely continuous with respect to R), if P|  R| for
+                                                                                                                         t     t
+                          all t ∈ N. We write this P       R. More explicitly, this means that
+                                                         loc
+                                                 R(A) = 0     ⇒ P(A)=0,          for any A ∈ Ft and t ∈ N.
+                          Local absolute continuity does not imply that P  R. However, it does imply that P|  R|
+                                                                                                                           τ       τ
+                          for any ﬁnite (but possibly unbounded) stopping time τ. Indeed, if A ∈ Fτ and R(A) = 0, then
+                          A∩{τ ≤t}∈Ft for all t, and hence P(A) = limt→∞P(A∩{τ ≤ t}) = 0.
+                        • A set P of probability measures on F∞ is called locally dominated by R if every element of P is
+                          locally dominated by R.
+                        • Any P loc R has an associated likelihood ratio process (often also called density process), namely
+                          the R-martingale (Z ) given by Z := dP| /dR| . Being a nonnegative martingale, once Z reaches
+                                                t             t       t     t                                             t
+                          zero it stays there. Thus with the convention 0/0 := 1, the ratios Zτ/Zt are well-deﬁned for any
+                          t ∈ N and any ﬁnite stopping time τ ≥ t. Note that each Zt is deﬁned up to R-nullsets, and therefore
+                          also up to P-nullsets.
+                        • If P     R has likelihood ratio process (Z ), the following ‘Bayes formula’ holds: for any t ∈ N, any
+                                 loc                                   t
+                          ﬁnite stopping times τ, and any nonnegative Fτ-measurable random variable Y, one has
+                                                                         
+                                                                  Zτ   
+                                                E [Y | F ] = E        YF 1          ,      P-almost surely.
+                                                 P       t     R  Z  t {Zt>0}
+                                                                    t
+                          The right-hand side is uniquely deﬁned R-almost surely (not just P-almost surely), and therefore
+                          provides a ‘canonical’ version of EP[Y | Ft]. We always use this version. This allows us to view such
+                          conditional expectations under P as being well-deﬁned up to R-nullsets.
+                        One might ask why we work with local domination, rather a ‘global’ condition like P  R for all P
+                    of interest. The answer is that such a condition would be far too restrictive, as we now illustrate. Let
+                                                                                          η
+                    (X )     be a sequence of random variables. For each η ∈ R, let P be the distribution such that the X
+                       t t∈N                                                                                              η        t
+                    become i.i.d. normal with mean η and unit variance. By the strong law of large numbers, P assigns
+                                                                         P
+                    probability one to the event Aη := {lim          t−1   t   X =η}. Moreover, the events Aη are mutually
+                                η     ν                         t→∞        s=1   s                               µ
+                    disjoint: A ∩A = ∅ whenever η 6= ν. This means by deﬁnition that the measures P are all mutually
+                    singular. Since there is an uncountable number of them, there cannot exist a measure R such that Pη  R
+                    for all η. On the other hand, if Pη| denotes the law of the partial sequence X ,...,X for some t ∈ N, then
+                                                        t                                            1       t
+                    the measures Pη|t, η ∈ R, are all mutually absolutely continuous. In particular, we could (for instance)
+                    use R = P0 as reference measure and obtain Pη          R for all η ∈ R.
+                                                                         loc
+                                                                           31
+                  A.2 Essential supremum
+                  Onsome probability space, consider a collection (Y )     of random variables, where A is an arbitrary
+                                                                    α α∈A
+                  index set. If A is uncountable, the pointwise supremum sup  Y mightnotbemeasurable (not a random
+                                                                          α∈A α
+                  variable). Moreover, it might happen that Yα = 0 almost surely for every α ∈ A, but supα∈AYα = 1. For
+                  these reasons, the pointwise supremum is often not useful. Instead, one can use the essential supremum.
+                  Proposition 19. There exists a [−∞,∞]-valued random variable Y, called the essential supremum and
+                  denoted by esssup     Y , such that
+                                   α∈A α
+                     1. Y ≥ Yα, almost surely, for every α ∈ A,
+                     2. if Y 0 is a random variable that satisﬁes Y 0 ≥ Yα, almost surely, for every α ∈ A, then Y0 ≥ Y,
+                       almost surely.
+                  The essential supremum is almost surely unique.
+                     In words, the essential supremum is the smallest almost sure upper bound on (Yα). The proposition
+                  guarantees that it always exists. In some cases, more can be said: the essential supremum can be obtained
+                  as the limit of an increasing sequence.
+                  Proposition 20. Suppose (Yα) is closed under maxima, meaning that for any α,β ∈ A there is some
+                  γ ∈ A such that Y = max{Y ,Y }. Then there is a sequence (α ) such that (Y         ) is an increasing
+                                     γ          α  β                                n              αn
+                  sequence and esssup     Y =lim        Y .
+                                      α∈A α        n→∞ αn
+                     For more information about the essential supremum (and inﬁmum), as well as proofs of the above
+                  results, we refer to Section A.5 in [9].
+                  B Omitted proofs
+                  Proof of Proposition 4. It is clear that (ii) implies (i). Now assume that (i) holds, for the moment with
+                  k = 1. Let M denote the transition matrix of the Markov process (X ), i.e., the matrix with elements p
+                                                                                    t                                j|i
+                  for i,j ∈ {0,1}. Note that exchangeability yields
+                                                  P(X =j|X =i)=P(X =j|X =i)
+                                                      3      2            3      1
+                  for i,j ∈ {0,1}, hence M2 = M. If M has full rank then M is the identity matrix and (X ) is constant in
+                                                                                                        t
+                  time. If M does not have full rank then its two rows are the same since its row sums are always equal to
+                  one. It follows that X ,X ,... are independent. Moreover, by exchangeability X ,X ,X ,... have the
+                                        1  2                                                      1  2   3
+                  same distribution. Thus (X ) is i.i.d. This shows the statement for k = 1.
+                                             t
+                     Let us assume that (i) holds for a general k ∈ N. Instead of providing a modiﬁcation of the above
+                  argument now with transition tensors, let us give an alternative probabilistic, more verbose argument.
+                  For simplicity, we only focus on the case k = 2; it is clear how to generalize this argument. Note that
+                  the Markov property yields that the law of X conditional on (X ,X ,X ,X ) equals the law of X
+                                                                5                   1   2   3  4                      5
+                  conditional on (X ,X ). By exchangeability, this also equals the law of X conditional on (X ,X ).
+                                    3   4                                                    5                   1   2
+                  This again yields that either (X ) is constant or the law of X does not depend on the earlier values
+                                                  t                             5
+                  (X ,X ,X ,X ). This observation concludes the proof.
+                     1  2   3   4
+                  Remark 21. In this remark, let us brieﬂy discuss Proposition 4 in the context of a general Markov
+                  process (Y ), say with a countable state space. This is not required below but sheds additional light on
+                            t
+                  Proposition 4(ii). To this end, let us hence assume that (Yt) is an exchangeable Markov process with
+                  countable state space. First of all, note that exchangeability yields that (Y ) reaches state i from state j if
+                                                                                        t
+                  and only if it reaches state j from state i. Indeed, for s,t ∈ N we have P(Y = i,Y = j) = P(Y = j,Y = i).
+                                                                                        s     t           s      t
+                  Hence, the state space can be partitioned in subsets, say with index set I, such that in each of these subsets,
+                  each state ‘communicates’ with any other. A suitable modiﬁcation of the proof of Proposition 4 now shows
+                  that (Yt) can be constructed as follows. First draw an I-valued random variable to choose the subset of the
+                                                                   32
+                     state space in which (Y ) will take values, and then choose i.i.d. draws of a distribution whose support is
+                                                t
+                     exactly this subset. As a corollary, conditionally on Y , the random variables Y ,Y ,... are i.i.d. Indeed, it
+                                                                                  1                            2   3
+                     is easy to see that a {0,1}-valued process (X ) that satisﬁes Proposition 4(ii) also satisﬁes that X ,X ,...
+                                                                        t                                                           2    3
+                     are i.i.d. conditional on X .
+                                                    1
+                      Proof of Theorem 14. The proof is essentially a simpliﬁed version of an argument due to Delbaen [6,
+                     Theorem 11]. This result is argued in continuous time and on a bounded time interval. For the convenience
+                      of the reader, we provide a self-contained proof for this paper’s discrete-time, inﬁnite-horizon setup.
+                          For each ﬁxed s ∈ N, L is deﬁned as the essential supremum of the family consisting of all E [E | F ],
+                                                    s                                                                              Q   τ    s
+                      indexed by all pairs (Q,τ) with Q ∈ Q and τ ≥ s a ﬁnite stopping time. Here we use a version of the
+                      conditional expectation that satisﬁes EQ[Eτ | Fs] = 0 on the event {Zs = 0}, where (Zt) denotes the
+                      likelihood ratio process of Q (see Appendix A). We claim that this family of conditional expectations is closed
+                      under maxima. To prove this claim, let (Q,τ) and (Q0,τ0) be given. Let A := {E [E | F ] ≥ E 0[E 0 | F ]}
+                                                                                                                 Q  τ     s      Q   τ     s
+                      and set τ00 := τ1    +τ01 c and
+                                         A        A
+                                                                      
+                                                                      
+                                                              Z00 :=    Zt,              Z0     t ≤ s
+                                                                t                         t
+                                                                        1 Z +1 cZ           ,   t > s
+                                                                          A t      A sZ0
+                                                                                           s
+                     where (Zt) and (Z0) are the likelihood ratio processes of Q and Q0, respectively. Note that Z0 > 0 on Ac so
+                                          t                                                                                   s
+                      that Z00 is well-deﬁned. Since A belongs to Fs and τ,τ0 ≥ s, τ00 is a (ﬁnite) stopping time. Moreover,
+                             t
+                      since Q is fork-convex, (Z00) is the likelihood ratio process of some Q00 ∈ Q. We now compute
+                                                    t
+                                                 E 00[E 00 | F ] = E 00[1 E | F ] + E 00[1 cE 0 | F ]
+                                                  Q    τ      s      Q    A τ      s     Q    A τ        s
+                                                                        00                   00              
+                                                                         Zτ                     Zτ0         
+                                                                 =E         1 E F +E                1 cE 0F
+                                                                     R   Z00 A τ s          R   Z00   A τ  s
+                                                                        s                      s            
+                                                                         Zτ                     Z00         
+                                                                 =E         1 E F +E             τ 1 cE 0F
+                                                                     R   Z A τ s            R   Z0   A τ  s
+                                                                           s                       s
+                                                                 =1 E [E |F ]+1 cE 0[E 0 | F ]
+                                                                     A Q     τ   s      A Q      τ     s
+                                                                 =max{E [E |F ],E 0[E 0 | F ]}.
+                                                                            Q   τ    s    Q    τ     s
+                     This demonstrates closure under maxima.
+                          NowﬁxanyQ∈Qands∈N. Thankstotheclosurepropertyundermaxima,Proposition20showsthat
+                      there exist families (Q ) of measures in Q and (τ ) of ﬁnite stopping times taking values in {s,s + 1,...}
+                                               n                              n
+                      such that EQ [Eτ | Fs] ↑ Ls almost surely under R, and hence under Q. Therefore, by the conditional
+                                    n    n
+                      version of the monotone convergence theorem,
+                                                           h                           i
+                                                                                 
+                                     E [L | F      ] = E     lim E [E       | F ] F       = lim E [E [E         | F ] | F    ].           (17)
+                                       Q  s     s−1      Q          Q    τ     s   s−1             Q   Q    τ     s     s−1
+                                                            n→∞ n         n                  n→∞         n    n
+                      Replacing Q by (1−n−1)Q +n−1Q we still have (17) and, in addition, Q absolutely continuous with
+                                    n                 n
+                      respect to Qn. From now on we use this modiﬁed choice of Qn. Let (Zt) and (Zn) be the likelihood ratio
+                                                                                                                 t
+                      processes of Q and Qn, respectively, and deﬁne
+                                                                            
+                                                                            
+                                                                     en       Zt, n      t ≤ s,
+                                                                    Zt :=        Zt
+                                                                              ZsZn, t>s.
+                                                                                    s
+                                                                                 33
+                                           en                                             e
+                     By fork-convexity, (Zt ) is the likelihood ratio process of some Qn ∈ Q. We then get
+                                                                                                      
+                                                                                       n                   
+                                                                                Zs       Zτ           
+                                             E [E   [E   | F ] | F    ] = E         E       n E F F
+                                              Q  Qn   τn    s     s−1      R   Zs−1 R    Zn τn s  s−1
+                                                                                          s       
+                                                                                Z Zn         
+                                                                                  s   τ
+                                                                       =ER             nEτ Fs−1
+                                                                               Z     Zn     n
+                                                                             " s−1 s          #
+                                                                                en       
+                                                                               Zτ        
+                                                                       =ER        n Eτ Fs−1
+                                                                               en      n
+                                                                               Zs−1
+                                                                       =E [E |F ] ≤L .
+                                                                           e    τn     s−1         s−1
+                                                                           Qn
+                     Combining this with (17) gives E [L | F           ] ≤ L     .  Iterating this inequality and using that F is
+                                                          Q   s     s−1       s−1                                                   0
+                     trivial yields E [L ] ≤ L . In particular, L is Q-integrable. Since (E ) is a Q-safe e-process, we have
+                                     Q  s       0                    s                             t
+                     L0 = supQ∈Q,τ≥0EQ[Eτ] ≤ 1. Since Q ∈ Q and s ∈ N were arbitrary, this proves that (Lt) is a Q-NSM
+                    with L0 ≤ 1.
+                        Let (L0) be another Q-NSM that dominates (Et). Then for any Q ∈ Q, any t ∈ {0,1,...}, and any
+                                t
+                     ﬁnite stopping time τ ≥ t, the optional stopping theorem under Q gives L0 ≥ E [L0 | F ] ≥ E [E | F ].
+                                                                                                        t    Q   τ    t      Q  τ     t
+                                  0
+                    Therefore L ≥ Lt by the deﬁnition of essential supremum.
+                                  t
+                                                                             34

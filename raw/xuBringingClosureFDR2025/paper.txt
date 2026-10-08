@@ -1,0 +1,849 @@
+                                                       Bringing closure to FDR control:
+                                           beating the e-Benjamini-Hochberg procedure
+                                                              *                            †                                ‡
+                                                  Ziyu Xu               Lasse Fischer                Aaditya Ramdas
+                                                                          September 4, 2025
+                                                                                  Abstract
+                                      False discovery rate (FDR) has been a key metric for error control in multiple hypothesis
+                                  testing, and many methods have developed for FDR control across a diverse cross-section of
+                                  settings and applications. We develop a closure principle for all FDR controlling procedures,
+                                  i.e., we provide a characterization based on e-values for all admissible FDR controlling proce-
+                                  dures. A general version of this closure principle can recover any multiple testing error metric
+                                  and allows one to choose the error metric post-hoc. We leverage this idea to formulate the
+                                  closed eBH procedure, a (usually strict) improvement over the eBH procedure for FDR control
+                                  whenprovided with e-values. This also yields a closed BY (BY) procedure that dominates the
+                                  Benjamini-Yekutieli (BY) procedure for FDR control with arbitrarily dependent p-values, thus
+                                  proving that the latter is inadmissibile. We demonstrate the practical performance of our new
+                                  procedures in simulations.
+                          Contents
+                          1 Introduction                                                                                                           2
+                          2 TheclosedeBH(
+                                                     eBH)procedure                                                                                 4
+                               2.1    Theclosed BY(BY)procedure . . . . . . . . . . . . . . . . . . . . . . . . . . . .                            8
+                               2.2    ThecompoundeBHprocedure . . . . . . . . . . . . . . . . . . . . . . . . . . . .                              9
+          arXiv:2504.11759v3  [stat.ME]  3 Sep 20253 AclosureprincipleforFDRcontrol                                                              10
+                          4 Closedtesting for general error metrics                                                                              11
+                          5 Extensions                                                                                                           13
+                              0This paper is subsumed by the merged work of Xu et al. (2025).
+                               *Department of Statistics and Data Science, Carnegie Mellon University, USA. Email: xzy@cmu.edu.
+                               †Competence     Center    for  Clinical   Trials   Bremen,     University   of   Bremen,     Germany.         Email:
+                          fischer1@uni-bremen.de.
+                               ‡Department of Statistics and Data Science and Machine Learning Department, Carnegie Mellon University, USA.
+                          Email: aramdas@cmu.edu.
+                                                                                      1
+                     6 Numericalsimulations                                                                        14
+                     7 Relatedwork                                                                                 15
+                     8 Conclusion                                                                                  16
+                     1   Introduction
+                     Multiple testing with p-values, in particular false discovery rate (FDR) control, has been a cen-
+                     terpiece of statistical research in the past three decades since its introduction by Benjamini and
+                     Hochberg(1995). Recently,WangandRamdas(2022)formulatedthee-Benjamini-Hochberg(eBH)
+                     procedure for FDR control, which uses e-values for each hypothesis and is robust to arbitrary de-
+                     pendence. It is known that by employing external randomization, or additional information about
+                     distribution of the e-values or their dependence structure, the eBH procedure can be improved (i.e.
+                     it can be amended to be more powerful).
+                        In this paper, we will show that one can (often strictly) improve the eBH procedure with no
+                     additional information or randomization. We call our procedure the closed eBH procedure, denoted
+                     eBH for brevity. Further, we establish that any FDR controlling procedure must rely on e-values,
+                     and in particular can be written as an instance of eBH acting on some e-values. In the process,
+                     we establish a closure principle for FDR control, similar to the results of Marcus et al. (1976)
+                     and Sonnemann and Finner (1988) for FWER control. This is also complementary to the results
+                     of Ignatiadis et al. (2025) who show that every FDR controlling procedure is an instance of the eBH
+                     procedure with compound e-values, a fact that we return to later in this work.
+                     Problem setup.    The standard multiple testing problem assumes that there are K null hypotheses
+                     H1,...,H ascientist wishes to test, some of which are truly null, and one wishes to discover the
+                               K
+                     non-nulls. Let α ∈ [0,1] be our fixed and desired level of control on the FDR.
+                                                  :                         :
+                        First, for any set A ⊆ [K] = {1,...,K}, define H     =∩ H,i.e.,theintersectionhypothe-
+                                                                          A      j∈A j
+                     ses of the base hypotheses corresponding to the set A. For any set A, if the true null set equals A,
+                     then the false discovery proportion (FDP) of a candidate discovery set R ⊆ [K] equals
+                                                 FDPA(R)=X1{j∈R} = |R∩A|.
+                                                              j∈A |R|∨1         |R| ∨ 1
+                     In words, if H  happened to be true (and H   is false for every B ⊃ A), and R was rejected, then
+                                   A                            B
+                     FDPA(R)wouldbetherealizedFDP.
+                        Let X ∈ X denote the data, which is sampled from the true distribution P∗. We define a
+                     discovery procedure R : X → 2[K] as a mapping from input data to a discovery set R ⊆ [K], where
+                     R≥0 represents the nonnegative reals. Formally, each base hypothesis H is a set of distributions,
+                                                                                            j
+                                                           ∗               ∗
+                     and Hj is said to be “truly null” if P  ∈ Hj. Let A ⊆ [K] denote the set of true nulls, i.e.,
+                     P∗ ∈ H ∗ and P∗ ̸∈ H for all A s.t. A∗ ⊂ A. The FDR of a discovery procedure R equals
+                             A              A
+                                                               :          ∗
+                                                     FDR(R) =E[FDPA (R(X))].
+                                                                    2
+                      TheeBHprocedure. Weconsiderthesituationwhereourdatahasalreadybeensummarizedinto
+                                             :
+                      K e-values X = E = (E1,...,EK) (one per hypothesis). These e-values may be arbitrarily
+                      dependent. Wang and Ramdas (2022) introduced the eBH procedure which takes in ensures FDR
+                      control below α under arbitrary dependence among the e-values, and is defined as producing the
+                      following discovery set:
+                                                                                                   
+                                           eBH :                            X              K         
+                                          k     =max k∈{0}∪[K]:                   1 E ≥           ≥k
+                                                                                       i   αk        
+                                                                           i∈[K]         
+                                           eBH :     eBH     :                       K
+                                         R      =R (E) = i∈[K]:Ei≥ αkeBH
+                      TheeBHprocedure(andvariants) has been used to derive FDR control in many settings with com-
+                      plex dependencies in the data, e.g., bandit data collection (Xu et al., 2021), multi-stream monitoring
+                      (Wangetal.,2025;DandapanthulaandRamdas,2025;Tavyrikovetal.,2025),multi-resolutiontest-
+                      ing (Gablenz and Sabatti, 2025; Yu et al., 2025), combining data from multiple sources (Banerjee
+                      et al., 2024; Li and Zhang, 2025), etc. Prior work has shown that existing FDR controlling method-
+                      ologies can be recast as an application of the eBH procedure. Examples include knockoffs (Ren
+                      and Barber, 2023; Guan et al., 2025) as well as the seminal procedure of Benjamini and Hochberg
+                      (1995) (Li and Zhang, 2025) and its variant introduced by Benjamini and Yekutieli (2001) that is
+                      robust to arbitrary dependence (Wang and Ramdas, 2022). We will show that the eBH procedure
+                      is actually inadmissible, and derive a procedure that (usually strictly) improves upon eBH that is
+                      applicable to and may improve power for all of the aforementioned situations.
+                      Contributions.     Ourcontributions are listed below.
+                          • Developmentofageneralclosureprinciplethatencompassesallexpectationbasederrorrates
+                            and allows to construct all procedures controlling these metrics (Theorem 3). This char-
+                            acterizes multiple testing procedures by single e-values for the intersection hypotheses and
+                            often yields improvements of existing procedures. While closure principles for FWER con-
+                            trol (Marcus et al., 1976) and FDP probability bounds (Goeman and Solari, 2011) are known,
+                            our principle additionally includes FDR control which was an open problem, while also re-
+                            covering these earlier known closure principles.
+                          • Illustration of the application of our closure principle by introducing a closed eBH (eBH) and
+                            a closed BY (BY) procedure that dominate the original methods (Section 2). Both eBH and
+                            BYarewell-studied and were not generally known to be inadmissible (it was known that BY
+                            can be improved by randomization, but not by a deterministic procedure (Xu and Ramdas,
+                            2023)).
+                          • Showing that in its most general form our closure principle allows for post-hoc choice (in
+                            a specific sense) of the significance level α (Section 3) and for post-hoc choice of the error
+                            metric (Section 4), thus providing multiple testing guarantee that has not been considered
+                            before.
+                      Paper outline.    Weintroduce the eBH procedure in Section 2. In Section 2.2, we formulate the
+                      closed compound eBHprocedureforcompounde-values. Then, we formulate our closure principle
+                                                                        3
+                    for all FDR controlling procedures in Section 3 and then extend it to any expectation based error
+                    rate in Section 4. We describe some extensions and synergies of the eBH procedure with existing
+                    e-value techniques in Section 5 (i.e., randomization, e-merging, boosting). We present simulations
+                    showingtheimprovementsofeBHoverexistingeBHmethodologyinSection6. Lastly,wediscuss
+                    prior work in depth in Section 7 and recap our findings in Section 8.
+                    2    TheclosedeBH(eBH)procedure
+                    Our procedure rejects more hypotheses (often strictly) than eBH, while still controlling the FDR.
+                    The construction proceeds akin to the closure principle for familywise error control (Marcus et al.,
+                    1976) by first defining a test for every intersection hypothesis. Define the e-value to test HA as
+                                                          E =|A|−1XEi.                                          (1)
+                                                            A
+                                                                      i∈A
+                    The arithmetic mean is a symmetric admissible e-value merging function (Vovk and Wang, 2021).
+                    Let EA denote the supremum of the expectations of a random variable over distributions where HA
+                    holds (i.e., for any distribution P ∈ H ). By the definition of E being an e-value for each j ∈ A,
+                                                         A                        j
+                    for any A ⊆ [K], we have that            E [E ] ≤ 1.
+                                                               A A
+                    Wedefine the set of candidate discovery sets as
+                                                                  FDP (R)               
+                                             :                         A
+                                           C = R⊆[K]:EA≥               α       ∀A⊆[K] .                         (2)
+                    Proposition 1. For any procedure R that ensures R ∈ C, we have that FDR(R) ≤ α.
+                    Proof. For any R ∈ C, we have that
+                                                         FDP ∗(R) ≤ αE ∗.
+                                                              A           A
+                    Taking expectations, the claim is proved.
+                        Let Ri ⊆ [K] be the set of hypotheses corresponding to the i largest e-values (with ties being
+                    arbitrarily broken) for each i ∈ [K]. Define the procedure that outputs largest discovery set in C as
+                    the eBH procedure:
+                                                     eBH :
+                                                    k     =max{i∈[K]:R ∈C}                                      (3)
+                                                                             i
+                                                     eBH :    eBH     :
+                                                   R      =R (E) =R[:keBH].
+                    Notethat ReBH ∈ argmax|R| by definition. We will now show that this method is provably (usually
+                                       R⊆C
+                    strictly) more powerful as eBH, the standard way to control the false discovery rate (FDR) in this
+                    setting. Another way of interpreting is eBH is to first define self-consistent candidate discovery sets
+                    CSC, and then note that ReBH is the largest such set. Formally,
+                                                SC :                                  
+                                               C    = R⊆[K]:min E ≥K/(α|R|) ,
+                                                                   i∈R   i
+                                             ReBH = argmax |R|.
+                                                      R⊆CSC
+                                                                   4
+                   Proposition 2. CSC ⊆ C, and consequently ReBH ⊆ ReBH.
+                   Proof. Consider the following derivation for arbitrary A and R:
+                           E =|A|−1XE
+                             A              i
+                                       i∈A
+                               ≥|A|−1|A∩R| min E ≥|A|−1|A∩R|minE ≥K−1|A∩R|minE.                         (4)
+                                              i∈A∩R i                 i∈R  i               i∈R  i
+                   RecallthatEAisdefinedasthearithmeticmeane-valuein(1). Thefirstinequalityislowerbounding
+                   each term in the sum and also dropping some positive terms. The second inequality follows by
+                   strictly expanding the set which we take a minimum over. The third inequality is because K ≥ |A|.
+                      Now, assume that FDP (R) > 0 and R ∈ CSC (otherwise FDP (R)/E         ≤ α is trivially
+                                           A                                      A      A
+                   satisfied). We have the following result for any R ∈ CSC:
+                                                                  |A∩R|      FDP (R)
+                                       E ≥K−1|A∩R|minE ≥                  =      A    .                 (5)
+                                        A                i∈R  i    α|R|         α
+                   Thefirst inequality is by (4), and the second inequality is by the definition of CSC. Thus, we get that
+                                                        FDPA(R) ≤α
+                                                           EA
+                   for any R ∈ CSC by (5). Thus, we get that CSC ⊆ C and also that ReBH ∈ C Since ReBH ∈
+                   argmax |R|, we have that |ReBH| = keBH ≤ keBH = |ReBH| and consequently ReBH = R eBH ⊆
+                                                                                                   [:k ]
+                    R∈C       eBH
+                   R eBH =R      . Thus, we have shown our desired results.
+                    [:k  ]
+                      Theloosenessintheinequalities in (4) hints at ReBH being potentially more powerful than eBH,
+                   and we will observe that is indeed the case in our simulations.
+                      Ignatiadis et al. (2024, Section S3.2) formulates the minimally adaptive eBH procedure where
+                   onefirst tests the global null with the arithmetic mean of the e-values, and only once the global null
+                   rejects, the eBH procedure is applied at level αK/(K − 1). Formally we can define
+                                        (                          K                     )
+                            eBHm :                         −1     X            K−1
+                           k     =max k∈[K]:E           ≥α and        1 Ei ≥           ≥k ∪{0},
+                                                    [K]                         αk
+                                                                   i=1
+                            eBHm :   eBHm     :
+                          R      =R       (E) =R[:keBHm].
+                   TheyshowthatthismethoddominateseBHaswell. Thismethodis,inturn,dominatedbytheeBH
+                   procedure.
+                   Proposition 3. ReBHm ⊆ ReBH.
+                   Proof. By definition of ReBHm, we know that if any discoveries are made,
+                                                              FDP (ReBHm)
+                                                E ≥α−1=           [K]        .
+                                                 [K]                α
+                                                              5
+                   Consider the following derivation for arbitrary A ⊂ [K], i.e, |A| ≤ K − 1, and R ⊆ [K]:
+                                 −1X
+                         E =|A|         E
+                          A              i
+                                    i∈A
+                                 −1                      −1                         −1
+                            ≥|A| |A∩R| min E ≥|A| |A∩R|minE ≥(K−1) |A∩R|minE.                           (6)
+                                           i∈A∩R i                 i∈R   i                    i∈R  i
+                   RecallthatEAisdefinedasthearithmeticmeane-valuein(1). Thefirstinequalityislowerbounding
+                   each term in the sum and also dropping some positive terms. The second inequality follows by
+                   strictly expanding the set which we take a minimum over. The third inequality is because |A| ≤
+                   K−1.                              eBHm                         eBHm
+                      Now, consider A where FDP (R       ) > 0 (otherwise FDP (R      )/α ≤ E is trivially
+                                                 A                            A                A
+                   satisfied). We have the following result:
+                                                                  |A∩ReBHm|      FDPA(ReBHm)
+                                            −1
+                              EA≥(K−1) |A∩R| min Ei≥                   eBHm   =               .
+                                                      i∈ReBHm      α|R     |          α
+                   Thefirstinequalityisby(6),andthesecondinequalityisbythedefinitionofReBHm. Thus,ReBHm ∈
+                   C and we have that ReBHm ⊆ ReBH.
+                   WhereiseBHgainingpower? TobetterillustratethefeaturesoftheeBHprocedure,wecantake
+                   a close look at the thresholds on the individual e-values for rejection. Choose A = {j} for each
+                   j ∈ R[:k], we see that C only enforces the constraint that
+                                                E ≥ 1 foreveryj ∈ReBH.
+                                                 j   αkeBH
+                   Of course, it imposes other “joint constraints” on averages of these e-values as well: for instance,
+                   the average of the smallest m rejected e-values must esceed m/(αkeBH). In contrast, the eBH
+                   procedure satisfies
+                                                  E ≥ 1 foreveryj ∈ ReBH,
+                                                   j   α
+                   which is a significantly harsher threshold. Meanwhile, the minimally adaptive eBH procedure that
+                   makeskeBHm ≥ keBH rejections satisfies
+                                               E ≥ 1 foreveryj ∈ReBHm,
+                                                 j   α K
+                                                      K−1
+                   whichisagainamuchmorestringentcondition. SinceK/(K−1) ≤ 2,withequalityonlyforK =
+                   2, the latter threshold matches that of the closed eBH procedure for K = 2, but is more stringent
+                   otherwise. It can be easily shown that the closed eBH procedure indeed equals the minimally
+                   adaptive eBH procedure for K = 2, but can be more powerful otherwise, as demonstrated by the
+                   following simple example.
+                   Example 1 (Closed eBH beats minimally adaptive eBH). We give a simple example with K = 3
+                   to show that the closed eBH rule can reject strictly more than the minimally adaptive eBH rule.
+                   For the set of input e-values E = (60,39,11), the eBH procedure only makes one rejection at
+                   α = 0.05, narrowly missing out on the second rejection. The minimally adaptive eBH procedure
+                   effectively runs eBH at level 3α/2, and makes two rejections. The closed eBH procedure rejects all
+                   3 hypotheses, which can be checked by verifying that the set {1,2,3} lies in C, since each e-value
+                   is larger than 20/3, all pairwise averages exceed 40/3 and the overall average exceeds 20.
+                                                              6
+                                 Algorithm 1: O(K3) dynamic programming algorithm for computing discoveries made
+                                 by the eBH procedure. Let E                  denote the ith smallest e-value for each i ∈ [K].
+                                                                          (i)
+                                   Input: E-values (E1,...,EK) and target FDR level α ∈ [0,1]
+                                   Output: Closed eBH discovery set ReBH
+                                   for k = K,K −1,...,keBH +1do
+                                         (Attempt to reject hypotheses with k largest e-values)
+                                         for r = 1 to k do
+                                              for m = r to r + K −k do
+                                                                      P
+                                                    Let S         = r E                           (sum of r smallest e-values among top k).
+                                                            (r,k)         i=1     (K−k+i)
+                                                                         P
+                                                    Let S            = m−rE                  (sum of m−r smallest e-values overall).
+                                                            (m−r)         Si=1+S(i)
+                                                    Let E(k,r,m) =          (r,k)    (m−r), and FDP(k,r) = r.
+                                                                                  m                                   k
+                                                    if FDP         /α>E                  then
+                                                             (k,r)             (k,r,m)
+                                                         continue to next k.
+                                                    end
+                                              end
+                                         end
+                                         return ReBH = R                (discovery set of k largest e-values)
+                                                                   [:k]
+                                   end
+                                   return ReBH = ReBH
+                              Efficiently computing ReBH                    We use a dynamic programming approach to efficiently compute
+                              ReBH —ourapproach is summarized in Algorithm 1. First, we note that computing ReBH reduces
+                              to computing the discovery set size keBH ∈ [K] and setting the discovery set as the hypotheses with
+                              the keBH largest e-values. Recall that the eBH procedure finds the largest rejection set R ⊆ [K]
+                              such that the following condition is satisfied for all subsets A ⊆ [K]:
+                                                                                                        FDP (R)
+                                                                           d :                                A
+                                                                           FDR(R) = max                                ≤α,
+                                                                                                  [K]       E
+                                                                                             A⊆2               A
+                              where we let 0/0 = 0.
+                                   The algorithm iteratively considers each R , which contains the hypotheses corresponding to
+                                                                                                  k
+                              the k largest e-values, and determines whether R                          ∈ C is true. The algorithm starts from K and
+                                                                                                     k
+                              stops as soon as it is able to discover Rk or reaches the eBH discovery set, i.e., at k = keBH.
+                                   To do this efficiently, we note that for each r ∈ [k], we can fix r to be the number of false
+                              discoveries. Then, to maximize FDP (R)/E , A includes r true nulls in R with the smallest
+                                                                                     A           A                                             k
+                              e-values in R and we only need to maximize over m ∈ {r,...,r + K − k}, the number of true
+                                                 k
+                              nulls outside of the rejection set, where for each m we pick the m − r smallest e-values.
+                                   LetA              betheindicescorrespondingtother smalleste-valuesinR andthem−rsmallest
+                                            (k,r,m)                                                                                      k
+                              e-values outside of Rk. Then, we can say that
+                                                                       d                                                r/k
+                                                                      FDR(Rk)=                     max               E            .
+                                                                                         r∈[k],m∈{r,r+K−k}             A(k,r,m)
+                                   Thus, we ended up with O(K3) computation, since for each k ∈ {|ReBH| + 1,...,K}, we can
+                                                                                                    7
+                              d                                       2                                       2
+                    compute FDR(R ) as a maximization over a O(K ) sized table which also only take O(K ) time
+                                     k
+                    to compute.
+                    Post-hoc validity   Astronger form of control on the FDP has been considered in prior literature
+                        ¨
+                    (Grunwald, 2024; Xu et al., 2024; Koning, 2024) that the eBH (or any e-self-consistent) procedure
+                    satisfies. To define this guarantee, we let Cβ denote C as defined in (2) constructed for level β ∈
+                    [0,1].
+                    Proposition 4. The following post-hoc validity is satisfied for the set of (Cβ)  .
+                                                      "                        #               β∈[0,1]
+                                                                    FDP ∗(R)
+                                                    E sup sup           A        ≤1,                              (7)
+                                                       β∈[0,1]R∈C       β
+                                                                 β
+                    where we let 0/0 = 1.
+                    Proof. By construction of Cβ for each β ∈ [0,1], we have the following deterministic inequality
+                                                      sup sup FDPA∗(R) ≤E ∗.
+                                                                      β          A
+                                                     β∈[0,1]R∈Cβ
+                    Wegetourdesired result by taking expectations on both sides.
+                        Thus, we get a form of control even when we choose both β and R in a data-dependent fashion.
+                    2.1   TheclosedBY(BY)procedure
+                    Our results also have implications for the Benjamini and Yekutieli (2001) (BY) procedure, which
+                                                                                                 :
+                    ensures FDR control under arbitrary dependence among p-values X = P = (P1,...,PK) ∈
+                         K
+                    [0,1] . The procedure is defined as follows:
+                                                    (                   k                    )
+                                         BY :                          X             αk
+                                        k    =max k∈{0}∪[K]:               1 Pi ≤ Kℓ ≥k
+                                                                       i=1             K
+                                         BY :     BY     :
+                                       R     =R (P) =R(:kBY),
+                    where R      denotes the set of hypotheses corresponding to the k smallest p-values.
+                             (:k)
+                        Define the following p-to-e calibrator fBY(α,K) : [0,1] → R≥0 (Xu et al., 2024):
+                                     BY(α,K)     :     −1                −1    −1          −1
+                                    f        (x) = Kα        x(α/(Kℓ ))       ∨1     1{x ≤ α     ℓ },
+                                                                      K                           K
+                    whereℓK istheKthharmonicnumber. WangandRamdas(2022)showedthatthatthisisequivalent
+                    to applying eBH to
+                                            EBY(α,K) = (fBY(α,K)(P ),...,fBY(α,K)(P )).
+                                                                     1                  K
+                    Hence, we can now the BY procedure as
+                                                    BY :    BY     :    eBH   BY(α,K)
+                                                  R    =R (P) =R (E                   ).
+                    Proposition 5. RBY ⊆ RBY.
+                        The above proposition follows directly from the formulation of BY as eBH and Proposition 2.
+                    Wealsosee empirically in Section 6, which gives us the rather surprising result that the BY proce-
+                    dure is inadmissible, even when restricted to deterministic procedures (as Xu and Ramdas (2023)
+                    provided a randomized version of the BY procedure that dominated the original).
+                                                                    8
+                      2.2   ThecompoundeBHprocedure
+                      Ignatiadis et al. (2025) showed that eBH was a universal procedure for FDR control, i.e., every
+                      FDRcontrolling procedure can be written as the eBH procedure applied to some set of compound
+                                                                                  e :    e        e
+                      e-values. For compound e-values, we let our data be X = E = (E ,...,E ). Compound e-values
+                                                                                          1        K
+                      are all nonnegative and satisfy the following condition
+                                                                X e
+                                                                    E [E ] ≤ K.                                          (8)
+                                                                      A i
+                                                                i∈A
+                                                                                                                      ∗
+                      for any A ⊆ [K]. In words, no matter which A constitutes the true set of null hypotheses A , the
+                      expected sum of the corresponding compound e-values cannot exceed K.
+                          OurresultsarecomplementarytotheaboveuniversalityresultoneBH.Insteadofreducingevery
+                      FDRproceduretousingeBHwithcompounde-values,weinsteadreduceittheeBHprocedurewith
+                      an e-value for each intersection hypothesis. These two interpretations are interconnected, and we
+                      can formulate eBH applied to compound e-values as the application of the eBH procedure to an
+                      e-collection for the intersection hypotheses.
+                          For any A ⊆ [K], note that the (8) implies that
+                                                                         −1Xe
+                                                               E =K             E                                        (9)
+                                                                 A                i
+                                                                            i∈A
+                      is a valid e-value for HA. Let the compound eBH procedure be the eBH procedure that utilizes (9)
+                                                                            ˜eBH :     eBH e        ˜eBH :      eBH e
+                      for its e-collection instead of (1) and be denoted as R     =R (E).LetR              =R (E)now
+                      be the discovery set that results from applying the eBH procedure.
+                                                     ˜eBH     ˜eBH
+                      Proposition 6. We have that R        ⊆R .
+                      Proof. The proof is nearly identical to that of the proof of Proposition 2, albeit using the e-values
+                      defined in (9).
+                                               −1Xe           −1       ˜         e       −1       ˜       e
+                                     E =K             E ≥K |A∩R| min E ≥K |A∩R|minE.                                    (10)
+                                       A                i                      ˜   i                   ˜   i
+                                                  i∈A                     i∈A∩R                      i∈R
+                      Thefirst inequality is lower bounding each term in the sum and also dropping some positive terms.
+                      Thesecondinequality is by strictly expanding the set which we take a minimum over.
+                                                            ˜eBH
+                          Wehavethefollowing result for R        :
+                                                                                   ˜eBH             ˜eBH
+                                                −1       ˜eBH         e      |A∩R |          FDPA(R      )
+                                       E ≥K |A∩R | min E.≥                               =                 .            (11)
+                                        A                        ˜eBH  i         ˜eBH              α
+                                                               i∈R            α|R     |
+                      The first inequality is by (10), and the second inequality is by the definition of ReBH. (11) implies
+                           ˜eBH                                         ˜eBH                          ˜eBH
+                      that R     ∈ C, and consequently we get that R          = R eBH ⊆ R eBH = R          . Thus, we have
+                                                                                   k         k
+                      shownourdesired result.
+                          Weconjecture that the compound eBH procedure and standard compound eBH procedure are
+                      actually equivalent, as we have observed simulations where this is the case, and we will leave a
+                      rigorous investigation to future work.
+                                                                        9
+                      3    Aclosureprinciple for FDR control
+                      Now, we will argue that any FDR controlling procedure (i.e., including procedures that take inputs
+                      that are not e-values) can be improved by or reinterpreted as a procedure based on deriving e-values
+                      for every intersection hypotheses HA for each A ⊆ [K]. Let R be a FDR controlling procedure
+                      (with discovery set R = R(X)) if it satisfies
+                                                            sup EA[FDPA(R)] ≤ α.
+                                                               [K]
+                                                           A⊆2
+                          In this section, we now let E  denoteanye-valuefortheintersectionhypothesisH . Now,con-
+                                                       A                                                       A
+                      sider any e-closed procedure R, which is any procedure that produces a discovery set that satisfies
+                      R∈Cfortheresultingcandidate set C in (2).
+                      Theorem1. Anye-closed procedure R (with corresponding discovery set R = R(X)) which uses
+                                                                       FDP (R)
+                                                                E =         A     .                                     (12)
+                                                                  A        α
+                      to form a e-collection (EA)        ensures that in R ∈ C. Further, the dominant e-closed procedure
+                                                  A⊆[K]
+                      Risequivalent to R, i.e., R = R.
+                          Thus, any FDR controlling procedure can be represented as a e-closed procedure.
+                      Proof. Note that E    is a valid e-value for H , since E [FDP (R)] ≤ α by R being a FDR con-
+                                          A                          A          A      A
+                      trolling procedure. Furthermore, we can see that
+                                                  max FDPA(R) = max FDPA(R) =α,
+                                                     [K]    E          A⊆[K] FDP (R)/α
+                                                 A⊆2          A                   A
+                      when we treat 0/0 = 1 in the above division. Thus, R ∈ C. As a result, there exists a e-closed
+                      procedure which can always choose R ∈ C. On the other hand, for every R′ ⊆ [K] with |R′| > |R|,
+                                                ′     ′              ′     ′                                           ′
+                      wehave any A = R∩R ∪A where∅ ⊂ A ⊆ R \RhasE = FDP (R)/α < FDP (R)/α.
+                                                                                       A         A                A
+                                          ′                          ′         ′
+                      Similarly, if 0 < |R | < |R|, we can choose A ∈ R\R instead and note the same inequality. Thus,
+                      Rand∅aretheonlysetsinC. Asaresult,letting the e-closed procedure always outputting R is the
+                      dominant procedure.
+                      Closure for post-hoc valid procedures.        We also formulate an alternative way to form an e-
+                      collection for the e-closed procedure from procedures with post-hoc FDP control (in the sense of
+                      (7)). Here, let D be a procedure that produces a family of discovery sets (Rβ)             , and D is
+                      post-hoc FDP controlling procedure if it satisfies                                   β∈[0,1]
+                                                            "       FDPA∗(R )#
+                                                          E sup                β    ≤1.
+                                                             β∈[0,1]      β
+                      Wecandefinethefollowing e-values for each A ⊆ [K]:
+                                                                          FDPA(R )
+                                                            ¯                      β
+                                                            EA= sup            β      .                                 (13)
+                                                                   β∈[0,1]
+                                                                        10
+                    Theorem 2. For an arbitrary post-hoc procedure D, the e-closed procedure R with e-collection
+                      ¯
+                    (EA)        that ouputs R recovers or improves upon the FDR controlling procedure R where R =
+                          A⊆[K]
+                    R(X)=D(X) foraspecificα∈[0,1].
+                                    α
+                                                        ¯
+                    Proof. The theorem follows from (E )          being a valid e-collection due to D having post-hoc
+                                                         A A⊆[K]
+                                                         ¯
+                    FDP control. Further, we note that E     ≥ E (as defined in (12)) since E      is included in the
+                                                           A      A                              A
+                                         ¯
+                    supremum taken in EA. As a result, the resulting e-closed procedure R provides FDR control by
+                    outputting a discovery set in R ∈ C s.t. R ⊇ R — this set always exists since R ∈ C. Thus, we have
+                    shownourdesired result.
+                        Let us briefly compare the construction of the e-collection in (13) to the one for (12). Notably,
+                    in (13), the e-values do not depend upon α. Further if eBH is plugged into the e-closed procedure
+                    applied to e-values from (12), it cannot be improved. However, every e-value in (13) is at least as
+                    large, and typically larger, than the corresponding e-value defined in (12) (as the latter is included
+                    in the supremum of the former). As a result, typically, taking the closure actually can increase the
+                    power over the original procedure. Further, e-collection of (12) sets Ei = 0 for i ̸∈ R. On the
+                    other hand, the e-collection of (13) constructs Ei s.t. Ei > 0 is possible for i ̸∈ R, and they are
+                    usually positive values. Thus, the e-closed procedure derived from (13) could improve over the
+                    FDRcontrolling procedure R used to derive the e-collection.
+                    4    Closed testing for general error metrics
+                    SupposewehaveageneralerrormetricF = (FA)              , whichmeansthatFA isa(possiblyrandom)
+                                                                    A⊆[K]
+                    function that maps any rejection set R to some nonnegative real number and we aim to find an R
+                    such that
+                                                          sup E [F (R)] ≤ α.                                    (14)
+                                                                 A A
+                                                            [K]
+                                                         A⊆2
+                    For example, in case of FDR control, we have FA = FDPA. However, there are many other error
+                    rates this general setup includes:
+                        • k-familywise error rate (k-FWER): FA(R) = 1{|A ∩ R| ≥ k}.
+                        • Per-family wise error rate (PFER): FA(R) = |A ∩ R|.
+                        • False discovery exceedance (FDX): FA(R) = 1{FDPA(R) > γ} for some γ ∈ (0,1).
+                        Analogousasbefore, given an e-value EA for each A ⊆ [K], define the set of candidate discov-
+                    ery sets for the error metric F by
+                                                 :                     FA(R)              
+                                           C(F) = R⊆[K]:EA≥               α      ∀A⊆[K] .
+                        The validity and admissibility of this general closure principle follows exactly as in Proposi-
+                    tion 1 and Theorem 1, respectively.
+                    Theorem 3. Any set R ∈ C(F) satisfies (14). Furthermore, for any rejection set R and EA =
+                    F (R)/α,wehaveR∈C(F). Hence,everyprocedurecanbeobtainedasaclosedprocedure.
+                      A
+                                                                   11
+                         This general formulation has the further advantage that it allows the post-hoc choice of the error
+                     metric. Let F be the set of all error metrics under consideration and suppose for every F ∈ F, we
+                     pick a specific closed procedure RF ∈ C(F) (usually the largest set among all candidates). Then,
+                     wehave
+                                                                    
+                                              sup E     supF (R ) ≤ sup E [E ]α≤α.
+                                                     A        A   F               A    A
+                                                [K]     F∈F                   [K]
+                                            A⊆2                           A⊆2
+                     Hence, we can choose the error metric and thus the corresponding rejection set RF post-hoc.
+                                                                                              −1P
+                     Example2(Decidingbetweene-HolmandeBHpost-hoc). LetE = |A|                          E bedefinedas
+                                                                                      A             i∈A   i
+                     in Section 2. We know that in case of F   =FDP ,theresultingclosed procedure is given by eBH.
+                                                            A         A
+                     NowsupposeweseekforFWERcontrolandthushaveF (R) = 1{|A∩R| > 0}. Then,
+                                                                              A
+                                                                    FA(R)               
+                                         C(F) = R⊆[K]:E ≥                      ∀A⊆[K]
+                                                                A       α
+                                                                     1                          
+                                               = R⊆[K]:E ≥ forallAwithA∩R̸=∅ .
+                                                                A    α
+                     Therefore, the largest rejection set R ∈ C(F) contains all indices i ∈ [K] such that E  ≥1/αfor
+                                                                                                           A
+                     all A with i ∈ A. This is the e-Holm procedure (Vovk and Wang, 2021; Hartog and Lei, 2025).
+                     Consequently, we could decide based on the data if we want to control the FDR with the eBH
+                     procedure or to control the FWER with the e-Holm procedure without violating the guarantee.
+                     Remark 1. Our general closure principle recovers the existing closure principles for FWER control
+                     (Marcus et al., 1976) and simultaneous FDP control (Goeman and Solari, 2011) by choosing EA =
+                     ϕA/αforsomelevel-αintersection tests ϕA, A ⊆ [K].
+                         To see this, note that in the FWER case, FA(R) = 1{|A ∩ R| > 0}, the largest set R ∈ C(F)
+                     contains all indices i ∈ [K] with E   ≥α−1 ⇔ ϕ = 1(seealso Example 2), which is precisely
+                                                         A              A
+                     the closure principle for FWER control (Marcus et al., 1976).
+                         ForsimultaneousFDPcontrol,fixacandidaterejectionsetR ⊆ [K],setFd(R) = 1{|R\A| <
+                                                                                                   A
+                     d}anddefine
+                                              :                                   d
+                                        d(R) =max{d∈{0,...,K}:ϕA ≥F (R) ∀A⊆[K]}
+                                                                                 A
+                                              =min{|R\A|:A⊆[K],ϕ =0},
+                                                                           A
+                     then d(R) is the closed procedure for simultaneous true discovery guarantee, which is equivalent
+                     to simultaneous FDP control (Goeman et al., 2021). By the simultaneous control of our closure
+                     principle over all error rates Fd, d ∈ {0,...,K}, and all rejection sets R ∈ C(Fd), we obtain the
+                     simultaneous true discovery of d using our general closure principle
+                                                        ∗ "                    d     #
+                                                     EA       sup      sup F ∗(R) ≤α
+                                                                               A
+                                                           d∈{0,...,K}  C(Fd)
+                                                                     R∈
+                                                =⇒ PA∗(∃R⊆[K]:d(R)>|R\A∗|)≤α.
+                     Remark2. Theofflinemultipletesting problem can be viewed as a composite generalized Neyman-
+                                                  ¨
+                     Pearson (GNP) problem (Grunwald, 2024) for different loss functions. In particular, we can view a
+                                                                     12
+                             discovery procedure, R as the maximally compatible decision rule for the multiple testing problem
+                             w.r.t. the e-collection derived in Theorem 1 for FDR control. However, admissibility results for
+                                                                                              ¨
+                             maximally compatible decision rules from Grunwald (2024) do not directly apply to our setting
+                             since their assumption on action “richness” (continuity of loss — for FDP or other discrete multiple
+                             testing error metrics — w.r.t. the action space) is violated in multiple testing, as there are only a
+                             finite set of values that the FDP can take.
+                             5      Extensions
+                             Wediscuss some extensions to the eBH procedure. These extensions primarily highlight the fact
+                             that the advantages of e-value procedures are retained for our procedure as well.
+                             Randomization.             Xu and Ramdas (2023) introduced stochastic rounding of e-values to use ran-
+                             domization to improve e-value based hypothesis tests as well as the eBH procedure. We can apply
+                             stochastic rounding individually to each intersection e-value E                          for A ⊆ [K], as follows.
+                                                                                                                   A
+                                  Recall that R[:k] denotes the set of hypotheses corresponding to the k largest e-values, and solve
+                                  ˆ        eBH
+                             for k := k          from (3). Then, define data-dependent test levels
+                                                                                     :   FDPA(R[:k])−1
+                                                                              αˆ      =
+                                                                                A,k                 α
+                             for each A ⊆ [K],k ∈ [K]. Finally, define
+                                                                                                                                    −1
+                                                                                                                             E −αˆ
+                                                                      −1                                                      A       ˆ
+                                                                                                                                    A,k
+                                                                        αˆ   ˆ        if αˆ   ˆ     >αˆ ˆ orU > −1                     −1
+                                                     S (E )=              A,k               A,k+1         A,k              αˆ  ˆ   −αˆ    ˆ .
+                                                       A     A                                                             A,k+1      A,k
+                                                                      −1
+                                                                        αˆ   ˆ        otherwise
+                                                                          A,k+1
+                             OnecanthencheckthatS (E )isane-valuewhereU isuniformrandomvariableon[0,1]that is
+                                                                 A     A
+                             independent of everything else.
+                                  Note that S (E ) ≥ αˆ−1                      almost surely, which means that eBH using the e-collection
+                                                   A     A           A,keBH
+                             (S (E ))               will never make fewer discoveries. Further, if min                             E −αˆ−1             >0,there
+                                A     A A⊆[K]                                                                             A⊆[K]      A        A,keBH
+                             is positive probability that keBH + 1 discoveries can be made. In such a case, the randomized eBH
+                             procedure is strictly more powerful than the eBH procedure.
+                             Boosting.        WangandRamdas(2022)observedthatonecanincreasethepowerofane-valuewhen
+                             testing against a finite set of rejection thresholds. In the most general setting of assuming arbitrary
+                             dependence, if one knows the marginal distribution of an e-value under the null, one can calculate a
+                             boosting factor b for an e-value E as follows
+                                                                       :              ′                        ′
+                                                                     b =max{b ∈[1,∞):E[T(bE)]≤1}
+                             where the expectation is taken under the known null distribution. Here, T is a truncation function
+                             that takes the largest element in a predetermined set that is less than or equal to the input.
+                                                                                               13
+                               In our setting, one simple way to boost e-values is to define a different truncation function T
+                                                                                                                                                 A
+                          for each A ⊆ [K] as follows:
+                                                    :
+                                           T (x) = max{r/(αk) : r/(αk) ≤ x,k ∈ [K],r ∈ [k ∧|A|]}∪{0},
+                                             A
+                          where a ∧ b is the minimum of a and b. This is a novel truncation function unlike ones used in
+                          boosting for the eBH procedure, and is derived from restricting the support of EA to only the values
+                          FDP (R)/α can take. Let b             be the boosting factor for E          with truncation function T         for each
+                               A                             A                                     A                                  A
+                          A⊆[K]. Then, one can notice that T (b E ) is a valid e-value and is at least as powerful as E
+                                                                         A A A                                                                   A
+                          in the sense that FDP (R)/α ≤ E implies FDP (R)/α ≤ T (b E ) for all R ⊆ [K].
+                                                    A               A                 A                A A A
+                               Usingtheaboveboostede-valuesimmediatelyyieldsthattheboostedeBHprocedurethatdom-
+                          inates the original. Other boosting techniques may be possible given more dependence assumptions
+                          or knowledge about the joint distribution of the entire e-collection (E )                      .
+                                                                                                               A A⊆[K]
+                          Alternative e-merging functions.             While we used the average e-merging function in our formu-
+                          lation of the eBH procedure, one can use other e-merging functions when stronger dependence
+                          assumptions, i.e., independence or sequential dependence, are made about the e-values. For exam-
+                          ple, if we assume all null e-values are independent, one can let the e-values for each intersection
+                          hypothesis be the product of the base hypothesis e-values, i.e.,
+                                                                              EA=YEi.
+                                                                                      i∈A
+                          One can then proceed to define a eBH procedure for the product e-merging function in a similar
+                          fashion as we did in Section 2, along with a corresponding algorithm, by using the logarithm to turn
+                          the products into sums when computing e-values for the intersection hypotheses.
+                          6     Numericalsimulations
+                                                                                                1.0            0=0.9,  =3
+                              1.0          0=0.5,  =3            1.0          0=0.7,  =3            1.0          0=0.9,  =3
+                                                                                                0.8
+                              0.8                                0.8                            0.6 0.8                                    eBH
+                                                                                                                                           (ours)
+                                                                   eBH                                eBH                                 eBH
+                              0.6                                0.6                                0.6                                    eBH
+                                                                   (ours)                       0.4   (ours)                              (ours)
+                                                                   eBH                                eBH                                 eBH
+                              0.4                                0.4                           FDR / TDP0.4                                eBHm
+                             FDR / TDP                          FDR / TDPeBHm                      FDR / TDPeBHm                          eBHm
+                                                                                                0.2                                         =0.1
+                              0.2                                0.2 =0.1                           0.2 =0.1                TDP            =0.1
+                                                      TDP                                TDP                                TDP 
+                                                                                                                           FDR 
+                              0.0                     FDR        0.0                     FDR    0.0 0.0                     FDR 
+                                                                                                          50     100    150     200
+                                      50    100    150    200            50     100   150    200             50    100   150    200
+                                               K                                  K                                KK
+                          Figure 1: Plot of FDR and TPR for different null proportions π0 and alternative mean µ = 3. All
+                          differences are significant since the closed eBH (eBH) procedure dominates the eBH and minimally
+                          adaptive eBH (eBHm) procedures.
+                                                             1                                                         :      ∗
+                               We perform simulations for independent Gaussians where we let π0 = |A |/K be the null
+                             1Codeat https://github.com/neilzxu/closed-ebh
+                                                                                     14
+                           proportion, µ be the signal of the alternatives and let Xi ∼ N(0,1) for i ∈ A∗ and Xi ∼ N(µ,1)
+                                                             ∗                                     :                     2
+                           otherwise for i ∈ [K] \ A . We let our e-value be E                     = exp(λX −λ /2) for λ = µ (the log-
+                                                                                                i                 i
+                           optimal choice). We let α = 0.1 in our simulations. We plot the empirical average FDR and true
+                                                    :           ∗ c              ∗ c
+                           positive rate (TPR) = E[|(A ) ∩ R|/|(A ) |] of eBH, minimally adaptive eBH (Ignatiadis et al.,
+                           2024), and eBH over n = 1000 trials. We plot the results in Figure 1, and can see that the eBH
+                           procedure improves noticeably over the standard and minimally adaptive eBH procedures across all
+                           settings, while controlling the FDR below α.
+                                                                                                    1.0            0=0.9,  =3
+                               1.0          0=0.5,  =3              1.0          0=0.7,  =3             1.0           0=0.9,  =3
+                                                                                                    0.8
+                               0.8                                  0.8                             0.6 0.8                                     BY
+                                                                                                                                                (ours)
+                                                                      BY                                  BY                                   BY
+                               0.6                                  0.6                                 0.6                                     BY
+                                                                      (ours)                        0.4   (ours)                               (ours)
+                                                                      BY                                  BY                                   BY
+                               0.4                                  0.4                            FDR / TDP0.4                                 BYm
+                              FDR / TDP                            FDR / TDPBYm                        FDR / TDPBYm                            BYm
+                                                                                                    0.2                                           =0.1
+                               0.2                                  0.2 =0.1                            0.2 =0.1                 TDP             =0.1
+                                                        TDP                                  TDP                                 TDP 
+                                                                                                                                FDR 
+                               0.0                      FDR         0.0                      FDR    0.0 0.0                      FDR 
+                                                                                                              50     100     150     200
+                                        50    100    150    200             50     100    150    200             50    100    150    200
+                                                 K                                   K                                  KK
+                           Figure 2: Plot of FDR and TPR for different null proportions π0 and alternative mean µ = 3. All
+                           differences are significant since the closed BY (BY) procedure dominates other variants of the BY
+                           procedure.
+                                Wealso evaluate the BY procedure, the application of minimally adaptive eBH to the e-values
+                                                                                                        :
+                           defined in (2.1), and the BY procedure where we set P                         = 1 − Φ(X ) and Φ is the c.d.f. of
+                                                                                                     i                   i
+                           the standard normal distribution. Here, we draw (X1,...,XK) from a multivariate normal with
+                           the same component means as described above and with Toeplitz-like covariance matrix where
+                           |Cov(X ,X )| = exp(−|i − j|/10)/5 with the covariance being positive if |i − j| is even and
+                                     i    j
+                           negative otherwise. Similarly, our results in Figure 2 show that BY has substantial power increase
+                           over the other BY procedures.
+                           7     Related work
+                           Wewill briefly describe the two lines of research and prior art that are most relevant to our current
+                           work. Aside from these, there is a substantial literature using e-values and the eBH procedure for
+                           FDRcontrol—RamdasandWang(2025)performsathoroughoverviewofsuchdevelopments.
+                           Closed testing and e-values.             There is a vast amount of literature for FWER control and simulta-
+                           neous(overallpotentialdiscoverysets)FDPboundsusingclosedtesting—seeoverviewspresented
+                           in Cui et al. (2021, Chapters 9 and 14) and Henning and and Westfall (2015). We will point out two
+                           specific works that are particularly relevant to ours since they also utilize e-values in the context of
+                           closed testing. The first is Vovk and Wang (2023), who formulate a method for FWER control via
+                           the arithmetic mean e-merging function, and consequently also simultaneous FDP bounds. Hartog
+                           and Lei (2025) extend the benefit of using arithmetic mean e-merging functions to graphical ap-
+                                                                                        15
+             proaches for FWER control (Bretz et al., 2009), and derive computationally efficient algorithms for
+             e-value versions of the Fallback (Wiens and and Dmitrienko, 2005) and Holm (1979) procedures.
+             Our work proposes new procedures the FDR metric (rather than FWER or probabilistic bounds on
+             the FDP) which has not been connected to intersection hypothesis testing or e-merging functions
+             before, and we show existing procedures (such as e-Holm) can be formualted using the generalized
+             closure principle we develop in Section 4.
+             BoostingthepowerofeBH Anotherlineofworkthatispertinentisvariousapproachestoboost-
+             ing the eBH procedure so that more discoveries are made. There are generally two areas in this line:
+             (1) boosting with no assumptions on the e-value distributions and (2) boosting e-values by using
+             explicit knowledge about the underlying (marginal or joint) distribution.
+                Forthefirst area, we have already discussed the connection between our work and the stochastic
+             rounding framework of Xu and Ramdas (2023) in Section 5, as well as the minimally adaptive eBH
+             procedure of Ignatiadis et al. (2024) in Section 2.
+                Thesecondarea includes two general types of assumptions.
+                • Marginalassumptions: AlongwithintroducingtheeBHprocedure,WangandRamdas(2022)
+                 also outlined how one can boost e-values if one knows the explicit marginal distribution of
+                 each e-value, and we discuss a simple variant for boosting the eBH procedure in Section 5.
+                 Blier-Wong and Wang (2024) relaxed the necessary knowledge on marginal distributions for
+                 boosting by deriving boosting thresholds for certain nonparametric classes of e-values.
+                • Conditionalassumptions: LeeandRen(2024);Leeetal.(2025)improvethepowerofeBHin
+                 the setting where one knows the distribution of all K e-values when conditioned a sufficient
+                 statistic calculated from the data under a singular null (i.e., a specific hypothesis is null, and
+                 all other hypotheses may be either null or non-null). This can also be viewed as a frame-
+                 work for deriving compound e-values from e-values when their joint distribution is known.
+                 Boosting factors can be calculated for each e-value via exact knowledge of these conditional
+                 distributions.
+             Developments in this area are orthogonal to our contribution. These boosting methods all require
+             additional knowledge about the underlying distributions. On the other hand, the eBH procedure
+             requires no assumptions on the e-values, and can be applied with valid FDR control in all situa-
+             tions where the eBH procedure can be applied. Potentially, these boosting methods can be used in
+             conjunction with eBH to further improve its power.
+             8  Conclusion
+             We have shown in this manuscript that the eBH procedure is inadmissible, and can be improved
+             through a FDR closure principle that results in the eBH procedure. We provide a computationally
+             efficient way of computing the eBH discovery set. Further, our FDR closure principle dictates that
+             all FDR controlling procedures rely on e-values for testing each possible intersection hypothesis of
+             the base hypotheses. Moreover, we generalize our FDR closure principle to general error metrics,
+             which particularly allows to choose the error metric post-hoc. These results open many lines of
+             future work .
+                                           16
+         References
+         T. Banerjee, B. Gang, and J. He. Harnessing The Collective Wisdom: Fusion Learning Using
+          Decision Sequences From Diverse Sources. arXiv:2308.11026, 2024.
+         Y. Benjamini and Y. Hochberg. Controlling the False Discovery Rate: A Practical and Powerful
+          ApproachtoMultipleTesting. JournaloftheRoyalStatisticalSociety.SeriesB(Methodological),
+          57(1):289–300, 1995.
+         Y. Benjamini and D. Yekutieli. The control of the false discovery rate in multiple testing under
+          dependency. The Annals of Statistics, 29(4):1165–1188, 2001.
+         C. Blier-Wong and R. Wang. Improved thresholds for e-values. arXiv:2408.11307, 2024.
+         F. Bretz, W. Maurer, W. Brannath, and M. Posch. A graphical approach to sequentially rejective
+          multiple test procedures. Statistics in Medicine, 28(4):586–604, 2009.
+         X.Cui,T.Dickhaus,Y.Ding,andJ.C.Hsu. HandbookofMultipleComparisons. CRCPress,2021.
+         S. Dandapanthula and A. Ramdas. Multiple testing in multi-stream sequential change detection.
+          arXiv:2501.04130, 2025.
+         P. Gablenz and C. Sabatti. Catch me if you can: Signal localization with knockoff e-values. Journal
+          of the Royal Statistical Society: Series B (Statistical Methodology), 87(1):56–73, 2025.
+         J. J. Goeman and A. Solari. Multiple testing for exploratory research. Statistical Science, 26(4):
+          584–597, 2011. doi: 10.1214/11-STS356.
+         J. J. Goeman, J. Hemerik, and A. Solari. Only closed testing procedures are admissible for control-
+          ling false discovery proportions. The Annals of Statistics, 49(2):1218–1238, 2021.
+            ¨
+         P. D. Grunwald. Beyond Neyman–Pearson: E-values enable hypothesis testing with a data-driven
+          alpha. Proceedings of the National Academy of Sciences, 121(39), 2024.
+         C. K. Guan, Z. Ren, and D. W. Apley. One-at-a-time knockoffs: Controlled false discovery rate
+          with higher power. arXiv:2502.18750, 2025.
+         W.HartogandL.Lei. Family-wise Error Rate Control with E-values. arXiv:2501.09015, 2025.
+         K.S.S.HenningandP.H.andWestfall. ClosedTestinginPharmaceuticalResearch: Historicaland
+          Recent Developments. Statistics in Biopharmaceutical Research, 7(2):126–147, 2015.
+         S. Holm. A Simple Sequentially Rejective Multiple Test Procedure. Scandinavian Journal of
+          Statistics, 6(2):65–70, 1979.
+         N. Ignatiadis, R. Wang, and A. Ramdas. E-values as unnormalized weights in multiple testing.
+          Biometrika, 2024.
+         N. Ignatiadis, R. Wang, and A. Ramdas. Asymptotic and compound e-values: Multiple testing and
+          empirical Bayes. arXiv:2409.19812, 2025.
+                            17
+                   N. W. Koning. Post-hoc α Hypothesis Testing and the Post-hoc p-value. arXiv:2312.08040, 2024.
+                   J. Lee and Z. Ren. Boosting e-BH via conditional calibration. arXiv:2404.17562, 2024.
+                   J. Lee, I. Popov, and Z. Ren. Full-conformal novelty detection: A powerful and non-random ap-
+                     proach. arXiv:2501.02703, 2025.
+                   G. Li and X. Zhang. A note on e-values and multiple testing. Biometrika, 112(1), 2025.
+                   R. Marcus, E. Peritz, and K. R. Gabriel. On Closed Testing Procedures with Special Reference to
+                     Ordered Analysis of Variance. Biometrika, 63(3):655–660, 1976.
+                   A. Ramdas and R. Wang. Hypothesis testing with e-values. arXiv:2410.23614, 2025.
+                   Z. Ren and R. F. Barber. Derandomised knockoffs: Leveraging e-values for false discovery rate
+                     control. Journal of the Royal Statistical Society Series B: Statistical Methodology, 2023.
+                                                    ¨         ¨    ¨
+                   E. Sonnemann and H. Finner. Vollstandigkeitssatze fur Multiple Testprobleme. In Multiple Hy-
+                     pothesenprufung / Multiple Hypotheses Testing, volume 70, pages 121–135. Springer, 1988.
+                               ¨
+                   Y. Tavyrikov, J. J. Goeman, and R. de Heide.   Carefree multiple testing with e-processes.
+                     arXiv:2501.19360, 2025.
+                   V.VovkandR.Wang.E-values: Calibration,combinationandapplications. TheAnnalsofStatistics,
+                     49(3):1736–1754, 2021.
+                   V. Vovk and R. Wang. Confidence and Discoveries with E-values. Statistical Science, 38(2):329–
+                     354, 2023.
+                   H. Wang, S. Dandapanthula, and A. Ramdas. Anytime-valid FDR control with the stopped e-BH
+                     procedure. arXiv:2502.08539, 2025.
+                   R.WangandA.Ramdas. Falsediscoveryratecontrolwithe-values. JournaloftheRoyalStatistical
+                     Society: Series B (Statistical Methodology), 84(3):822–852, 2022.
+                   B. L. Wiens and A. and Dmitrienko. The Fallback Procedure for Evaluating a Single Family of
+                     Hypotheses. Journal of Biopharmaceutical Statistics, 15(6):929–942, 2005.
+                   Z. Xu and A. Ramdas. More powerful multiple testing under dependence via randomization.
+                     arXiv:2305.11126, 2023.
+                   Z. Xu, R. Wang, and A. Ramdas. A unified framework for bandit multiple testing. In Neural
+                     Information Processing Systems, 2021.
+                   Z. Xu, R. Wang, and A. Ramdas. Post-selection inference for e-value based confidence intervals.
+                     Electronic Journal of Statistics, 18(1):2292–2338, 2024.
+                   Z. Xu, A. Solari, L. Fischer, R. de Heide, A. Ramdas, and J. Goeman. Bringing Closure to False
+                     Discovery Rate Control: A General Principle for Multiple Testing. arXiv:2509.02517, 2025.
+                   C. Yu, R. Ming, M. Xiao, Z. Wang, and B. Jing. A generalized e-value feature detection method
+                     with FDR control at multiple resolutions. arXiv:2409.17039, 2025.
+                                                             18

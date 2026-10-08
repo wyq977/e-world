@@ -1,0 +1,1764 @@
+                                        An online generalization of the
+                                     (e-)Benjamini-Hochberg procedure
+                                                 ∗               †                       ‡
+                                   Lasse Fischer        Ziyu Xu         Aaditya Ramdas
+                                                     February 27, 2026
+                                                          Abstract
+                          In online multiple testing, the hypotheses arrive one by one, and at each time we must
+                       immediately reject or accept the current hypothesis solely based on the data and hypotheses
+                       observed so far. Many online procedures have been proposed, but none of them are generalizations
+                       of the Benjamini-Hochberg (BH) procedure based on p-values, or of the e-BH procedure that uses
+                       e-values. In this paper, we consider a relaxed problem setup that allows the current hypothesis to
+                       be rejected at any later step. We show that this relaxation allows us to define — what we justify
+                       extensively to be — the natural and appropriate online extension of the BH and e-BH procedures.
+                       Weshow that the FDR guarantees for BH (resp. e-BH) and online BH (resp. online e-BH) are
+                       identical under positive, negative or arbitrary dependence, at fixed and stopping times. Further,
+                       the online BH (resp. online e-BH) rule recovers the BH (resp. e-BH) rule as a special case when
+                       the number of hypotheses is known to be fixed. Of independent interest, our proof techniques also
+                       allow us to prove that numerous existing online procedures, which were known to control the FDR
+                       at fixed times, also control the FDR at stopping times.
+       arXiv:2407.20683v5  [stat.ME]  26 Feb 2026
+                    ∗University of Bremen, Germany. Email: fischer1@uni-bremen.de
+                    †Carnegie Mellon University, USA. Email: xzy@cmu.edu
+                    ‡Carnegie Mellon University, USA. Email: aramdas@cmu.edu
+                                                             1
+                      Contents
+                      1       Introduction                                                                                         3
+                          1.1   Online ARC (accept-to-reject) procedures . . . . . . . . . . . . . . . . . . . . . . . . .          3
+                          1.2   Problem Setup . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .       4
+                          1.3   Our contributions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     4
+                          1.4   The TOAD algorithm . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .          5
+                      2       The online e-BH procedure                                                                            6
+                          2.1   SupFDR control under arbitrary dependence . . . . . . . . . . . . . . . . . . . . . . .             6
+                          2.2   Online e-BH uniformly improves e-LOND . . . . . . . . . . . . . . . . . . . . . . . . .             7
+                          2.3   Boosting the online e-BH procedure        . . . . . . . . . . . . . . . . . . . . . . . . . . . .   8
+                          2.4   Online e-BH with p-values . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .       9
+                      3       The online BH procedure                                                                             11
+                          3.1   OnlineFDR control under positive dependence . . . . . . . . . . . . . . . . . . . . . . .         11
+                          3.2   SupFDR control under positive dependence . . . . . . . . . . . . . . . . . . . . . . . .          12
+                          3.3   SupFDR control under negative dependence . . . . . . . . . . . . . . . . . . . . . . . .          13
+                                         K
+                          3.4   SupFDR control under arbitrary dependence . . . . . . . . . . . . . . . . . . . . . .             14
+                      4       Related literature                                                                                  14
+                      5       Conclusion                                                                                          15
+                      A       Details about boosting with online e-BH                                                             19
+                          A.1 Handling the infinite sum in the truncation function used for boosting . . . . . . . . .            19
+                          A.2 Boosting under local dependence . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .         20
+                          A.3 Boosting with PRDS e-values . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .         22
+                      B       The e-TOAD procedure                                                                                23
+                      C       Online BH versus LORD                                                                               24
+                      D       The online Storey-BH procedure                                                                      25
+                      E       Positive and negative dependence                                                                    27
+                      F       Simulation setup                                                                                    28
+                      G       Omitted proofs and derivations                                                                      28
+                          G.1 Online e-BH with p-values . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .       28
+                          G.2 SupFDR control of online BR and r-LOND . . . . . . . . . . . . . . . . . . . . . . . .              29
+                          G.3 Weighted FDR-Linking theorem . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .          29
+                          G.4 Relationship between SupFDR and StopFDR . . . . . . . . . . . . . . . . . . . . . . .               31
+                          G.5 Sharpness of SupFDR and StopFDR control of online BH . . . . . . . . . . . . . . . .                31
+                                                                             2
+                      1     Introduction
+                      Suppose we observe a stream of (null) hypotheses (H )                that comes either with a sequence of
+                                                                                    t t∈N
+                      p-values (P )      or with a sequence of e-values (E )     . Let P denote the true but unknown probability
+                                  t t∈N                                     t t∈N
+                      distribution and E the corresponding expected value, while P               and E      denote the probability
+                                                                                             H          H
+                                                                                               0          0
+                      and expectation under the null hypothesis (that is, according to any distribution that satisfies H ).
+                                                                                                                                   0
+                      A p-value P for H is a random variable with values in [0,1] such that P                 (P ≤ x) ≤ x for all
+                                    t       t                                                              Ht    t
+                      x ∈ [0,1]. In contrast, an e-value E is a nonnegative random variable with E               [E ] ≤ 1. Previous
+                                                              t                                               H    t
+                                                                                                                t
+                      works [14, 17, 11, 34] defined an online multiple testing procedure as a sequence of test decisions
+                      (r )    , where each r is only allowed to depend on the p-values (or e-values) P ,...,P . In this
+                        t t∈N                 t                                                                   1        t
+                      paper we relax this setup, which allows to define more powerful procedures that are valid under more
+                      general stopping rules. This allows us to propose (what we justify to be) online generalizations of the
+                      Benjamini-Hochberg (BH) and e-BH procedures (recapped later).
+                      1.1     Online ARC (accept-to-reject) procedures
+                      An online ARC procedure is an online multiple testing method that can change earlier accept decisions
+                      (or non-rejections) into a rejection at a later point in time. The motivation is that early in the
+                      procedure, there have been no discoveries yet, and so the level at which hypotheses are tested at must
+                      be quite stringent leading to fewer discoveries initially. However, as the number of discoveries builds
+                      up, we may realize that we could have tested earlier hypotheses at more relaxed levels, leading to
+                      rejections at earlier times.
+                          In more detail, an online ARC procedure goes through all p-values P ,P ,... (or e-values) and at
+                                                                                                      1   2
+                      each time t ∈ N it decides based on P ,...,P which of the hypotheses H ,...,H are to be rejected
+                                                                1       t                               1       t
+                      with the restriction that as soon as a hypothesis is rejected, this decision cannot be overturned in the
+                      future and thus the rejection remains during the entire testing process. However, in contrast to a fully
+                      online multiple testing procedure, an online ARC procedure allows to turn an accepted hypothesis
+                      into a rejected one based on information obtained in the future. This is why we call this online with
+                      accept-to-reject changes (online ARC) procedure. Formally one can define an online ARC procedure as
+                      follows.
+                      Definition 1. An online ARC procedure is a nested sequence of rejection sets R1 ⊆ R2 ⊆ R3 ⊆ ...,
+                                            :
+                      where each Rt ⊆ [t] = {1,...,t} only depends on the p-values or e-values that are known up to step t.
+                          In statistical hypothesis testing, the null hypothesis H usually states the status quo which is
+                                                                                        t
+                      challenged by testing it. If H is rejected, this can be seen as evidence that H is not true. This
+                                                        t                                                       t
+                      evidence is used to draw conclusions and derive recommendations for the future. However, if H is
+                                                                                                                                  t
+                      accepted, this is typically not seen as evidence that Ht is true, but just as insufÏcient evidence to reject
+                      H. Therefore, actions are typically not changed based on accepted hypotheses. For these reasons, we
+                        t
+                      believe that reversing rejections should be forbidden, while accept-to-reject changes are useful in many
+                      applications.
+                          For example, an important online multiple testing application is A/B testing in tech companies
+                      [18, 19]. Here, a rejection might lead to an adjustment of a website or an app. However, after
+                      an acceptance there won’t be any changes. Consequently, reversing rejections can lead to undoing
+                      unnecessary adjustments made to a website, which can cost money and time, whereas turning accepted
+                      hypotheses into rejected ones may lead to additional improvements of the website at a later point.
+                      The same logic applies to many other online multiple testing tasks such as platform trials [23, 35] and
+                      genomic studies [2, 1].
+                          Online multiple testing procedures are a special case of online ARC procedures, where we disallow
+                      all changes to decisions. Sometimes, online multiple testing procedures are suitable for the applications,
+                      leading to a rich literature on the topic, but ARC procedures also have their place, and this particular
+                      paper focuses on designing online ARC procedures.
+                          Interestingly, ofÒine procedures can also be interpreted as special online ARC procedures where we
+                      do not make any rejections until the final step.
+                                                                             3
+                 1.2   Problem Setup
+                 Let I ⊆ N be the index set of true hypotheses. The false discovery proportion (FDP) of a rejection
+                     0
+                 set R is defined as
+                                                             |R∩I |
+                                                          :      0
+                                                  FDP(R) = |R|∨1 .
+                 The false discovery rate (FDR) is the expected FDP: FDR(R) = E[FDP(R)]. We let FDPt and FDRt
+                 be shorthand for FDP(R ) and FDR(R ), respectively, for each t ∈ N. The type FDR control usually
+                                      t           t
+                 considered in online multiple testing is defined as:
+                                                          :
+                                                OnlineFDR =sup FDR .
+                                                             t∈N     t
+                 Javanmard and Montanari [17] provided an algorithm that controlled OnlineFDR below a fixed level
+                 α∈[0,1] for independent p-values. However, this does not guarantee FDR control at any data-adaptive
+                 stopping time (like the time of the hundredth rejection); this is severe restriction in the online setting.
+                 For this reason, Xu and Ramdas [32] introduced the SupFDR, defined as
+                                                       :            
+                                               SupFDR =E sup FDPt .
+                                                            t∈N
+                    Wecan also define a notion of FDR for arbitrary (data-dependent) stopping times
+                                                         :
+                                                 StopFDR = sup FDR ,
+                                                                    τ
+                                                            τ∈T
+                 where T denotes the set of all stopping times. In this paper, we will generally use α ∈ (0,1] to denote a
+                 constant used to induce a fixed level of error control unless otherwise specified. We note that enforcing
+                 control of SupFDR and StopFDR have the following relationship,
+                                       SupFDR≤α =⇒ StopFDR≤α
+                                       StopFDR≤α =⇒ SupFDR≤α(1+log(α−1)).
+                 Controlling the SupFDR ensures valid FDR control at arbitrary (data-dependent) stopping times since
+                 the supremum of FDP will exceed FDP at any single time τ. Interestingly, a reverse relationship
+                                    t              τ
+                 also holds, meaning control of the FDR at stopping times implies control of the SupFDR, albeit at an
+                 inflated level (we prove this result in Appendix G.4).
+                    In addition to the aforementioned false discovery metrics that involve all time steps, we will also
+                 consider the SupFDR until some fixed time K, defined as
+                                                     K :             
+                                              SupFDR =E sup FDP .
+                                                                      t
+                                                            1≤t≤K
+                 The SupFDRK can be useful if there is a fixed maximum number of hypotheses K, but we may want
+                 to stop early.
+                 1.3   Our contributions
+                 In this paper we introduce the online e-BH and online BH procedure, online ARC versions of the e-BH
+                 and BH procedures [31, 3].
+                    The e-BH procedure was recently proposed by Wang and Ramdas [31] and provides an e-value
+                 analog of the seminal p-value based Benjamini-Hochberg (BH) procedure [3]. We show that online
+                 e-BH controls the SupFDR under arbitrary dependence between the e-values (Section 2.1). To the best
+                 of our knowledge, this is the first nontrivial online procedure with SupFDR control under arbitrary
+                 dependence. In addition, it uniformly improves e-LOND, the current state-of-the-art online procedure
+                                                           4
+                  for FDRcontrol with arbitrarily dependent e-values. Next, we demonstrate how the “boosting” approach
+                  for the ofÒine e-BH procedure [31] can be extended to the online e-BH procedure (Section 2.3). We
+                  also propose a new boosting technique for locally dependent e-values which improves on boosting
+                  under arbitrary dependence. A comparison of the guarantees provided by the e-BH and online e-BH
+                  procedure is given in Table 1.
+                   Assumption                         e-BH                    Online e-BH
+                   Independence or PRDS (boosted)     FDR≤α[31]               OnlineFDR≤α (Sec. 2.3)
+                   Arbitrary dependence               FDR≤α[31]               SupFDR≤α(Sec. 2.1)
+                   Local dependence (boosted)         Not considered before   SupFDR≤α(Sec. 2.3)
+                                    Table 1: Comparison of e-BH and online e-BH guarantees.
+                     In contrast, we show that the online BH procedure controls the OnlineFDR under positive regression
+                  dependence on a subset (PRDS) (Section 3.1). Furthermore, it controls the SupFDR at slightly inflated
+                  levels under weak positive (PRDN) and negative (WNDN) dependence assumptions (Sections 3.2
+                  and 3.3). Under arbitrary dependence, online BH provides SupFDRK control at an inflated level if a
+                  maximum number of hypotheses K is specified (Section 3.4). The guarantees of the BH and online BH
+                  procedure are summarized in Table 2.
+                   Assumption           BH                          Online BH
+                   Independence         FDR≤α[3]                    OnlineFDR≤α (Sec. 3.1)
+                   PRDS                 FDR≤α[4]                    OnlineFDR≤α (Sec. 3.1)
+                   PRDN                 FDR≤α(1+log(α−1)) [27]      SupFDR≤α(1+log(α−1)) (Sec. 3.2)
+                   WNDN                 FDR≤α(3.18+log(α−1)) [6]    SupFDR≤α(3.18+log(α−1)) (Sec. 3.3)
+                   Arbitrary dependence FDR≤αℓ [4]                  SupFDRK ≤αℓ (Sec. 3.4)
+                                                 K                                K
+                                     Table 2: Comparison of BH and online BH guarantees.
+                     As shown in the Tables 1 and 2, both online procedures, online e-BH and online BH, provide
+                  OnlineFDR control whenever their ofÒine counterparts provide FDR control and in some cases even
+                  control the SupFDR where the ofÒine methods were only known to control the FDR. In addition, we
+                  will show that the online versions are natural generalizations of the ofÒine procedures, meaning e-BH
+                  and BH can be obtained by online e-BH and BH for a specific choice of weighting parameters (see
+                  Sections 2 and 3). Therefore, we believe the names online e-BH and online BH are justified for our
+                  procedures.
+                     Along the way, we also prove SupFDR control for all other existing online procedures with FDR
+                  control under arbitrary dependence. This includes the reshaped LOND procedure [37] and e-LOND
+                  [34]. Previously, these methods were only known to control the FDR at fixed times. In addition, we
+                  prove SupFDR control of LOND [13] under PRDN and WNDN at slightly inflated levels. We also
+                  provide new guarantees for the TOAD algorithm by Fisher [13].
+                  1.4   The TOAD algorithm
+                 While ARC procedures have not been explicitly named and conceptualized before, the only online ARC
+                  procedure that we are aware of (which is not already a fully online procedure) is the TOAD algorithm
+                  by Fisher [13]. The TOAD algorithm was introduced in the context of p-values and “decision deadlines”
+                  where one must make a decision about H by a deadline d based on a p-value P . One can view online
+                                                    t             t                  t
+                  procedures as having a deadline for making a decision as setting d = t, and online ARC procedures as
+                                                                          t
+                  setting d = ∞. In Fisher’s framework, rejection-to-acceptance changes before the deadline were not
+                         t
+                  explicitly disallowed, although not used by the procedures. In the Appendix B we present the e-TOAD
+                  algorithm, an e-value analog of the TOAD procedure with decision deadlines. Then, our online e-BH
+                                                             5
+                        procedure can be viewed as an instance of our e-TOAD framework with unbounded deadlines, where
+                        e-TOAD extends TOAD and its guarantees from p-values to e-values. Further, while Fisher [13]
+                        showed that TOAD for arbitrarily dependent p-values controls the OnlineFDR, we extend his result
+                        to show that it actually controls the SupFDR. We also improve the power of TOAD under arbitrary
+                        dependence slightly by allowing individual shape functions for the hypotheses. Furthermore, we prove
+                        that TOAD for positively dependent p-values controls the SupFDR under PRDN and WNDN at a
+                        slightly inflated level.
+                        2     The online e-BH procedure
+                        Let us first review the e-BH procedure for ofÒine multiple testing. Let K e-values E1,...,EK for
+                        the hypotheses H ,...,H         be given. The (base) e-BH procedure [31] rejects hypotheses with the k∗
+                                            1        K
+                        largest e-values, where
+                                                                                  K                           
+                                                 k∗ = maxk ∈{1,...,K}:X1{Ej ≥K/(kα)}≥k,
+                                                                                 j=1                          
+                       with the convention max(∅) = 0. For the online e-BH procedure we weight each hypothesis H with a
+                                                                 P                           P                                     i
+                                                                                          :
+                        nonnegative constant γ such that                γ ≤1. Let π =                γ be the sum of the null weights.
+                                                   i                i∈N i               0       i∈I0  i
+                       The online e-BH procedure is defined by the rejection sets
+                                                   oe-BH :                     1   
+                                                 R        = i≤t:E ≥                    , t ∈ N, where
+                                                   t                     i    k∗αγ
+                                                                              t   i                           
+                                                                                 t                            
+                                                 k∗ = max      k ∈ {1,...,t} : X1{E ≥ 1/(kαγ )} ≥ k               ,
+                                                  t                                      j            j       
+                                                                                 j=1
+                       with the conventions max(∅) = 0 and 1/0 = ∞. Note that k∗ is nondecreasing in t, which implies that
+                          oe-BH                                                             t
+                       (R       )t∈N is a nested sequence of rejection sets such that the online e-BH procedure is indeed an
+                          t
+                        online ARC procedure. Also note that the naive procedure that sets Rt to be the rejection set of the
+                        ofÒine e-BH procedure applied to E ,...,E is not an online ARC procedure: it may change its mind
+                                                                 1       t
+                        in both directions (possibly more than once).
+                           If we choose γi = 1/K for i = 1,...,K and γi = 0 otherwise, the online e-BH becomes the e-BH
+                        procedure, and in that sense it is an online generalization of the e-BH procedure. In particular, the
+                        online e-BH allows to choose different weights for the hypotheses and also to test an infinite number
+                        of hypotheses. Wang and Ramdas [31] have already formulated a weighted e-BH procedure which is
+                        similar to this method; however, their approach does not immediately apply to an infinite number of
+                        hypotheses while we claim that our approach defines an online ARC procedure with SupFDR control.
+                        2.1     SupFDR control under arbitrary dependence
+                       To show SupFDR control, we first define the following class of procedures.
+                       Definition 2. A discovery set of finite cardinality, R ⊆ N, is considered self-consistent if it satisfies
+                        E ≥(αγ |R|)−1 for e-values (or P ≤ αγ |R| for p-values) for each t ∈ R. We denote by R(α) the set
+                         t        t                            t       t
+                        of discovery sets that are self-consistent at level α.
+                           The above definition is consistent with the definition of self-consistency as defined by Blanchard
+                        and Roquain [5] and generalizes the definition (referred to as “compliance”) introduced in Su [27].
+                       Wang and Ramdas [31] showed that self-consistent e-value procedures control FDR under arbitrary
+                        dependence in the ofÒine multiple testing setting with uniform weights. We now show an extension
+                        of this result for general weights (γt)t∈N and any self-consistent rejection set in an infinite stream of
+                        hypotheses.
+                                                                                 6
+                        Proposition 2.1. For a stream of infinite hypotheses and its corresponding arbitrarily dependent
+                                              h                      i
+                       e-values (E )      , E sup           FDP(R) ≤α.
+                                    t t∈N          R∈R(α)
+                        Proof. We first prove it for the case where we have K hypotheses. Since R(α) is finite, there exists a
+                        R∗ that maximizes the FDP. Thus we have that
+                                                   E" sup FDP(R)#=FDR(R∗)
+                                                       R∈R(α)                                                 
+                                                                              X 1{E ≥1/(αγ|R∗|)}
+                                                                           =       E        i          i
+                                                                              i∈I             |R∗|∨1
+                                                                                 0
+                                                                           ≤α·XγE[E]≤π α≤α.                                              (1)
+                                                                                        i    i      0
+                                                                                  i∈I0
+                       Where the first inequality follows because 1{x ≥ 1} ≤ x for all x ≥ 0, the second follows from Ei being
+                        an e-value for each i ∈ I , and the last is due to π ≤ 1.
+                                                   0                             0
+                           When we have an infinite stream of hypotheses, we know the following is true
+                                                          sup FDP(R)= lim               sup      FDP(R).
+                                                        R∈R(α)                t→∞R∈R(α),R⊆[t]
+                       Thus, by taking an expectation over all the terms in the above equation, we get
+                                              "                   #            "                         #
+                                           E     sup    FDP(R) = lim E               sup       FDP(R) ≤π α≤α,
+                                                                       t→∞                                      0
+                                               R∈R(α)                           R∈R(α),R⊆[t]
+                       where the equality is by the Fatou-Lebesgue theorem and the last two inequalities are by (1).
+                           This immediately implies SupFDR control for online e-BH, since the rejection sets Roe-BH are
+                                                                                                                                  t
+                        self-consistent for all t.
+                       Theorem 2.2. The online e-BH procedure controls the SupFDR at level α under arbitrary dependence
+                       between the e-values.
+                           The existing state-of-the-art method for OnlineFDR control under arbitrary dependence of the
+                        e-values is e-LOND [34]. In the following subsection, we show that e-LOND even provides SupFDR
+                        control and that online e-BH uniformly improves e-LOND.
+                        2.2     Online e-BH uniformly improves e-LOND
+                       The e-LOND algorithm [34] rejects hypothesis H , if E ≥ (αe-LOND)−1, where
+                                                                                t      t      t
+                                     e-LOND :             e-LOND                   e-LOND :                      e-LOND −1
+                                    α          =αγ |R             | + 1    and R              ={i≤t:E ≥(α                 )   }.
+                                     t               t    t−1                       t                      i      i
+                        It follows immediately that Re-LOND ⊆ Re-BH for all t ∈ N, where Re-BH is the rejection set of the
+                                                           t             t                               t
+                        online e-BH procedure at step t. Hence, online e-BH uniformly improves e-LOND, meaning that the
+                        former makes at least the same discoveries as the latter on every run. Xu and Ramdas [34] only proved
+                        FDRcontrol for e-LOND at fixed times. We note that e-LOND is also a self-consistent procedure so
+                        its SupFDR control follows immediately from Proposition 2.1.
+                        Proposition 2.3. The e-LOND procedure [34] controls SupFDR at level α under arbitrary dependence
+                       between the e-values.
+                           The power gain of the online e-BH method compared to e-LOND is illustrated in Figure 1. The
+                        left plot shows that the online e-BH method substantially improves e-LOND when the signal of the
+                        alternative hypotheses is weak. This improvement is slightly smaller when the signal strong (right
+                        plot). The simulation setup is in Appendix F.
+                                                                                 7
+                                                1.0                                                       1.0
+                                                0.8                                                       0.8
+                                               er0.6                                                     er0.6
+                                               w                                                         w
+                                               o                                                         o
+                                               P0.4                                                      P0.4
+                                                0.2                                                       0.2
+                                                0.0     0.2          0.4          0.6          0.8        0.0     0.2          0.4          0.6         0.8
+                                                          Proportion of false hypotheses                            Proportion of false hypotheses
+                                                                                  Procedure        online e−BH       e−LOND
+                             Figure 1: Power comparison of online e-BH and e-LOND for different proportions of false hypotheses.
+                             In the left (right) plot, the signal of the alternative is weak (strong).
+                             Remark 1. Xu and Ramdas [33, 34] improved the e-BH and e-LOND procedure, respectively, using a
+                             randomization approach. The idea is to define a randomized e-value as
+                                                                              :                                                      −1
+                                                                  S (E ) =max(1{E ≥αˆ }E ,1{U ≤E αˆ }αˆ                                  ),
+                                                                    αˆt    t                    t       t    t               t  t    t
+                             where αˆt is a potentially data-dependent significance level obtained by e-BH or e-LOND and U a
+                             uniform random variable on [0,1] that is independent of E and αˆ . Xu and Ramdas [33] showed that
+                                                                                                                 t          t
+                             if E is an e-value, then S              (E ) is a valid e-value as well. Furthermore, S                      (E ) ≥ αˆ−1 iff E ≥ αˆ−1U,
+                                   t                              αˆt    t                                                             αˆt   t        t          t       t
+                             implying that e-BH and e-LOND are uniformly more powerful when applied to S (E ) instead of E .
+                                                                                                                                                  αˆt    t                    t
+                             One could consider applying the same idea to online e-BH. However, note that we do not have one
+                             data dependent level with the e-BH but a sequence of levels that is increasing overtime due to future
+                             rejections. Hence, one would need to fix a time at which the stochastic rounding approach is applied.
+                             For example, one could set
+                                                                                            :            ∗
+                                                                                        αˆ   =αγ(k            +1).
+                                                                                          t         t   t−1
+                             In this case stochastic rounding would increase the probability of rejecting H at time t. However, if
+                                                                                                                                              t
+                             we do not reject, then S              (E ) = 0 and there would not be any chance to obtain a rejection at a later
+                                                                αˆt    t
+                             stage. In this case, online e-BH becomes equivalent to the randomized e-LOND procedure. One could
+                             also consider applying stochastic rounding at the (potentially data-adaptive) time τ at which entire
+                             testing process was stopped. In this case, stochastic rounding could only lead to additional rejections
+                             at the very end and online e-BH becomes a weighted generalization of the randomized e-BH procedure
+                             by Xu and Ramdas [33]. In the next section, we consider a deterministic rounding approach which also
+                             leads to improved e-values. However, in contrast to stochastic rounding, it does not allow to round to
+                             data-adaptive levels.
+                             2.3        Boosting the online e-BH procedure
+                             If additional information about the marginal or joint distribution of the e-values is available, then the
+                             online e-BH procedure can be improved. We call this process “boosting” in line with the same term
+                             being used for e-BH [31]. We demonstrate the following three forms of boosting in this paper.
+                                 1. Boosting when information about the marginal distribution is available.
+                                 2. Boosting when information about the marginal distribution is available and the e-values are
+                                      locally dependent.
+                                 3. Boosting when information about the marginal distribution is available and the e-values are
+                                      positive regression dependent on a subset (PRDS).
+                                                                                                      8
+                          While the first and third form are online extensions of the boosting techniques by Wang and
+                      Ramdas [31], the second form of boosting is new and particularly useful in the online setting. Online
+                      e-BH controls the SupFDR under the first two boosting types and the OnlineFDR under the third
+                      boosting type. In the remaining part of the section, we describe the first form of boosting, which
+                      is the cornerstone for all three methods. The details for the second and third form are provided in
+                      Appendix A.
+                          Wefirst reformulate the boosting method by Wang and Ramdas [31] which makes it easier to use
+                      it for our purposes; however, our approach is equivalent to theirs. Let K be the number of hypotheses.
+                      Define the truncation function T : [0,∞] → [0,K/α] as
+                                                       K                          
+                                                   :  X K                    K        K                  :  K
+                                             T(x) =       1 kα ≤x< (k−1)α kα withT(∞) = α,
+                                                      k=1
+                      where we again use the convention 1/0 = ∞. Note that T(x) only takes values in the set {K/(αk) :
+                      k ∈ {1,...,K}}∪{0}. Let X ,...X            be any nonnegative random variables (not necessarily e-values).
+                                                      1       K
+                      The idea of boosting is that e-BH applied on X ,...,X           rejects the same hypotheses as if applied on
+                                                                          1        K
+                      T(X ),...,T(X ). Hence, if T(X ),...,T(X ) are valid e-values for H ,...,H , e-BH applied on
+                           1            K                   1            K                             1        K
+                      X ,...,X      controls the SupFDR (even though the latter may not be e-values). We call such random
+                        1        K
+                      variables X boosted e-values. A simple approach is to set X = b E , where E is a valid e-value, for
+                                   t                                                     t    t  t           t
+                      some boosting factor b ≥ 1. Note that such a boosting factor always exists, since T(E ) ≤ E .
+                                               t                                                                      t      t
+                          For a given (γ )      we can simply extend this approach to the online e-BH procedure by defining
+                                          t t∈N
+                      the truncation function for the t-th e-value as
+                                                  ∞                               
+                                              :  X 1                        1           1                   :    1
+                                       T (x) =       1          ≤x<                        ,   with T (∞) =         ,              (2)
+                                         t               kαγ           (k −1)αγ       kαγ             t         αγ
+                                                 k=1          t                   t       t                        t
+                      and the convention 0·∞ = 0. In case of γt = 1/K, t ≤ K, we have Tt = T for all t ≤ K. We capture
+                      the result about boosted e-values in the following proposition.
+                      Proposition2.4. Let X ,X ,... be a sequence of nonnegative random variables such that E              [T (X )] ≤
+                                                 1   2                                                                  H t t
+                                                                                                                          t
+                      1 for all t ∈ N. Then the online e-BH procedure applied to X ,X ,... controls the SupFDR at level α.
+                                                                                         1   2
+                          Due to the infinite sum in (2) it might be difÏcult to determine boosted e-values exactly. In
+                      Appendix A.1, we propose two different approaches to handle this and demonstrate the application in
+                      a Gaussian testing setup.
+                          Apower comparison of online e-BH with boosted and non-boosted e-values is shown in Figure 2.
+                      The left plot shows the results for weak signals and the right plot for strong signals. Boosting improves
+                      the power in both cases.
+                      2.4     Online e-BH with p-values
+                      In the following, we consider applying the online e-BH procedure to ψ (P ),ψ (P ),..., where each P
+                                                                                                  1   1    2   2                     t
+                      is a p-value for H and ψ : [0,1] → [0,∞], t ∈ N is a function with ψ (0) = ∞. Wang and Ramdas [31]
+                                         t       t                                               t
+                      called ψ a decreasing transform and (for simplicity) assumed that ψ = ψ = ... = ψ for a strictly
+                               t                                                                    1     2
+                      decreasing and continuous function ψ. Here, we allow a different function ψ for each hypothesis H
+                                                                                                           t                         t
+                      and only assume that ψt is nonincreasing and left-continuous. To clarify this change of definition,
+                      we use the term nonincreasing transform instead. Define the generalized inverse of a nonincreasing
+                      transform ψt as
+                                                           −1     :
+                                                         ψ (x) =max{u∈[0,1]:ψ (u)≥x}.
+                                                           t                            t
+                      With this, boosting (see Section 2.3) can be applied to derive the following result, which is formally
+                      proven in the Appendix G.1.
+                      Proposition 2.5. Let ψ ,ψ ,... be nonincreasing transforms.
+                                                  1   2
+                                                                             9
+                                                     1.0                                                           1.0
+                                                     0.8                                                           0.8
+                                                    er0.6                                                         er0.6
+                                                    w                                                             w
+                                                    o                                                             o
+                                                    P0.4                                                          P0.4
+                                                     0.2                                                           0.2
+                                                     0.0     0.2           0.4           0.6           0.8         0.0      0.2           0.4           0.6           0.8
+                                                               Proportion of false hypotheses                                 Proportion of false hypotheses
+                                                                                        Online e−BH          non−boosted          boosted
+                                Figure 2: Power comparison of online e-BH with non-boosted and boosted e-values for different
+                                proportions of false hypotheses. In the left (right) plot, the signal of the alternative is weak (strong).
+                                The simulation setup is described in Appendix F.
+                                   (i) If for every t it holds that
+                                                                            ∞                                                               
+                                                                           X 1 ψ−1 1 −ψ−1                                              1               ≤1,
+                                                                                 kαγ           t      kαγ               t      (k −1)αγ
+                                                                           k=1         t                     t                                 t
+                                         then the online e-BH procedure applied to the random variables ψ (P ),ψ (P ),... controls the
+                                                                                                                                                 1    1      2     2
+                                         SupFDR at level α.
+                                  (ii) If the p-values P ,P ,... are PRDS (see Appendix E for a formal definition of PRDS) and for
+                                                                   1    2
+                                         all t it holds that
+                                                                                             sup       1 ψ−1(1/(kαγ )) ≤ 1,
+                                                                                                    kαγ t                      t
+                                                                                              k∈N         t
+                                         then the online e-BH procedure applied to the random variables ψ (P ),ψ (P ),... controls the
+                                                                                                                                                 1    1      2     2
+                                        OnlineFDR at level α.
+                                     In the ofÒine case, the Benjamini-Hochberg (BH) procedure [3] is equivalent to the e-BH procedure
+                                applied to the random variables 1/P ,...,1/P [31]. One could derive an online BH procedure in the
+                                                                                         1              k
+                                same way by setting the decreasing transforms to ψ (x) = 1/x = ψ−1(x). Proposition 2.5 immediately
+                                                                                                                t                       t
+                                implies that this online BH procedure controls the OnlineFDR, if the p-values are PRDS. In the next
+                                section, we study the behavior of the online BH procedure more deeply.
+                                Remark 2. Benjamini and Yekutieli [4] introduced an ofÒine p-value based multiple testing procedure
+                                with FDR control (BY procedure) and Blanchard and Roquain [5] generalized this using a shape
+                                function β (BR procedure). Let β(k) = Rk x dν(x), k ∈ {1,...,K}, for some probability measure ν on
+                                                                                                0
+                               (0,∞). Blanchard and Roquain [5] proved that FDR control is guaranteed under arbitrary dependence
+                                of the p-values, if the hypotheses with the k∗ smallest p-values are rejected, where
+                                                                                                               K                                       
+                                                                    ∗                                         X                                        
+                                                                  k =max k∈{1,...,K}:                                1{Pj ≤ β(k)α/K} ≥ k                    .
+                                                                                                              j=1                              PK 
+                                                                                                                                           :             1
+                                The BY procedure is obtained by setting β(k) = k/ℓK, where ℓK =                                                    i=1 i ≈ log(K). Fisher [13]
+                                generalized the method by Blanchard and Roquain [5] to the online ARC case in the same manner as
+                                we did for the e-BH procedure by using general weights (γt)t∈N instead of 1/K for each hypothesis
+                               (see (6) in Appendix for d = ∞). We call this the online BR procedure in the following. However,
+                                                                          t
+                                                                                                              10
+                      Fisher [13] only showed FDR control for the online BR procedure at fixed times. In Appendix G.2, we
+                      show how the online BR procedure can be written as a special case of the online e-BH procedure using
+                      Proposition 2.5 (i) and therefore provides SupFDR control.
+                      Remark 3. Javanmard and Montanari [16] introduced a version of their LOND algorithm with
+                      OnlineFDR control under arbitrary dependence and later Zrnic et al. [37] generalized this method
+                      to the reshaped LOND (r-LOND) procedure. The r-LOND procedure rejects hypothesis H , if
+                                                                                                                             t
+                      Pt ≤ αr-LOND, where
+                             t
+                                  r-LOND :             r-LOND                 r-LOND :                       r-LOND
+                                 α         =αγβ |R            | + 1    and R            ={i≤t−1:P ≤α                 }
+                                  t             t t    t−1                     t−1                      i     i
+                      and βt is some shape function. In Appendix G.2 we show that r-LOND could be derived as a special
+                      case of a boosted e-LOND procedure and therefore also provides SupFDR control under arbitrary
+                      dependence of the p-values.
+                      3    The online BH procedure
+                      In the same manner as for e-values, one can define an online ARC version of the p-value based
+                      Benjamini-Hochberg (BH) procedure [3], or the online BH procedure for short. Recall, as before, that
+                     (γ )     is a nonnegative sequence that sums to one. Then, define:
+                        t t∈N
+                                                  oBH :                  ∗
+                                                R      ={i≤t:P ≤k αγ},t∈N, where
+                                                  t               i     t   i                       
+                                                                              t                     
+                                                k∗ = max     k ∈ {1,...,t} : X1{P ≤ kαγ } ≥ k
+                                                 t                                  j        j      
+                                                                             j=1
+                      with the convention max(∅) = 0. Again, note that applying the ofÒine BH procedure to the p-values
+                      P1,...,Pt at each time t would not define an online ARC procedure.
+                         The online BH procedure is a special instance of the TOAD framework under positive dependence
+                      by Fisher [13], which is obtained if no decision deadlines are specified for the TOAD algorithm, meaning
+                      that dt = ∞ for all t ∈ N. However, the great generality of the TOAD framework leads to a certain
+                      notational overhead and complexity that is unnecessary to define and analyze the online BH procedure,
+                      leading to this special case being lost. The online BH procedure, we argue, is a simple and important
+                      algorithm which deserves particular emphasis.
+                         As with the online e-BH procedure, if we set γ ,...,γ      to equal 1/K and the rest of the γ sequence
+                                                                         1       K
+                      to equal zero, one simply obtains the BH procedure at time K, so online BH is a generalization of the
+                      BHprocedure. Although OnlineFDR control of the online BH procedure under PRDS is implicitly
+                      proven by Fisher [13], we also provide a short, direct proof in the next subsection. Furthermore, we
+                      prove that the online BH procedure additionally controls the SupFDR in case of PRDN (Section 3.2)
+                      and WNDN (Section 3.3) p-values, and SupFDRK for arbitrary p-values (Section 3.4).
+                      3.1    OnlineFDR control under positive dependence
+                      The most general condition under which FDR control of the BH procedure is usually proven is positive
+                      regression dependence on a subset (PRDS) [4] (see Definition 3 in Appendix E). The online BH
+                      procedure also controls the OnlineFDR under PRDS.
+                      Proposition 3.1. If the null p-values are PRDS, the online BH procedure ensures that OnlineFDR ≤ α.
+                      Proof. For any t ∈ N, we have                               
+                                                          X 1{P ≤k∗αγ}                    X
+                                              FDR =             E      i     t   i   ≤         αγ ≤α,
+                                                    t                     k∗                      i
+                                                        i≤t,i∈I            t            i≤t,i∈I
+                                                              0                               0
+                      where the first inequality follows from Lemma 1 (b) of Ramdas et al. [21].
+                                                                          11
+                           In the next subsection, we prove that online BH controls the SupFDR at a slightly inflated level
+                       under a weaker assumption than PRDS.
+                       Remark 4. In the same manner as online e-BH uniformly improves e-LOND (Section 2.2), online
+                       BHuniformly improves the LOND procedure introduced by Javanmard and Montanari [16] which
+                       controls the OnlineFDR under PRDS [37]. The LOND procedure is exactly defined as e-LOND but
+                       with p-values instead of e-values, meaning H is rejected if P ≤ αγ (|RLOND|+1) where |RLOND| is
+                                                                          t                 t      t    t−1                    t−1
+                       the number of previous rejections. Another uniformly more powerful online procedure than LOND
+                       is provided by the LORD algorithm [17, 19], which is only known to control the OnlineFDR under
+                       independence of the p-values. In Appendix C we compare LORD to our online BH procedure.
+                       Remark 5. It is easy to see from the proof above that online BH even controls the OnlineFDR at level
+                       απ . In order to avoid this conservatism in the ofÒine case, Storey and colleagues [25, 26] introduced an
+                          0
+                       adaptive BH procedure by estimating π0. In Appendix D, we introduce the natural online generalization
+                       of this Storey-BH procedure and prove its OnlineFDR control under independence of the p-values.
+                       3.2     SupFDR control under positive dependence
+                       We will now show that the online BH procedure can also control the SupFDR, albeit at a slightly
+                       inflated level. Note that RoBH is clearly a self-consistent set (just like online e-BH) — it is the largest
+                                                    t
+                       such set when R is restricted to be a subset of {1,...,t}. Recall that R(α) is the set of self-consistent
+                       rejection sets. The following theorem provides a weighted version of the FDR-linking theorem (i.e.,
+                       weighted analog of Theorems 1 and 2 in Su [27]).
+                       Theorem 3.2 (Weighted FDR-linking theorem). Under any dependence structure among p-values
+                       (P )      for fixed K ∈ N, we can ensure the following is true:
+                         t t∈[K]
+                                                    "                   #                  1
+                                                                                          Z FDR (x)
+                                                  E     sup    FDP(R) ≤π α+π α                     0     dx,
+                                                                               0      0          x2
+                                                      R∈R(α)                             π α
+                                                                                          0
+                       where FDR (x) is the FDR of the weighted BH procedure applied only to the p-values corresponding to
+                                   0
+                       the null hypotheses, i.e., I , with weights (γ /π )        .
+                                                    0                   t  0 t∈I0
+                           The proof of Theorem 3.2 is provided in Appendix G.3. We can use the weighted FDR-linking
+                       theorem to prove an upper bound of the expected maximum FDP over all self-consistent discovery sets
+                       under positive regression dependence within nulls (PRDN). PRDN is a positive dependence assumption
+                       that is restricted to the dependency between null p-values and is therefore weaker than PRDS (see
+                       Appendix E for a definition of PRDN).
+                       Proposition 3.3. For PRDN p-values (Pt)t∈N, we have that
+                                             "                  #                        −1                    −1
+                                           E     sup FDP(R) ≤π α(1+log((π α) ))≤α(1+log(α )).
+                                                                      0              0
+                                               R∈R(α)
+                       Proof. Similar to the proof of Proposition 2.1, we first prove the above result restricted to a finite set
+                       of K hypotheses. Since under positive regression dependence and the global null, the weighted Simes
+                       p-value is a valid p-value, we have that FDR (x) = x under PRDN. Then, we get the upper bounds in
+                                                                        0
+                       the proposition statement for the finite K hypotheses by carrying out the integration in the upper
+                       bound of the weighted FDR-linking theorem and the fact that the function f(x) = x(1+log(1/x))
+                       is increasing in (0,1]. Now, we apply the same limit argument as seen in Proposition 2.1 to show
+                       this upper bound extends to the infinite hypotheses case as well. Thus, we have shown our desired
+                       result.
+                           The SupFDR control of the online BH procedure is now a direct result of Proposition 3.3.
+                                                                              12
+                  Theorem 3.4. The online BH procedure ensures that SupFDR ≤ α(1+log(α−1)) when the p-values
+                  (P )   are PRDN.
+                    t t∈N
+                     Note that the bound in Theorem 3.4 is sharp in the following sense.
+                  Theorem 3.5. For every ε > 0, there exists a K ∈ N, and α′ ∈ (0,1] such that, for online BH,
+                                                             0
+                                         SupFDR≥StopFDR>(1−ε)α(1+log(α−1))
+                  for all α ≤ α′ where the first K hypotheses are null and have p-values that are i.i.d. uniform random
+                                             0
+                  variables, and the remaining hypotheses are non-null with p-values set to 0. Note that this p-value
+                  distribution satisfies the PRDN conditon, meaning that the SupFDR upper bound in Theorem 3.4 is
+                  unimprovable.
+                     Wedefer the proof of this result to Appendix G.5.
+                     Notably, the p-value configuration constructed in Theorem 3.5 ensures that all p-values are
+                  independent. Hence, it is not even possible to improve the SupFDR bound in Theorem 3.4 under
+                  stronger assumptions like PRDS or independence.
+                  3.3   SupFDR control under negative dependence
+                  We can also show that online BH controls the SupFDR under some kind of negative dependence,
+                  following a similar approach to Chi et al. [6]. Like positive dependence, there are many notions of
+                  negative dependence. A comprehensive overview of the different notions and a comparison between
+                  these is given by Chi et al. [6]. In addition, they showed that the BH procedure controls the FDR
+                  at a slightly inflated level, if the p-values are weakly negatively dependent on the nulls (WNDN) (see
+                  Appendix E for a formal definition of WNDN). The following result can be shown about weighted
+                  self-consistent procedures under negative dependence.
+                  Proposition 3.6. For WNDN p-values (Pt)t∈N, we have that
+                                             "              #               −1
+                                           E    sup FDP(R) ≤α(3.18+log(α )).
+                                              R∈R(α)
+                     The above result, when restricted to a finite set of hypotheses, follows from the proof of Theorem 19
+                  in Chi et al. [6], as the proof utilizes an application of the FDR-linking theorem with a bound on the
+                  type I error of the Simes p-value under WNDN. Prop. 12 in Chi et al. [6] shows that the weighted Simes
+                  p-value has identical type I error under WNDN as unweighted Simes, so we can apply the weighted
+                  FDR-linking theorem to obtain the upper bounds in the proposition for finite hypotheses using an
+                  identical argument to the aforementioned proof. Combining this result with the limit argument seen in
+                  Proposition 3.3, we can obtain the full result for an infinite stream of hypotheses.
+                     The following theorem shows that online BH even controls SupFDR under WNDN at an inflated
+                  level and is a direct result of Proposition 3.6.
+                  Theorem 3.7. The online BH procedure ensures that SupFDR ≤ α(3.18+log(α−1)) when the p-values
+                  (P )   are WNDN.
+                    t t∈N
+                     The sharpness result in Theorem 3.5 holds on an instance of independent p-values (which are
+                  WNDN)thatachieve SupFDR and StopFDR which approaches α(1+log(α−1)). Thus, the dependence
+                  on log(α−1) cannot be improved, but it may still be possible to show a sharper constant than 3.18.
+                     Propositions 3.3 and 3.6 directly imply that the LOND algorithm [16, 37] (see Remark 4) and the
+                  TOADalgorithm for positively dependent p-values [13] (see (6) in Appendix B with β (k) = k) also
+                                                                                              t
+                  have the prescribed SupFDR bounds, since both also satisfy the weighted self-consistency condition.
+                  Proposition 3.8. LOND and TOAD ensure that SupFDR ≤ α(1+log(α−1)) when (P )    are PRDN,
+                  and SupFDR≤α(3.18+log(α−1)) when (P )      are WNDN.                      t t∈N
+                                                        t t∈N
+                                                             13
+                                     K
+                   3.4    SupFDR control under arbitrary dependence
+                   In Remark 2 we mentioned that the online BR procedure controls the SupFDR, which is formally proven
+                   in Appendix G.2. Suppose we have some fixed number K ∈ N of hypotheses and let β(k) = k/ℓ   for
+                                             P                                                              K
+                   k ∈ {1,...,K}, where ℓ  = K 1≈log(K). It follows immediately, that online BR applied at level
+                                         K      i=1 i
+                   αℓ   rejects exactly the same hypotheses as online BH applied at level α. Hence, online BH controls
+                     K
+                   the SupFDRK at the inflated level αℓ .
+                                                      K
+                   Theorem3.9. The online BH procedure ensures that SupFDRK ≤ αℓ     for all K ∈ N under arbitrarily
+                                                                                   K
+                   dependent p-values.
+                      Online BH does not control the SupFDR under arbitrary dependence if the number of hypotheses
+                   is infinite. To see this, note that Guo and Rao [15, Theorem 5.1 (iii)] showed that there exist p-value
+                   configurations such that the FDR of the BH procedure equals exactly min(αℓ ,1), where K is the
+                                                                                             K
+                   number of total hypotheses. Hence, for every α there is a K such that the FDR of the BH procedure
+                   equals 1. Since the BH procedure is a special case of online BH for every K, the online BH procedure
+                   can neither control the OnlineFDR, the StopFDR nor the SupFDR at a level below 1 under arbitrary
+                   dependence.
+                   4    Related literature
+                   In the following, we give a brief overview of the existing online multiple testing literature divided
+                   according to the different settings and assumptions considered in this paper.
+                      Independence.     The online multiple testing framework was introduced by Foster and Stine [14]
+                   and initially focused on online FDR control at fixed times and with independent p-values [17, 20, 19].
+                   The most popular procedures in this setting are the LORD algorithm, which was introduced by
+                   Javanmard and Montanari [17] and later generalized and improved by Ramdas et al. [19], and the
+                   SAFFRON algorithm, which was introduced by Ramdas et al. [20]. We compare the (improved)
+                   LORDalgorithm to online BH in Appendix C and SAFFRON to online Storey-BH in Appendix D.
+                   Weconclude that the existing methods and our online ARC procedures lead to similar power, however,
+                   our online ARC procedures provide a more balanced and better interpretable weighting. In addition,
+                   online BH even controls the OnlineFDR under PRDS and allows to control the SupFDR at a slightly
+                   inflated level. Such results are not known for LORD nor SAFFRON.
+                      PRDS.      The LOND algorithm was introduced by Javanmard and Montanari [16] and proven to
+                   control the OnlineFDR under PRDS by Zrnic et al. [37]. The TOAD algorithm (for PRDS p-values)
+                   by Fisher [13] generalizes LOND by allowing delayed decisions. We proved that LOND and TOAD
+                   also control the SupFDR at a slightly inflated level (under PRDN and WNDN), allowing them to stop
+                   data-adaptively at any time (Section 3.3).
+                      Arbitrary dependence.        Javanmard and Montanari [16] introduced a modified version of
+                   the LOND algorithm that provides OnlineFDR control under arbitrary dependence, which was later
+                   generalized by Zrnic et al. [37] to the r-LOND algorithm. With TOAD (for arbitrarily dependent
+                   p-values), Fisher [13] introduced a modification of r-LOND that allows to incorporate decision deadlines.
+                   Recently, Xu and Ramdas [34] introduced e-LOND, providing OnlineFDR control with arbitrarily
+                   dependent e-values. In this paper we showed that r-LOND (Appendix G.2), TOAD (Appendix B) and
+                   e-LOND (Section 2.2) even provide SupFDR control without any additional assumptions and therefore
+                   can be stopped at arbitrary stopping times.
+                      FDRcontrol at stopping times.        XuandRamdas[32] were the first considering FDR control
+                   at arbitrary stopping times. They introduced SupLORD and showed that it provides valid SupFDR
+                   control. However, they rely on the assumption that the null p-values are valid conditional on all
+                   past p-values, which is a strong assumption close to independence [12]. Other works also considered
+                   FDRcontrol at particular data-adaptive stopping times [37, 13], all relying on some assumption of
+                                                                 14
+                  independenceorconditional validity. Our paper is the first bringing together arbitrary/positive/negative
+                  dependence and stopping times.
+                     Batching and delayed decisions.   Zrnic et al. [36] and Fisher [13] explored the possibility of
+                  increasing power of online procedures by batching multiple hypotheses and allowing delayed decisions,
+                  respectively. They introduced online frameworks where decisions, both acceptances and rejections,
+                  can be reversed until some prespecified decision deadlines. Although Fisher [13] noted that his TOAD
+                  algorithm will never turn a rejected hypothesis into an accepted one, the online ARC framework was
+                  not explicitly mentioned before.
+                     E-values.   Multiple testing with e-values was initially considered in the ofÒine setting. Wang
+                  and Ramdas [31] provided with e-BH an analog of the popular Benjamini-Hochberg (BH) procedure [3].
+                  Vovk and Wang [30, 29] considered merging functions for e-values and applying the Closure Principle
+                  with these. Recently, e-values were also brought up in online multiple testing. Xu and Ramdas [34]
+                  introduced the aforementioned e-LOND and Fischer and Ramdas [10] considered online closed testing
+                  with e-values, proving that e-values are essential for an online true discovery guarantee.
+                  5   Conclusion
+                  Online ARC multiple testing is a flexible and powerful concept. It allows to test hypotheses one at
+                  a time, while ensuring that a rejection remains, regardless of the future. However, by changing the
+                  decision for accepted hypotheses based on future information online ARC procedures are more powerful
+                  than classical online procedures. We showed that the e-BH and BH procedure possess natural online
+                  ARCgeneralizations.
+                     The online e-BH method controls the SupFDR under arbitrary dependence between the e-values.
+                  This allows to apply the online e-BH procedure at any e-values and to stop data-adaptively at any
+                  time while ensuring valid FDR control. This offers a much higher flexibility than classical online
+                  FDRcontrol at fixed times. We proved that the same flexibility is provided by the existing online
+                  procedures r-LOND [37], e-LOND [34], online BR [5, 13] and TOAD for arbitrarily dependent p-values
+                  [13]. Previously, data-adaptive stopping was only proven under some independence assumption about
+                  the joint distribution of the test statistics.
+                     The p-value based online BH procedure controls the SupFDR at a slightly inflated level when the
+                  p-values are PRDN or WNDN. The same holds for the LOND [17] and the TOAD (for positively
+                  dependent p-values) [13] algorithm.
+                     In Table 3 we list all online procedures with proven SupFDR control under different dependence
+                  assumptions between the p-values or e-values.
+                                               Arb. dep.    Pos. dep.    Neg. dep.       Cond. val.
+                            Online e-BH       Section 2.1     =⇒            =⇒              =⇒
+                    alue    e-LOND [34]       Section 2.2     =⇒            =⇒              =⇒
+                    e-v       e-TOAD           Section B      =⇒ ∗          =⇒ ∗            =⇒
+                             Online BH             -       Section 3.2  Section 3.3           -
+                             Online BR        Section G.2     =⇒            =⇒              =⇒
+                    alue    r-LOND [37]       Section G.2     =⇒            =⇒              =⇒
+                       TOAD(arb. dep.) [13]    Section B      =⇒ ∗          =⇒ ∗            =⇒
+                    p-vTOAD(pos. dep.) [13]        -       Section 3.3  Section 3.3           -
+                                                                    ∗             ∗
+                            LOND[17]               -       Section 3.3  Section 3.3           -
+                           SupLORD [32]            -            -            -       Xu and Ramdas [32]
+                  Table 3: Procedures with proven SupFDR control under different dependence assumptions. The
+                 “implies” symbol indicates that the guarantee is implied by control under arbitrary dependence and
+                  the asterisk that the SupFDR guarantee is provided at a slightly inflated level.
+                                                            15
+            Acknowledgments
+            LFacknowledgesfundingbytheDeutscheForschungsgemeinschaft(DFG,GermanResearchFoundation)
+            – Project number 281474342/GRK2224/2. AR was funded by NSF grant DMS-2310718.
+            Supplementary Material
+            TheRcodetoreproduceall simulations is available at https://github.com/fischer23/online_e-BH.
+            References
+            [1] 1000 Genomes Project Consortium. A global reference for human genetic variation. Nature, 526
+              (7571):68, 2015.
+            [2] Ehud Aharoni and Saharon Rosset. Generalized α-investing: definitions, optimality results and
+              application to public databases. Journal of the Royal Statistical Society Series B: Statistical
+              Methodology, 76(4):771–794, 2014.
+            [3] Yoav Benjamini and Yosef Hochberg. Controlling the false discovery rate: a practical and
+              powerful approach to multiple testing. Journal of the Royal Statistical Society Series B: Statistical
+              Methodology, 57(1):289–300, 1995.
+            [4] Yoav Benjamini and Daniel Yekutieli. The control of the false discovery rate in multiple testing
+              under dependency. The Annals of Statistics, 29(4):1165–1188, 2001.
+            [5] Gilles Blanchard and Etienne Roquain. Two simple sufÏcient conditions for FDR control. Electronic
+              Journal of Statistics, 2:963–992, 2008.
+            [6] Ziyu Chi, Aaditya Ramdas, and Ruodu Wang. Multiple testing under negative dependence.
+              Bernoulli, 31(2):1230–1255, 2025.
+            [7] Yo Joong Choe and Aaditya Ramdas. Combining Evidence Across Filtrations. arXiv:2402.09698,
+              2024.
+            [8] A. Philip Dawid, Steven de Rooij, Peter Grunwald, Wouter M. Koolen, Glenn Shafer, Alexander
+              Shen, Nikolai Vereshchagin, and Vladimir Vovk. Probability-free pricing of adjusted American
+              lookbacks. arXiv:1108.4113, 2011.
+            [9] A. Philip Dawid, Steven de Rooij, Glenn Shafer, Alexander Shen, Nikolai Vereshchagin, and
+              Vladimir Vovk. Insuring against loss of evidence in game-theoretic probability. Statistics &
+              Probability Letters, 81(1):157–162, 2011.
+            [10] Lasse Fischer and Aaditya Ramdas. Admissible online closed testing must employ e-values.
+              arXiv:2407.15733, 2024.
+            [11] Lasse Fischer, Marta Bofill Roig, and Werner Brannath. The online closure principle. The Annals
+              of Statistics, 52(2):817–841, 2024.
+            [12] Aaron Fisher. Online false discovery rate control for LORD++ and SAFFRON under positive,
+              local dependence. Biometrical Journal, 66(1):2300177, 2024.
+            [13] Aaron J Fisher. Online control of the false discovery rate under “Decision Deadlines”. In
+              International Conference on Artificial Intelligence and Statistics, 2022.
+                                        16
+         [14] Dean P Foster and Robert A Stine. α-investing: a procedure for sequential control of expected
+           false discoveries. Journal of the Royal Statistical Society Series B: Statistical Methodology, 70(2):
+           429–444, 2008.
+         [15] Wenge Guo and M Bhaskara Rao. On control of the false discovery rate under no assumption of
+           dependency. Journal of Statistical Planning and Inference, 138(10):3176–3188, 2008.
+         [16] Adel Javanmard and Andrea Montanari. On online control of false discovery rate. arXiv:1502.06197,
+           2015.
+         [17] Adel Javanmard and Andrea Montanari. Online rules for control of false discovery rate and false
+           discovery exceedance. The Annals of Statistics, 46(2):526–554, 2018.
+         [18] Ron Kohavi, Alex Deng, Brian Frasca, Toby Walker, Ya Xu, and Nils Pohlmann. Online controlled
+           experiments at large scale. In ACM SIGKDD International Conference on Knowledge Discovery
+           and Data Mining, 2013.
+         [19] Aaditya Ramdas, Fanny Yang, Martin J Wainwright, and Michael I Jordan. Online control of the
+           false discovery rate with decaying memory. Neural Information Processing Systems, 30, 2017.
+         [20] Aaditya Ramdas, Tijana Zrnic, Martin Wainwright, and Michael Jordan. SAFFRON: an adaptive
+           algorithm for online control of the false discovery rate. In International Conference on Machine
+           Learning, 2018.
+         [21] Aaditya K Ramdas, Rina F Barber, Martin J Wainwright, and Michael I Jordan. A unified
+           treatment of multiple testing with prior knowledge using the p-filter. The Annals of Statistics, 47
+           (5):2790–2821, 2019.
+         [22] David S Robertson, Jan Wildenhain, Adel Javanmard, and Natasha A Karp. onlineFDR: an R
+           package to control the false discovery rate for growing data repositories. Bioinformatics, 35(20):
+           4196–4199, 2019.
+         [23] David S Robertson, James MS Wason, Franz König, Martin Posch, and Thomas Jaki. Online
+           error rate control for platform trials. Statistics in Medicine, 42(14):2475–2495, 2023.
+         [24] Glenn Shafer, Alexander Shen, Nikolai Vereshchagin, and Vladimir Vovk. Test Martingales, Bayes
+           Factors and p-Values. Statistical Science, 26(1), 2011.
+         [25] John D Storey. A direct approach to false discovery rates. Journal of the Royal Statistical Society
+           Series B: Statistical Methodology, 64(3):479–498, 2002.
+         [26] John D Storey, Jonathan E Taylor, and David Siegmund. Strong control, conservative point
+           estimation and simultaneous conservative consistency of false discovery rates: a unified approach.
+           Journal of the Royal Statistical Society Series B: Statistical Methodology, 66(1):187–205, 2004.
+         [27] Weijie J. Su. The FDR-Linking Theorem. arXiv:1812.08965, 2018.
+         [28] V. G. Vovk. A Logic of Probability, with Application to the Foundations of Statistics. Journal of
+           the Royal Statistical Society. Series B (Methodological), 55(2):317–351, 1993.
+         [29] Vladimir Vovk and Ruodu Wang. E-values: Calibration, combination and applications. The
+           Annals of Statistics, 49(3):1736–1754, 2021.
+         [30] Vladimir Vovk and Ruodu Wang. Confidence and discoveries with e-values. Statistical Science, 38
+           (2):329–354, 2023.
+         [31] Ruodu Wang and Aaditya Ramdas. False discovery rate control with e-values. Journal of the
+           Royal Statistical Society Series B: Statistical Methodology, 84(3):822–852, 2022.
+                               17
+         [32] Ziyu Xu and Aaditya Ramdas. Dynamic algorithms for online multiple testing. In Mathematical
+           and Scientific Machine Learning, 2021.
+         [33] Ziyu Xu and Aaditya Ramdas. More powerful multiple testing under dependence via randomization.
+           arXiv:2305.11126, 2023.
+         [34] Ziyu Xu and Aaditya Ramdas. Online multiple testing with e-values. In International Conference
+           on Artificial Intelligence and Statistics, 2024.
+         [35] Sonja Zehetmayer, Martin Posch, and Franz Koenig. Online control of the false discovery rate in
+           group-sequential platform trials. Statistical Methods in Medical Research, 31(12):2470–2485, 2022.
+         [36] Tijana Zrnic, Daniel Jiang, Aaditya Ramdas, and Michael Jordan. The power of batching in
+           multiple hypothesis testing. In International Conference on Artificial Intelligence and Statistics,
+           2020.
+         [37] Tijana Zrnic, Aaditya Ramdas, and Michael I Jordan. Asynchronous online testing of multiple
+           hypotheses. Journal of Machine Learning Research, 22(33):1–39, 2021.
+                               18
+                          Here we give a brief overview of the appendix. We begin with a detailed explanation of boosting
+                      under local dependence and PRDS e-values in Section A. In Section B, we introduce e-TOAD, an
+                      e-value version of the TOAD procedure [13], which can be applied in online settings with decision
+                      deadlines. We also show that e-TOAD and TOAD (for arbitrarily dependent p-values) provide SupFDR
+                      control under arbitrary dependence. In Section C, we compare the LORD algorithm [17, 19] with the
+                      online BH procedure. Afterwards, we introduce an online version of the Storey-BH procedure [25, 26]
+                      and compare it to the SAFFRON algorithm [20] (Section D). In Section E, we discuss the considered
+                      notions of positive and negative dependence. In Section F, we describe the simulation setup used in the
+                      paper. In Section G, we provide omitted proofs and derivations for results stated in the main paper.
+                      A Details about boosting with online e-BH
+                      In this section, we provide several details regarding the boosting techniques briefly described in
+                      Section 2.3. In Section A.1, we demonstrate how the infinite sum in (2) can be handled. In Section A.2,
+                      weshowhowtheboostingapproachcanbefurtherimprovedwheninformationaboutalocaldependence
+                      structure is available while maintaining SupFDR control. We show in Section A.3 how OnlineFDR
+                      control can be guaranteed while employing an improved boosting technique for PRDS e-values.
+                      A.1 Handling the infinite sum in the truncation function used for boosting
+                      In this section we propose two approaches to handle the infinite sum in (2) and demonstrate their
+                      application in a Gaussian testing problem. The first approach is a conservative one. Here, for each
+                      t ∈ N we define some natural number s ∈ N and set
+                                                                        s                               
+                                         + s     :              1        X 1                        1          1
+                                          T (x) = x1 x<               +      1         ≤x<                         .               (3)
+                                           t                  sαγ                kαγ           (k −1)αγ      kαγ
+                                                                   t     k=1         t                    t       t
+                                                     + s                                         + s
+                      Obviously, we have T (x) ≤ T (x) for all s ∈ N and therefore E            [ T (X )] ≤ 1 implies that X is a
+                                              t         t                                    Ht     t   t                       t
+                                                              + s                                     + s
+                      boosted e-value. We still have that      T (x) ≤ x such that boosting with T can only increase power
+                                                                 t                                       t
+                      compared to no boosting.
+                          Another approach is to set
+                                                s                                                                   
+                                   − s      :  X 1                        1          1       + s                   1
+                                     T (x) =       1         ≤x<                          = T (x)−x1 x<                            (4)
+                                      t                kαγ           (k −1)αγ       kαγ        t                  sαγ
+                                               k=1         t                    t       t                             t
+                                                                                     − s
+                      for some natural number s ∈ N. Note that we have                 T (x) = T (x) for all x ≥ 1/(sαγ ) and
+                                                                                        t          t                          t
+                       − s                                                                                        − s
+                        T (x) < T (x)forallx < 1/(sαγ ). Therefore, applyingonlinee-BHtoX withE                  [ T (X )] ≤ 1does
+                         t         t                       t                                          t       H      t   t
+                                                                                                   −            t
+                      not necessarily control SupFDR. However, we can apply online e-BH to Ts(X ) instead, which provides
+                                                                                                      t   t
+                                                   − s                                                        − s         − s
+                      SupFDR guarantee since T (X ) is a valid e-value. Furthermore, note that T [ T (x)] = T (x) for
+                                                     t    t                                                  t   t           t
+                                                         − s                                                           − s
+                      all x, implying that the e-value     T (X ) cannot be further improved by boosting if E         [ T (X )] = 1.
+                                                            t    t                                                  Ht    t   t
+                      With this approach we do not necessarily improve non-boosted e-values, since Et ≤ Xt does not imply
+                                  − s
+                      that E ≤ T (X ), where ≤ is to be read in an almost sure sense. However, in some situations this is
+                              t      t   t
+                      even more powerful than boosting with (2). For example, suppose we know in advance that the total
+                                                                                              − r
+                      number of rejections won’t be larger than r. Then boosting with          T is uniformly more powerful than
+                                                                                                t
+                      boosting with T , since e-values smaller than 1/(rαγ ) cannot lead to a rejection anyway. If such prior
+                                        t                                      t
+                      information is not available one could also adapt s to t, for example, by setting s = ⌈1/γ ⌉. In this
+                                                                                                                          t
+                                                                            −1                             − s
+                      case we could not reject hypotheses with X < α          , however, all the mass of    T (X ) is put to values
+                                                                      t                                       t   t
+                      greater than α−1, increasing the probability for a rejection at larger levels.
+                          Wang and Ramdas [31] have introduced several concrete examples how the boosted e-values
+                      X ,X ,... could be chosen in specific testing problems. In the following we extend one of them to the
+                        1    2
+                      online case.
+                                                                             19
+                       Example 1. Consider an e-value Et that is obtained from a likelihood ratio between two normal
+                        distributions with variance 1 but a difference δ > 0 in means
+                                                                     E =exp(δZ −δ2/2),
+                                                                       t            t
+                       where Z follows a standard normal distribution under the null hypothesis H . Hence, E is a log-
+                                 t                                                                                 t             t
+                        normally distributed random variable with parameters (−δ2/2,δ) if H is true. Suppose we are looking
+                                                                                                       t
+                        for a boosted e-value of the type X = b E for some boosting factor b ≥ 1. Using (3), we can calculate
+                                                               t    t  t                              t
+                                     + s                       δ                    
+                                E [ T (b E )] = b        1−Φ        +log(sαγ b )/δ
+                                  Ht    t   t  t      t           2             t t
+                                                      s
+                                                  +X[Φ(δ/2−log([k−1]αγ b )/δ)−Φ(δ/2−log(kαγ b )/δ)]/(kαγ ),
+                                                                                   t t                            t t             t
+                                                     k=1
+                       where Φ is the CDF of a standard normal distribution. Thus, we can set this equation to 1 and solve
+                        for b numerically. For α = 0.05, γ = 0.01, δ = 3 and s = 10, we obtain a boosting factor of b = 1.165.
+                             t                                 t                                                                  t
+                        For increasing s, the method becomes less conservative and the boosting factor increases. For s = 100
+                       we obtain bt = 1.174, but increasing s further only leads to marginal improvements. Using (4), we
+                        obtain
+                                                      s
+                                     − s             X
+                                E [ T (b E )] =          [Φ(δ/2−log([k−1]αγ b )/δ)−Φ(δ/2−log(kαγ b )/δ)]/(kαγ ).
+                                 Ht     t   t  t                                   t t                            t t             t
+                                                     k=1
+                        In this case, the same parameters as before yield a boosting factor of bt = 3.071. This boosting factor
+                        decreases if s increases. For s = 100, we obtain bt = 1.73. The boosting factors obtained by these two
+                        approaches converge to the same limit for s → ∞. Note that with the latter approach we need to
+                                              − s
+                        plugin the e-value     T (b E ) instead of b E into the online e-BH algorithm. However, if we expect
+                                                 t  t  t                t  t
+                                                                                                                    − s
+                        the number of rejections to be small, we can increase power substantially using               Tt .
+                           In the following section, we show how the boosting approach can be further improved if additional
+                        information about the joint distribution of the e-values is available.
+                        A.2 Boosting under local dependence
+                        In many online applications not all e-values are arbitrarily dependent. Indeed, e-values that lie far
+                        in the past often have no influence on the current testing process. For this reason, Zrnic et al. [37]
+                        introduced a local dependence structure that allows arbitrary dependence for e-values close together in
+                        time while e-values in the distant past should be independent. Precisely, (Et)t∈N are called locally
+                        dependent with lags (L )        , if for all t ∈ I it holds that
+                                                   t t∈N                 0
+                                                                     E ⊥⊥E           , . . . , E .
+                                                                       t      t−L −1         1
+                                                                                  t
+                        If Lt = t − 1, the e-values are arbitrarily dependent. If Lt < t − 1, the e-value Et is independent of
+                        some of the past e-values.
+                           In the following, we will show that such local dependence information can be exploited to further
+                        boost the e-values and increase power. For this, we define a lag-dependent truncation function.
+                                                   L                  1                            1          
+                                                 T t(x) =                        1 x≥
+                                                   t         (k∗        +1)αγ              (k∗       +1)αγ
+                                                                t−L −1          t            t−L −1          t
+                                                                    t                           t        
+                                                                  ∞
+                                                          +      X 1 1 ≤x<                         1           1
+                                                                               kαγ            (k −1)αγ       kαγ
+                                                             k=k∗      +2          t                     t       t
+                                                                 t−Lt−1
+                                                                                    1         
+                                                          =min Tt(x), (k∗             +1)αγ       ,
+                                                                              t−L −1          t
+                                                                                  t
+                                                                                 20
+                                                                                                                          L
+                                where T is the truncation function in (2). Note that T t(x) ≤ T (x) for all x and L . Hence, the
+                                             t                                                                            t               t                               t
+                                boosted e-values using TLt can potentially be larger than the ones obtained by T . The idea of
+                                                                        t                                                                                              t
+                                  L                                             ∗
+                                T t is that if we know that k                               of the independent past hypotheses were rejected, H can be
+                                  t                                             t−L −1                                                                                            t
+                                                              ∗                       t−1
+                                rejected if E ≥ [(k                      +1)αγ ]           . Hence, there is no additional gain if E is strictly larger than
+                                                    t         t−L −1                t                                                                      t
+                                    ∗                        −1 t
+                                [(k            +1)αγ ]           . We can then use this information for improved boosting.
+                                    t−L −1                t
+                                         t
+                                PropositionA.1. LetX ,X ,...beasequenceofnonnegativerandomvariables such that E                                                                  [TLt(X )] ≤
+                                                                       1     2                                                                                               Ht     t       t
+                                1 for all t ∈ N. Then the online e-BH procedure applied with X ,X ,... controls the SupFDR at level
+                                                                                                                                   1     2
+                                α.
+                                     Finding such X ,X ,... is particularly simple if a sequence of locally dependent e-values (E )
+                                                              1     2                                                                                                                  t t∈N
+                                with lags (L )              and known marginal distributions is available. In this case one can simply calculate
+                                          L        t t∈N
+                                E [T t(b E )|k∗                     ], since E is independent of k∗                           .
+                                  H t           t   t                              t
+                                     t                   t−L −1                                                    t−L −1
+                                                               t                                                        t
+                                                                                                               + L ,s            − L ,s
+                                     Analogously to (3) and (4), we can also define                             T t       and T t , respectively. In the following we
+                                                                                                                   t                 t
+                                continue Example 1 to quantify the improvement gain due to local dependence.
+                                Example 2. ConsiderExample1butsupposethee-valueE isindependentofthee-valuesE ,...,E
+                                                                                                                         t                                                1            t−L −1
+                                                                                                                                                                                            t
+                                for some L ∈ {1,...,t−1}. We obtain
+                                                 t
+                                                        + L ,s                 ∗
+                                                 E [ T t (b E )|k                        ]
+                                                   Ht       t        t   t    t−L −1
+                                                                                    t
+                                                  =b [1−Φ(δ/2+log(sαγ b )/δ)]
+                                                     t                                   t t                       
+                                                 + 1−Φ δ/2−log((k∗                              +1)αγ b )/δ             /[(k∗            +1)αγ ]
+                                                                                     t−L −1                t t                t−L −1                t
+                                                                                          t                                        t
+                                                             s
+                                                 +          X [Φ(δ/2−log([k−1]αγ b )/δ)−Φ(δ/2−log(kαγ b )/δ)]/(kαγ ).
+                                                                                                            t t                                      t t                   t
+                                                     k=k∗           +2
+                                                          t−Lt−1
+                                For the parameters α = 0.05, γ = 0.01, δ = 3, s = 100 and k∗                                                  =2, this leads to the boosting
+                                                                                  t                                                t−L −1
+                                                                                                                                        t              ∗
+                                factor bt = 1.265. For a larger number of previous (independent) rejections kt−L −1 = 10, the boosting
+                                factor also increases to b = 1.541. Furthermore, we have                                                                    t
+                                                                       t
+                                                − L ,s                 ∗                      + L ,s                 ∗
+                                         E [ T t (b E )|k                        ] = E       [  T t (b E )|k                   ] − b [1 − Φ(δ/2+log(sαγ b )/δ)].
+                                           Ht       t        t   t    t−L −1             Ht       t        t   t     t−L −1           t                                  t t
+                                                                            t                                             t
+                                In this case we obtain a boosting factor of bt = 1.940 for k∗                                         =2andbt =2.639 for k∗                             =10.
+                                                                                                                           t−L −1                                           t−L −1
+                                                                                                                                t                                                t
+                                     The gain in power obtained by exploiting information about the local dependence structure to
+                                improve boosting is illustrated in Figure 2. It is seen that using information about locally dependent
+                                e-values improves power significantly.
+                                                     1.0                                                           1.0
+                                                     0.8                                                           0.8
+                                                    er0.6                                                         er0.6
+                                                    w                                                             w
+                                                    o                                                             o
+                                                    P0.4                                                          P0.4
+                                                     0.2                                                           0.2
+                                                     0.0     0.2           0.4           0.6           0.8         0.0      0.2           0.4           0.6           0.8
+                                                               Proportion of false hypotheses                                 Proportion of false hypotheses
+                                                        Online e−BH          boosted (under arbitrary dependence)                 boosted under local dependence
+                                Figure 3: Power comparison of online e-BH with boosted and boosted e-values under local dependence
+                                for different proportions of false hypotheses. In the left (right) plot the signal of the alternative is weak
+                               (strong). The simulation setup is described in Section F.
+                                                                                                              21
+                            In the p-value literature, it is usually started with a procedure under independence which is made
+                        conservative when local dependence is present. Interestingly, we take the other direction and start
+                        with a procedure that works under arbitrary dependence and improve it when information about a
+                        local dependence structure is available. A similar behavior for the BH and e-BH procedure was noted
+                        by Wang and Ramdas [31].
+                        Remark 6. Another advantage of local dependence is that γt can be measurable with respect to
+                        F         =σ(E ,...,E             ) and thus depend on the previous data. In fact, to choose γ predictable
+                          t−L −1         1        t−L −1                                                                       t
+                              t                       t
+                        it is even sufÏcient that Et is valid conditional on Ft−L −1, which is slightly weaker than independence.
+                                                                                       t
+                        To see this, just note that for all t ∈ I it holds that
+                                                                    0
+                                                E[γ E ] = E[E[γ E |F            ]] = E[γ E[E |F           ]] ≤ E[γ ].
+                                                    t t           t  t   t−L −1          t     t  t−L −1           t
+                                                                             t                        t
+                        A.3 Boosting with PRDS e-values
+                        Wang and Ramdas [31] also introduced a more powerful boosting technique than the one we described
+                        in Section A.1 which works under positive regression dependence on a subset (PRDS) [4] (see Section
+                        Efor a formal definition of PRDS for e-values). In the following we extend this method to the online
+                        setting. However, the proof technique of FDR control is different in this case such that SupFDR
+                        control can no longer be guaranteed and we only show OnlineFDR control.
+                            Let the truncation function Tt be as in (2). Instead of bounding the expected value of the truncated
+                        e-value T (X ), Wang and Ramdas [31] proposed to bound the probability
+                                  t   t
+                                                sup    1 P (X ≥1/(kαγ ))=supxP (T (X )≥x)≤1,                                              (5)
+                                                            H     t            t             H     t   t
+                                                     kαγ      t                                t
+                                                k∈N       t                           x≥0
+                        if the X , t ∈ N, are PRDS. In the following, we show that this condition can also be used for boosting
+                                 t
+                        in the online case.
+                        Proposition A.2. Let X ,X ,... be a sequence of nonnegative random variables such that (5) holds
+                                                      1   2
+                        for all t ∈ N. Then the online e-BH procedure applied with X ,X ,... controls the OnlineFDR at level
+                                                                                              1    2
+                        α, if the random variables X ,X ,... are PRDS.
+                                                         1    2
+                        Proof. Let t ∈ N be fixed and X = (X αγ ,...,X αγ ). Then f(X) = 1/(k∗ ∨1), where
+                                                                     1   1        t   t                         t
+                                                                                  t                            
+                                                   ∗                            X                              
+                                                 k =max k∈{1,...,t}:                 1{X ≥1/(kαγ )}≥k ,
+                                                   t                                      j            j       
+                                                                                 j=1
+                        is a nonincreasing function. Furthermore, the range of f is given by If = {1,1/2,1/3,...} and
+                                                            sup{x ∈ I : x ≤ X αγ } = T (X )αγ .
+                                                                        f          i   i      i   i    i
+                        With this, Lemma 1 (ii) in [31] implies that
+                                                    E[f(X)1{X αγ ≥f(X)}]≤supxP(T (X )αγ ≥x)
+                                                                  i   i                          i   i    i
+                                                                                       x≥0
+                        for all i ∈ I , i ≤ t. Since
+                                     0
+                                                 supxP(T (X )αγ ≥ x) ≤ αγ ⇔ supxP(T (X ) ≥ x) ≤ 1,
+                                                            i   i    i            i               i   i
+                                                 x≥0                                    x≥0
+                        we obtain                                                                 
+                                                             X 1{X ≥1/(αγ(k∗∨1))
+                                                 FDR =             E         i          i  t
+                                                      t                          (k∗ ∨1)
+                                                           i∈I0,i≤t                t
+                                                        ≤ X supxP(T(X)αγ ≥x)≤α X γ ≤α.
+                                                                              i   i    i                     i
+                                                           i∈I0,i≤tx≥0                              i∈I0,i≤t
+                                                                                 22
+                          By Markov’s inequality, E       [T (X )] ≤ 1 implies that (5) is satisfied. Hence, boosting with (5) is
+                                                       H t t
+                                                         t
+                      more powerful than boosting with E         [T (X )] ≤ 1.
+                                                              H t t
+                                                                t
+                      B Thee-TOADprocedure
+                      First, we review the TOAD procedure by Fisher [13] under arbitrary dependence. Afterwards, we
+                      introduce e-TOAD, an e-value analog of the TOAD procedure and show that e-TOAD provides
+                      SupFDR control. By showing that TOAD is a special case of e-TOAD we also conclude SupFDR
+                      control for the TOAD procedure.
+                          In the online setup with “decision deadlines” by Fisher [13] each H comes with a decision deadline
+                                                                                                   t
+                      d ≥t, which means that the decision for hypothesis H can be changed until time d . For example, if
+                        t                                                         t                                t
+                      d =t for all t ∈ N, the classical online setup is obtained. Furthermore, let C = {i ≤ t : d ≥ t} be
+                        t                                                                                    t              i
+                      the set of currently “active” hypotheses. We will see that TOAD and e-TOAD never turn a rejected
+                      hypothesis into an accepted hypothesis and therefore are online ARC procedures.
+                          Initialize R0 = ∅. The TOAD algorithm under arbitrary dependence [13] is recursively defined as
+                      follows.
+                                TOAD :    n                               ∗        o
+                              R        = i∈{1,...,t}:Pi ≤αγiβi(k                  )  , t ∈ N, where                                (6)
+                                t                                         min(di,t)
+                                                                                                                          
+                               ∗      TOAD                               X                        TOAD                    
+                              k =|R          \C|+max k≤|C|:                      1{P ≤αγ β (|R            \C|+k)}≥k .
+                               t      t−1        t                 t                j      j j    t−1        t            
+                                                                        j≤t,j∈Ct
+                      The shape functions βi are defined the same as in Section 2.4. The TOAD procedure under arbitrary
+                      dependence is an online generalization of the BR procedure [5]. Note that Fisher [13] only allowed to
+                      use the same shape function β = β for all i ∈ N. This can cost a lot of power, particularly if d < ∞.
+                                                             i                                                                 t
+                      For example, suppose d = 1, which means that the decision for the first hypothesis must be made
+                                                 1
+                      immediately. Then we could choose β (1) = 1, meaning to put all mass on k∗ = 1 since this is the only
+                                                               1                                         1
+                      relevant value. This would not be possible if the same shape function must be used for all hypotheses,
+                      which usually implies β1(1) < 1. We will show that TOAD even controls the SupFDR for individual
+                      shape functions by proving that it is a special case of e-TOAD.
+                          The e-TOAD algorithm is defined by
+                             e-TOAD :    n                             ∗        −1o
+                           R          = i∈{1,...,t}:Ei ≥(αγik                  )     , t ∈ N, where
+                             t                                         min(di,t)
+                                                                                                                            
+                             ∗      e-TOAD                              X                       e-TOAD              −1      
+                           k =|R            \C|+max k≤|C|:                      1{E ≥[αγ (|R             \C|+k)] }≥k .
+                             t      t−1         t                 t                j       j    t−1         t               
+                                                                       j≤t,j∈Ct
+                      Note that e-TOAD becomes online e-BH in case of d = ∞ for all t and e-LOND if d = t for all t.
+                                                                                 t                                  t
+                          Analogously to Section 2, the SupFDR control of the e-TOAD algorithm follows because the e-value
+                      Ei, i ∈ {1,...,t}, of every rejected hypothesis at time t satisfies
+                                                                 E ≥1/(αγ |Re-TOAD|).
+                                                                   i         i   t
+                      Proposition B.1. The e-TOAD procedure provides SupFDR control at level α under arbitrary
+                      dependence between the e-values.
+                          Define the truncation function as
+                                                     dt                              
+                                      TTOAD(x)=X1              1   ≤x<          1          1     with Tt(∞) = 1 .
+                                       t                     kαγ           (k −1)αγ      kαγ                     αγ
+                                                    k=1          t                   t       t                      t
+                                                                             23
+                      Then e-TOAD applied to X ,X ,... rejects the same hypotheses as if applied to
+                                                             1   2
+                      TTOAD(X ),TTOAD(X ),... . Therefore, applying e-TOAD to X ,X ,... ensures SupFDR con-
+                        1        1    2         2                                                 1   2
+                      trol, if E[TTOAD(X )] ≤ 1 for all t ∈ I . With this, we can prove the following proposition in the exact
+                                  t        t                    0
+                      same manner as we proved Proposition 2.5.
+                      Proposition B.2. Let ψ ,ψ ,... be nonincreasing transforms such that for every t it holds that
+                                                  1   2
+                                                  d                                           
+                                                   t
+                                                 X 1 ψ−1 1 −ψ−1                            1          ≤1.
+                                                      kαγ      t    kαγ          t    (k −1)αγ
+                                                 k=1      t              t                       t
+                      Then the e-TOAD procedure applied to the random variables ψ (P ),ψ (P ),... controls the SupFDR
+                                                                                           1   1    2   2
+                      at level α.
+                          Define ψ such that ψ−1(1/(αγ k)) = αβ (k)γ . Then ψ (P ) ≥ 1/(αγ k) iff P ≤ ψ−1(1/(αγ k)) =
+                                    t             t         t          t    t          t  t           t        t     t         t
+                      αβ (k)γ . Hence, e-TOAD applied to ψ (P ),ψ (P ),... rejects the same hypotheses as TOAD applied
+                         t     t                                 1   1   2   2
+                      to P ,P ,... . In the exact same manner as in Proposition G.1, we can show that ψ ,ψ ,... satisfy
+                           1   2                                                                                     1  2
+                      Proposition B.2. Hence, TOAD controls the SupFDR.
+                      Proposition B.3. The TOAD procedure (6) provides SupFDR control at level α under arbitrary
+                      dependence between the p-values.
+                      C Online BH versus LORD
+                      In this section, we compare the LORD procedure [17, 19] with the online BH procedure. Javanmard and
+                      Montanari [17] introduced the LORD algorithm with OnlineFDR control which was later generalized
+                      and improved to the LORD++ algorithm by Ramdas et al. [19]. Here we follow the latter presentation,
+                      but call it LORD instead of LORD++ for brevity.
+                          Let αLORD,αLORD,... be individual levels such that
+                                1        2
+                                       P
+                                          t   αLORD
+                                          i=1 i                                     LORD :                   LORD
+                                                      ≤αfor all t ∈ N, where R             ={i≤t:P ≤α              }.              (7)
+                                       |RLORD|∨1                                    t                   i    i
+                                          t
+                          Ramdas et al. [19] showed that any online procedure defined by the rejection sets RLORD, t ∈ N,
+                                                                                                                        t
+                      controls the OnlineFDR if the null p-values are independent from each other and the non-nulls; and the
+                      thresholds αLORD, i ∈ N, are nonrandom and nondecreasing functions of the past rejection indicators
+                                    i
+                      1{P1 ≤ αLORD},...,1{Pi−1 ≤ αLORD}.
+                                 1                        i−1
+                          Let αoBH := k∗αγ , t ∈ N and i ≤ t, be the individual significance level for hypothesis H at time
+                                i,t       t   i                                                                             i
+                      t obtained by the online BH procedure (Section 3). Since k∗ = |RoBH|, it is easy to see that the
+                                          oBH                                              t       t        oBH
+                      individual levels α     , i ≤ t, also satisfy the LORD condition (7). However, α           is not a function of
+                                          i,t                                                               i,t
+                      only the first i − 1 rejections, but depends on all rejections up to step t. Therefore, online BH is not a
+                      special instance of the LORD algorithm, but online BH and LORD are both allowed to spend the
+                      same amount of significance level up to each time t. For this reason, online BH and LORD should
+                      have similar power, and the difference between these procedures lies in a different weighting of the
+                      hypotheses (with online BH all individual levels gain from rejections, while with LORD only future
+                      levels gain from rejections).
+                          This is verified via simulations in Figure 4, where we compare online BH with a special instance of
+                      the LORD algorithm implemented in the R package onlineFDR [22]. The simulation setup is described
+                      in Section F. Recall that (γ )        is a sequence that sums to one and which defines the weighting of
+                                                     t t∈N                     t−1
+                      the different hypotheses. In Figure 4, we set γt = q         (1−q) with q = 0.99 in the left plot and with
+                      q = 0.999 in the right plot for both procedures. That means, in the right plot the γ sequence is
+                      decreasing slower. It is easy to see that LORD performs better than online BH in the left plot and
+                      worse in the right plot. In addition, online BH with q = 0.999 performs nearly the exact same as
+                                                                             24
+                           LORDwith q =0.99. This supports our theoretical reasoning that the difference between these two
+                           procedures lies in a different weighting of the hypotheses, but both procedures spend the same amount
+                           of significance level.
+                               Wethink one advantage of online BH compared to LORD is that its weighting is easier to interpret.
+                           If γ = 2γ for i ̸= j, then H will be tested at twice the level compared to H with online BH,
+                                i        j                          i                                                                   j
+                           regardless of the number of rejections. In contrast, the weighting of LORD strongly depends on the
+                           number of rejections in a complex nonlinear manner. Another important advantage of online BH
+                           compared to LORD is that online BH controls the OnlineFDR under PRDS, while LORD is only
+                           known to control it under independence. In addition, we proved that online BH even controls the
+                           SupFDRatslightly inflated levels under PRDN and WNDN. Such results are not known for the LORD
+                           procedure. However, of course LORD is an online procedure in the strict sense, which can be desirable
+                           in certain applications, while online BH is an online ARC procedure. We conclude that there is much
+                           to be gained by relaxing the online requirement to an online ARC requirement: we get a procedure
+                           with seemingly comparable power, but with a much stronger suite of type-I error control guarantees.
+                                      1.0                                                        1.0
+                                      0.8                                                        0.8
+                                     er0.6                                                      er0.6
+                                     w                                                          w
+                                     o                                                          o
+                                     P0.4                                                       P0.4
+                                      0.2                                                        0.2
+                                      0.0     0.2          0.4          0.6          0.8         0.0     0.2           0.4          0.6          0.8
+                                                Proportion of false hypotheses                             Proportion of false hypotheses
+                                                                            Procedure       Online BH        LORD
+                           Figure 4: Power comparison of online BH and LORD for different proportions of false hypotheses.
+                           In the left plot the sequence (γ )                decreases fast (q = 0.99) and in the left plot it decreases slow
+                                                                     t t∈N
+                          (q = 0.999). The simulation setup is described in Section C.
+                           D Theonline Storey-BH procedure
+                           Similarly as for e-BH and BH, one can define an online version of the Storey-BH procedure [25, 26],
+                           which we call just SBH in the following. In this section, we introduce the online SBH procedure, prove
+                           its OnlineFDR guarantee and compare it with the existing SAFFRON [20] procedure.
+                               Recall that (γ )           is a sequence that sums to one. In addition, let λ ∈ [α,1) be a user-defined
+                           constant and           t t∈N
+                                                                                        P
+                                                                        max       γ +      ∞ γ1{P >λ∨i>t}
+                                                                πˆt =        i∈N i         i=1 i        i                 .                                  (8)
+                                                                  0                         (1−λ)
+                           Then the online SBH method is defined by the rejection sets
+                                                     oSBH :                             ∗        t     	
+                                                  R         = i≤t:P ≤min(k αγ /πˆ ,λ) ,t∈N,
+                                                    t                 i                 t    i   0                                     
+                                                                                             t                                         
+                                               where k∗ = max           k ∈ {1,...,t} : X1{P ≤ min(kαγ /πˆt,λ)} ≥ k                        ,
+                                                         t                                           j                j   0            
+                                                                                            j=1
+                                                                                            25
+                                                                                                                                                            PK
+                             with the convention max(∅) = 0. Note that for γ1 = ... = γK = 1/K, we have πˆK = 1+ i=11{Pi>λ}.
+                                                                                                                                                  0            (1−λ)K
+                             In this case the online SBH procedure recovers the SBH procedure [25, 26] and therefore is a true
+                             generalization of it. In addition, since πˆt is nonincreasing in t, the online SBH procedure is indeed an
+                                                                                      0
+                             online ARC procedure.
+                             Proposition D.1. If the null p-values are independent from each other and the non-nulls, the online
+                             SBH procedure ensures that OnlineFDR ≤ α.
+                                                                       P
+                                                         max       γ + ∞           γ 1{P >λ∨i>t}
+                             Proof. Let πˆt,−j =              i∈N i       i=1,i̸=j  i     i           . For any t ∈ N, we have
+                                               0                            (1−λ)
+                                                                        X 1{P ≤min(k∗αγ/πˆt,λ)}
+                                                         FDR =                  E          i             t    i    0
+                                                                t                                     k∗
+                                                                      i≤t,i∈I0                          t
+                                                                       X "1{P ≤min(k∗αγ/πˆt,−i,λ)}#
+                                                                 =             E          i             t    i    0
+                                                                                                       k∗
+                                                                    i≤t,i∈I0                             t
+                                                                        X "1{P ≤k∗αγ/πˆt,−i}#
+                                                                  ≤             E          i      t     i   0
+                                                                                                   k∗
+                                                                      i≤t,i∈I0                      t
+                                                                                   "                              t,−i                       !#
+                                                                        X                  1{P ≤k∗αγ /πˆ               }
+                                                                                                i       t    i    0      
+                                                                  =             E E                                       (P )
+                                                                                                          ∗                 j j∈{1,...,t}\i
+                                                                                                        k                
+                                                                      i≤t,i∈I0                            t
+                                                                  (i)    X              " 1 #
+                                                                  ≤              αγ E
+                                                                                    i      πˆt,−i
+                                                                      i≤t,i∈I0               0
+                                                                  (ii)    X                                1
+                                                                   ≤              αγ                     P
+                                                                                     i max        γ +                        γ
+                                                                       i≤t,i∈I0              j≤t j           j≤t,j∈I0,j̸=i     j
+                                                                           X                          γi
+                                                                  =α               maxj≤tγj +P                           γj ≤ α.
+                                                                        i≤t,i∈I0                         j≤t,j∈I0,j̸=i
+                             Inequality (i) follows by Lemma 1 (a) and inequality (ii) by Lemma 3 of Ramdas et al. [21].
+                                  An existing online procedure that adapts to the proportion of true hypotheses is SAFFRON [20],
+                             which is defined as LORD (see Section C) but with the condition
+                                      P
+                                          t                   1{P >λ}
+                                               αSAFFRON            i
+                                          i=1 i                  1−λ                                             SAFFRON :                              SAFFRON
+                                                                          ≤αfor all t ∈ N, where R                             ={i≤t:P ≤α                            }     (9)
+                                            |RSAFFRON|∨1                                                         t                              i       i
+                                                t
+                             instead of (7). The relation between SAFFRON and online SBH is similar to the relation between
+                             LORD and online BH (see Section C). That means, the levels defined by online SBH satisfy (9).
+                             However, in contrast to the LORD vs. online BH case, online SBH satisfies the SAFFRON condition
+                             (9) only in a conservative manner due to the additional summand max                                         γ in (8). We think this is
+                                                                                                                                    i∈N i               SAFFRON
+                             required, since SAFFRON only allows to use the information P > λ for all levels α                                                       , j > i,
+                                                                                                                          i      i                      j
+                             while online SBH uses it for all j ∈ N. Consequently, online SBH can lead to a more balanced weighting.
+                             Overall, we think both procedures lead to a comparable power and the main difference lies in a different
+                             weighting of the hypotheses, just as for online BH and LORD.
+                                  This can also be seen in Figure 5, where we compare online SBH with SAFFRON as implemented
+                             in the R package onlineFDR [22], which should be compared to Figure 4. Both procedures were applied
+                             with λ = 0.5, the remaining simulation setup is the same as in Section C.
+                                                                                                    26
+                                                    1.0                                                          1.0
+                                                    0.8                                                          0.8
+                                                   er0.6                                                        er0.6
+                                                   w                                                            w
+                                                   o                                                            o
+                                                   P0.4                                                         P0.4
+                                                    0.2                                                          0.2
+                                                    0.0     0.2           0.4          0.6           0.8         0.0      0.2          0.4           0.6           0.8
+                                                              Proportion of false hypotheses                                Proportion of false hypotheses
+                                                                                   Procedure         Online Storey−BH           SAFFRON
+                               Figure 5: Power comparison of online SBH and SAFFRON for different proportions of false hypotheses.
+                               In the left plot the sequence (γ )                         decreases fast (q = 0.99) and in the left plot it decreases slow
+                                                                                 t t∈N
+                               (q = 0.999). The simulation setup is described in Section D.
+                               E Positive and negative dependence
+                               Here we give the formal definitions of the used positive and negative dependence assumptions made in
+                               the paper, which are online extensions of the classical definitions [4, 27, 6, 31].
+                                     Let us first define two different positive dependence assumptions that one can make on p-values.
+                               Thefirst is the PRDS condition for FDR control of the BH procedure that was introduced by Benjamini
+                               and Yekutieli [4]. We generalize this typical PRDS definition to the online setting (i.e., applicable to
+                               countably infinite hypotheses) in the following way.
+                               Definition 3 (PRDS). A set D ⊆ Rn is called increasing if x ∈ D implies that y ∈ D for all y ≥ x. For
+                               a sequence of p-values (P )                     with a countable index set I, we say that they have positive regression
+                                                                      t t∈I                                  ′                                         I′
+                               dependence on a subset (PRDS) if, for any finite I ⊆ I, increasing set D ⊆ R , and null index i ∈ I ,
+                                                                                                                                                                                          0
+                               we have that P((Pt)t∈I′ ∈ D | Pi ≤ s) is increasing over s ∈ (0,1].
+                                     Note that this definition is equivalent to the standard PRDS definition when I is finite. Further,
+                               this is the PRDS definition implicitly used by Zrnic et al. [37]. For example, PRDS is satisfied if the
+                               p-values corresponding to true hypotheses are independent from all the other p-values. However, it
+                               also holds under some kind of positive dependence [4].
+                                     Aslightly weaker notion of positive dependence is PRDN [27], which is restricted to the dependency
+                               between p-values that correspond to true hypotheses.
+                               Definition 4 (PRDN). For a sequence of p-values (P )                                   with a countable index set I, we say that they
+                                                                                                              t t∈I
+                               have positive regression dependence within nulls (PRDN) if, for any finite subset of the null hypotheses
+                               I′ ⊆ I , increasing set D ⊆ RI′, and null index i ∈ I , we have that P((P )                                                    ′ ∈ D | P ≤ s) is a
+                                         0                                                                           0                                 t t∈I                i
+                               increasing over s ∈ (0,1].
+                                     Likewise, this is the generalization of PRDN from Su [27] to the online setting.
+                                     The only type of negative dependence we consider in this paper is WNDN.
+                               Definition 5 (WNDN). We say that a sequence of p-values (P )                                               are weakly negatively dependent
+                                                                         T                        Q                             t t∈I
+                               within nulls (WNDN) if P                            P ≤s ≤                   P(P ≤s) for any A ⊆ I and s ∈ [0,1].
+                                                                             i∈A i                    i∈A         i                               0
+                                     Similarly as for positive dependence, there are many types of negative dependence. A comparison
+                               of the different types is given by Chi et al. [6].
+                                     Since e-values and p-values are working on inverse scales, the PRDS condition is also flipped around
+                               when considering e-values [31].
+                               Definition 6 (PRDS for e-values). A set D ⊆ Rn is called decreasing if x ∈ D implies that y ∈ D
+                               for all y ≤ x. For a sequence of e-values (Et)t∈I with a countable index set I, we say that they have
+                               positive regression dependence on a subset (PRDS) if, for any finite I′ ⊆ I, decreasing set D ⊆ RI′,
+                               and null index i ∈ I , we have that P((E )                             ′ ∈ D | E ≥ s) is decreasing over s ∈ (0,∞).
+                                                              0                                t t∈I                i
+                                                                                                            27
+                         This definition of PRDS for e-values ensures that if the p-values (P )       are PRDS and (ψ )       are
+                                                                                                t t∈N                   t t∈N
+                      nonincreasing transforms, then the random variables (ψ (P ))          are PRDS in the e-value sense.
+                                                                                 t   t t∈N
+                      F Simulation setup
+                      Wesimulated m = 100 independent trials, each consisting of n = 1000 hypothesis pairs of the form
+                      H : X ∼ N(0,1) vs. HA : X ∼ N(µ ,1), t ∈ N, where µ > 0 is the signal strength. In case
+                        t    t                   t      t        A                      A
+                      of µ   = 3.5 we speak of weak signal and in case of µ         = 4.5 of strong signal. To obtain locally
+                          A                                                      A
+                      dependent e-values, we first generated normally distributed random variables (Z1,...,Zn) with mean 0,
+                      variance 1 and a batch dependence structure. That means we have batches Bi = {Z(i−1)b+1,...,Zib},
+                      i ∈ {1,...,n/b}, such that random variables contained in the same batch have correlation 0.5 while
+                      random variables from different batches are independent. The final test statistics were obtained by
+                      X =Z +µ Π ,where Π ∼Ber(π ) and π ∈{0.1,0.2,...,0.9} gives the probability that HA is
+                        t     t    A A            A          A         A                                                     t
+                      true.
+                         The e-values were calculated as likelihood ratio ϕ      (X )/ϕ (X ), where ϕ denotes the density of
+                                                                              µ     t   0   t           µ
+                                                                               A
+                      a normal distribution with variance 1 and mean µ. The boosted e-values were obtained as described
+                                                                                −         − L ,s
+                      in Examples 1 and 2 using the truncation functions         Ts and T t with s = n, respectively. In
+                                                                                   t         t
+                      all simulations concerning e-values we set the batch-size to b = 20 and applied all procedures with
+                      γt = qt−1(1−q), t ∈ {1,...,n}, where q = 0.99.
+                         Thep-valueswerecalculatedbyP = Φ(−Z ). Whenconsideringp-values, wegeneratedindependent
+                                                            t         t
+                      test statistics (b = 1) and only considered weak signals (µA = 3.5).
+                         The code for the simulations is available at https://github.com/fischer23/online_e-BH.
+                      G Omitted proofs and derivations
+                      In this section, we provide the omitted proofs or derivations for results that were mentioned in the
+                      main paper.
+                      G.1 Online e-BH with p-values
+                      In this subsection, we provide the formal proof of Proposition 2.5.
+                      Proof. If we prove that E[T (ψ (U))] ≤ 1, where T is given by (2) and U ∼ U[0,1], then the first claim
+                                                  t   t                   t
+                      follows by Proposition 2.4. For this, note that
+                                                        ∞                                   
+                                      E[T (ψ (U))] = XP          1   ≤ψ(U)<           1          1
+                                          t  t                 kαγ       t       (k −1)αγ      kαγ
+                                                       k=1         t                        t      t
+                                                        ∞                                          
+                                                    =XP ψ−1            1     ≥U>ψ−1              1           1
+                                                                     kαγ                    (k −1)αγ       kαγ
+                                                       k=1                t                           t         t
+                                                        ∞                                         
+                                                    =X 1 ψ−1 1 −ψ−1                            1
+                                                           kαγ      t    kαγ         t    (k −1)αγ
+                                                       k=1     t              t                      t
+                                                    ≤1.
+                      The second claim follows immediately by Proposition A.2, since
+                                         sup   1 P(ψ (U) ≥ 1/(kαγ )) = sup        1 P(U ≤ψ−1(1/(kαγ )))
+                                             kαγ       t              t          kαγ           t          t
+                                         k∈N     t                          k∈N      t
+                                                                          =sup 1 ψ−1(1/(kαγ )).
+                                                                                 kαγ t             t
+                                                                            k∈N      t
+                                                                          28
+                  G.2 SupFDR control of online BR and r-LOND
+                  In the following proposition, we show how the online BR procedure can be written as a special instance
+                  of the online e-BH method and therefore provides SupFDR control under arbitrary dependence between
+                  the e-values.
+                  Proposition G.1. The online BR procedure provides SupFDR control at level α under arbitrary
+                  dependence between the p-values.
+                  Proof. Let β be a shape function and ψ be chosen such that ψ−1(1/(αγ k)) = αβ (k)γ . Note
+                              t                          t                     t       t         t   t
+                  that ψ (P ) ≥ 1/(αγ k) iff P   ≤ ψ−1(1/(αγ k)) = αβ (k)γ .   Hence, online e-BH applied to
+                         t t          t       t      t       t         t    t
+                  ψ (P ),ψ (P ),... rejects the same hypotheses as online BR applied to P ,P ,... . Furthermore,
+                    1  1   2  2                                                        1  2
+                  it holds that
+                               ∞                                      ∞
+                              X 1 ψ−1 1 −ψ−1                    1        =X1(β(k)−β(k−1))
+                                 kαγ     t   kαγ       t    (k −1)αγ           k  t      t
+                              k=1    t           t                  t      k=1
+                                                                            ∞ Z k
+                                                                         =X k−1x/k dν(x)
+                                                                           k=1
+                                                                         ≤Z ∞1dν(x)
+                                                                            0
+                                                                         =1.
+                  Consequently, the SupFDR control follows by Proposition 2.5.
+                     In the same manner as we derived the online BR procedure as special case of the boosted online
+                  e-BH procedure, one could also derive r-LOND as a special case of a boosted e-LOND procedure. For
+                  this, one can just define the truncation function
+                                           t                        
+                                 TLOND =X1        1  ≤x<        1        1    with Tt(∞) = 1
+                                  t             kαγ         (k −1)αγ   kαγ                 αγ
+                                          k=1       t               t      t                 t
+                  and then do the same steps as above. Consequently, r-LOND also provides SupFDR control.
+                  Proposition G.2. The r-LOND procedure provides SupFDR control at level α under arbitrary
+                  dependence between the p-values.
+                  G.3 Weighted FDR-Linking theorem
+                  Here we provide the proof of Theorem 3.2.
+                  Proof. We follow a similar proof structure as the proof of Theorem 1 in Su [27]. By the definition of
+                  self-consistency, we note that any R ∈ R(α) and t ∈ R, the following inequality holds:
+                                                                  −1
+                                                       |R| ≥ ⌈(αγ ) P ⌉.                                 (10)
+                                                                 t    t
+                  Thus, we get an upper bound on the supremum over FDP
+                                                     |I ∩R|                     |I ∩R|
+                              sup   FDP(R)= max       0     ≤ max                0                .
+                                                                                −1
+                                              R∈R(α) |R|∨1    R∈R(α) max{⌈(αγ )   P ⌉ : t ∈ R} ∪ {1}
+                             R∈R(α)                                           t    t
+                  The inequality is a result of applying the bound in (10) to every t ∈ R and taking the best possible
+                  bound.
+                                                              29
+                                                     :                       null             null             null            null
+                                        Let K = |I | and P                        , . . . , P       and γ           , . . . , γ      denote the corresponding weights. Now,
+                                                  0           0             1                K                1               K
+                                                null             null             null          0 null                           0
+                                  define P           , . . . , P        and γ          , . . . , γ        be the null p-values and weights sorted in ascending order
+                                               (1)              (K0)              (1)             (K0)
+                                  based on (γnull)−1Pnull. We continue the derivation of the upper bound as follows.
+                                                     i             i
+                                                                                                                |I ∩R|                                                  j
+                                                        sup       FDP(R)≤ max                                      0                        ≤ max
+                                                                                     R∈R(α) ⌈(αγnull                 )−1Pnull            ⌉      j∈[K ] ⌈(αγnull)−1Pnull⌉
+                                                     R∈R(α)                                               (|I ∩R|)           (|I ∩R|)                  0          (j)           (j)
+                                                                                                             0                   0
+                                                                                                         α                                              π α
+                                                                                 ≤                                              =                          0                       .                 (11)
+                                                                                      minj∈[K ](jγnull)−1Pnull                       minj∈[K ](jγnull/π0)−1Pnull
+                                                                                                   0       (j)           (j)                      0       (j)                (j)
+                                  The first inequality is noting that there exists a null p-value and corresponding weight of index i ∈ R
+                                                             null −1      null           null         −1 null
+                                  that satisfies (γ               )    P         ≤(γ                )     P              simply by the cardinality of I ∩ R. The second
+                                                            (i)           (i)           (|I0∩R|)            (|I0∩R|)                                                        0
+                                  inequality is by changing the indexing set of the maximum, and the third inequality is by dropping the
+                                  ceiling function in the denominator.
+                                        Now we note that
+                                                                                          null-Simes :                       null        −1 null
+                                                                                       P                  = min (jγ               /π0)        P
+                                                                                                              j∈[K ]         (j)                (j)
+                                                                                                                     0
+                                  is precisely the weighted Simes p-value applied only to the p-values and weights of the null hypotheses,
+                                  i.e., I . One rejects the weighted Simes p-value if and only if the weighted BH procedure makes any
+                                           0
+                                  discoveries at level α ∈ [0,1].
+                                       Wenowobserve that trivially, we can augment the bound in (11) to get that
+                                                                                          sup        FDP(R)≤                   π0α         ∧1.                                                     (12)
+                                                                                       R∈R(α)                              Pnull-Simes
+                                        Now, let F denote the c.d.f. of Pnull-Simes. Thus, we get the following derivation:
+                                                  "                             #         h        π0α                 i
+                                               E       sup        FDP(R) ≤E Pnull-Simes ∧1
+                                                    R∈R(α)                                                                       h                                                      	i
+                                                                                   =P Pnull-Simes ≤ π α +E                               π0α          · 1     Pnull-Simes > π α
+                                                                                                                    0               Pnull-Simes                                       0
+                                                                                                           1
+                                                                                   =F(π α)+ Z π0α dF(x).
+                                                                                              0                  x
+                                                                                                       π0α
+                                  The first inequality is by plugging in (12). The second equality follows from casing on the value of
+                                  Pnull-Simes into disjoint cases, and the last equality comes from the definition of F.
+                                        Using integration by parts, it follows that
+                                                          "                            #                                                                  1                 
+                                                                                                                                       F(π α)            Z F(x)
+                                                                                                                                             0                              
+                                                      E        sup       FDP(R) ≤F(π α)+π α F(1)−                                                    +                   dx
+                                                                                                     0            0                       π α                    x2
+                                                            R∈R(α)                                                                          0
+                                                                                                                                                        π0α
+                                                                                                                   1                                         1
+                                                                                                                 Z F(x)                                    Z FDR (x)
+                                                                                           =π α+π α                             dx=π α+π α                              0        dx.
+                                                                                                 0          0             2                0          0                 2
+                                                                                                                        x                                             x
+                                                                                                                πα                                        πα
+                                  The last equality follows from the equivalence between Type I error of weighted Simes p-value and
+                                  FDRof weighted BH under the global null (i.e., when applied to only null p-values). Hence we have
+                                  shown our desired result.
+                                                                                                                     30
+                    G.4 Relationship between SupFDR and StopFDR
+                    Wenoted in the introduction that a bound on the FDR at all stopping times also implies a bound on
+                    the SupFDR. In this section we give a formal derivation of this result.
+                    Definition 7. Recall that a filtration (Ft)t∈N is a sequence of nested sigma-algebras, and stopping
+                    times (w.r.t. (F )) are random variables τ ∈ N such that 1{τ = t} is measurable w.r.t. F .
+                                   t                                                                       t
+                    Theorem G.3. Let (W )       be a nonnegative process that is adapted to some filtration (F ), meaning
+                                           t t∈N                                                           t
+                    W is measurable with respect to F for all t ∈ N. Furthermore, let (W )    be almost surely bounded
+                      t                               t                                  t t∈N
+                    (with respect to P) by some constant c ≥ 1 and E[Wτ] ≤ 1 for all stopping times τ with respect to (Ft).
+                   Then, E[sup     W]≤1+log(c).
+                               t∈N   t
+                    Proof. By Ville’s inequality, we have that
+                                                          PsupWt >α−1≤α
+                                                             t∈N
+                    for all α ∈ [0,1]. Thus, we can use the tail bound integration formula for expectation of nonnegative
+                    random variables:
+                                                        ∞              
+                                            E supW ≤Z P supW ≥s ds
+                                               t∈N  t          t∈N   t
+                                                          0
+                                                           c                     c
+                                                         Z                        Z −1
+                                                       = P supW ≥s ds≤ s ∧1ds
+                                                               t∈N   t
+                                                          0                       0
+                                                           1       c
+                                                       =Z ds+Z s−1 ds=1+log(c)
+                                                          0       1
+                    Corollary G.4. If a sequence of discovery sets (Rt) ensures StopFDR control at level α, then SupFDR
+                    is controlled at level α(1 + log(α−1)).
+                       The above theorem can also be seen as similar to defining an adjuster [24, 9, 8, 7] for upper bounded
+                    e-processes or calibrator [28, 29] for lower bounded anytime-valid p-values.
+                    G.5 Sharpness of SupFDR and StopFDR control of online BH
+                    WewillshowthattheSupFDRandStopFDRcontrolofonlineBHunderPRDNp-valuesinTheorem3.4
+                    is sharp, as claimed in Theorem 3.5. First, we cite the following construction from Su [27] for a
+                    worst-case construction of the FDP of picking non-nulls as a function of the realized null p-values. Let
+                    there be K fixed hypotheses, and without loss of generality let I = [|K |], i.e., the nulls come first.
+                                                                                    0      0
+                    Now, define the following quantities:
+                                                         ∗ :                null
+                                                        j  =argmax j/⌈KP       /α⌉,
+                                                                            (j)
+                                                               j∈I0
+                                                         ∗ :       null      ∗
+                                                       K =(⌈KP ∗ /α⌉−j )∨0,
+                                                         1         (j )
+                    where Pnull,...,Pnull are the p-values corresponding to null hypotheses ordered from smallest to
+                            (1)       (K0)
+                    largest. Consider the following adversarial construction of non-null p-values for t ∈ {K + 1,...,K}.
+                                                                                                        0
+                                                        P =1−1{t≤K +K∗}.                                          (13)
+                                                         t               0     1
+                                                                    31
+                                                    Fact 1 (Lemma 2.4 of Su [27]). Let RBH be the discovery set of the BH procedure at level α applied
+                                                     to any p-values where the non-null p-values are set in the manner of (13). When K∗ ≤ K −K , then
+                                                                                                                                                                                                                                                                               1                            0
+                                                                        BH                                                         null
+                                                     FDP(R )=max                                               (j/⌈Kp ∗ /α⌉)∧1.
+                                                                                                     j∈I0                          (j )
+                                                              Figure 6 shows how we derive our problem instance for the online ARC setting from the afore-
+                                                     mentioned ofÒine construction. Let γ = K−1 for t ∈ [K] and γ = 0 for t > K. We let the first K
+                                                                                                                                                         t                                                                    t                                                                                             0
+                                                     p-values be identical to the ofÒine setting and the remaining hypotheses be non-null with p-values set
+                                                     to 0. Now we note the following.
+                                                     Lemma G.5. For the above choice of p-values and weights for the online setting, we have that
+                                                     RoBH ∗ = RBH and as a result, we get the following identity for the FDP when K∗ ≤ K − K :
+                                                         K0+K                                                                                                                                                                                                                             1                               0
+                                                                  1                        
+                                                                           oBH                                                                   null
+                                                     FDP R                               ∗       =(max                          j/⌈Kp ∗ /α⌉)∧1.
+                                                                           K +K                                      j∈I0                        (j )
+                                                                               0         1
+                                                     Proof. Note that we can map p-value realizations of our ofÒine construction to our online construction
+                                                     simply by setting the null p-values to be equivalent but setting all non-null p-values to be 0 in the online
+                                                     construction. Applying weighted BH with weights of γ = K−1 to the first K +K∗ hypotheses is
+                                                                                                                                                                                                         t                                                            0              1
+                                                     exactly equivalent to applying standard BH to K hypotheses where the first K +K∗ hypotheses have
+                                                                                                                                                                                                                                                                 0             1
+                                                     identical p-values to the weighted BH p-values, and the remaining p-values are 1, as the hypotheses
+                                                     with p-values of 1 will never be rejected. Thus, when combined with Fact 1, we can justify the above
+                                                     lemma.
+                                                                                                         i.i.d.                                                                 P = 0 for                                                           P = 1 for 
+                                                                                       P = U ∼ Uniform[0,1]                                                                        t                                                                  t
+                                                                                         t            t                                                             i ∈ {K + 1,…,K +K*}                                                i ∈ {K + K* + 1,…,K}
+                                                                                                  for  i ∈ I = [K ]                                                            0                   0         1                                     0         1
+                                                                                                                   0             0
+                                                                                    P             P            P            …  P                        P                    P                    …  P                              P                                       P                  P
+                                                                                       1             2            3                         K              K+1                  K+2                              K+K*                  K+K*+1  …                                                                  …
+                                                                                                                                               0              0                    0                                 0       1             0       1                           K                  K+1
+                                                        Oﬄine
+                      U            U             U            …  U                              0                    0              …                   0                        1                 …  1
+                                                                                        1            2             3                         K
+                                                        (Su 2018)                                                                               0
+                                                        Online                      U            U             U            …  U                     x  0                          0               …                  0                        0                 …  0                               0             …
+                                                                                        1            2             3                         K
+                                                                                                                                                0
+                                                                                                                Online BH 
+                                                       o-BH                        BH
+                                                                                                                       −1                                                     R                   =R                                            (oﬄine) BH
+                                                                                                          ( γ  =K  for  t ∈ [K])                                                  K+K*
+                                                                                                             t                                                                       0        1
+                                                     Figure 6: Visualization of our p-value construction for the online ARC setting that results in online
+                                                     BHproducing discovery sets that are equal to the discovery sets in Su [27] produced by the (ofÒine)
+                                                     BHprocedure (which maximize the FDR). This occurs whenever K∗ ≤ K −K , and we formalize the
+                                                                                                                                                                                                                                     1                            0
+                                                     discovery equivalence result in Theorem G.5.
+                                                              Now, Su [27] showed that the FDP expression in the above lemma was sufÏcient to justify sharpness
+                                                     of the FDR bound when the null p-values are chosen to be i.i.d. uniform random variables.
+                                                    Fact 2 (Theorem 6 of Su [27]). For every ε > 0, there exists a K, K < K, and α′ ∈ (0,1) such that
+                                                                                                                                                                                                                                         0
+                                                     FDR(RBH)>(1−ε)α(1+log(α−1)) for all α ≤ α′ where the null p-values are i.i.d. uniform random
+                                                     variables, and the non-null p-values are set in accordance with (13).
+                                                              Now, we note that K +K∗ is a stopping time since it can be determined solely by the null p-values
+                                                                                                                    0             1
+                                                    (which we will have observed by the K th time step). Thus, if we apply our Theorem G.5 to the above
+                                                                                                                                                        0
+                                                     fact, we have shown our desired result in Theorem 3.5.
+                                                              As a result, SupFDR and StopFDR control of online BH is sharp in the PRDN case, and the
+                                                     log(α−1) factor is unimprovable in the WNDN case.
+                                                    Remark 7. We will also note what our example here means w.r.t. the sharpness of certain self-consistent
+                                                     procedures in the ofÒine multiple testing setting.
+                                                                                                                                                                                      32
+               • If we are thinking about the self-consistent set that has the maximum FDP over all self-consistent
+                 sets, then our construction does indicate that under i.i.d. null and non-null p-values, a FDR
+                 lower bound of α(1+log(α−1)) is sharp.
+               • However, we can also restrict ourselves to discovery sets along the “BH path”, i.e., self-consistent
+                 sets that correspond to to the smallest k p-values for some k ∈ [K]. The discovery sets used for
+                 our example would not be along the BH path, since the null p-values would not be 0 almost
+                 surely, and anything along the BH path would discover all the non-null p-values first (as they
+                 are all 0). In this case, we would still have i.i.d. null p-values, but some of the non-null p-values
+                 must be adversarially chosen in the sense of Su [27], i.e., setting the K∗ non-null p-values to be
+                                                             1
+                1, to restrict the “BH path” to reach the sharp lower bound of α(1 + log(α−1)).
+                                            33

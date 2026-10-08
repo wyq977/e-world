@@ -1,0 +1,547 @@
+                                 The only admissible way of merging arbitrary
+                                                              e-values
+                                                             Ruodu Wang∗
+                                                            March 17, 2025
+                                                                Abstract
+                                       We prove that the only admissible way of merging arbitrary e-values
+                                    is to use a weighted arithmetic average. This result completes the picture
+                                    of merging methods for arbitrary e-values, and generalizes the result of
+                                    Vovk and Wang (2021, Annals of Statistics, 49(3), 1736–1754) that the
+                                    only admissible way of symmetrically merging e-values is to use the arith-
+                                    metic average combined with a constant. Although the proved statement
+                                    is naturally anticipated, its proof relies on a sophisticated application of
+                                    optimal transport duality and a minimax theorem.
+                                    Keywords: Hypothesis testing, e-variables, arithmetic average, admissi-
+                                    ble decisions, optimal transport duality
+                              1 Introduction
+                              E-values and e-processes in hypothesis testing have been an active research
+                              area in the recent years, led by a series of papers including Shafer (2021),
+                              Vovk and Wang (2021), Gru¨nwald et al. (2024) and Wasserman et al. (2020).
+                              The popularity of e-values came from its various features such as ﬂexibility,
+                              anytime validity, robustness, post-hoc decision validity, and a strong connection
+                              to betting and martingales. Wang and Ramdas (2022), Gru¨nwald (2024), and
+                              Ramdas et al. (2023) oﬀered many discussions on these features.
+        arXiv:2409.19888v2  [math.ST]  14 Mar 2025Arguably, one of the central advantages of e-values, especially in contrast
+                              to p-values, is that they are easy to combine. It is elementary that a weighted
+                              arithmetic average of e-values, with weights summing to 1, is an e-value. This
+                              convenient feature has been used in many applications. For instance, it is used
+                              to obtain admissible ways of merging p-values by Vovk et al. (2022), to con-
+                              struct discovery matrices by Vovk and Wang (2023), to deranomize the Model-
+                              X knockoﬀs of Barber and Cand`es (2015) by Ren and Barber (2024), and to
+                              boost the power of the e-Benjamini-Hochberg procedure of Wang and Ramdas
+                              (2022) by Lee and Ren (2024).
+                                 ∗Department of Statistics and Actuarial Science, University of Waterloo, Waterloo, On-
+                              tario, Canada. E-mail: wang@uwaterloo.ca.
+                                                                    1
+                          A natural question is, in addition to the weighted averages, whether there
+                       are other useful e-merging functions, i.e., functions that produce an e-value from
+                       severalinpute-values. If weadditionallyassumethat the inpute-valuesareinde-
+                       pendent or sequential, then many other admissible methods exist, as studied by
+                       Vovk and Wang (2021, 2024). Without assuming particular dependence struc-
+                       tures, the simple question of identifying useful e-merging functions turns out to
+                       be surprisingly nontrivial. As a central result on the combination of e-values,
+                       Vovk and Wang (2021, Theorem 3.2) showed, through several additional tech-
+                       nical results, that all admissible symmetric e-merging functions take the form of
+                       a convex combination of the arithmetic average and the constant 1. From there,
+                       one may naturally conjecture that, without assuming symmetry, admissible e-
+                       merging functions should take the form of a convex combination of a weighted
+                       average and the constant 1. This was not established by Vovk and Wang (2021)
+                       or its follow-up papers due to technical challenges.
+                          The main aim of this short paper is to prove the above conjecture, and thus
+                       to oﬀer a complete characterization of all admissible e-merging functions. This
+                       justiﬁes the use of weighted averages of e-values in many applications (where
+                       the weighted averages may have already been used), and frees us of any doubts
+                       about whether there are better choices in particular contexts. Although the
+                       anticipated mathematical result is natural, the proof requires a delicate analysis
+                       via optimal transport duality, very diﬀerent from the proof for the symmetric
+                       case by Vovk and Wang (2021).
+                          At an abstract level, the reason why optimal transport duality is essential is
+                       due to the requirement of an e-merging function to work for e-values with any
+                       dependence structure. Maximization over all dependence structures is a classic
+                       problem in optimal transport theory, and, more precisely, in our context it is a
+                       multi-marginal optimal transport problem; see Rachev and Ru¨schendorf (1998)
+                       and Villani (2009) for more on optimal transport theory. On a related matter,
+                       optimal transport duality is crucial for results of Vovk et al. (2022), where e-
+                       values serve as intermediate tools for characterizing admissible ways of merging
+                       p-values.
+                          Merging functions of some subclasses of e-values are discussed in Section 5.
+                       2 The main result
+                       Let K be a positive integer and denote by [K] = {1,...,K}. Write R+ = [0,∞)
+                       and denote by ∆ the standard simplex in Rn for n ∈ N, that is,
+                                    n
+                                         (                  n     )
+                                    ∆ = (x ,...,x )∈[0,1]n : Xx =1 .
+                                      n     1    n            k
+                                                           k=1
+                       Ahypothesis is a collection of probability measures on a measurable space (Ω,F)
+                       called the sample space.
+                          Ane-variable E for a hypothesis H is a [0,∞]-valued random variable satis-
+                             P
+                       fying E [E] ≤ 1 for all P ∈ H. We have been using the loose term “e-values” for
+                                                    2
+                              e-variables in the Introduction. An e-merging function is an increasing Borel
+                              function F : RK → R     such that for any hypothesis, F(E ,...,E ) is an e-
+                                             +      +                                   1       K
+                              variable for any e-variables E ,...,E . We have safely excluded inﬁnite points
+                                                          1       K
+                              in the domain of F; see Vovk and Wang (2021, Appendix C) for a justiﬁcation.
+                                  Ane-mergingfunctionF isadmissible ifforanye-mergingfunctionG, G ≥ F
+                              implies G = F. That is, F cannot be strictly improved. All equalities and
+                              inequalities are point-wise.
+                                  As explained in Vovk and Wang (2021, Appendix D), to study merging
+                              methods, it is necessary and suﬃcient to consider the simple hypothesis {P}
+                              with an atomless probability measure P, and all results carry through to any set-
+                              tings of possibly composite hypotheses. Therefore, in the sequel, all e-variables
+                              are deﬁned for the ﬁxed H = {P}, and E represents the expectation with respect
+                              to P. We omit mentioning P explicitly in most places.
+                                  For any vector λ ∈ ∆     , deﬁne the mapping M : RK → R by e 7→ λ·
+                                                       K+1                        λ    +      +
+                              (e,1). The mapping Mλ outputs the λ-weighted average of its input arguments
+                              and the constant 1. It is an e-merging function of dimension K. The main
+                              result in the paper is stated next.
+                              Theorem 1. For a function F : RK → R ,
+                                                                +      +
+                                (i) if F is an e-merging function, then F ≤ M  for some λ ∈ ∆     ;
+                                                                             λ                K+1
+                               (ii) F is an admissible e-merging function if and only if F = Mλ for some
+                                    λ∈∆ .
+                                          K+1
+                                  It suﬃces to show (i), as (ii) follows directly from (i) and the simple fact that
+                              Mλis an e-merging function not dominated by any other weighted average. In
+                              Section 3 we will prove Theorem 1. Before that, we address the simplest case
+                              K=1,whichwillbeusedintheproofofTheorem1. Inwhatfollows, arandom
+                              variable is binary if it takes at most two possible values.
+                              Lemma 2. Let θ ∈ [1,∞] and r ∈ R+. If a function g : [0,θ] → R+ satisﬁes
+                              E[g(E)] ≤ r for all binary e-variables E taking values in [0,θ], then there exists
+                              h∈[0,1] such that g(x) ≤ r(1 −h+hx) for x ∈ [0,θ]∩R.
+                                  As a particular case of Lemma 2 with r = 1, if g is an e-merging function
+                              of dimension 1, then there exists h ∈ [0,1] such that g(x) ≤ (1 − h) + hx =
+                              M(h,1−h)(x) for x ∈ R+. Hence, Theorem 1 holds for K = 1. This result,
+                              although very simple, is not found in the literature.
+                                  Lemma 2 is a reﬁnement of Lemma EC.2 of Wang et al. (2025); the latter
+                              result considered all e-variables instead of those binary and bounded in [0,θ].
+                              Because of its importance for our main result, a self-contained proof, similar to
+                              the one in Wang et al. (2025), is presented in Section 4.
+                              Remark 3. For α ∈ [0,1], a level-α test for a hypothesis H is a [0,1]-valued
+                                                            P
+                              random variable τ satisfying E [τ] ≤ α for all P ∈ H, with τ = 1 indicating a
+                              rejection, τ = 0 indicating no rejection, and τ ∈ (0,1) indicating a randomized
+                              decision. For α 6= 0, τ/α is an e-variable. For the connection between tests and
+                              e-values, see Koning (2024) and Ramdas and Wang (2024). Applying the proof
+                                                                    3
+                                       of Theorem 1 to e-variables that are bounded in [0,1/α], we get that using a
+                                       weighted average is the only admissible way to merge arbitrary level-α tests.
+                                       Merging tests at diﬀerent levels is similar, up to an adjustment of the weights.
+                                       3 Proof of Theorem 1
+                                       Let us ﬁrst prove a small lemma. In what follows, a∨b is the maximum of a,b,
+                                       a∧b is the minimum of a,b, and 0 represents a zero vector of the appropriate
+                                       dimension.
+                                       Lemma 4. Any e-merging function F satisﬁes F(e) ≤ 1∨max(e) for all e ∈
+                                       RK.
+                                          +
+                                       Proof. Suppose that there exists e ∈ RK such that F(e) > 1 ∨ max(e). Let
+                                                                                           +
+                                       e¯ = max{e}. If e¯ ≤ 1, then e is a vector of constant e-variables, but F(e) > 1
+                                       is not an e-variable, a contradiction. Next, consider e¯ > 1. Take e-variables
+                                       E ,...,E        with P((E ,...,E ) = e) = 1/e¯ and P((E ,...,E ) = 0) = 1 −
+                                          1        K                1         K                               1         K
+                                       1/e¯.   It is straightforward to see that E ,...,E                are e-variables. Moreover,
+                                                                                            1         K
+                                       E[F(E ,...,E )] > e¯/e¯ = 1, a contradiction to the assumption that F is an
+                                                1         K
+                                       e-merging function.
+                                            Fix an e-merging function F. Lemma 4 implies in particular
+                                                                                 K
+                                                      F(e1,...,eK) ≤ 1+Xek                   for all (e1,...,eK) ∈ RK.                  (1)
+                                                                                                                          +
+                                                                                k=1
+                                       This allows us to apply optimal transport duality. Let us state the duality ﬁrst.
+                                       Let Π(µ ,...,µ ) be the set of all Borel measures on RK with marginal distri-
+                                                  1        K
+                                       butions µ ,...,µ         on R. Let B be the set of Borel-measurable functions on R ,
+                                                   1         K                                                                           +
+                                       and write LK φ : (x ,...,x ) 7→ PK φ (x ) for functions φ ,...,φ                               ∈B.
+                                                       k=1 k         1        K          k=1 k k                         1         K
+                                       Deﬁne                           (                                         )
+                                                                                                    K
+                                                              D = (φ ,...,φ )∈BK :Mφ ≥F ,
+                                                                 F          1        K                   k
+                                                                                                   k=1
+                                       that is, the set of tuples of univariate functions whose sum dominates F. The
+                                       set DF is important in optimal transport theory because it compares F with
+                                                                                            L
+                                       a separable function G of the from G =                  K φ , with the key property that
+                                                                                               k=1 k
+                                       E[G(E ,...,E )] depends only on the marginals of (E ,...,E ) but not the
+                                                1         K                                                   1         K
+                                       dependence structure.
+                                            Let ME be the set of all distributions on R+ with mean no larger than 1,
+                                       i.e., the set of all distributions of e-variables, and Mθ be the subset of ME
+                                                                                                             E
+                                       containing all distributions on [0,θ] for θ ≥ 1. In what follows, we always write
+                                       φ=(φ ,...,φ ) and µ =(µ ,...,µ ).
+                                                1         K                 1         K
+                                            Condition (1) implies that the set DF is not empty, and moreover some
+                                                                          P R
+                                                                             K                                            K
+                                       elements φ in D         satisﬁes             φ dµ <∞when µ∈(M ) . With this,
+                                                            F                k=1      k    k                           E
+                                       optimal transport duality holds.
+                                                                                         4
+                                Lemma 5 (Optimal transport duality). For µ ,...,µ             ∈ M and an e-
+                                                                                   1       K        E
+                                merging function F, we have
+                                                               Z                 K Z
+                                                    1 ≥ sup       Fdπ= inf X φ dµ ,                            (2)
+                                                                          φ∈D           k   k
+                                                        π∈Π(µ)                F k=1
+                                                                                    P R
+                                where in the inﬁmum we only consider those with        K     φ dµ well-deﬁned.
+                                                                                       k=1    k   k
+                                    The inequality in (2) follows because F is an e-merging function, and the
+                                equality is a classic form of optimal transport duality in the form of Remark
+                                2.1.2 of Rachev and Ru¨schendorf (1998).
+                                    Tointerpret (2), let E ,...,E    be e-variables with distributions µ ,...,µ .
+                                           L              1       K                                    1       K
+                                Since F ≤     K φ for φ ∈ D , the equality in (2) means that the supremum
+                                              k=1 k             F
+                                of E[F(E ,...,E )] over dependence structures of (E ,...,E ) is equal to the
+                                          1   PK                                        1       K
+                                inﬁmum of E[     K φ (E )] over φ.
+                                                 k=1 k    k
+                                    Weexplain our main idea in the proof ﬁrst. The inequality (2) implies
+                                                                        K Z
+                                                           sup     inf X φ dµ ≤1.
+                                                                 φ∈D           k    k
+                                                        µ∈(ME)K       F k=1
+                                If we could interchange the order of sup and inf in the above equation, then for
+                                            PK R                                                   K
+                                any ǫ > 0,          φ dµ ≤1+ǫ for some φ and all µ ∈ (M ) . Using this
+                                              k=1     k   k                                      E
+                                and Lemma 2 yields linear upper bounds on φ, with which we can further use
+                                F ≤ LK φ to show F ≤ M for some λ. The following lemma gives the
+                                         k=1 k                   λ
+                                desired maximin interchangeability under the assumption of bounded compact.
+                                Let M0 be the set of all distributions on R+.
+                                                                  K
+                                Lemma 6. Suppose M⊆(M0) is compact with respect to weak convergence
+                                and F : RK → R+ is bounded and upper semicontinuous. Then
+                                          +
+                                                          K Z                         K Z
+                                               sup inf X        φ dµ = inf sup X            φ dµ ,             (3)
+                                                                  k   k       +              k    k
+                                                    φ∈D
+                                              µ∈M       F                 φ∈D µ∈M
+                                                          k=1                 F      k=1
+                                where D+ is the subset of D     containing all φ with nonnegative components.
+                                         F                   F
+                                    Wewill prove Lemma 6 later. We now use this lemma to complete the proof
+                                of Theorem 1. Fix θ ∈ [1,∞). We need to verify a few things for an e-merging
+                                function F, which justiﬁes that we can apply Lemma 6.
+                                                                          θ K
+                                  (i) Since [0,θ] is compact, the set (ME)     equipped with the weak topology
+                                      is tight. By Prokhorov’s theorem, it is sequentially compact, and hence
+                                      compact.
+                                                                  K                            K
+                                 (ii) Since F is bounded on [0,θ]    and its value outside [0,θ] does not matter
+                                      in (3), we can treat F as bounded when applying Lemma 6.
+                                                                        5
+                                    (iii) There exists an upper semicontinuous e-merging function F∗ with F∗ ≥ F
+                                          by Proposition E.1 of Vovk and Wang (2021). Therefore, to prove Theo-
+                                          rem 1, it suﬃces to consider upper semicontinuous e-merging functions.
+                                                                                       θ K
+                                       By using Lemmas 5 and 6 with M = (ME)                and an upper semicontinuous
+                                   e-merging function F, we have
+                                                                    K Z                      K          Z
+                                             1 ≥ inf        sup    X φ dµ = inf X sup                      φ dµ .         (4)
+                                                       +                    k    k        +                  k   k
+                                                  φ∈D µ∈(Mθ)K                        φ∈D        µ ∈Mθ
+                                                       F       E   k=1                    F k=1 k     E
+                                   Denote by Tφ = sup           θ R φdµ for φ ∈ B. For any ǫ > 0, by (4), we can ﬁnd
+                                                           µ∈ME      P
+                                   (φ ,...,φ ) ∈ D+ such that           K T ≤1+ǫ. Foreachk∈[K], by applying
+                                      1        K       F                k=1 φk
+                                   Lemma 2 to φ , there exists a constant h           ∈[0,1] such that
+                                                    k                              φk
+                                                      φ (x) ≤ T     (1−h +h x) for all x∈[0,θ].
+                                                       k         φk        φk     φk
+                                   Since (φ ,...,φ ) ∈ D+, we have
+                                             1       K        F
+                                                              K
+                                         F(x ,...,x ) ≤ XT (1−h +h x ) for all x ,...,x ∈[0,θ].
+                                              1       K           φk        φk     φk k             1        K
+                                                             k=1
+                                                                                                                           K
+                                   This means that there exists λ        ∈∆        such that F ≤ (1+ǫ)M           on[0,θ] .
+                                                                      ǫ,θ     K+1                            λ
+                                                                                                               ǫ,θ
+                                   Since ∆        is compact, we can ﬁnd a convergent subsequence of λ           bysending
+                                            K+1                                                               ǫ,θ
+                                   ǫ ↓ 0 and θ → ∞, with its limit denoted by λ ∈ ∆               . Continuity of λ 7→ M
+                                                                                       0     K+1                            λ
+                                   yields F ≤ M       on RK, thus the desired statement.
+                                                   λ
+                                                    0       +
+                                   of Lemma 6. We assume 0 ≤ F ≤ 1 without loss of generality. We ﬁrst argue
+                                   that we can require (φ ,...,φ ) ∈ D            to be upper semicontinuous and take
+                                                              1       K        F
+                                   values in [0,1]. That is, we will show, for (µ ,...,µ ) ∈ M,
+                                                                                      1       K
+                                                                K Z                      K Z
+                                                          inf  X φ dµ = inf X φ dµ ,                                      (5)
+                                                         φ∈D            k    k                   k    k
+                                                              F                      e
+                                                                                  φ∈D
+                                                               k=1                    F k=1
+                                   where
+                                      e
+                                      D ={φ∈D : φ isupper semicontinuous and 0≤φ ≤1 for k ∈ [K]}.
+                                        F            F      k                                        k
+                                   (a) For (φ ,...,φ ) ∈ D , denote by c = inf                  φ (x) for k ∈ [K]. Since
+                                        P 1             K        F                k       x∈R+ k
+                                           K φ (x ) ≥ F(x ,...,x ) ≥ 0 for all (x ,...,x ) ∈ RK, the function
+                                           k=1 k k             1        K                  1       K        +
+                                        ˜                             PK
+                                        φ : x 7→ φ (x) − c +                  c /K is nonnegative. Moreover, for all
+                                          k            k         k      m=1 m
+                                        (µ ,...,µ ) ∈ M,
+                                           1       K
+                                                                   K Z               K Z
+                                                                  X ˜               X
+                                                                         φ dµ =            φ dµ .
+                                                                           k   k             k    k
+                                                                  k=1               k=1
+                                        Hence, we can safely restrict the functions φ ,...,φ          to be nonnegative.
+                                                                                           1       K
+                                                                                6
+                                  (b) For (µ ,...,µ ) ∈ M, since F ≤ 1, together with (a) we can also safely
+                                              1       K
+                                       truncate φ ,...,φ     at 1.
+                                                  1       K
+                                  (c) Since F is upper semicontinuousandbounded, byProposition1.31ofKellerer
+                                       (1984) the functions (φ ,...,φ ) can be chosen as upper semicontinuous.
+                                                                1       K
+                                  The above three arguments together show the assertion (5).
+                                      Next, we verify
+                                                              K Z                          K Z
+                                                  sup inf X         φ dµ = inf sup X             φ dµ .              (6)
+                                                                      k   k                        k    k
+                                                          e                       e
+                                                 µ∈Mφ∈D                        φ∈D µ∈M
+                                                           F k=1                   F      k=1
+                                  To apply the minimax theorem of Sion (1958), we need to check a few things.
+                                  Deﬁne the mapping
+                                                                              K Z
+                                                               J : (µ,φ) 7→ X       φ dµ .
+                                                                                      k   k
+                                                                             k=1
+                                    (i) The mapping J is bilinear, and therefore both convex and concave.
+                                   (ii) The set M equipped with the weak topology is compact.
+                                   (iii) Since each component of φ is bounded in [0,1], φ 7→ J(µ,φ) is continuous
+                                        with respect to point-wise convergence in φ for each µ. This continuity is
+                                        not needed if we use the minimax theorem of Fan (1953, Theorem 2).
+                                   (iv) Since each component of φ is upper semicontinuous, µ 7→ J(µ,φ) is upper
+                                        semicontinuous with respect to weak convergence in µ for each φ.
+                                  Therefore, Sion’s minimax theorem implies that (6) holds. Putting (5) and (6)
+                                  together we get
+                                                        sup inf J(µ,φ)= inf sup J(µ,φ).
+                                                             φ∈D                  e
+                                                       µ∈M       F             φ∈D µ∈M
+                                                                                   F
+                                                      e       +
+                                  Finally, by using DF ⊆ DF ⊆ DF we obtain (3).
+                                  4 Proof of Lemma 2
+                                  Proof. The case r = 0 is trivial as g is the constant function 0. Otherwise,
+                                  r > 0, and without loss of generality we can assume r = 1.
+                                      If θ = 1, then g(x) ≤ 1 for all x, and taking h = 0 gives the desired inequality.
+                                  In what follows, we assume θ ∈ (1,∞], and all points x,y that appear below are
+                                  in [0,θ] ∩ R.
+                                      First, it is easy to note that g(y) ≤ y for y > 1; indeed, if g(y) > y then taking
+                                  a random variable X with P(X = y) = 1/y and 0 otherwise gives E[g(X)] > 1
+                                  and breaks the assumption. Moreover, g(y) ≤ 1 for y ≤ 1 is also clear, which in
+                                  particular implies g(1) ≤ 1.
+                                                                             7
+                                   Suppose for the purpose of contradiction that the statement in the lemma
+                                does not hold. This means that for each λ ∈ [0,1], either (a) g(x) > (1−λ)+λx
+                                for some x < 1 or (b) g(y) > (1 − λ) + λy for some y > 1 (or both). Since
+                                g(y) ≤ y for y > 1 and g(x) ≤ 1 for x < 1, we know that λ = 1 implies (a) and
+                                λ=0implies (b).
+                                   We claim that there exists λ ∈ (0,1) for which both (a) and (b) happen.
+                                                                 0
+                                To show this claim, let
+                                            Λ0 = {λ ∈ [0,1] : g(y) > (1 − λ) + λy for some y > 1};
+                                            Λ1 = {λ ∈ [0,1] : g(x) > (1 − λ) + λx for some x < 1}.
+                                Clearly, the above arguments show Λ0 ∪ Λ1 = [0,1], 0 ∈ Λ0, and 1 ∈ Λ1.
+                                Moreover, since the function λ 7→ (1 − λ) + λx is monotone for either x < 1
+                                or x > 1, we know that both Λ and Λ are intervals. Let λ = supΛ and
+                                                                  0       1                      ∗         0
+                                 ∗                                         ∗
+                                λ =infΛ . We will argue λ 6∈ Λ and λ 6∈ Λ . If λ ∈ Λ , then there exists
+                                           1                  ∗    0             1     ∗     0
+                                                                                                    ˆ
+                                y > 1 such that g(y) > (1−λ )+λ y. By continuity, there exists λ > λ such
+                                                              ∗     ∗                                ∗     ∗
+                                                  ˆ     ˆ                  ˆ
+                                that g(y) > (1 − λ ) + λ y, showing that λ ∈ Λ , contradicting the deﬁnition
+                                                   ∗     ∗                   ∗    0
+                                                                         ∗
+                                of λ . Therefore, λ 6∈ Λ . Similarly, λ 6∈ Λ , following the same argument.
+                                    ∗               ∗     0                     1
+                                           ∗
+                                If λ  = λ , then this point is not contained in Λ ∪ Λ , a contradiction to
+                                    ∗                                                0     1
+                                                                            ∗
+                                Λ ∪Λ =[0,1]. Hence, it must be λ > λ , which implies that Λ ∩Λ is not
+                                  0    1                              ∗                             0    1
+                                empty.
+                                   Let x <1 and y > 1 be such that
+                                         0           0
+                                             g(x ) > 1−λ +λ x         and g(y ) > 1−λ +λ y .
+                                                 0         0     0 0            0         0     0 0
+                                Let X be distributed as P(X = y ) = (1 − x )/(y − x ) and P(X = x ) =
+                                                                    0           0    0     0                0
+                                (y −1)/(y −x ), which clearly satisﬁes E[X] = 1 and is binary. Moreover,
+                                  0        0    0
+                                                   1−x             y −1
+                                       E[g(X)] =        0 g(y ) +   0     g(x )
+                                                  y −x       0    y −x       0
+                                                   0    0          0     0
+                                                   1−x                        y −1
+                                               >        0 (1−λ +λ y )+ 0             (1 −λ +λ x )=1.
+                                                  y −x           0    0 0    y −x           0    0 0
+                                                   0    0                     0     0
+                                This yields a contradiction.
+                                5 Merging functions of subclasses of e-values
+                                Theorem 1 focuses on merging arbitrary e-variables. In an application, if some
+                                information on the e-variables is available, one may consider merging functions
+                                that are valid for a subclass of e-variables, but not necessarily valid for arbitrary
+                                e-variables. For many subclasses, every weighted average M        for λ ∈ ∆
+                                                                                               λ             K+1
+                                remains admissible, but they may not be the only admissible choices.
+                                   Formally, let EK be a set of K-dimensional vectors of e-variables. A merging
+                                function of the subclass EK is an increasing Borel function F : RK → R+ such
+                                                                                                   +
+                                that F(E ,...,E ) is an e-variable for any (E ,...,E ) ∈ E . A merging
+                                          1       K                               1       K       K
+                                function F of EK is admissible if for any merging function G of EK, G ≥ F
+                                                                        8
+                                   implies G = F. The cases of independent and sequential e-variables are studied
+                                   by Vovk and Wang (2021, 2024). We consider four other subclasses below.
+                                       We ﬁrst make a general observation. Let E be a vector of e-variables with
+                                   mean 1. Clearly, E[M (E)] = 1 for λ ∈ ∆              .  Since M is continuous, any
+                                                            λ                       K+1             λ
+                                   G≥M withG6=M satisﬁes E[G(E)] > 1 if E has full support in RK, and
+                                           λ               λ                                                       +
+                                   G cannot be a valid merging function of {E}. Therefore, if the subclass EK
+                                   contains an element of full support in RK, then M          is admissible.
+                                                                                +          λ
+                                       (a) Fixed Marginals. Let EK be the set of vectors of e-variables with
+                                   given marginals µ ,...,µ . If all marginals have full support in R , then M
+                                                       1       K                                              +           λ
+                                   is admissible. To see other admissible merging functions of EK, suppose that the
+                                   marginals µ ,...,µ      are continuous with full support on R       and let g ,...,g
+                                                1       K                                            +           1       K
+                                   bethesurvivalfunctions of µ ,...,µ . Let f ,...,f           beadmissible calibrators;
+                                                                   1       K        1       K
+                                   that is, decreasing upper semicontinuous functions fk : [0,1] → [0,∞] satisfying
+                                   f (0) = ∞ and R1f (x)dx = 1. For each k ∈ [K] and E distributed as
+                                    k                   0  k                                             k
+                                   µ , g (E ) is uniformly distributed on [0,1], and f (g (E )) is an e-variable.
+                                    k    k   k                                               k   k   k
+                                   Therefore,
+                                                    (e1,...,eK) 7→ Mλ(f1 ◦g1(e1),...,fK ◦gK(eK))
+                                   is an admissible merging function of EK, following the general observation above.
+                                       (b) Bounded second moments. LetE bethesetofvectors(E ,...,E )
+                                                                                   K                           1        K
+                                   of e-variables with second moments E[X X ] bounded above by σ              ∈[0,∞) for
+                                                                               i  j                         ij
+                                   i, j ∈ [K]. In addition to the weighted averages, the functions (e1,...,eK) 7→
+                                   e e /σ    and their mixtures are merging functions of E . As a special case,
+                                    i j   ij                                                      K
+                                   if elements of EK have nonpositive bivariate correlation coeﬃcients (a form of
+                                   negative dependence), then the functions (e1,...,eK) 7→ eiej with i 6= j are
+                                   merging functions of EK.
+                                       (c) Identical e-variables. Let EK be the set of vectors of identical e-
+                                   variables. Clearly, the function V      : e 7→ max(e) is a merging function of the
+                                                                        K
+                                   subclass EK. Moreover, all admissible merging functions in this setting have the
+                                   form λ+(1−λ)V for λ ∈ [0,1]. To see this, ﬁrst note that for any merging
+                                                       K
+                                   function F of EK, the function g : e 7→ F(e,...,e) satisﬁes the condition in
+                                   Lemma 2, and hence for some λ ∈ [0,1] g(e) ≤ λ + (1 − λ)e for all e ∈ R+.
+                                   It follows that F(e) ≤ g(max(e)) ≤ λ + (1 − λ)max(e) for all e ∈ RK. Note
+                                                                                                                 +
+                                   that when applied to a vector E of identical e-variables, V (E) = M (E) for
+                                                                                                     K            λ
+                                   any λ with the ﬁnal component 0, so using λ+(1−λ)V                is the same as using
+                                                                                                  K
+                                   weighted averages.
+                                       (d) Exchangeable e-variables. Let EK be the set of vectors of exchange-
+                                                                                     ¯
+                                   able e-variables. For (E ,...,E ) ∈ E , let E = (E +···+E )/k for k ∈ [K].
+                                                             1        K      K        k      1           k
+                                   By the randomized Markov inequality in Ramdas and Wang (2024, Theorem
+                                   4.5),                  h                 i
+                                                        E 1 W         ¯       ≤1/β for all β > 1.
+                                                             { k∈[K]Ek≥β}
+                                   Hence, F : (e ,...,e ) 7→ β1 W                   for β > 1 is an e-merging function
+                                             β     1       K         {       e¯ ≥β}
+                                                                        k∈[K] k
+                                   of E . It is straightforward to check that neither F         ≥M nor F ≤M for
+                                       K                                                     β       λ        β      λ
+                                   any β > 0 and λ ∈ ∆         . It remains unclear whether F is admissible.
+                                                           K+1                                    β
+                                                                              9
+                  Acknowledgements
+                  The author would like to thank the editors, two anonymous referees for useful
+                  comments on the paper, and Jose Blanchet, Qinyu Wu, Vladimir Vovk, and
+                  Zhenyuan Zhang for helpful discussions on the main result. The work is ﬁnan-
+                  cially supported by the Natural Sciences and Engineering Research Council of
+                  Canada (RGPIN-2024-03728, CRC-2022-00141).
+                  References
+                  Barber, R. F. and Cand`es, E. (2015). Controlling the false discovery rate via
+                    knockoﬀs. Annals of Statistics, 43(5), 2055–2085.
+                  Fan, K. (1953). Minimax theorems. Proceedings of the National Academy of
+                    Sciences, 39(1), 42–47.
+                  Gru¨nwald, P. (2024). Beyond Neyman–Pearson: E-values enable hypothesis
+                    testing with a data-driven alpha. Proceedings of the National Academy of
+                    Sciences, 121(39), e2302098121.
+                  Gru¨nwald, P., de Heide, R. and Koolen, W. M. (2024). Safe testing. Journal of
+                    the Royal Statistical Society Series B, forthcoming.
+                  Kellerer, H. G. (1984). Duality theorems for marginal problems. Zeitschrift fu¨r
+                    Wahrscheinlichkeitstheorie und Verwandte Gebiete, 67, 399–432.
+                  Koning, N. (2024). Continuous testing: Unifying tests and e-values. arXiv:
+                    2409.05654v6.
+                  Lee, J. and Ren, Z. (2024). Boosting e-BH via conditional calibration. arXiv:
+                    2404.17562.
+                  Rachev, S. T., and Ru¨schendorf, L. (1998). Mass Transportation Problems: Vol-
+                    ume I: Theory. Springer Science & Business Media.
+                  Ramdas, A., Gru¨nwald, P., Vovk, V. and Shafer, G. (2023). Game-theoretic
+                    statistics and safe anytime-valid inference. Statistical Science, 38(4), 576–601.
+                  Ramdas, A. and Wang, R. (2024). Hypothesis testing with e-values. arXiv:
+                    2410.23614v2.
+                  Ren, Z. and Barber, R. F. (2024). Derandomized knockoﬀs: Leveraging e-values
+                    for false discovery rate control. Journal of the Royal Statistical Society Series
+                    B, 86(1), 122–154.
+                  Shafer, G. (2021). The language of betting as a strategy for statistical and
+                    scientiﬁc communication. Journal of the Royal Statistical Society, Series A,
+                    184(2), 407–431.
+                                         10
+              Sion, M. (1958). On general minimax theorems. Paciﬁc Journal of Mathematics,
+               8(1), 171–176.
+              Villani, C. (2009). Optimal Transport: Old and New. Springer-Verlag, Berlin.
+              Vovk, V., Wang, B. and Wang, R. (2022). Admissible ways of merging p-values
+               under arbitrary dependence. Annals of Statistics, 50(1), 351–375.
+              Vovk, V. and Wang, R. (2021). E-values: Calibration, combination, and appli-
+               cations. Annals of Statistics, 49(3), 1736–1754.
+              Vovk, V. and Wang, R. (2023). Conﬁdence and discoveries with e-values. Sta-
+               tistical Science, 38(2), 329–354.
+              Vovk, V. and Wang, R. (2024). Merging sequential e-values via martingales.
+               Electronic Journal of Statistics, 18(1), 1185–1205.
+              Wang, Q., Wang, R. and Ziegel, J. (2025). E-backtesting. Management Science,
+               forthcoming.
+              Wang, R. and Ramdas, A. (2022). False discovery rate control with e-values.
+               Journal of the Royal Statistical Society Series B, 84(3), 822–852.
+              Wasserman, L., Ramdas, A. and Balakrishnan, S. (2020). Universal inference.
+               Proceedings of the National Academy of Sciences, 117(29), 16880–16890.
+                               11

@@ -1,0 +1,1818 @@
+                     Derandomizedknockoffs: leveraging e-values for
+                     false discovery rate control
+                     Zhimei Ren
+                     DepartmentofStatisticsandDataScience,WhartonSchool,UniversityofPennsylvania,PA,USA.
+                     E-mail: zren@wharton.upenn.edu
+                     Rina Foygel Barber
+                     Department of Statistics, University of Chicago, IL, USA.
+                     E-mail: rina@uchicago.edu
+                     Summary. Model-X knockoffs is a flexible wrapper method for high-dimensional regression algo-
+                     rithms, which provides guaranteed control of the false discovery rate (FDR). Due to the random-
+                     ness inherent to the method, different runs of model-X knockoffs on the same dataset often result
+                     in different sets of selected variables, which is undesirable in practice. In this paper, we introduce
+                     amethodologyforderandomizingmodel-XknockoffswithprovableFDRcontrol. Thekeyinsightof
+                     our proposed methodlies in the discovery that the knockoffs procedure is in essence an e-BH pro-
+                     cedure. We make use of this connection, and derandomize model-X knockoffs by aggregating the
+                     e-values resulting from multiple knockoff realizations. We prove that the derandomized procedure
+                     controls the FDR at the desired level, without any additional conditions (in contrast, previously
+                     proposed methods for derandomization are not able to guarantee FDR control). The proposed
+                     methodis evaluated with numerical experiments, where we find that the derandomized procedure
+                     achieves comparable power and dramatically decreased selection variability when compared with
+                     model-X knockoffs.
+                     Keywords: Multiple hypothesis testing; Knockoffs; Variable selection; Stability; False discov-
+                     ery rate.
+                1.  Introduction
+                In high-dimensional datasets, it is common to have measurements of a large number of potential
+                explanatory features, of which relatively few are informative for predicting the target response.
+                The problem of identifying these few relevant features among the many candidates, also known
+                as the variable selection problem, is often framed as a test of conditional independence: for
+                which features X is it true that Y ̸ = X | X  ? Here, Y denotes the response variable and X
+                                 j                   | j    −j                                                −j
+                denotes all measured features aside from Xj—effectively, this question asks whether Xj carries
+                information for predicting Y , beyond what is already contained in the set of remaining features
+       arXiv:2205.15461v5  [stat.ME]  31 Aug 2023X .
+                  −j
+                   Theknockoff filter (Barber and Cand`es, 2015; Cand`es et al., 2018) is a framework for selecting
+                a set of X ’s that are likely relevant, with guaranteed control of the false discovery rate (FDR).
+                          j
+                                                                e
+                It operates by constructing a knockoff copy X of each candidate feature X , after which
+                                                                  j                               j
+                                                                                   e       e
+                the response Y and (original and knockoff) features X ,...,X ,X ,...,X are given as input
+                                                                        1       p   1       p
+                to an arbitrary variable selection procedure. By examining whether the procedure chooses
+                                                                                     e
+                substantially more original variables (the X ’s) than knockoffs (the X ’s), we may infer whether
+                                                            j                         j
+                the procedure is successfully controlling the FDR.
+                              e
+                   Since the X ’s are drawn randomly, the resulting output S       of the method is random as
+                               j                                                kn
+                well—that is, multiple runs of knockoffs on the same observed dataset can in general lead to
+                different selected sets Skn. Empirically, it has been observed that the output can be highly
+               2    Zhimei Ren and Rina Foygel Barber
+               variable from one run to another, which is potentially an undesirable property. To address this,
+               Ren et al. (2021) propose the “derandomized knockoffs”. After running knockoffs M times on
+               the given dataset, their procedure computes
+                                                         M
+                                                      1 X          (m)	
+                                               Π =          1 j ∈ S                                  (1)
+                                                 j   M             kn
+                                                        m=1
+               for each feature X , where S(m) is the selected set of features on the m-th run of the knockoffs
+                                j         kn
+               method. The final selected set is then given by S         = {j : Π ≥ η}, all features X
+                                                                kn–derand         j                    j
+               exceeding some threshold probability of selection for a random run of knockoffs. For this
+               method, Ren et al. (2021) establish a guaranteed bound on the expected number of false
+               discoveries, but it appears impossible to prove a bound directly on the FDR.
+                Our contributions  In this work, we find that, with a simple and natural modification in the
+               construction of the derandomized knockoffs procedure, we can restore the guarantee of FDR
+               control. Specifically, we will consider a weighted probability of selection, replacing Πj with
+                                                 M
+                                             1 X          (m)        (m)	
+                                                    weight   · 1 j ∈ S    ,                          (2)
+                                             M            j           kn
+                                                m=1
+               where, informally, we choose a lower weight if many features were selected in the m-th run.
+               In the case of a single run of knockoffs (M = 1), our new procedure reduces to the original
+               knockoff filter, while for large M, the output is derandomized (i.e., as M → ∞, the set Skn–derand
+               becomes a deterministic function of the observed data). Our method builds on the recent e-BH
+               procedure of Wang and Ramdas (2022) (a generalization of the Benjamini–Hochberg algorithm
+               for FDR control (Benjamini and Hochberg, 1995)), which allows us to find an adaptive, FDR-
+               controlling threshold for the weighted selection probabilities computed in (2). By leveraging
+               these tools, we are able to provide a version of the knockoff filter that offers derandomization
+               without losing the benefit of a rigorous guarantee on the FDR.
+               1.1.  Problem setup
+               Suppose there are p explanatory variables X = (X ,X ,...,X ) and a response Y, where
+                                                                  1  2       p
+               (X,Y) are jointly sampled from some distribution P   . For each j ∈ [p] := {1,2,...,p}, we
+                                                                 XY
+               wish to test the hypothesis
+                                                  H :Y = X |X .                                      (3)
+                                                    j      |  j   −j
+               We call a feature j a null if H is true, and a non-null otherwise. We will write H = {j :
+                                             j                                                  0
+               H is true} and H = [p]\H to denote the set of nulls and the set of non-nulls, respectively.
+                 j              1        0
+                                                          iid
+                  Imagine now we have n samples (X ,Y ) ∼ P      , and we assemble the covariates into a
+                                                     i  i      XY
+                             n×p                                         n
+               matrix X ∈ R      and the responses into a vector Y ∈ R . A multiple testing procedure
+               applied to (X,Y) then produces a set S of selected variables. The goal here is to include in
+               this set as many non-nulls as possible while controlling the false discovery rate
+                                                           h|S ∩H0|i
+                                                 FDR := E |S|∨1 ,
+               where a ∨ b = max(a,b). In this work, we consider the model-X framework, where we (ap-
+               proximately) know the marginal distribution P  of the covariates X, but do not assume any
+                                                            X
+               knowledge of the model of Y |X. For example, in many applications, we may have ample
+               unlabeled data (i.e., observations of X = (X ,...,X )) which may be used for estimating P ,
+                                                         1       p                                    X
+               but relatively little labeled data (i.e., observations of labeled pairs (X,Y )); see Cand`es et al.
+               (2018) for more discussion of this framework.
+                                                                                Derandomized knockoffs    3
+               1.2.  Background: model-X knockoffs
+               Themodel-Xknockofffilter, or knockoffs for short, is a multiple testing procedure that provably
+               controls the FDR under the model-X framework. Given the dataset (X,Y) as well as knowledge
+                                                                                  e
+               of P , the knockoffs procedure starts by generating a knockoff copy X satisfying
+                   X
+                                              e        e    d  e            e  
+                                          X,X,X ,X          = X,X,X ,X                                  (4)
+                                            j   j  −j   −j       j   j   −j   −j
+                                 d                                                          e
+               for each j, where = denotes equality in distribution. This condition requires X to depend on
+               X(so that any dependence between features X and X is mimicked by dependence between,
+                                                             j       k
+                    e                 e                                                 e
+               e.g., X and X ), but X is constructed independently of Y, i.e., Y      =X|X. (See Cand`es
+                      j       k                                                       |
+               et al. (2018); Sesia et al. (2019); Romano et al. (2020); Bates et al. (2021); Spector and Janson
+                                                                                           e
+               (2022) for discussion and examples of knockoff generation.) Having sampled X, the knockoffs
+                                                                                    p
+               procedure proceeds to compute feature importance statistics W ∈ R using the augmented
+                            e
+               dataset ([X,X],Y):                                    
+                                                                e
+                                                   W=W[X,X],Y ,
+               where W(·) is an algorithm evaluating the importance of the features, with the property that
+                                 e
+               swapping X and X flips the sign of W , and a larger value of W suggests evidence against
+                           j       j                   j                        j
+               the null. For instance, to compute the Lasso coefÏcient-difference (LCD) statistic proposed by
+                                                                                                  e
+               Cand`es et al. (2018, Eqn. (3.7)), we can run the cross-validated Lasso on Y ∼ [X,X]; let βj
+                                                         e          e                           e
+               denote the resulting coefÏcient of X and β that of X , and define W = |β | − |β | for each
+                                                   j      j          j               j     j     j
+               j ∈ [p]. Since the knockoffs act as a control group for the real features, if X is a null then the
+                                                                                         j
+                                                    e
+               Lasso is equally likely to select X or X , and moreover, W ’s distribution is symmetric around
+                                               j     j                  j
+               0.
+                  The final selected set of features is then given by
+                                                                    1+P 1{Wj≤−t}               
+                        Skn := {j : Wj ≥ T} where T := inf    t > 0 :   Pj∈[p]              ≤α .        (5)
+                                                                          j∈[p] 1{Wj ≥ t}
+               Barber and Cand`es (2015); Cand`es et al. (2018) prove that this selected set satisfies FDR ≤ α.
+               1.3.  Background: e-values and the e-BH procedure
+               The concept of e-values (Vovk and Wang, 2021) is another useful tool for statistical inference
+               andmultiple testing in general. Given a null hypothesis, we call a non-negative random variable
+               Ean“e-value” if E[E] ≤ 1 under the null (in contrast, a p-value is a random variable P ∈ [0,1]
+               such that P(P ≤ t) ≤ t for any t ∈ [0,1] under the null). For the e-value, a large value shows
+               evidence against the null, and hence the null hypothesis is rejected when the e-value exceeds
+               a threshold. For example, if the goal is to test a hypothesis at level α, we can reject the null
+               hypothesis when E ≥ 1/α. The probability of making a type-I error is then
+                                                P(E ≥1/α)≤α·E[E]≤α,
+               where the first step applies Markov’s inequality and the second follows from the definition of
+               e-values.
+                  In the context of multiple hypothesis testing, let e be an e-value associated with a null hy-
+                                                                   j
+               pothesis H . With e-values e ,e ,...,e , Wang and Ramdas (2022) propose the e-BH procedure
+                         j                 1  2      p
+               that achieves FDR control when testing H ,H ,...,H simultaneously. The e-BH procedure
+                                                         1   2       p
+               operates in a similar way to the BH procedure (Benjamini and Hochberg, 1995): the rejection
+               set (i.e., the selected set of discoveries) is given by
+                                       n         p o        b        n                p o
+                                S    = j:e ≥          where k = max k ∈ [p] : e   ≥      ,              (6)
+                                 ebh        j     b                             (k)  αk
+                                                 αk
+                  4     Zhimei Ren and Rina Foygel Barber
+                  where e    ≥··· ≥ e      denotes the order statistics of the e ’s, and where we take the convention
+                          (1)           (p)                                       j
+                                                                  b
+                  that if this latter set is empty then we set k = 0 (and so Sebh = ∅). Wang and Ramdas (2022)
+                  prove that the e-BH procedure satisfies FDR ≤ α · |H |/p ≤ α. Importantly, this result allows
+                                                                               0
+                  for arbitrary dependence among the e ’s.
+                                                             j
+                  1.4.  Additional related work
+                  Previously, many attempts have been made to derandomize knockoffs. As mentioned ear-
+                  lier, Ren et al. (2021) propose a derandomizing scheme controlling the expected number of
+                  false discoveries; Nguyen et al. (2020) introduce a aggregation method aiming at FDR control,
+                  but under strong assumptions such as that the null feature importance statistics are i.i.d. In a
+                  parallel line of work, Emery and Keich (2019); Gimenez and Zou (2019) consider constructing
+                  multiple simultaneous knockoffs to improve the stability of knockoffs—this is in contrast to
+                  our attempt to aggregate multiple independent knockoff copies. The idea of using e-values for
+                  derandomization can also be found in Vovk (2020); Wasserman et al. (2020).
+                     Broadly speaking, the process of derandomization via computing each feature’s selection
+                  probability over random runs of the knockoffs method, can be viewed as a special case of
+                  stability selection (Meinshausen and Buh¨ lmann, 2010) (see also Liu et al. (2010); Shah and
+                  Samworth (2013) for related methods). More recently, Dai et al. (2022, 2023) also consider
+                  derandomization (over multiple sample splits) with FDR control via computing each feature’s
+                  weighted selection frequency (this is termed the “inclusion rate” in their paper). Their pro-
+                                                                                                                        (m)
+                  cedure also takes the form of (2) but with a different choice of the weight terms, weight                 ,
+                                                                                                                        j
+                  and with asymptotic rather than finite-sample FDR control guarantees (we will compare the
+                  definitions of the procedures, and the different results, in more detail in Section 3.1 below).
+                  2.  Knockoffs as an e-BH procedure
+                  Our first main result shows that the two multiple testing procedures introduced in Section 1
+                  can be unified through a certain perspective—the knockoffs procedure is in fact equivalent to a
+                  (relaxed) e-BH procedure with a class of properly defined e-values.
+                  2.1.  Theequivalence between the knockoffs and the e-BH
+                  Toseewhyknockoffsisequivalent to an e-BH procedure, we first define a set of relaxed e-values.
+                  Recall that in the knockoffs procedure, we have the feature importance statistics W and the
+                  stopping time T. For each j ∈ [p], define
+                                                                     1{W ≥T}
+                                                    e := p·        P j                    .                              (7)
+                                                     j        1+          1{W ≤−T}
+                                                                     k∈[p]      k
+                  Wewill now see that running e-BH on the e ’s is exactly equivalent to running knockoffs.
+                                                                    j
+                     Theorem 1. Let Skn be the set of selected features for the knockoff procedure (5), and let
+                  S    be the set of selected features for the e-BH procedure (6) applied to e ,...,e , where e is
+                   ebh                                                                               1       p           j
+                  defined in (7). Then Skn = Sebh.
+                                                          P                                         P
+                                                                                                  1+       1{W ≤−T}
+                     Proof. Taking K = |S | =                     1{W ≥ T}, we see that               k∈[p]    k       ≤ α
+                                                  kn         k∈[p]     k                                   K
+                  by definition of the knockoffs threshold T (5), and so for all j ∈ Skn, ej takes the value
+                    P      p                                                                               b
+                                      ≥p/(αK). Therefore, e           ≥p/(αK), and so we must have k ≥ K when we
+                  1+ k∈[p]1{Wk≤−T}                               (K)
+                  run the e-BH procedure (6). This proves that j ∈ S             for all j ∈ S   . Conversely, if j ̸∈ S    ,
+                                                                             ebh               kn                         kn
+                  then W < T and so e = 0, which means that j cannot be selected by the e-BH procedure,
+                          j                 j
+                  i.e., j ̸∈ S  .
+                            ebh
+                                                                                               Derandomized knockoffs         5
+                  2.2.   Arelaxation of the e-BH procedure
+                  While the theorem above shows that knockoffs gives identical output to the e-BH procedure, we
+                  note that it does not yet give an alternative explanation for why knockoffs controls the FDR—
+                  this is because the quantities e defined in (7) have not been shown to be e-values. Indeed,
+                                                       j
+                  while e ≥ 0 holds by definition, it may not be the case that E[e ] ≤ 1 for all j ∈ H . Instead,
+                          j                                                                  j                     0
+                  the ej’s satisfy a more relaxed criterion. A key step in the proof of the FDR control property
+                  of the knockoff filter is the bound (Barber and Cand`es, 2015; Cand`es et al., 2018)
+                                                       "    P 1{Wj≥T} #
+                                                               j∈H0
+                                                     E 1+P            1{Wj ≤−T} ≤1.                                         (8)
+                                                                j∈H0
+                  Intuitively, this arises from the fact that each null j ∈ H is equally likely to have W ≥ T as
+                                                                                    0                                j
+                                                                         e
+                  to have W ≤ −T, because the knockoff copy X acts as a control group for the null feature
+                              j                                            j
+                  X. As a result, we can immediately see that the e ’s defined in (7) satisfy
+                    j                                                        j
+                                                                 XE[e]≤p.                                                   (9)
+                                                                         j
+                                                                j∈H0
+                  Clearly, this condition is strictly weaker than requiring E[e ] ≤ 1 for all j ∈ H . Nonetheless,
+                                                                                       j                      0
+                  as pointed out by Wang and Ramdas (2022), this condition is sufÏcient to bound FDR in the
+                  e-BH procedure: the ej’s satisfying (9) can be thought of as weighted e-values; that is, we can
+                  write e = E[e ] · e¯ , where e¯ ’s are strict e-values with E[e¯ ] = 1 and E[e ]’s are weights. This
+                          j       j    j           j                                  j               j
+                  is summarized in the following theorem.
+                      Theorem 2 (Wang and Ramdas 2022). Suppose the values e ,e ,...,e satisfy condi-
+                                                                                                 1   2       p
+                  tion (9). Then the selected set Sebh of the e-BH procedure (6) satisfies FDR ≤ α.
+                  From this point on, then, we will refer to any e ,...,e satisfying (9) as e-values, even though
+                                                                         1       p
+                  the original condition (i.e., E[e ] ≤ 1 for j ∈ H ) is strictly stronger and may not be satisfied.
+                                                     j                  0
+                      Before proceeding, we remark that the knockoff e-values are close to sharp in the following
+                  sense.
+                      Remark 1 (Sharpness of the knockoff e-values). Given e-values e ,e ,...,e , let
+                                                                                                             1   2       p
+                  Sebh denote the set of features selected by the e-BH procedure, and its FDR is given by
+                                                               hP        1{e ≥       p   }i
+                                                                    j∈H0     j    α|S   |
+                                                    FDR=E                            ebh    .
+                                                                        |S    | ∨ 1
+                                                                           ebh
+                  The proof of FDR control for the e-BH procedure makes use of the inequality
+                                                         n          p    o     e α|S    |
+                                                       1 e ≥               ≤ j       ebh ,                                (10)
+                                                            j    α|S    |          p
+                                                                     ebh
+                  which is tight when e ∈ {p/(α|S           |), 0}. Meanwhile, the knockoff e-values defined in (7) are
+                                           j            ebh
+                  either 0 or
+                                                   P        p              ≥ p = p ,                                      (11)
+                                               1+          1{W ≤−T}           α|S |       α|S    |
+                                                      j∈[p]     j                 kn          ebh
+                  where the first inequality is by the definition of T. For any t < T, again by the definition of T,
+                  we have that
+                                       P p                    < P          p            ≤ p = p .                         (12)
+                                  1+          1{W ≤−t}           α         1{W ≥t}         α|S |      α|S    |
+                                         j∈[p]      j                 j∈[p]     j              kn         ebh
+                  Combining (11) and (12), we can see when P               1{Wj ≤−T}isreasonably large, the nonzero
+                                                                      j∈[p]
+                  e-values will be close to p/(α|S       |), and therefore the inequality in (10) is close to tight.
+                                                      ebh
+                          6        Zhimei Ren and Rina Foygel Barber
+                          3.     Derandomizing knockoffs
+                          One major advantage of using e-values for multiple testing is that validity depends only on the
+                          expected values E[e ]—in particular, no assumptions are needed on the dependence structure
+                                                            j
+                          among the e ’s (Wang and Ramdas, 2022). As observed by Vovk and Wang (2021), the fact
+                                                j
+                          that the average of multiple e-values is still an e-value is a very favorable property, as it allows
+                          us to pool results from multiple runs or multiple analyses of an experiment. Since Theorem 1
+                          finds an equivalent e-value based formulation of the knockoffs method, we can therefore combine
+                          results from different knockoff realizations by averaging the corresponding e-values, to achieve
+                          a derandomized procedure.
+                          3.1.       Theprocedure
+                                                                                                                                                                          e
+                          Suppose we have used our knowledge of PX to construct a valid distribution for X|X, i.e.,
+                          so that (4) is satisfied for each j. We then generate M copies of the knockoff matrix, draw-
+                                  e(1) e(2)                e(M)
+                          ing X ,X ,...,X                            from this distribution (drawn i.i.d. conditional on the observed data
+                          (X,Y)). Let W(m) denote the feature importance statistics computed with the m-th knockoff
+                                            (m)                    e(m)           
+                          matrix, W               =W [X,X ],Y . Choosing some αkn ∈(0,1), we compute the threshold
+                                                                                              1+P 1{W(m)≤−t}                                         
+                                                             T(m) = inf            t > 0 :                j∈[p]          j                  ≤α                                       (13)
+                                                                                                    P 1{W(m)≥t}                                    kn
+                                                                                                        k∈[p]          k
+                          for each m, so that S(m) = {j : W(m) ≥ T(m)} is the selected set for the knockoff filter when
+                                                               kn                     j
+                                                                     e(m)
+                          run with the m-th copy X                            of the knockoff matrix. Let
+                                                                                                     1{W(m) ≥T(m)}
+                                                                           (m)                               j
+                                                                         e       =p·             P                                                                                   (14)
+                                                                           j              1+                 1{W(m) ≤−T(m)}
+                                                                                                     k∈[p]           k
+                          be the corresponding e-value, so that as proved in Theorem 1, the m-th selected set S(m) is
+                                                                                                                                                                                  kn
+                                                                                                        (m)             (m)
+                          equivalent to running e-BH on the e-values e                                       , . . . , ep    .  For each j ∈ [p], we aggregate the
+                                                                                                        1
+                          e-values obtained from these M knockoff copies by taking the average
+                                                                                                              M
+                                                                                             avg        1 X (m)
+                                                                                           e      =                e      .
+                                                                                             j         M             j
+                                                                                                            m=1
+                          Finally, we obtain the selected set of discoveries, Skn–derand, by applying the e-BH procedure
+                          at level α              to the e-values eavg,...,eavg. Note that the parameters α                                                   and α            may be
+                                           ebh                                 1              p                                                          kn             ebh
+                          different—we will discuss this more below.
+                                The following theorem proves that this derandomized procedure controls the FDR at level
+                          αebh.
+                                Theorem 3. For any α ,α                                 ∈ (0,1), and any number of knockoff copies M ≥ 1, the
+                                                                          kn      ebh
+                          selected set Skn–derand computed in Algorithm 1 satisfies FDR ≤ αebh.
+                                                                                                                                           e(m)                         e
+                                Proof. Applying the bound (8) with the m-th knockoff copy X                                                         in place of X, and with
+                                                                                                               P             1{W(m)≥T(m)} 
+                                                                                                                       j∈H          j
+                          the threshold αkn in place of α, we see that E                                            P 0                                    ≤ 1. This implies
+                                                                                                                 1+            1{W(m)≤−T(m)}
+                                                                                           P                           j∈H0          j
+                          that the m-th set of e-values satisfies                                       E[e(m)] ≤ p, for each m. Taking the average over
+                                                                                                j∈H          j
+                                                                   P                 avg             0
+                          m=1,...,M, we have                                   E[e       ] ≤ p as well. The result then follows from Theorem 2.
+                                                                       j∈H0          j
+                                                                                             Derandomized knockoffs        7
+                     Remark 2. A special case of Algorithm 1 is when α             =α =αandM=1. Inthiscase,
+                                                                                kn     ebh
+                  the derandomized procedure reduces to the original knockoffs procedure at level α, and α                 is
+                                                                                                                      ebh
+                  also the optimal choice for α .
+                                                  kn
+                     To see the optimality, let T(α) and S(α) denote the selection threshold and the selection
+                  set of knockoffs with target FDR level α; let ej(α) be the e-value by plugging T(α) in (7).
+                  When α      < α , we have by construction that |{j : e (α ) > 0}| = |S(α )| ≤ |S(α                      )|.
+                           kn      ebh                                            j  kn                   kn           ebh
+                  Since only positive e-values can possibly be selected, the number of selections made by e-BH
+                  applied to {e (α    )}      is no larger than |S(α      )|. On the other hand, when α         >α ,we
+                                j   kn  j∈[p]                          ebh                                   kn      ebh
+                  assume |S(α )| > |S(α         )|, since otherwise e (α ) ≤ e (α        ) for any j ∈ [p] and the result
+                                kn           ebh                       j  kn      j   ebh
+                  is immediate. By the definition of T(αkn),
+                                                  1+P 1{Wj≤−T(αkn)}
+                                                     Pj∈[p]                         >α .
+                                                             1{W ≥T(α )}                ebh
+                                                        j∈[p]     j        kn
+                  As an implication, for any integer K such that |S(αebh)| + 1 ≤ K ≤ |S(αkn)|, the K-th largest
+                  element in {e (α )}         is
+                                 j   kn  j∈[p]
+                                          P           p                 <         p        ≤      p     .
+                                      1+          1{W ≤−T(α )}             α    · |S(α   )|   α     · K
+                                             j∈[p]     j          kn        ebh        kn       ebh
+                  By definition, the e-BH procedure cannot make more than |S(αebh)| selections. Collectively, we
+                  show that α     =α isoptimal.
+                               kn     ebh
+                     Remark 3. In fact, we are allowed to use different methods for constructing the knockoffs
+                  e(m)                                                                                         (m)
+                  X and/ordifferent functions W for defining the feature importance statistics W                  , for each
+                  run m = 1,...,M; the FDR control result will still hold as long as the conditions for validity of
+                  the knockoff procedure are satisfied for each m. This could be the case when two different labs
+                  are using different knockoffs generating mechanisms and/or different W for their data analysis
+                  and wish to combine their results. More generally, combining different knockoff configurations
+                  across multiple runs can potentially improve the robustness of our procedure, and this is an
+                  interesting direction for future research.
+                     Remark 4 (Generalization of T(m)). More generally, we are free to choose the m-th
+                  threshold T(m) in a different way as long as it is still a stopping time with respect to the
+                  filtration generated by a masked version of W(m), and the FDR guarantee for derandomized
+                  knockoffs will still hold.
+                                                                                    (m)
+                     To be specific, for each run m of knockoffs, the values e          defined in (14) are valid e-values
+                                                                                    j
+                  (according to the relaxed definition (9)), as long as T(m) is a stopping time with respect to
+                  the filtration generated by a masked version of W(m), meaning that for each t > 0, the event
+                  1{T(m) ≥ t} is determined by (1) the magnitudes |W(m)| for all j, (2) the values W(m) for all j
+                                              P                              j                                 j
+                  with |W(m)| < t, and (3)                 1{W(m) >0}. For example, for any c ≥ 0, one can define
+                          j                      j:|W(m)|≥t      j
+                                                     j
+                                                               c +P       1{W(m) ≤−t}              
+                                        T(m) := inf    t > 0 :         j∈[p]     j           ≤α .
+                                                                   P 1{W(m)≥t}                    kn
+                                                                     k∈[p]      k
+                     Remark 5. In practice, we recommend letting M be the largest acceptable number given the
+                  computational constraint of the user.
+                   A uniform improvement on T(m) in (13)            For any choice of αkn, we can uniformly improve
+                  the power of our procedure by slightly modifying the stopping time defined in (13). This
+                8     Zhimei Ren and Rina Foygel Barber
+                improvement is inspired by Luo et al. (2022), and specifically, we define an alternative stopping
+                time as
+                                           1+P 1{W(m)≤−t}                        X                        o
+                      T(m) := inf    t > 0 :       j∈[p]    j           ≤α or         1{W ≥t}<1/α           .  (15)
+                                               P 1{W(m)≥t}                  kn             j            kn
+                                                  k∈[p]    k                      j∈[p]
+                Note that (15) differs from (13) only when
+                                1+P 1{W ≤−t}                          n         X                         o
+                    inf   t > 0 :   P j∈[p]      j        ≤α       >inf t>0:          1{W(m) ≥t}<1/α          ,
+                                           1{W ≥t}            kn                          j               kn
+                                      k∈[p]     k                                j∈[p]
+                that is, the “hopeless” case where (13) gives an infinite stopping time and all the corresponding
+                e-values are 0’s.  The alternative definition of T(m) only increases the value of e-values by
+                stopping earlier in the powerless case, therefore leading to a uniformly more powerful procedure.
+                Plugging (15) in (7) still yields valid e-values as a result of Remark 4. The improvement
+                is particularly significant when α     and/or the fraction of non-nulls is small. The complete
+                                                    kn
+                procedure with the improved stopping time is described in Algorithm 1.
+                3.1.1.  Comparison to Ren et al. (2021)
+                Recall that the procedure of Ren et al. (2021) computes the (unweighted) selection probability
+                defined in (1), then picking the features whose selection probability passes a constant thresh-
+                old. In contrast, our procedure instead computes a weighted selection probability, and then
+                thresholding it with a data-dependent cutoff—here, the weight corresponding to the m-th run
+                is given by
+                                                1/(1+P        1{W(m) ≤−T(m)})
+                                                          k∈[p]    k                  .
+                                             Pl∈[M]1/(1+Pk∈[p]1{W(l) ≤ −T(l)})
+                                                                        k
+                3.1.2.  Comparison to Dai et al. (2022, 2023)      P
+                Our procedure uses e-values of the form e = 1         M weight(m) ·1{j ∈ S(m)}, where we have
+                                                            j   M m=1            j            kn
+                now seen that the weights are chosen as
+                                          weight(m) = p·                 1               .
+                                                j         1+Pk∈[p]1{W(m) ≤−T(m)}
+                                                                          k
+                In contrast, the method proposed in Dai et al. (2022, 2023) can be rewritten in our notation
+                by taking
+                                            weight(m) = p·               1            .                        (16)
+                                                   j        αkn · Pk∈[p] 1{W(m) ≥ t}
+                                                                              k
+                By definition of the knockoff procedure, comparing the denominators, the weights used by Dai
+                et al. (2022, 2023) are always less than or equal to the weights in our proposed method; con-
+                sequently, our method is strictly more powerful. In addition, the results of Dai et al. (2022,
+                2023) establish asymptotic control of the FDR and require additional strong conditions (e.g.,
+                an assumption that the ranking of the baseline algorithm is consistent asymptotically). In
+                contrast, our result in Theorem 3 offers finite-sample FDR control without any additional as-
+                sumptions. (Indeed, since the key to establish finite-sample FDR control is showing that the
+                weighted selection frequencies we construct in (2) is a class of (relaxed) e-values, and since this
+                                                      (m)
+                is also true when the weights weight      are chosen according to Dai et al. (2022, 2023)’s more
+                                                      j
+                conservative rule (16), our analysis can also be applied to show a finite-sample FDR control
+                result for their method.)
+                                                                                             Derandomized knockoffs        9
+                  Algorithm 1 Derandomized knockoffs with e-values
+                  Input: Data (X,Y); parameters α ,α               ∈(0,1), M ∈ N .
+                                                          kn   ebh                  +
+                   1: for m = 1,...,M do
+                                                       e(m)
+                   2:   Sample the knockoff copy X          .                           
+                                                                             (m)            e(m)
+                   3:   Compute the feature importance statistics: W             =W [X,X ],Y).
+                   4:   Compute the knockoffs threshold T(m) according to (15).
+                                                   (m)
+                   5:   Compute the e-values e         according to (14) for each j ∈ [p].
+                                                   j
+                   6: end for                                        P
+                                                           avg     1    M     (m)
+                   7: Compute the averaged e-values e          =            e     for each j ∈ [p].
+                                                           j      M m=1 j
+                                 b               avg                    b
+                   8: Compute k = max{k : e          ≥p/(αebhk)}, or k = 0 if this set is empty.
+                                                 (k)
+                                                                                           avg            b
+                  Output: The selected set of discoveries S                 := {j ∈ [p] : e    ≥p/(α k)}.
+                                                                  kn–derand                j           ebh
+                  3.2.  Choices of parameters
+                  In Algorithm 1, we have the freedom to choose two potentially different parameters αebh and
+                  αkn. While αebh determines the ultimate FDR guarantee of the procedure (as established in
+                  Theorem 3), the parameter αkn does not affect this FDR guarantee, but may instead affect the
+                  power of the method. Should we simply choose α             =α (particularly given that this choice
+                                                                          kn     ebh
+                  reduces to the original knockoffs method when M = 1)?
+                     In fact, it turns out that choosing αkn < αebh is preferable when M > 1. To understand
+                  why, we will sketch a simple scenario where choosing αkn = αebh might lead to zero power,
+                  while choosing a smaller value of α       can lead to high power. Suppose that the data contains s
+                                                         kn
+                  manynon-nulls, which each have extremely strong signals, so that any single run of the knockoff
+                  filter is highly likely to select all s non-nulls. For each run m, we will expect a false discovery
+                                                                                     (m)            α
+                  proportion of approximately α , meaning that we have |S               ∩H|≈ kn sfalse discoveries
+                                                    kn                              kn       0     1−α
+                  together with the ≈ s true discoveries. In particular, we should then have kn
+                               X  (m)              (m)	     X  (m)            (m)	      (m)             αkn
+                                                                                                    
+                          1+        1 W       ≤−T         ≈       1 W       ≥T        = S      ∩H0 ≈              s,
+                                         j                             j                   kn             1−α
+                              j∈H                            j∈H                                                kn
+                                  0                             0
+                  where the first step holds since null features j have statistics W(m) that are symmetric around
+                                                                                          j
+                  zero. Since each non-null j is selected in (nearly) every run of knockoffs, while for a null j ∈ H
+                                                                                                                           0
+                  it may be the case that j is selected for only a small proportion of the runs, we therefore expect
+                  to see
+                                             avg       p                     avg
+                                            e    ≈           for j ∈ H ,    e    ≈0for j ∈ H .
+                                             j       α                 1     j                  0
+                                                       kn s
+                                                    1−α
+                                                        kn
+                  Applying the e-BH procedure at level α          to these e-values, we see that power can be high only
+                                                              ebh
+                         α
+                  if p/(  kn s) ⪆ p/(α      s), while otherwise power will be zero as we will not be able to make
+                        1−α              ebh
+                            kn                                                                                    α
+                  any discoveries. In other words, α       =α willlikely lead to zero power but α             ⪅ ebh will
+                                                        kn     ebh                                         kn    1+α
+                                                                                                                     ebh
+                  lead to (nearly) perfect recovery.
+                     Theabovederivation provides some intuition for choosing α             <α inordertoobtainhigh
+                                                                                        kn     ebh
+                  power. As pointed out by Remark 4, we also have the freedom to tune the offset parameter c in
+                  defining the knockoff threshold. To provide a guidance on parameter selection, we numerically
+                  investigate the power of our proposed procedure with different choices of αkn and c in the
+                  simulated experiments (see Section 4 and Section C of the appendix). Empirically, we find
+                  that the combination of c = 1 and α         =α /2consistently works well in different scenarios;
+                                                           kn      ebh
+                  whether these parameters are optimal, or can be chosen in a better way, remains an open
+                  question for future work.
+                  10     Zhimei Ren and Rina Foygel Barber
+                  3.3.  Derandomization: a closer look
+                                                                                                        (m)
+                  In Algorithm 1, conditional on the data (X,Y), for each feature j the e                  ’s are i.i.d. for
+                                                                                                        j
+                  m=1,...,M. By the strong law of large numbers, we then have
+                                                           M
+                                               avg     1 X (m)           ∞         (1)      
+                                              e    =          e    −→e := E e X,Y ,                                    (17)
+                                               j      M        j         j          j
+                                                          m=1
+                  almost surely as M → ∞. Let Skn–∞ denote the selected set obtained by applying e-BH to
+                                             ∞        ∞
+                  these limiting e-values e ,...,e . Note that Skn–∞ is now a deterministic function of the data
+                                             1        p
+                  (X,Y). By (17), we would then expect that the selected set Skn–derand obtained by averaging
+                  over M runs of knockoffs, should eventually stabilize to this completely derandomized selected
+                  set S     .
+                       kn–∞                                             ∞
+                     To quantify this intuition, let ∆ = mink∈[p] |e       −p/(αk)|. Applying Hoeffding’s inequality,
+                                                                        (k)
+                                                                          2      2                   avg    ∞
+                  we have with probability at least 1−2p·exp(−2∆ M/p ) that maxj∈[p]|e                  −e |<∆,which
+                                                                                                     j      j
+                                      avg     ∞
+                  implies maxk∈[p]|e      −e | < ∆. On this event, then, the definition of the e-BH procedure
+                                      (k)     (k)
+                  implies that S           =S        .
+                                  kn–derand     kn–∞
+                  4.  Simulations
+                  Wenext illustrate the performance of our proposed derandomized knockoffs method, and com-
+                  pare to the original knockoffs procedure, with numerical experiments.†
+                   Settings   We generate data for two different models: the Gaussian linear model and the
+                  logistic model. In both settings, we choose sample size n = 1000. In the linear case, the feature
+                  dimension p = 800 with |H | = 80 non-nulls, and in the logistic case, p = 600 with |H | = 50
+                                                 1                                                                  1
+                  non-nulls. The marginal distribution P        of the feature vector X ∈ Rp is given by X ∼ N(0,Σ),
+                                                             X
+                  where the covariance matrix has entries Σjk = 0.5|j−k|. The distribution of Y |X is defined as
+                  follows for our two models:
+                                                                                                              X⊤β 
+                  Gaussian linear model: Y |X ∼ N(X⊤β,1),              Logistic model: Y |X ∼ Bernoulli          e          ,
+                                                                                                               1+eX⊤β
+                                 p                                                                              |H |
+                                                                                                         ¯        1
+                  where β ∈ R is the coefÏcient vector. To determine β, we first construct β ∈ R                    , where
+                                  ¯
+                  each entry of β is independently generated from N(A,1), with A denoting the overall signal
+                                                  ¯
+                  amplitude. Oncegenerated, β is fixed across the experiments. We then determine the coefÏcient
+                  vector β by letting
+                                                                 ¯                ¯       
+                                                                  β1               β2
+                                                 β = 0,...,0, √ ,0,...,0,−√ ,... ,
+                                                        | {z }      n | {z }         n
+                                                           z              z
+                  where z = 9 in the linear case and z = 11 in the logistic case. The signal amplitude A ∈
+                  {4,5,6,7,8} for the Gaussian linear model or A ∈ {10,15,20,25,30,35} for the logistic model.
+                                                                                             e
+                  Methods For the original model-X knockoff filter, the knockoffs X are constructed using the
+                  multivariate GaussiandistributionP         of the features, as in Cand`es et al. (2018, Eqn. (3.2), (3.13)),
+                                                          X
+                                                                    p
+                  and the feature importance statistics W ∈ R are computed via the Lasso coefÏcient-difference
+                  (LCD)statistic as in Cand`es et al. (2018, Eqn. (3.7)). Finally, the selection set S         is computed
+                                                                                                            kn
+                  via the knockoff filter run with target FDR level α = 0.1.
+                    †Code to reproduce all experiments on simulated and real data is available at https://github.
+                  com/zhimeir/derandomized_knockoffs_fdr. The knockoffs method is implemented via the R-package
+                  knockoff (Patterson and Sesia, 2018).
+                                                                                                                            Derandomized knockoffs                    11
+                             For the derandomized knockoffs method (Algorithm 1), we draw M = 50 copies of the
+                        knockoffs, and compute the m-th selected set S(m) using the selection threshold defined in (15)
+                                                                                                kn
+                        with αkn ∈ {0.01,0.02,...,0.2}, and then apply e-BH with target FDR level αebh = 0.1. When
+                        compared with the original knockoffs, αkn is taken to be 0.05.
+                         Measures of performance                    For each model and each signal amplitude setting, the data set
+                        (X,Y) is generated independently 100 times. For each draw of the dataset (X,Y), we also
+                        replicate the knockoffs procedure (i.e., original or derandomized) 20 times. (When investigating
+                        the effect of different parameters, the derandomized knockoffs procedure is implemented once
+                        for each draw of the dataset.) For each model, each signal amplitude, and each of the two
+                        methods, we measure performance in several different ways. First, we estimate the power and
+                        FDRas
+                                                                100 20                                                          100 20
+                                                        1      XX|S ∩H|                                                 1      XX|S ∩H|
+                                     Power =                                  d,k        1    and FDR=                                        d,k        0 ,
+                                                   100·20                       |H |                               100·20                   |S     | ∨ 1
+                                                                d=1 k=1             1                                          d=1 k=1         d,k
+                        where Sd,k denotes the selected set for the d-th draw of the dataset (X,Y) and the k-th run of
+                        (original or derandomized) knockoffs for this dataset.
+                             Next, we would like to quantify the “randomness” of each selection procedure. Note that
+                        there are two sources of variability: the randomness conditional on the dataset (i.e., arising from
+                        the knockoffs construction), and that from the dataset itself. We define two different measures,
+                        to capture the overall (“marginal”) variability, and to capture the “conditional” variability that
+                        arises from the knockoffs construction (note that it is this latter measure that derandomized
+                        knockoffs aims to reduce). Define
+                                                                    100 20                                                  20
+                                               pb =         1       XX1{j∈S } and pb = 1 X1{j∈S }
+                                                 j     100·20                              d,k                j,d     20                     d,k
+                                                                    d=1 k=1                                                k=1
+                        for each j ∈ [p], where pb is the empirical probability of selection on average over a random draw
+                                                            j
+                        of the datasets and the knockoffs, while pb                         is the empirical probability of selection conditional
+                                                                                       j,d
+                        on the d-th draw of the dataset. Let sbbe the average number of selections over all d,k, and let
+                        sb  be the average number over all runs k of knockoffs for a fixed dataset d. We then define
+                         d
+                                                                                                            P pb(1−pb)
+                                                          Marginal selection variability =                      j∈[p]   j          j .
+                                                                                                                p· sb(1 − sb)
+                                                                                                                     p         p
+                        To motivate this definition, if the selected set Sd,k contains the same sb features for each d,k
+                        then we will have pb ∈ {0,1} for all j and so Var                                      = 0, while if S              contains a random
+                                                       j                                               marg                            d,k
+                        selection of sb features for each d,k, then we will have pb ≈ s/pb                                  for all j and so Var                   ≈1.
+                                                                                                               j                                           marg
+                        Similarly, we define
+                                                                                                        P P
+                                                                                                            100            pb   (1 −pb )
+                                                 Conditional selection variability =                        d=1      j∈[p]   j,d          j,d .
+                                                                                                            P
+                                                                                                                100       sb         sb
+                                                                                                                      p· d(1− d)
+                                                                                                                d=1        p          p
+                         Results        Figure 1 plots the power and FDR of derandomized knockoffs as a function of αkn
+                        under both models with different signal amplitude. For the Gaussian linear model, the low,
+                        medium and high signal amplitude correspond to A = 4, 6 and 8, respectively; for the logistic
+                        model, the three cases correspond to A = 10, 20 and 30, respectively. In all the settings, we
+                        observe that derandomized knockoffs consistently performs well with α                                            =α /2=0.05.
+                                                                                                                                     kn        ebh
+              12    Zhimei Ren and Rina Foygel Barber
+                  Gaussian
+                  Logistic
+              Fig. 1. Realized power (left) and FDR (right) of derandomized knockoffs as a function of the parameter
+              α for the simulation data experiments. The offset parameter c = 1. Shading for the power and FDR
+               kn
+              plots indicates error bars. The target FDR level αebh = 0.1. Results are averaged over 100 independent
+              trials.
+                 Figure 2 plots the power, FDR, and selection variability as functions of the signal amplitude,
+              for both settings. We see that derandomized knockoffs achieves comparable power as the original
+              knockoffs method when the signal strength is reasonably large, while there is some power loss
+              whenthesignalstrengthisweak(asweshallseeinFigure3and4,theoriginalknockoffsachieves
+              higher power in this scenario with an increased chance of selecting null features). For logistic
+              regression, derandomized knockoffs achieves a slightly higher power than the original knockoffs
+              methodinthestrong-signalsetting. In all cases, both methods have FDR bounded by the target
+              level α = 0.1, whereas derandomized knockoffs consistently achieves an FDR substantially lower
+              than the original knockoffs. Finally, derandomized knockoffs in general exhibits lower selection
+              variability, both marginally and conditionally. In particular, the conditional variability (that
+              is, the variability arising from the randomness in the knockoffs method, while conditioning on
+              a fixed dataset) is substantially decreased for the derandomized method, as expected.
+                 In Figure 3 and 4, we take a closer look at the marginal and conditional selection probability
+              of individual features by the two methods. Especially in weak-signal settings, we can see that the
+              original knockoffs often has a high selection probability for the nulls that are rarely selected by
+              derandomized knockoffs (i.e., many red points are above the 45-degree line); this phenomenon
+              is more pronounced when we focus on the conditional selection probability.
+              5.  Application to HIV mutation data
+              We next compare original and derandomized knockoffs on a study of detecting mutations as-
+              sociated with drug resistance in Human Immunodeficiency Virus Type 1 (HIV-1) (Rhee et al.,
+              2006).
+               Data The dataset‡ documents drug resistance measurements (for several classes of drugs)
+              and genotype information on samples of HIV-1. Our analysis focuses on a particular protease
+              inhibitor (PI) named lopinavir. For sample i and mutation j, Y denotes the log-fold increase
+                                                                         i
+                ‡Available at https://hivdb.stanford.edu/download/GenoPhenodatasets/PI_dataset.txt
+                                                                              Derandomized knockoffs     13
+                   Gaussian
+                  Logistic
+               Fig. 2. Power, FDR, and selection variability, for the simulated data experiments. Shading for the power
+               andFDRplotsindicates error bars. Results are averaged over 100 independent trials.
+               in resistance to the drug, and X  is a binary variable indicating whether or not mutation j is
+                                               ij
+               present in sample i.
+                Methods After cleaning the data (removing rows with missing values and mutations that
+               appear less than three times in the data), we have a dataset of n = 1840 samples and p = 219
+               mutations. The data matrix X is normalized such that each column has zero mean and unit
+               variance. We use the second-order method (Cand`es et al., 2018, Sec. 3.4.2) to generate knockoffs
+               via the first and second moments of X (as discussed in Romano et al. (2020) and the references
+               therein, it is empirically observed that this approximate knockoffs construction often affects
+               the power but leaves the FDR intact). The original and derandomized knockoffs methods are
+               implemented with the LCD as the feature importance statistic, as for our simulations. We set
+               α=0.1 for knockoffs, and α     =0.05 and α     =0.1 for derandomized knockoffs, so that the
+                                           kn              ebh
+               target FDR level is 0.1 for both methods. The derandomized method is run with M = 100
+               copies of the knockoff matrix. For both original and derandomized knockoffs, we repeat the
+               experiment 50 times in order to examine the variability of the selected set across different
+               generations of the knockoffs.
+                Results  Theresults of this experiment are shown in Figure 5, summarizing the results from 50
+               independentrunsofbothmethods. Inthehistograms, wedisplaytheselectionfrequency(across
+               the 50 trials) for each mutation j ∈ [p], for both methods. For the original knockoffs method, we
+               see that a substantial number of mutations have selection probability bounded away from 0 and
+               from 1, exhibiting some instability. For derandomized knockoffs, on the other hand, nearly all
+               the mass is at 0 and 1, meaning that each mutation is either (almost) always selected or (almost)
+               never selected. In the boxplot, we see that the original knockoffs method makes more discoveries
+               on average than derandomized knockoffs, but the number of discoveries is quite variable. When
+               the discoveries from each method are cross-referenced with the verified discoveries reported
+               at https://hivdb.stanford.edu/dr-summary/comments/PI/, we find evidence of a higher
+               FDRfor the original knockoff method, indicating that derandomized knockoffs may retain the
+                 14     Zhimei Ren and Rina Foygel Barber
+                 Fig. 3. Top: the marginal selection probability pb by original knockoffs versus that by derandomized
+                                                                   j
+                 knockoffs. Bottom: the conditional selection probability pb   by original knockoffs versus that by de-
+                                                                            j,1
+                 randomized knockoffs. The results are from simulations under the Gaussian linear model. Each point
+                 corresponds to a feature, where the blue ones are non-nulls and the red ones are nulls. For the given
+                 dataset, many null features never selected by derandomized knockoffs have large selection probability
+                 by the original knockoffs.
+                 samepowerdespitetheloweraveragenumberofdiscoveries(seeAppendixDforamoredetailed
+                 analysis, including which specific mutations were selected).
+                 6.   Discussion
+                 In this work, we discover a connection between knockoffs and e-values, showing that the knock-
+                 off filter can be reframed as an e-BH procedure. This equivalence in turn allows us to pool
+                 information across multiple runs of knockoffs to achieve a derandomized procedure without
+                 compromising the guarantee of FDR control. Our method shows desirable performance in
+                 practice, retaining the power of the original method while reducing variability. Additionally,
+                 derandomized knockoffs achieves an empirical FDR that is lower than the target level in our
+                 experiments; as an open question for future work, it would be interesting to see under what
+                 mild conditions can we derive a sharper FDR bound (for example, as in Meinshausen and
+                 Buhlmann¨   (2010); Shah and Samworth (2013) for stability selection, or as in Ren et al. (2021)
+                 for the previously proposed version of derandomized knockoffs).
+                    Many variants and extensions of the knockoffs method have appeared in the literature, in-
+                 cluding the “fixed-X” setting (Barber and Cand`es, 2015), robustness results for the model-X
+                 setting when PX is not known exactly (Barber et al., 2020), a multienvironment knockoff filter
+                 (Li et al., 2021), and knockoffs that incorporate side information (Ren and Cand`es, 2020). In
+                 Appendix A, we give derandomized versions of each of these, together with accompanying theo-
+                 retical guarantees. In addition to these extensions, our proposed derandomization scheme could
+                 potentially also be combined with other existing extensions of the knockoffs methodology—for
+                 example, the group knockoff filter (Dai and Barber, 2016) for discovering a group-sparse struc-
+                 ture, or the missing value knockoffs method (Koyuncu and Yener, 2022) to handle the presence
+                 of missing data.
+                                                                              Derandomized knockoffs     15
+               Fig. 4. The results are from simulations under the logistic model. The other details are the same as in
+               Figure 4.
+               Fig. 5. Results for the HIV data experiment. Left: boxplot of the number of discoveries for original and
+               derandomized knockoffs, over 50 independent trials. Right: histogram of the selection probability for
+               each feature j ∈ [p], over 50 independent trials, for original and derandomized knockoffs.
+               Data availability statement
+               Thecodefor reproducing the numerical results in this paper can be found at https://github.
+               com/zhimeir/derandomized_knockoffs_fdr.
+               Acknowledgment
+               Z.R. and R.F.B were supported by the OfÏce of Naval Research via grant N00014-20-1-2337.
+               R.F.B. was additionally supported by the National Science Foundation via grants DMS-1654076
+               and DMS-2023109.
+               A.   Extensions
+               A.1.  Fixed-X knockoffs
+               Thederandomization procedure can also be applied to aggregating multiple runs of the fixed-X
+               knockoffs procedure (Barber and Cand`es, 2015). The fixed-X knockoffs procedure considers a
+                  16     Zhimei Ren and Rina Foygel Barber
+                  setting where the design matrix X is fixed and the response is generated from a Gaussian linear
+                  model:
+                                                                Y=Xβ+ε,
+                                 p
+                  where β ∈ R is an unknown coefÏcient vector and ε ∼ N(0,I ). The test of conditional
+                                                                                            n
+                                                                                                                       e
+                  independence (defined in (3)) is equivalent to testing if βj = 0. The (fixed-X) knockoffs X for
+                                     e      n×p
+                  Xis any matrix X ∈ R           satisfying
+                                                  e⊤e                 ⊤e
+                                                  X X=Σ,            X X=Σ−diag{s},
+                                 ⊤                                                                                   e
+                  where Σ = X Xis the gram matrix, and s is a p-dimensional nonnegative vector; given X, one
+                                                                                   e
+                  can compute the feature importance statistics with ([X,X],Y) and apply the knockoffs filter
+                                                            e
+                  as in the model-X case. Specifically, X can be generated as
+                                  e               −1                                        −1           1/2
+                                  X=X(Ip−Σ diag{s})−U(2diag{s}−diag{s}Σ diag{s}) ,
+                                 n×p                                                           ⊤                  ⊤
+                  where U ∈ R         is an orthonormal matrix orthogonal to X (i.e., U U = Ip and U X = 0).
+                                      e
+                  When generating X, the choice of U is arbitrary, and may be constructed deterministically or
+                  randomly (c.f. Barber and Cand`es (2015, Section 2))—in either case, this arbitrary choice will
+                  generally affect the set of discoveries, and thus it might be desirable to derandomize in order to
+                  obtain a more stable and meaningful selected set. Our derandomization scheme can be applied
+                  here to aggregating results from fixed-X knockoffs with different methods of implementation,
+                  andtheresulting set of discoveries has guaranteed FDR control (the proof is exactly the same as
+                  in the model-X case). The complete procedure for derandomized fixed-X knockoffs is described
+                  in Algorithm A.1, and its validity proved in the following theorem.
+                     Theorem A.1. For any α ,α               ∈(0,1), and any number of knockoff copies M ≥ 1, the
+                                                    kn   ebh
+                  selected set offered by Algorithm A.1 satisfies FDR ≤ αebh.
+                     Proof. By Barber and Cand`es (2015, Lemma A1), P                   E[e(m)] ≤ p, and by the linearity
+                                                                                   j∈H      j
+                                   P           avg                                     0
+                  of expectation,          E[e    ] ≤ p. The result follows immediately from Theorem 2.
+                                      j∈H0     j
+                  A.2.   Robust knockoffs
+                  The validity of the model-X knockoffs frame relies crucially on the knowledge of P , but in
+                                                                                                                  X
+                  practice, this distribution might be estimated rather than known exactly. In this section, we
+                  investigate the robustness of the derandomized knockoffs procedure when the knockoff copies are
+                  sampled without exact knowledge of P . In this section, we will show that when the knockoffs
+                                                             X
+                  are constructed using approximate knowledge of P , Algorithm 1 achieves approximate FDR
+                                                                           X
+                  control.
+                     Thesetting of our discussion follows that of Barber et al. (2020). Formally, suppose for each
+                  j ∈ [p], the researcher only has access to an estimated conditional distribution for Xj |X−j,
+                  denoted by Q (·|X ) (instead of the ground truth P (·|X ) = P                         ). Based on these
+                                 j      −j                                      j      −j       X |X
+                                                                        e                        j   −j
+                  Q’s, the researcher samples the knockoffs with X |X ∼ P               , such that for any j ∈ [p], P
+                    j                                                              e                                    e
+                                                                                   X|X                                  X|X
+                  is pairwise exchangeable w.r.t. Q . The definition of pairwise exchangeability w.r.t. Q is as
+                                                        j                                                            j
+                  follows.
+                     Definition A.1. P           is pairwise exchangeable with respect Q if for any distribution D(j)
+                                            e                                                j
+                       p                    X|X                                    e       (j)
+                  on R with the j-th conditional distribution Q , and (X,X) ∼ D               ×P       , it holds that
+                                                                      j                            e
+                                                                                                  X|X
+                                                      e         e  d  e                 e 
+                                                 X,X,X ,X             = X,X,X ,X .
+                                                   j   j   −j    −j         j   j   −j    −j
+                                                                                    Derandomized knockoffs      17
+                Algorithm A.1 Derandomized fixed-X knockoffs
+                                                                                       −1
+                Input: Data (X,Y); nonnegative s satisfying 2diag{s}−diag{s}Σ            diag{s} ⪰ 0; parameters
+                    α ,α ∈(0,1) and M ∈N .
+                      ebh  kn                     +
+                 1: for m = 1,...,M do
+                 2:   Construct the knockoff copy
+                                e(m)              −1              (m)                      −1          1/2
+                               X =X(Ip−Σ diag{s})−U (2diag{s}−diag{s}Σ diag{s}) ,
+                                (m)
+                      where U       is drawn uniformly at random from the set of orthonormal n × p matrices
+                      orthogonal to X.                                              
+                                                                       (m)      (m)     e(m)
+                 3:   Compute the feature importance statistics: W         =W [X,X ],Y).
+                 4:   Compute the stopping time T(m) according to (15).
+                 5:   Compute the e-value e according to (14), for all j ∈ [p].
+                                              j
+                 6: end for                                  P
+                                                     avg   1    M    (m)
+                 7: Compute the average e-value e       =           e    for each j ∈ [p].
+                                                    j     M 	m=1 j
+                               b              avg                   b
+                 8: Compute k = max k : e        ≥p/(α k) , or k = 0 if this set is empty.
+                                              (k)        ebh
+                                                                                    avg          b 	
+                Output: The selected set of discoveries S             := j ∈[p] : e     ≥p/(α k) .
+                                                             kn–derand               j         ebh
+                As remarked in Barber et al. (2020), when the conditional distributions Q ’s are mutually
+                                                                                                  j
+                compatible, i.e. there exists a joint distribution Q   on Rp whose j-th conditional distribution
+                                                                     X
+                coincides with Q , then the knockoff construction algorithm (Cand`es et al., 2018, Algorithm
+                                  j
+                1) with Q     as the input produces knockoffs satisfying Definition A.1. When the Q ’s are
+                           X                                                                                j
+                not mutually compatible, Barber et al. (2020, Section 4) provide examples in which knockoffs
+                satisfying Definition A.1 can be produced. Moving on, we work under the premise that we can
+                generate knockoffs obeying Definition A.1.
+                   To measure the deviation of Q from the ground truth, we follow Barber et al. (2020) and
+                                                    j
+                define the “empirical KL divergence” quantity for any j ∈ [p] and for each run m of knockoffs:
+                                          X                             e(m)         
+                                   (m)             P (X |X       )   Q(X |X )
+                                 c                   j   ij   i,−j     j  ij     i,−j
+                                KLj    =      log  Q(X |X )·             e(m)          , m ∈ [M].
+                                                     j   ij   i,−j   P (X     | X   )
+                                           i                          j   ij     i,−j
+                Wethen take the maximum over the M runs of knockoffs,
+                                                      cmax            c(m)
+                                                      KL     = max KL       .
+                                                         j      m∈[M]    j
+                                      cmax                                  cmax
+                Clearly, the smaller KL      is, the closer Q is to P , and KL     =0whenP =Q . Intuitively,
+                                         j                  j       j          j               j     j
+                the better Q approximated P , the more likely it is to control the FDR (when P = Q for
+                              j                 j                                                       j     j
+                all j ∈ [p], the FDR is controlled at the desired level). Such an intuition is formalized by the
+                following theorem which shows that Algorithm 1 controls the FDR among the features with
+                                 cmax
+                small values of KLj    .
+                   Theorem A.2. Fix any α ,α            ∈(0,1), and any number of knockoff copies M ≥ 1. For
+                                                kn  ebh              max
+                                                                  c
+                any ε ≥ 0, consider the null variables for which KLj     ≤ε. The fraction of the rejections made
+                by Algorithm 1 that correspond to such nulls obeys
+                                                                           
+                                                              cmax       	 
+                                               j : j ∈ S ∩ H0,KL      ≤ε 
+                                                                   j               ε
+                                           E              |S| ∨ 1              ≤e ·α.
+                   18     Zhimei Ren and Rina Foygel Barber
+                   As a result, the FDR can be controlled as
+                                                                ε                  cmax        
+                                                 FDR≤min e ·α+P maxKL                        ≥ε .
+                                                           ε>0                   j      j
+                   Theproof of Theorem A.2 can be found in Appendix B.1. Note that the FDR inflation depends
+                                      cmax
+                   directly on the KLj       ’s, which take the form of the maximum of M conditional independent
+                                                      c(m)
+                   objects. Consequently, when KL             is bounded almost surely, the FDR inflation is bounded for
+                                                         j
+                   any choices of M. In the numerical experiments to be presented in the next section, we will
+                   see that we generally observe controlled FDR even with estimated PX.
+                   A.3.   Multienvironment knockoffs
+                   For the purpose of making scientific conclusions, it is sometimes not sufÏcient to find associa-
+                   tions that are significant in only one environment—here, environments can refer to subpopula-
+                   tions, experimental settings or data sources (see more discussion in Li et al. (2021)). Intuitively,
+                   if an association is found to be significant in all environments (e.g., a genetic variant found to
+                   be associated with a certain disease in all subpopulations), it is more likely to be the “true”
+                   driving factor and less prone to the impact of unobserved confounders.
+                      Formally, suppose there are E environments, and in each environment e ∈ [E], the data
+                   vector (X,Y) ∼ Pe        (we work again in the model-X framework, and so Pe is assumed known).
+                                        XY                                                                X
+                   Wewrite the conditional independence hypothesis in environment e as
+                                                              Hci,e : Y e   =Xe|Xe .                                         (A.1)
+                                                                j           |   j    −j
+                   To find the association that is consistently true across all the environments (i.e., robust associ-
+                   ation) is equivalent to testing the following consistent conditional independence hypothesis:
+                                    Hcst : ∃ e ∈ [E] such that the null Hci,e defined in (A.1) is true.                      (A.2)
+                                       j                                         j
+                   By definition, rejecting Hcst suggests an association between X and Y across all the envi-
+                                                  j                                              j
+                   ronments. In practice, (A.2) may be hard to reject especially as the number of environments
+                   increases. Li et al. (2021) also propose a relaxed version of (A.2) that tests for partial consis-
+                   tency. For any fixed number r ∈ [E], the partial consistency null hypothesis is defined as
+                                                                                        
+                                                            n                          o
+                                                 Hpcst,r :  e ∈ [E] : Hci,e is true  > E − r.                              (A.3)
+                                                    j                     j             
+                   Rejecting (A.3) then means that the association is true in at least r environments.
+                      To proceed, we let the set of nulls H = {j : Hcst is true} when testing Hcst’s or H =
+                                                                    0             j                                j           0
+                   {j : Hpsct is true} when testing Hpcst’s. Previously, Li et al. (2021) proposed a variant of
+                           j                                 j
+                   knockoffs called the multi-environment knockoff filter (MEKF) to simultaneously test Hcst’s or
+                                                                                                                            j
+                   Hpcst’s with guaranteed FDR control. To be specific, suppose we have independent datasets
+                     j
+                      1    1           E    E               e   e
+                   (X ,Y ),...,(X ,Y ) where (X ,Y ) is obtained from environment e. For each e ∈ [E],
+                                                                 ee        e                      e ee      e
+                   the MEKF generates a knockoff copy X for X ; it then takes ([X ,X ],Y )                          as input and
+                                                                                                       E×p    e∈[E]
+                   computes the multi-environment feature importance statistic W ∈ R                       , whose definition is
+                   given as follows.
+                                                                                                    E×p
+                      Definition A.2 (Definition 1 of Li et al. (2021)). W ∈ R                            are valid multi-environment
+                                                              d                           E×p
+                   knockoff statistics if they satisfy W = W ⊙ε and ε ∈ {±1}                    is a random matrix with inde-
+                                                   e              e                                     ci,e               e
+                   pendent entries and rows ε such that ε = ±1 with probability 1/2 if H                    is true and ε = +1
+                                                                  j                                     j                  j
+                   otherwise, for all j ∈ [p] and e ∈ [E].
+                                                                              Derandomized knockoffs     19
+                                                                  e          e ee    e
+               To construct such W, one can simply compute W = W([X ,X ],Y ) for all e ∈ [E] and
+               assemble the We’s into a E ×p matrix. More methods for constructing W can be found in Li
+               et al. (2021, Section 4.2). With W, we define for each j ∈ [p] the (normal) feature importance
+               statistic for testing Hcst to be
+                                    j
+                                                               e   Y e
+                                            Wj = min sign(W ) ·         |W |,                         (A.4)
+                                                  e∈[E]        j           j
+                                                                    e∈[E]
+               and that for testing Hpsct,r to be
+                                     j
+                                                             r
+                                                       1        Y (E−e+1)
+                                           Wj =sign 2 −pj ·        |Wj|       .                       (A.5)
+                                                                e=1
+                           (k)                                           e
+               Above, |W |    denotes the k-th largest element among {|W |}     , and
+                         j                                               j  e∈[E]
+                              −                     0     1          −                0      1
+                       pj = Ψ nj −1,(E −r+1−nj)∨0,2 +Uj·ψ nj ,(E−r+1−nj)∨0,2 ,
+               where Ψ(x,m,π) is the binomial cumulative distribution function evaluated at x, ψ(x,m,π) is
+               the corresponding probability mass, and U ∼ Uniform[0,1] that is independent of everything
+                                                         j
+               else; n− and n0 denote the number of negative signs and zeros in the j-the column of W,
+                      j       j
+               respectively. Finally, applying the knockoff filter to the Wj’s produces a selected set controlling
+               FDR.
+                  The MEKFprocedure is random since it depends on the one-time construction of knockoffs
+               (and the auxiliary Uj’s); we can again derandomize it with the assistance of e-values. Specifi-
+               cally, for each m ∈ [M], we construct the feature importance statistics W(m) as in (A.4) or (A.5)
+                                                      e(m)
+               (based on the m-th draw of knockoffs, X     ); define then the stopping time and e-values ac-
+               cording to (15) and (14) respectively. For each j ∈ [p], we aggregate the e-values from different
+               runs by taking their average. The selected set is obtained by applying e-BH to the e ’s. We
+                                                                                                    j
+               summarize the complete derandomized MEKF in Algorithm A.2; the following theorem verifies
+               the validity of the derandomized MEKF.
+                  Theorem A.3. Considertestingconsistent conditional independence hypotheses defined in (A.2)
+               or partial consistent conditional independent hypotheses defined in (A.3) for any r ∈ [E]. For
+               any α ,α     ∈(0,1), any number of knockoff copies M ≥ 1, and any number of environments
+                     kn  ebh
+               E≥1,the selected set offered by Algorithm A.2 satisfies FDR ≤ α     .
+                                                                                ebh
+                  Proof. When testing Hcst’s, by Theorem 1 of Li et al. (2021), we have for any m ∈ [M]
+                    P                      j
+                              (m)                       psct
+               that        E[e   ] ≤ p. When testing H     ’s, by Proposition 7 of Li et al. (2021), we have
+                      j∈H0    j        P                j
+                                                 (m)
+               for any m ∈ [M] that           E[e   ] ≤ p. In either case, by the linearity of expectation,
+               P                         j∈H0    j
+                         avg
+                      E[e   ] ≤ p. Applying Theorem 2 completes the proof.
+                 j∈H0    j
+               A.4.  Knockoffs with side information
+               Imagine a situation where each hypothesis H is associated with some prior/side information
+                                                            j
+                      r
+               u ∈ R . For example, in a genome-wide association study (GWAS), H corresponds to the
+                j                                                                      j
+               association between genetic variant j and the response; u can be the prior knowledge of this
+                                                                        j
+               genetic variant a scientist has from previous related work. For structured hypothesis testing, u
+                                                                                                          j
+               can be the physical location corresponding to the hypothesis, and scientists know a priori that
+               signals are sparse/clustered. In these examples, incorporating prior information in the multiple
+               testing procedure can potentially boost the detecting power.
+                    20      Zhimei Ren and Rina Foygel Barber
+                    Algorithm A.2 Derandomized MEKF
+                    Input: Data (X,Y); parameters α                   , α   ∈(0,1) and M ∈ N
+                                                                  ebh    kn                          +
+                     1: for m = 1,...,M do
+                                                                  e(e,m)
+                     2:     Construct the knockoff copy X                 for all e ∈ [E].                      (m)              e(m)
+                     3:     Computethemulti-environmentfeatureimportancestatistics: W                                =W [X,X ],Y).
+                     4:     Transform the multi-environment feature importance statistics W(m) into the feature
+                            importance statistics W(m) according to (A.4) when testing Hcst’s or to (A.5) when
+                                                                                                                j
+                            testing Hpcst’s.
+                                        j
+                     5:     Compute the stopping time T(m) according to (15).
+                     6:     Compute the e-value e according to (14), for all j ∈ [p].
+                                                         j
+                     7: end for                                             P
+                                                                 avg     1     M      (m)
+                     8: Compute the average e-value e                =              e      for each j ∈ [p].
+                                                                j       M 	m=1 j
+                                      b                  avg                        b
+                     9: Compute k = max k : e                ≥p/(α k) , or k = 0 if this set is empty.
+                                                         (k)          ebh
+                                                                                                        avg              b 	
+                    Output: The selected set of discoveries S                         := j ∈[p] : e          ≥p/(α k) .
+                                                                           kn–derand                     j            ebh
+                        Consider first a special case where u ∈ R                 reflects the possibility of j being a non-null (a
+                                                                        j      +
+                    higher value suggests an increased chance). We explicitly make use of u when constructing
+                                                                                                                    j
+                    the e-values: for each j ∈ [p] and m ∈ [M], define
+                                                                                 (m)          (m)	
+                                                      (m)               puj · 1 Wj        ≥T
+                                                    e      :=         P                                   	,                          (A.6)
+                                                      j         u +            u ·1 W(m) ≤−T(m)
+                                                                 j       k∈[p]   k        k
+                    and aggregate the e-values across m ∈ [M] by taking their average. We then apply e-BH to the
+                    newlydefinede-values and obtain a selected set of discoveries. Intuitively, a large value of u can
+                                                                                                                                        j
+                    boost the e-value of hypothesis j, thereby increasing the chance of selecting j and improving
+                    the power of our procedure. We refer to this weight-assisted multiple testing procedure the
+                    weighted version of derandomized knockoffs with side information.
+                        Alternatively, we may have side information u that is of higher dimensions, or it may not
+                                                                                    j
+                    be explicit how the side information helps selection (it needs to be learned from the data). We
+                    can apply the adaptive knockoffs procedure (Ren and Cand`es, 2020) and similarly aggregate
+                    the e-values associated with different knockoff copies. Concretely, the adaptive knockoffs proce-
+                    dure generates knockoffs and computes feature importance statistics as in the original knockoffs
+                    procedure; it then sequentially screens the hypotheses in an order determined by the side infor-
+                    mation and the partially masked feature importance statistics. At each step k ∈ {0,1,...,p},
+                    let P(k) denote the set of unscreened features (there are in all p − k of them) with positive
+                    feature importance statistics and N(k) those with negative feature importance statistics. Define
+                                                                                     1+|N(k)|              
+                                                   T =inf k ∈{0,1,...,p} : |P(k)|∨1 ≤ αkn ,                                            (A.7)
+                    and the selected set of adaptive knockoffs is P(T). When there are M knockoff runs, we define
+                    for any m ∈ [M] correspondingly the set of unscreened features with positive W ’s to be P (k),
+                                                                                                                          j            m
+                    the set of those with negative W ’s to be N (k), and the stopping time to be T(m). The e-value
+                                                             j             m
+                    for this m and j can be constructed as
+                                                                                           (m) 	
+                                                                        p·1 j ∈ P (T           )
+                                                               e(m) =                 m            .                                   (A.8)
+                                                                j          1+|N (T(m))|
+                                                                                    m
+                                                                              Derandomized knockoffs     21
+               Averaging the e-values over m ∈ [M] and applying e-BH to the e ’s gives the set of discoveries.
+                                                                              j
+               We refer to this method of utilizing side information as the adaptive version of derandomized
+               knockoffs with side information.
+                  Thecompleteprocedureofbothversionsforderandomizedknockoffswithsideinformationis
+               summarized in Algorithm A.3. The following theorem establishes the validity of both versions.
+                  Theorem A.4. For any α ,α          ∈ (0,1), any number of knockoff copies M ≥ 1, and
+                                             kn  ebh
+                                               p
+               any fixed side information u ∈ R , the selected set offered by both versions described in Algo-
+                                               +
+               rithm A.3 satisfies FDR ≤ αebh.
+               The proof of Theorem A.4 can be found in Appendix B.2. Intuitively, the weighted version
+               makes explicit use of the side information but only applies in a special case; on the other hand,
+               the adaptive version is more general, but need to pay the price of learning when utilizing the
+               side information. As such, it remains interesting to investigate the pros and cons of these two
+               versions in different scenarios.
+               Algorithm A.3 Derandomized knockoffs with side information
+                                                                                     p
+               Input: Data (X,Y); parameters α      , α  ∈(0,1), M ∈ N and u ∈ R .
+                                                  ebh  kn                +           +
+                1: for m = 1,...,M do
+                                               e(m)
+                2:   Sample the knockoff copy X    .                       
+                                                                  (m)          e(m)
+                3:   Compute the feature importance statistics: W     =W [X,X ],Y).
+                4:   Weighted version: compute the stopping time T(m) according to (15), and the e-values
+                     according to (A.6).
+                     Adaptive version: compute the stopping time T(m) according to (A.7), and the e-values
+                     according to (A.8).
+                5: end for                               P
+                                                 avg   1   M     (m)
+                6: Compute the average e-value e    =           e   for each j ∈ [p].
+                                                j     M 	m=1 j
+                             b             avg                 b
+                7: Compute k = max k : e      ≥p/(α k) , or k = 0 if this set is empty.
+                                           (k)       ebh
+                                                                              avg          b 	
+               Output: The selected set of discoveries S         := j ∈[p] : e    ≥p/(α k) .
+                                                        kn–derand              j         ebh
+               B.   Proofs for Section A
+               B.1.  Proof of Theorem A.2
+               Fix m ∈ [M]. For any j ∈ H , we additionally define the “masked” feature importance statistics
+                                          0
+               W(m,j) = (W(m),...,|W(m)|,...,W(m)), and the stopping time induced by W(m,j) as
+                            1         j          p
+                                                     1+P       1{W(m,j) ≤ −t}        
+                                 T(m,j) = inf  t > 0 :   Pk∈[p]      k           ≤αkn .
+                                                               1{W(m,j) ≥ t}
+                                                           ℓ∈[p]    ℓ
+               Observe that when W(m) ≥ 0, it holds that T(m) = T(m,j). Consequently,
+                                    j
+                                                                (m)    (m) cmax               
+                          (m)    cmax           (m,j)         1{Wj    ≥T ,KLj ≤ε}  (m,j)
+                      E e    · 1{KL     ≤ε}|W         =p·E        P                        W
+                          j         j                         1+        1{W(m) ≤−T(m)}
+                                                                   k∈[p]    k   max              
+                                                                  (m)    (m,j) c           
+                                                     =p·E 1{Wj       ≥T      , KLj   ≤ε} W(m,j)
+                                                            1+Pk∈[p]1{W(m) ≤−T(m,j)}
+                                                                           k
+                                         1{|W(m)| ≥ T(m,j)}                                       
+                               (a)             j                        (m)     cmax          (m,j)
+                               =p·1+P 1{W(m)≤−T(m,j)}·P Wj                 >0,KLj      ≤ε|W        ,
+                                          k̸=j    k
+                 22     Zhimei Ren and Rina Foygel Barber
+                                                             (m,j)                   (m,j)                 (m,+)    (m,−)
+                 wherestep(a)followsfromthefactthatT               is a function of W     . Define now{X        , X      }
+                                                                                                           j        j
+                                             e(m)                             (m,+)      e(m)       (m,−)
+                 the unordered set of (X ,X       ) such that when X = X            and X      =X        , W >0 and
+                                           j   j                        j     j            j        j        j
+                 vice versa. Let
+                                              n        (m,+)                   (m,−)         
+                                             X P X |X                        Q X        | X
+                                     ρ(m) =      log    j    ij      i,−j ·   j   ij       i,−j .
+                                      j                      (m,+)                 (m,−)
+                                                      Q X         | X        P X        | X
+                                             i=1        j    ij       i,−j    j    ij      i,−j
+                 Then
+                          (m)         cmax          (m,+)    (m,−)	       e(m)     
+                        P W       >0,KL       ≤ε X         , X       , X   , X   , Y
+                          j              j            j        j         −j   −j    
+                              (m)      c(m)        (m,+)     (m,−)	        e(m)
+                      ≤P W        >0,KL       ≤ε X         , X       , X   , X   , Y
+                          j              j            j       j         −j    −j                    
+                                    (m,+) e       (m,−)   (m)        (m,+) e(m,−)	         e(m)
+                      =P X =X            , X = X        , ρ   ≤ε X         , X       , X   , X   , Y
+                             j      j       j            j            j       j         −j    −j                
+                      (a) ρ(m)     (m)                   (m,−) e        (m,+)    (m,+) e(m,−)	         e(m)
+                      =e j    · 1{ρ    ≤ε}·P X =X             , X = X          X       , X       , X  , X    , Y
+                                  j               j     j        j                j       j        −j   −j
+                         ε             (m,−) e        (m,+)    (m,+) e(m,−)	         e(m)
+                      ≤e ·P X =X             , X = X          X      , X       , X  , X    , Y
+                              j       j        j                j       j        −j    −j
+                         ε        (m)        (m,+) e(m,−)	         e(m)
+                      =e ·P W        <0 X          , X       , X  , X    , Y ,
+                                 j             j       j         −j    −j
+                 where step (a) follows from Lemma 1 of Barber et al. (2020). Next, we shall make use of the
+                 following lemma that connects T(m,j) to T(m,ℓ), whose proof is exactly the same as Lemma 6
+                 of Barber et al. (2020), so we omit the proof here.
+                    Lemma B.1. Foranyj,ℓ, if W(m) ≤ −min(T(m,j),T(m,ℓ)) and W(m) ≤ −min(T(m,j),T(m,ℓ)),
+                                                      j                                   ℓ
+                 then T(m,j) = T(m,ℓ).
+                 Using the above and the tower property, we have
+                                              max                        1{W(m) ≤−T(m)}            
+                                    (m)     c                    ε               j         j
+                                E e     · 1{KL      ≤ε} ≤p·e ·E            P
+                                    j          j                       1+        1{W(m) ≤−T(m)}
+                                                                             k̸=j     k          j
+                                                                           1{W(m) ≤−T(m)}            
+                                                          =p·eε·E          P j             j           .
+                                                                       1+        1{W(m) ≤−T(m)}
+                                                                             k̸=j     k          k
+                 The last equality is due to Lemma B.1. Summing over m ∈ [M] and j ∈ H , we have
+                                                                                                  0
+                                                                         M
+                               X avg          cmax            1 X X  (m)             cmax        
+                                   E e    · 1{KL      ≤ε} =                 E e     · 1{KL     ≤ε}
+                                       j          j            M                j          j
+                              j∈H0                                 j∈H0m=1
+                                                                    M      P             (m)       (m) 
+                                                                p X                 1{W      ≤−T }
+                                                                        ε      j∈H0      j         j
+                                                             ≤M        e E P        1{W(m) ≤−T(m)}
+                                                                   m=1         k∈H0      k          k
+                                                             ≤p·eε.
+                                                                                             Derandomized knockoffs         23
+                  Finally,
+                                                                                                    max
+                                            cmax        	                 avg       p         c             
+                        j : j ∈ S    ∩H,KL           ≤ε         X 1{e ≥                   }·1{KLj       ≤ε}
+                                   ebh     0     j                            j      α|S   |
+                   E                                           =      E                 ebh
+                                    |S    | ∨ 1                                        |S    | ∨ 1
+                                      ebh                        j∈H                      ebh
+                                                                     0
+                                                                        p        avg     p                    cmax         
+                                                                  XX 1{e ≥ ,|S |=k}·1{KL                               ≤ε}
+                                                               =           E      j      αk    ebh                j
+                                                                 j∈H k=1                            k
+                                                                     0
+                                                                          p
+                                                                 α XX avg                                 cmax         
+                                                               ≤             E e     · 1{|S    | = k} · 1{KL       ≤ε}
+                                                                 p               j         ebh                j
+                                                                   j∈H0 k=1
+                                                                 α X        avg      cmax
+                                                               ≤p        E[ej   · 1{KLj      ≤ε}]
+                                                                   j∈H0
+                                                                  ε
+                                                               ≤e ·α,
+                  completing the proof.
+                  B.2.   Proof of Theorem A.4
+                  By Theorem 2, for both versions of the algorithm it sufÏces to check that the e ’s satisfy the
+                                                                                                               j
+                  relaxed e-value condition (9).
+                   Weighted version       We continue using the notation for masked feature importance statistics
+                  andthecorrespondingstoppingtime. Foranym ∈ [M], j ∈ H andthee-valuedefinedin(A.6),
+                                                                                         0
+                  we have
+                                          pu ·1{W(m) ≥T(m)}                         pu ·1{W(m) ≥T(m,j)}
+                            (m)              j       j                                 j        j
+                           e     =       P                                 =        P
+                            j       u +         u ·1{W(m) ≤−T(m)}             u +         u ·1{W(m) ≤−T(m,j)}
+                                     j      ℓ̸=j  ℓ       ℓ                    j       ℓ̸=j ℓ       ℓ
+                  Since T(m,j) is fully deterministic given W(m,j), we have
+                                                                                          (m)      (m,j)	
+                                 (m)    (m,j)         (m)          (m,j)         puj · 1 |Wj     | ≥ T
+                             E e      W        =P W        >0|W            ·      P                               	
+                                 j                     j                    u +          u ·1 W(m) ≤−T(m,j)
+                                                                              j      ℓ̸=j ℓ        ℓ
+                                                                                          (m)      (m,j)	
+                                                                               pu ·1 |W        | ≥ T
+                                               (a)               (m,j)            j        j
+                                               =P Wj <0|W               ·      P             (m)          (m,j)	
+                                                                         u +          u ·1 W        ≤−T
+                                                                           j      ℓ̸=j ℓ        ℓ
+                                                                  (m)          (m,j)	               
+                                                          pu ·1 W         ≤−T                 
+                                               =E            j        j                        W(m,j) ,                 (B.1)
+                                                           P            (m)           (m,j)	 
+                                                     u +         u ·1 W         ≤−T
+                                                      j      ℓ̸=j  ℓ       ℓ
+                  wherestep(a)usesthepropertyofknockoffsthatconditionalonthemagnitudes(|W |,|W |,...,|W |),
+                                                                                                                 1      2          p
+                  the signs of the null Wj’s are i.i.d. coin flips (c.f. Cand`es et al. (2018, Lemma 3.3)).                 By
+                  Lemma B.1,
+                                            (m)          (m,j)	                                 (m)          (m,j)	            
+                                    pu ·1 W         ≤−T                                    pu ·1 W         ≤−T              
+                  (B.1) = E            j        j                       W(m,j) = E            j        j                     W(m,j) .
+                                     P            (m)           (m,ℓ)	                 P              (m)          (m,ℓ)	 
+                               u +         u ·1 W         ≤−T                                    u ·1 W        ≤−T
+                                j       ℓ̸=j ℓ       ℓ                                      ℓ∈[p] ℓ        ℓ
+                  Summing over j ∈ H , we have
+                                          0
+                  X                   hP        u ·1{W(m) ≤−T(m,j)}i                  hP        u ·1{W(m) ≤−T(m,j)}i
+                           (m)               j∈H0 j         j                               j∈H0 j         j
+                       E e       =p·E P                                         ≤p·E P                                         =p.
+                           j                       u ·1{W ≤−T(m,j)}                                u ·1{W ≤−T(m,j)}
+                  j∈H                          ℓ∈[p] ℓ       ℓ                                ℓ∈H0 ℓ         ℓ
+                      0
+                  24      Zhimei Ren and Rina Foygel Barber
+                  Wethen average over m ∈ [M] and obtain that
+                                                             h     M        i        M
+                                      X avg           X 1 X (m)                  1 X X  (m)
+                                           E[e    ] =      E           e      =               E e       ≤p.
+                                              j                M        j        M                 j
+                                     j∈H0             j∈H0        m=1               m=1j∈H0
+                   Adaptive version      For any m ∈ [M] and the e-value defined in (A.8),
+                                                                                                                 
+                                                               (m) 	                                   (m) 	     
+                      X                 X 1j∈P (T )                                  j ∈ H ,j ∈ P (T         ) 
+                               (m)                          m                                 0       m             
+                          E ej      =p·        E                 (m)      ≤p·E                                (m) 	    ≤p,
+                                                    1+|N (T         )|             1+ j ∈H ,j ∈N (T              ) 
+                     j∈H                  j∈H               m                                    0        m
+                         0                    0
+                  where the last inequality follows from Theorem 1 of Ren and Cand`es (2020). We then have
+                  P           avg
+                          E[e    ] ≤ p by linearity of expected value.
+                     j∈H0     j
+                  C.   Additional simulations
+                  In this section, we collect results from additional simulations to evaluate our proposed method
+                  under a variety of scenarios.
+                  C.1.    Theeffect of c and αkn
+                  Under the two simulation settings in Section 4, we additionally investigate the joint effect of c
+                  and αkn on the performance of derandomized knockoffs. Here, we consider αebh = 0.1 and 0.2;
+                  for the former choice, we let αkn range in {0.01,0.02,...,0.2} and in {0.02,0.04,...,0.4} for the
+                  latter. In both cases, c ∈ {0.1,0.2,...,2}. Figure C.1 and C.2 are heatmaps of the proposed
+                  procedure’s power resulting from different choices of (c,α ) with α                 =0.1 and α         =0.2,
+                                                                                      kn          ebh                ebh
+                  respectively. Figure C.3 further plots the power and FDR as functions of α                when α       =0.2.
+                                                                                                         kn          ebh
+                  In all cases, we observe that derandomized knockoffs consistently performs well with the choice
+                  c = 1 and α      =α /2,justifying our intuition that α             =α /2isagooddefault choice.
+                                kn     ebh                                        kn     ebh
+                      Gaussian
+                      Logistic
+                  Fig. C.1. Heatmaps of the power of derandomized knockoffs with different choices of (c,α           ). The left,
+                                                                                                                  kn
+                  middle and right columns correspond to low, medium and high signal amplitude, respectively. A darker
+                  color represents a higher value. In these experiments, we set αebh = 0.1, and we observe that power is
+                  consistently high around α     =0.05, justifying our intuition that α   =α /2isagooddefaultsetting.
+                                              kn                                       kn     ebh
+                                                                                      Derandomized knockoffs      25
+                    Gaussian
+                    Logistic
+                Fig. C.2. Heatmaps of the power of derandomized knockoffs with different choices of (c,α ). The
+                                                                                                            kn
+                target FDR level α    =0.2, and the power is consistently high around α   =0.1. The other details are
+                                  ebh                                                  kn
+                the same as in Figure C.1.
+                C.2.   Ahigh-dimensional setting
+                Consider n = 800 samples and p = 1000 features, with |H | = 100. The marginal distribution
+                                                                              0
+                of the features P    =N(0,Σ) where Σ = 0.5|j−k| for all j,k ∈ [p]. The model of Y |X is the
+                                  X                      jk
+                same Gaussian linear model as in Section 4; the coefÏcient vector β is given by
+                                              ¯               ¯                 ¯               ¯
+                                               β               β                 β              β
+                                                1               2                 99              100
+                               β = 0,...,0, √ ,0,...,0,−√ ,...,0,...,0, √ ,0,...,0,− √ ),
+                                     | {z }     n | {z }        n      | {z }      n | {z }        n
+                                         9             9                   9             9
+                                   ¯
+                where as before β is sampled from N(A,I           ) and fixed throughout the trials. The signal
+                                                               100
+                amplitude A ranges in {4,5,6,7,8,9}, and the implementation of original and derandomized
+                knockoffs is the same as that in Section 4. Figure C.4 and C.5 present the results under
+                the high-dimensional setting, where we see a similar pattern: derandomized knockoffs exhibits
+                comparable (or even slightly higher) power when the signal strength is moderately strong, while
+                there is some power loss in the weak-signal regime. Derandomized knockoffs achieves lower
+                FDR, and decreased variability (especially for the conditional variability). When we compare
+                the marginal and conditional selection probability of individual hypotheses by both methods,
+                we can also observe that the original knockoffs tends to have a higher selection probability for
+                the null features that are rarely selected by the original knockoffs.
+                                                                         `
+                C.3.   Comparison under simulation settings in Candes et al. (2018)
+                Wenowcompareourproposedmethodwiththeoriginalknockoffsmethodundertwosimulation
+                settings considered in Cand`es et al. (2018). In both settings, there are n = 3000 samples. For
+                the low-dimensional setting, there are p = 1000 features and in the high-dimensional setting,
+                p = 6000. The marginal distribution of the features is P     =N(0,I )andthemodelY |X isthe
+                                                                           X          p
+                same Gaussian linear model as in Section 4, where the coefÏcient vector β contains 60 nonzero
+                entries whose location and signs are randomly determined and fixed throughout the trials. The
+                                                                  A
+                nonzero entries all have the same magnitude √ , where A ∈ {2,3,4,5} in the low-dimensional
+                                                                  n
+                setting and A ∈ {3,4,5,6} in the high-dimensional one. The implementation of original and
+                26    Zhimei Ren and Rina Foygel Barber
+                     Gaussian
+                    Logistic
+                Fig.C.3. Realizedpower(left)andFDR(right)ofderandomizedknockoffsasafunctionoftheparameter
+                α forthesimulation data experiments. The target FDR level α   =0.2. The details are otherwise the
+                 kn                                                        ebh
+                sameasinFigure1.
+                   High-dimensional
+                Fig. C.4. Power, FDR, and selection variability, for the high-dimensional simulated data experiment.
+                Theother details are the same as in Figure 2.
+                derandomized knockoffs is the same as in Section 4, and that of original knockoffs also coincides
+                with Cand`es et al. (2018), except that Cand`es et al. (2018) use a selection threshold slightly
+                different from (5) and is designed for controlling a relaxed version of FDR.
+                   Figure C.6 shows the power and FDR of the two methods under the two settings. We
+                again see that derandomized knockoffs exhibits comparable power as original knockoffs when
+                the signals are reasonably strong, and there is some power loss in the weak-signal regime. The
+                realized FDR of derandomized knockoffs is consistently lower than that of original knockoffs.
+                C.4.  Comparison with the derandomization scheme of Ren et al. (2021)
+                As discussed earlier, Ren et al. (2021) propose a scheme for derandomizing the knockoffs by
+                thresholding the (unweighted) selection frequency. The algorithm proposed there is designed
+                for the purpose of per family-wise error (PFER) control; it is nevertheless of interest to compare
+                the two methods empirically. Hereafter, we refer to the method of Ren et al. (2021) as the PFER
+                version, and the method proposed in this paper the FDR version. We compare the two methods
+                under the Gaussian linear model defined in Section 4. For both methods, we generate M = 50
+                knockoff copies given the dataset (X,Y). In the m-th run of the PFER version, we generate a
+                              e(m)                                                       (m)          e(m)
+                knockoff copy X     andcomputethethefeatureimportancestatistics W           =W([X,X ],Y)
+                                                                                           Derandomized knockoffs        27
+                 Fig. C.5. Top: the marginal selection probability pb by original knockoffs versus that by derandomized
+                                                                      j
+                 knockoffs. Bottom: the conditional selection probability pb    by original knockoffs versus that by deran-
+                                                                            j,1
+                 domized knockoffs. The results are from simulations under the high-dimensional setting. The details
+                 are otherwise the same as in Figure 3.
+                 as in the FDR version. We then apply the filter of Janson and Su (2016) (designed for the PFER
+                 control) to W(m) with a sequence of parameters v ∈ V := {1,2,3,4}. Here, the parameter v
+                 suggests the target PFER level the filter controls (i.e. E[|S(m) ∩ H0|] ≤ v), and with each
+                                                                                   (v)      P
+                                                   (v,m)                                  1    M              (v,m)
+                                                  b                                                         b
+                 v, we obtain a selected set S          .  Next, we compute Πj        = M      m=11{j ∈ S         } for all
+                 v ∈ V and j ∈ [p]. Finally, the set of discoveries corresponding to a parameter v is given by
+                   (v)          (v)                                                      (v)
+                  b                                                                     b
+                 S     ={j : Π     ≥0.5}. Foreachv,theaggregatedselectedsetS                hasPFERcontrolledatlevel
+                                j
+                 2v, but is not guaranteed to control the FDR; in order to compare it with our proposed method,
+                 we compute the realized power and the realized FDR of these selected sets, plotting the power
+                 as a function of the FDR (i.e., the ROC curve) in Figure C.7. We implement the derandomized
+                 knockoffs in the same way as in Section 4, where we take α                = 0.1 and α       = 0.05. The
+                                                                                       ebh                kn
+                 realized power and FDR of the derandomized knockoffs is marked as a rectangle in Figure C.7.
+                 Wecan see from the figures that at the same level of realized FDR, the FDR version (i.e., the
+                 derandomized procedure proposed in our present work) achieves comparable power with the
+                 previous version of Ren et al. (2021).
+                 C.5.    Robustness to the estimation error of P
+                                                                     X
+                 We empirically evaluate the robustness of the derandomized knockoffs procedure. In this ex-
+                                                                                                                       |i−j|
+                 periment, n = 600 and p = 100; the covariate distribution P            =N(0,Σ), where Σ =0.5              .
+                                                                                     X                        ij
+                 Y |X follows a Gaussian linear model, with the coefÏcient vector being
+                                                                A        A
+                                                         β =(√ ,0,−√ ,0,...),
+                                                                 n        n
+                 and A ∈ {4.5,5,5.5,6,6.5}. The implementation of derandomized knockoffs is the same as in
+                 Section 4, except that now we assume no knowledge of covariance matrix Σ; instead, to estimate
+                 Σ, we are given an additional n0 many unlabeled samples (i.e., we observe X but do not observe
+                                                                    b           b
+                 Y). We construct knockoffs with Q         =N(0,Σ), where Σ is the sample covariance matrix com-
+                                                         X
+                 puted with the n0 unlabeled samples; we then apply the original knockoffs and derandomized
+                 28     Zhimei Ren and Rina Foygel Barber
+                      w-dimensional
+                      Lo
+                      High-dimensional
+                 Fig. C.6. Power and FDR under the low-dimensional simulation setting (top) and the high-dimensional
+                                                                  `
+                 simulation setting (bottom) considered in Candes et al. (2018). Shading indicates error bars, and the
+                 results are averaged over 100 independent trials.
+                 Fig. C.7. The dashed line represents the realized power of the PFER version as a function of the
+                 realized FDR; the rectangle represents the realized power and FDR resulting from the FDR version
+                 (with the target FDR level α    =0.1).
+                                             ebh
+                 knockoffs, where the derandomized version is implemented according to Algorithm 1 with the
+                 same parameters used in Section 4. Figure C.8 describes the realized power and FDR achieved
+                 by the original knockoffs and the proposed method under the Gaussian linear model setting.
+                 In particular, the covariance matrix is estimated with n0 ∈ {600,700,800,900,1000}. Here, we
+                 observe the FDR to be controlled at the desired level for both methods, with lower FDR for
+                 derandomized knockoffs as before. Derandomized knockoffs shows power that is comparable
+                 to the original method across most settings, although the power is lower in one setting (the
+                 smallest value of n0, where the estimated distribution of X is most unreliable).
+                 C.6.   Amultiple-environment setting
+                 Weevaluate the performance of the algorithm proposed in Section A.3 in a multi-environment
+                 simulation setting. Suppose p = 100, and there are two environments. In environment e ∈ [2],
+                 we assume Xe ∼ N(0,Σ), where Σ             =0.5|j−k| for all j,k ∈ [p]; the response follows from a
+                                                         jk
+                                                           e          e ⊤ (e)               (e)
+                 environment-specific linear model: Y       ∼N((X ) β ,Σ), where β             is the coefÏcient vector.
+                                                                              Derandomized knockoffs     29
+               Fig. C.8. Power (top) and FDR (bottom), for the Gaussian linear simulation data experiments with
+               estimated P . Each panel corresponds to a size of unlabeled data for estimating P .
+                          X                                                              X
+               Weconstruct the coefÏcient vectors as:
+                             (1)    A   A       A               (2)    A  A       A
+                            β   =(√ ,√ ,..., √ ,0,...,0),     β    =(√ ,√ ,..., √ ,0,...,0),
+                                     n   n       n                     n   n       n
+                                    |     {z     }                    |     {z     }
+                                          50                                60
+               and the signal amplitude A ranges in {3,3.5,4,4.5,5,5.5}. Here, {1,2,...,50} is the set of
+               nonnulls, and the FDR target is 0.1. We implement MEKF with the code from https://
+               github.com/lsn235711/MEKF_code, where the empirical prior is used when constructing the
+               multi-environment feature importance statistics. The derandomized MEKF is implemented
+               with the same details, and we take αebh = 0.1 and αkn = 0.05. Figure C.9 shows the power
+               and FDR resulting from MEKF and the derandomized MEKF in this simulated setting—the
+               derandomized version shows higher power and lower FDR.
+               Fig. C.9. Power and FDR, for the multi-environment simulated setting. The other details are the same
+               as in Figure 2.
+               30    Zhimei Ren and Rina Foygel Barber
+               C.7.  Side information
+               We set up an experiment to illustrate how side information can help improve the power of
+               derandomized knockoffs. The simulation setting is the same as the Gaussian linear model in
+               Section C.5 with a few changes. Here, we assume known Σ, and A ∈ {3,3.5,4,4.5,5,5.5}; the
+               nonnulls are placed on {1,2,...,50} while the remaining features {51,...,100} are null (the
+               index hence carries information, with lower values of j corresponding to signals). We apply
+               the weighted version of derandomized knockoffs with side information, using u = exp(−j).
+                                                                                              j
+               The other implementation details are exactly the same as in Section 4. Figure C.10 plots the
+               power and FDR from the original knockoffs, derandomized knockoffs, and the weighted version
+               of derandomized knockoffs with side information. Clearly, the weighted version achieves a
+               significantly higher power by incorporating side information, while still controlling FDR.
+               Fig. C.10. Power and FDR, for the simulated experiments with side information. The other details are
+               the same as in Figure 2.
+               D.   Additional results from the analysis of the HIV dataset
+               For the HIV dataset, over 50 independent runs of both methods, the average number of dis-
+               coveries made by the derandomized knockoffs procedure is 63.5, and the average number of
+               discoveries made by the original knockoffs is 77.0. As we have observed in the simulations,
+               the derandomized knockoffs procedure often shows a lower FDR while achieving comparable
+               power with the original knockoffs—in other words, the original knockoffs would often make
+               more (false) discoveries to achieve the same detecting power as the derandomized knockoffs.
+               To examine whether this may be the case in our real data example as well, we compare the dis-
+               coveries made by both methods with the reference found at https://hivdb.stanford.edu/
+               dr-summary/comments/PI/. To be specific, for each method we take the set of mutations
+               selected for more than half of the times; this results in a set of 63 discoveries for the derandom-
+               ized knockoffs, and a set of 74 discoveries for the original version (which includes all 63 of the
+               discoveries made by derandomized knockoffs).
+                  Table D.1 contains a complete list of the 63 mutations selected in at least 50% of the runs
+               of the derandomized knockoffs procedure, and Table D.2 shows the list of the 74 mutations
+               selected in at least 50% of the runs of the original knockoffs procedure. In each table, the column
+               “Annotation” contains the comments on the corresponding mutations from the reference, where
+               “Major”, “Accessory” and “Other” refer to major effect, accessory effect and other effect on
+               the drug resistance to PI (i.e., the discovery is confirmed); “NA” means no comments are found
+               from the reference. We say a mutation is “verified” by the reference if the annotation is not
+               “NA”. For derandomized knockoffs, Out of the 63 discoveries, 38 mutations are verified. For
+               original knockoffs, out of the 74 discoveries, 39 are verified. We thus see approximately the
+               samenumberofverifiedmutationsmadebythetwomethods,eventhoughtheoriginalknockoffs
+                                                                              Derandomized knockoffs     31
+                                    Table D.1.    The complete list of mutations discov-
+                                    ered by derandomized knockoffs at FDR level 0.1. The
+                                    annotation is the reported effect from https://hivdb.
+                                    stanford.edu/dr-summary/comments/PI/.
+                                     Mutation   Annotation     Mutation   Annotation
+                                       6W          NA            54M        Major
+                                       10F      Accessory         54S       Major
+                                        10I       Other           54T       Major
+                                       10L         NA            54V        Major
+                                       10V        Other           58E      Accessory
+                                       12P         NA            61D         NA
+                                       14R         NA            62V         NA
+                                       16A         NA             63P        NA
+                                        20I       Other           64L        NA
+                                       20R        Other          69K         NA
+                                       20T      Accessory        71A         NA
+                                       20V        Other           71T       Other
+                                       22V         NA            71V        Other
+                                        24I     Accessory         72L        NA
+                                        32I       Major           73T      Accessory
+                                       33F      Accessory        76V        Major
+                                       33L         NA             77I        NA
+                                       34Q         NA            82A        Major
+                                        36I        NA             82F       Major
+                                       36L         NA             82S       Major
+                                       36M         NA             82T       Major
+                                       37Q         NA            84A        Major
+                                       43T      Accessory        84V        Major
+                                        46I       Major          88D       Accessory
+                                       46L        Major           89I        NA
+                                       47V        Major          89V       Accessory
+                                       48M        Major          90M        Major
+                                       48V        Major          92K         NA
+                                       50L        Major          92Q         NA
+                                       50V        Major           93I        NA
+                                       53L      Accessory         95F        NA
+                                       54L      Accessory
+               method makes substantially more discoveries overall—this can be viewed as evidence that the
+               derandomizedknockoffsproceduremaintainscomparabledetectionpowerwhiledecreasingFDR
+               and decreasing variability.
+                32     Zhimei Ren and Rina Foygel Barber
+                                      Table D.2.   The complete list of mutations selected for
+                                      more than 50% times (out of 50 independent runs) by
+                                      the original knockoffs procedure at FDR level 0.1. The
+                                      annotation is the reported effect from https://hivdb.
+                                      stanford.edu/dr-summary/comments/PI/.
+                                       Mutation   Annotation       Mutation   Annotation
+                                          6W          NA             54T         Major
+                                          10F      Accessory         54V         Major
+                                          10I        Other           58E       Accessory
+                                          10L         NA             61D          NA
+                                         10V         Other           61E          NA
+                                         12P          NA             62V          NA
+                                         14R          NA             63P          NA
+                                         16A          NA             64L          NA
+                                          20I        Other           67C          NA
+                                         20K          NA             67E          NA
+                                         20R         Other           67Y          NA
+                                         20T       Accessory         69K          NA
+                                         20V         Other           71A          NA
+                                         22V          NA              71I        Other
+                                          24I      Accessory         71T         Other
+                                          32I        Major           71V         Other
+                                          33F      Accessory         72L          NA
+                                          33L         NA             72M          NA
+                                         34Q          NA             73T       Accessory
+                                         35D          NA             76V         Major
+                                          36I         NA              77I         NA
+                                          36L         NA             82A         Major
+                                         36M          NA             82F         Major
+                                         37Q          NA             82S         Major
+                                         39Q          NA             82T         Major
+                                         43T       Accessory         84A         Major
+                                          46I        Major           84V         Major
+                                          46L        Major           88D       Accessory
+                                         47V         Major            89I         NA
+                                         48M         Major           89V       Accessory
+                                         48V         Major           90M         Major
+                                          50L        Major           91S          NA
+                                         50V         Major           92K          NA
+                                          53L      Accessory         92Q          NA
+                                          54L        Major            93I         NA
+                                         54M         Major           93L          NA
+                                          54S        Major           95F          NA
+                                                                              Derandomized knockoffs     33
+               References
+               Barber, R. F. and Cand`es, E. J. (2015) Controlling the false discovery rate via knockoffs. The
+                 Annals of Statistics, 43, 2055–2085.
+               Barber, R. F., Cand`es, E. J. and Samworth, R. J. (2020) Robust inference with knockoffs. The
+                 Annals of Statistics, 48, 1409–1431.
+               Bates, S., Cand`es, E., Janson, L. and Wang, W. (2021) Metropolized knockoff sampling. Journal
+                 of the American Statistical Association, 116, 1413–1427.
+               Benjamini, Y. and Hochberg, Y. (1995) Controlling the false discovery rate: a practical and
+                 powerful approach to multiple testing. Journal of the Royal Statistical Society: Series B
+                 (Methodological), 57, 289–300.
+               Cand`es, E., Fan, Y., Janson, L. and Lv, J. (2018) Panning for gold: ‘model-x’ knockoffs for
+                 high dimensional controlled variable selection. Journal of the Royal Statistical Society: Series
+                 B (Statistical Methodology), 80, 551–577.
+               Dai, C., Lin, B., Xing, X. and Liu, J. S. (2022) False discovery rate control via data splitting.
+                 Journal of the American Statistical Association, 1–18.
+               —(2023) A scale-free approach for false discovery rate control in generalized linear models.
+                 Journal of the American Statistical Association, 1–31.
+               Dai, R. and Barber, R. (2016) The knockoff filter for fdr control in group-sparse and multitask
+                 regression. In International conference on machine learning, 1851–1859. PMLR.
+               Emery, K. and Keich, U. (2019) Controlling the fdr in variable selection via multiple knockoffs.
+                 arXiv preprint arXiv:1911.09442.
+               Gimenez, J. R. and Zou, J. (2019) Improving the stability of the knockoff procedure: Multiple
+                 simultaneous knockoffs and entropy maximization. In The 22nd International Conference on
+                 Artificial Intelligence and Statistics, 2184–2192. PMLR.
+               Janson, L. and Su, W. (2016) Familywise error rate control via knockoffs. Electronic Journal
+                 of Statistics, 10, 960–975.
+               Koyuncu, D. and Yener, B. (2022) Missing value knockoffs. arXiv preprint arXiv:2202.13054.
+               Li, S., Sesia, M., Romano, Y., Cand`es, E. and Sabatti, C. (2021) Searching for robust associa-
+                 tions with a multi-environment knockoff filter. Biometrika.
+               Liu, H., Roeder, K. and Wasserman, L. (2010) Stability approach to regularization selection
+                 (stars) for high dimensional graphical models. Advances in neural information processing
+                 systems, 23.
+               Luo, Y., Fithian, W. and Lei, L. (2022) Improving knockoffs with conditional calibration. arXiv
+                 preprint arXiv:2208.09542.
+               Meinshausen, N. and Buhlmann,¨   P. (2010) Stability selection. Journal of the Royal Statistical
+                 Society: Series B (Statistical Methodology), 72, 417–473.
+               Nguyen, T.-B., Chevalier, J.-A., Thirion, B. and Arlot, S. (2020) Aggregation of multiple
+                 knockoffs. In International Conference on Machine Learning, 7283–7293. PMLR.
+               Patterson, E. and Sesia, M. (2018) knockoff: The knockoff filter for controlled variable selection.
+                 Rpackage version 0.3, 2.
+               34    Zhimei Ren and Rina Foygel Barber
+               Ren, Z. and Cand`es, E. (2020) Knockoffs with side information.             arXiv preprint
+                 arXiv:2001.07835.
+               Ren, Z., Wei, Y. and Cand`es, E. (2021) Derandomizing knockoffs. Journal of the American
+                 Statistical Association, 1–11.
+               Rhee, S.-Y., Taylor, J., Wadhera, G., Ben-Hur, A., Brutlag, D. L. and Shafer, R. W. (2006)
+                 Genotypic predictors of human immunodeficiency virus type 1 drug resistance. Proceedings
+                 of the National Academy of Sciences, 103, 17355–17360.
+               Romano, Y., Sesia, M. and Cand`es, E. (2020) Deep knockoffs. Journal of the American Statis-
+                 tical Association, 115, 1861–1872.
+               Sesia, M., Sabatti, C. and Cand`es, E. J. (2019) Gene hunting with hidden markov model
+                 knockoffs. Biometrika, 106, 1–18.
+               Shah, R. D. and Samworth, R. J. (2013) Variable selection with error control: another look at
+                 stability selection. Journal of the Royal Statistical Society: Series B (Statistical Methodology),
+                 75, 55–80.
+               Spector, A. and Janson, L. (2022) Powerful knockoffs via minimizing reconstructability. The
+                 Annals of Statistics, 50, 252–276.
+               Vovk, V. (2020) A note on data splitting with e-values: online appendix to my comment on
+                 glenn shafer’s” testing by betting”. arXiv preprint arXiv:2008.11474.
+               Vovk, V. and Wang, R. (2021) E-values: Calibration, combination and applications. The Annals
+                 of Statistics, 49, 1736–1754.
+               Wang,R.andRamdas,A.(2022)Falsediscoveryratecontrolwithe-values. Journal of the Royal
+                 Statistical Society: Series B (Statistical Methodology). URL: https://rss.onlinelibrary.
+                 wiley.com/doi/abs/10.1111/rssb.12489.
+               Wasserman, L., Ramdas, A. and Balakrishnan, S. (2020) Universal inference. Proceedings of
+                 the National Academy of Sciences, 117, 16880–16890.
+               List of figure legends
+                  • Figure 1: Realized power (left) and FDR (right) of derandomized knockoffs as a function
+                    of the parameter α   for the simulation data experiments. The offset parameter c = 1.
+                                       kn
+                    Shading for the power and FDR plots indicates error bars. The target FDR level αebh =
+                    0.1. Results are averaged over 100 independent trials.
+                  • Figure 2: Power, FDR, and selection variability, for the simulated data experiments.
+                    Shading for the power and FDR plots indicates error bars. Results are averaged over 100
+                    independent trials.
+                  • Figure 3: Top: the marginal selection probability pb by original knockoffs versus that
+                                                                        j
+                    by derandomized knockoffs. Bottom: the conditional selection probability pb   by origi-
+                                                                                               j,1
+                    nal knockoffs versus that by derandomized knockoffs. The results are from simulations
+                    under the Gaussian linear model. Each point corresponds to a feature, where the blue
+                    ones are non-nulls and the red ones are nulls. For the given dataset, many null features
+                    never selected by derandomized knockoffs have large selection probability by the original
+                    knockoffs.
+                                                                                Derandomized knockoffs    35
+                  • Figure 4: The results are from simulations under the logistic model. The other details are
+                     the same as in Figure 4.
+                  • Figure 5: Results for the HIV data experiment. Left: boxplot of the number of discoveries
+                     for original and derandomized knockoffs, over 50 independent trials. Right: histogram of
+                     the selection probability for each feature j ∈ [p], over 50 independent trials, for original
+                     and derandomized knockoffs.
+                  • Figure C.1: Heatmaps of the power of derandomized knockoffs with different choices of
+                     (c,α ). The left, middle and right columns correspond to low, medium and high signal
+                         kn
+                     amplitude, respectively. A darker color represents a higher value. In these experiments,
+                     we set αebh = 0.1, and we observe that power is consistently high around αkn = 0.05,
+                     justifying our intuition that αkn = αebh/2 is a good default setting.
+                  • Figure C.2: Heatmaps of the power of derandomized knockoffs with different choices of
+                     (c,α ). The target FDR level α       = 0.2, and the power is consistently high around
+                         kn                            ebh
+                     αkn = 0.1. The other details are the same as in Figure C.1.
+                  • Figure C.3: Realized power (left) and FDR (right) of derandomized knockoffs as a function
+                     of the parameter αkn for the simulation data experiments. The target FDR level αebh =
+                     0.2. The details are otherwise the same as in Figure 1.
+                  • Figure C.4: Power, FDR, and selection variability, for the high-dimensional simulated
+                     data experiment. The other details are the same as in Figure 2.
+                  • Figure C.5: Top: the marginal selection probability pb by original knockoffs versus that
+                                                                          j
+                     by derandomized knockoffs. Bottom: the conditional selection probability pb  by original
+                                                                                               j,1
+                     knockoffs versus that by derandomized knockoffs. The results are from simulations under
+                     the high-dimensional setting. The details are otherwise the same as in Figure 3.
+                  • Figure C.6: Power and FDR under the low-dimensional simulation setting (top) and the
+                     high-dimensional simulation setting (bottom) considered in Cand`es et al. (2018). Shading
+                     indicates error bars, and the results are averaged over 100 independent trials.
+                  • Figure C.7: The dashed line represents the realized power of the PFER version as a func-
+                     tion of the realized FDR; the rectangle represents the realized power and FDR resulting
+                     from the FDR version (with the target FDR level α     =0.1).
+                                                                        ebh
+                  • Figure C.8: Power (top) and FDR (bottom), for the Gaussian linear simulation data
+                     experiments with estimated P . Each panel corresponds to a size of unlabeled data for
+                                                  X
+                     estimating P .
+                                 X
+                  • Figure C.9: Power and FDR, for the multi-environment simulated setting. The other
+                     details are the same as in Figure 2.
+                  • Figure C.10: Power and FDR, for the simulated experiments with side information. The
+                     other details are the same as in Figure 2.

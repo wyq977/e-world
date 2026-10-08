@@ -1,0 +1,1441 @@
+                                               Online multiple testing with e-values
+                                                          Ziyu Xu∗              Aaditya Ramdas†
+                                                                   November 14, 2023
+                                                                           Abstract
+                                 Ascientist tests a continuous stream of hypotheses over time in the course of her investigation
+                             —shedoes not test a predetermined, fixed number of hypotheses. The scientist wishes to make
+                             as many discoveries as possible while ensuring the number of false discoveries is controlled — a
+                             well recognized way for accomplishing this is to control the false discovery rate (FDR). Prior
+                             methods for FDR control in the online setting have focused on formulating algorithms when
+                             specific dependency structures are assumed to exist between the test statistics of each hypothesis.
+                             However, in practice, these dependencies often cannot be known beforehand or tested after the fact.
+                             Our algorithm, e-LOND, provides FDR control under arbitrary, possibly unknown, dependence.
+                             We show that our method is more powerful than existing approaches to this problem through
+                             simulations. We also formulate extensions of this algorithm to utilize randomization for increased
+                             power, and for constructing confidence intervals in online selective inference.
+                       Contents
+                       1 Introduction                                                                                                   2
+                       2 Doubly sequential inference                                                                                    5
+                       3 e-LOND: FDR control via e-values                                                                               6
+                           3.1   Prior work: the LOND and r-LOND algorithms . . . . . . . . . . . . . . . . . . . . . .                 7
+                           3.2   The e-LOND algorithm . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .             7
+                           3.3   More power through randomization . . . . . . . . . . . . . . . . . . . . . . . . . . . . .             8
+                       4 Online FCR control with e-CIs                                                                                  9
+                       5 Numerical simulations                                                                                        10
+         arXiv:2311.06412v1  [stat.ME]  10 Nov 20235.1Local dependence . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .11
+                           5.2   Sampling WoR . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .         12
+                       6 Application: online model-free selective inference under covariate shift                                     12
+                           6.1   FDRcontrol through online multiple testing . . . . . . . . . . . . . . . . . . . . . . . .           13
+                           6.2   Drug property prediction       . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   14
+                       7 Related work                                                                                                 15
+                           ∗Department of Statistics and Data Science, Carnegie Mellon University, USA. Email: xzy@cmu.edu.
+                           †Departments of Statistics and Data Science, and Machine Learning, Carnegie Mellon University, USA. Email:
+                       aramdas@cmu.edu.
+                                                                               1
+                      8 Omitted proofs                                                                                           16
+                          8.1   Proof of Theorem 1 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   16
+                          8.2   Proof of Theorem 3 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   17
+                          8.3   Proof of Theorem 4 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   17
+                          8.4   Proof of Proposition 1 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   18
+                          8.5   Proof of Proposition 2 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   18
+                          8.6   Proof of Theorem 5 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   20
+                      9 Conclusion                                                                                               20
+                      A Comments on the online multiple testing problem                                                          24
+                          A.1 Additional remarks on online FDR control . . . . . . . . . . . . . . . . . . . . . . . . .         24
+                          A.2 Relating online multiple testing and adaptive data analysis         . . . . . . . . . . . . . . .  24
+                      B Simulation details                                                                                       24
+                          B.1 Definition of LORD∗ . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      25
+                          B.2 Local dependence simulation details . . . . . . . . . . . . . . . . . . . . . . . . . . . .        25
+                          B.3 Sampling WoR simulation details . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .        25
+                      C FDRcontrol of e-LOND is sharp                                                                            26
+                      1     Introduction
+                      Science advances one hypothesis at a time. Moreover, the rate at which new hypotheses are tested has
+                      drastically increased in recent decades to the point where a single scientist can quickly test hundreds
+                      to thousands of hypotheses with the aid of computation. For example, a geneticist can now sequence
+                      thousands of genes from trial subjects and individually determine whether each of these genes has an
+                      effect on phenotypes of interest (e.g., disease, physical characteristics, etc.). A team of data scientists
+                      can test many variations of a website or app in A/B experiments to determine which version maximizes
+                      desirable user metrics. The key feature of all these examples is that hypotheses are being formulated
+                      andtested in an online fashion — the total number of hypotheses that are tested is unknown beforehand
+                      and possibly infinite. Thus, we can formulate the online multiple testing problem, as receiving a stream
+                      of hypotheses, H ,H ,... — typically, these are the null hypotheses we wish to reject (e.g., this gene
+                                        1    2
+                      has no effect on this disease, there is no association between socioeconomic status and future earning
+                      potential, this recommendation algorithm does not increase average user view count, etc.). A subset,
+                      H0 ⊆N, of these null hypotheses are truly null, where N denotes the natural numbers. We wish to
+                                                                                                                    :
+                      discover all the hypotheses that are not null, i.e., discover the non-null hypotheses H        =N\H . For
+                                                                                                                  1          0
+                      each hypothesis, we observe some data and must immediately decide whether it is a discovery or not
+                      before observing future hypotheses. Thus, we denote the set of discoveries so far as R ⊆ R ⊆ ··· ⊆ N.
+                                                                                                                 1     2
+                      The false discovery proportion (FDP) refers to the proportion of discoveries in a discovery set R that
+                      are truly null. We want to control the false discovery rate (FDR), which is the expectation of the FDP.
+                      Define these as follows.
+                                                           :   |R∩H0|                    :
+                                                 FDP(R) = |R|∨1 ,              FDR(R) =E[FDP(R)].
+                      (X )    denotes a sequence of objects indexed by a set I — we drop the index set and write (X ) it
+                         t t∈I                                                                                                  t
+                      is clear from context (often N). Our goal is to produce discovery sets (R ) that satisfy the following
+                                                                                                      t
+                      guarantee:
+                                                              FDR(Rt)≤αfor all t ∈ N,                                            (1)
+                                                                            2
+         while maximizing the number of discoveries. FDR is reasonable metric to control in applications where
+         one wishes to filter candidates that are promising before doing more extensive follow-up studies, e.g.,
+         clinical trials for drugs, genome-wide association studies for genetic factors, features for pushing to
+         production, etc. We elaborate on the motivations for considering the FDR error metric in Appendix A.1.
+         Robertson et al. (2023) comprehensively surveys the existing literature of online multiple testing. In
+         particular, multiple previous works have devoted significant effort to formulating different types of
+         dependency that can arise in natural situations and deriving algorithms that provide online FDR
+         control under these dependence structures (Zrnic et al., 2021, 2020; Fisher, 2022b,a). These works have
+         considered dependencies that are natural to the online setting (i.e., local dependence and dependence
+         between asynchronously initiated experiments) as well as the popular PRDS condition (Benjamini and
+         Yekutieli, 2001). However, under unknown or arbitrary dependence in the data, the assumptions for
+         these algorithms are violated and they do not provably control the FDR.
+           There are many circumstances where one wishes to be robust to arbitrary dependence — we list
+         some below:
+         • Data reuse. A natural way in which unknown dependency might arise is when one uses the same
+          dataset to evaluate a large number of hypotheses. Although reusing data for different hypothesis
+          tests is not generally a statistically valid practice, this practice inevitably occurs, as data collection
+          may be difÏcult or prohibitively expensive. For example, in many applied areas of machine learning,
+          the same dataset may be used to evaluate many different methods, e.g., Kaggle competitions (Bojer
+          and Meldgaard, 2021), the UCI data repository (Asuncion and Newman, 2007). Similarly, open data
+          repositories in science also are reused across many studies (1000 Genomes Project Consortium, 2015;
+          Wellcome Trust Case Control Consortium, 2007; Koscielny et al., 2014). Data reuse naturally comes
+          up in ofÒine policy evaluation in reinforcement learning, since often deploying a new policy has costs
+          (e.g., expenses incurred by new actions, loss of revenue if a policy underperforms, etc.), and one
+          would wish to backtest many policies on previously collected data. In all these cases, the statistics
+          calculated for each test are highly dependent, since they use the same data.
+         • Temporal overlap. This type of dependency is considered primarily in works involving local
+          dependencies (Zrnic et al., 2021), as it occurs when data collected for different hypotheses overlap
+          or are subject to temporal noise. For example, in A/B testing, users are incrementally added to
+          each experiment over time. However, since there is no partitioning of users across experiments,
+          experiments may overlap in users. This induces a dependence among the resulting test statistics.
+          Temporal events (e.g., holidays or weekends) can also induce time-dependent noise. We elaborate on
+          the “doubly sequential framework” relevant to this setting in Section 2.
+         • Inherent dependence. Dependence between statistics might simply arise because of the data
+          generating process. One common type is dependence that arises from sampling without replacement
+          (WoR) from a finite population. Sampling WoR naturally arises when we wish to test the average
+          treatment effect of a treatment on the finite population (Splawa-Neyman et al., 1990) — the statistics
+          calculated for different treatments allocated to different samples are dependent — we simulate
+          our methods in this setting in Section 5. Similarly, dependence also arises when doing coarser
+          cluster (rather than individual) based randomization (Campbell et al., 2007). Dependence can also
+          come from a data-dependent sampling mechanism, which we can observe in multi-armed bandits or
+          adaptive sampling settings.
+         In many experiments, one may not know ahead of time which combination of the aforementioned types
+         of dependencies may occur, nor the specific structure they may take. This is particularly relevant in
+         online multiple testing, since the nature of the hypotheses being tested and which types of data are
+         being used to conduct the tests are not known a priori. Hence, being simultaneously powerful and
+         robust to arbitrary dependence is a highly practical desiderata.
+           The primary of contribution of this paper is a new algorithm, e-LOND, that provably controls
+         FDR, i.e., satisfies (1), under unknown and arbitrary dependence, while being more powerful (i.e,
+                               3
+                   makes more discoveries) than previous state-of-the-art algorithms. Our method accomplishes this by
+                   utilizing e-values, a class of statistics that has garnered significant recent attention in hypothesis testing.
+                   E-values are central in sequential testing (Ramdas et al., 2020, 2021) as every admissible sequential
+                   test utilizes an e-value. We characterize a “doubly sequential framework” of scientific experimentation
+                   that combines sequential tests with online multiple testing in Section 2, and illustrate how retaining
+                   validity under arbitrary dependence is particularly useful in this framework. A notable example of
+                   an e-value is the universal inference statistic (Wasserman et al., 2020), which allows for testing of
+                   composite nulls without regularity conditions. This, in turn, enables the construction of tests for novel
+                   problems where no prior valid test exists — an example of this is testing whether a distribution is
+                   log-concave (Dunn et al., 2022; Gangrade et al., 2023). The kinds of hypotheses for which e-values are
+                   applicable is quite comprehensive. We refer the reader to Ramdas et al. (2023) for thorough collection
+                   of examples for which e-values are applicable.
+                   P-values vs. e-values.  Since the formulation of online multiple testing by Foster and Stine (2008),
+                   solutions have only assumed a p-value, P , is associated with hypothesis H and satisfies the following,
+                                                        t                             t
+                                               P(P ≤s)≤sfor all s ∈ [0,1] if t ∈ H                           (2)
+                                                   t                              ,
+                   for all t ∈ N. We consider the novel setting where, instead, an e-value, E , accompanies each hypothesis
+                                                                                    t
+                   H and satisfies the following property for all t ∈ N:
+                    t
+                                                        E[E ] ≤ 1 if t ∈ H .                                 (3)
+                                                            t           0
+                      An online multiple testing algorithm is a sequence of (possibly random) test levels (α ), where
+                                                                                                       t
+                   α ∈[0,1] for all t ∈ N, and the algorithm produces discovery set R at the tth step in the following
+                    t                                                            t
+                   fashion:
+                                           Rt =({i∈[t]:Pi ≤αi} if using p-values,     .
+                                                  {i ∈ [t] : E ≥ 1/α } if using e-values
+                                                            i      i
+                   The definition of Rt in the e-value case is equivalent to the p-value case if we assumed our p-values
+                   were formulated as Pt = 1/Et — one can see this is a bona fide p-value by applying Markov’s inequality
+                   to the e-value definition in (3). One can consider e-value algorithms as operating on a special type
+                   of p-values. We leverage the specific properties of e-values to derive more powerful algorithms that
+                   remain valid even under arbitrary dependence.
+                   Our contributions. We make the three following contributions in the main paper.
+                   1. Powerful online FDR control under arbitrary dependence with e-values. The current method for
+                     online FDR control under arbitrary dependence, the r-LOND algorithm (Javanmard and Montanari,
+                     2018; Zrnic et al., 2021), is unnecessarily conservative when applied to e-values. The r-LOND
+                     algorithm corrects each of its test levels by an additional factor that is logarithmic in the number
+                     of hypotheses tested so far, compared to its counterpart, the LOND algorithm, that ensures
+                     FDR control under a much more stringent assumption of positive dependence. This is similar
+                     to the penalty paid by the Benjamini-Yekutieli procedure (Benjamini and Yekutieli, 2001) in the
+                     ofÒine setting. Our algorithm, e-LOND, operates on e-values, but does not require the additional
+                     correction. Thus, it can maintain FDR control regardless of the dependence structure and dominates
+                     the standard r-LOND algorithm. Another previous approach to FDR control under dependence is
+                               ∗
+                     the LORD algorithm, which requires a priori knowledge of which hypotheses have statistics that
+                     are dependent. Our numerical simulations in Section 5 show that e-LOND is more powerful than
+                     r-LOND and becomes more powerful than LORD∗ when more hypotheses are mutually dependent.
+                                                                4
+                    2. Additional power through randomization. If one is interested in maximizing the power of their
+                       online multiple testing procedure, then one can incorporate randomization in the manner of of Xu
+                       and Ramdas (2023), who use randomization to improve ofÒine multiple testing procedures. We
+                       develop variants of e-LOND and r-LOND (Ue-LOND and Ur-LOND, respectively), that use the
+                       randomization of a single uniform random variable to increase their power over their deterministic
+                       counterparts. These randomized methods dominate (i.e., never make fewer, and often make more
+                       discoveries) their deterministic versions and hence should be employed if one is interested in making
+                       as many discoveries as possible.
+                    3. Online FCR control with no restrictions on selection rules or dependence on e-CIs. In addition to
+                       online FDR control, we also provide novel results for the online selective confidence interval (CI)
+                       problem introduced by Weinstein and Ramdas (2020). In this problem, one wishes to output, in
+                       an online fashion, CIs for a stream of parameters such that the overall false coverage rate (FCR)
+                       of all the CIs is controlled. This problem adds in the additional complexity of having a selection
+                       rule — while a discovery is made at the tth hypothesis solely based on its test level αt, one decides
+                       whether a parameter should be selected for CI construction based on a selection rule S (which uses
+                                                                                                          t
+                       the observed data for the current and past parameters) that is separate from the coverage level
+                       of the CI, 1 − α . The extension of e-LOND to the online selective CI problem can control FCR
+                                      t
+                       under any sequence of selection rules, and arbitrary dependence. The sole caveat of this algorithm
+                       is that it operates on a subset of CIs based on e-values, called e-CIs (Vovk and Wang, 2023; Xu
+                       et al., 2022), which have been used for ofÒine FCR control.
+                       Ourdevelopments of e-LOND and Ue-LOND allow one to significantly improve power when e-values
+                    are available — hence, our e-value methods are complementary to existing p-value based methods,
+                    i.e., r-LOND, for FDR control under arbtirary dependence. Our randomization techniques do benefit
+                    both e-value and p-value methods. Thus, a practitioner should use r-LOND or Ur-LOND when only
+                    p-values are available, and e-LOND or Ue-LOND when e-values are available. When there is a mix of
+                    p-values and e-values, one should follow the guidance summarized in Corollary 1 of calibrating p-values
+                    to e-values.
+                    Outline. In Section 2, we discuss the “doubly sequential” framework that abstracts scientific
+                    experimentation. We recap existing online multiple testing algorithms and introduce the e-LOND
+                    algorithm in Section 3. In Section 4 we devise methods for the online selective inference problem
+                    from e-LOND. We demonstrate the power of e-LOND empirically through numerical simulations in
+                    Section 5, and summarize our findings in Section 9. We defer discussion of related work to Section 7
+                    and appendix A.2. Further, we apply our methods to an online version of the model-free selective
+                    inference problem of Jin and Cand`es (2023) in Section 6, and evaluate their performance on real data
+                    from protein prediction task. Lastly, we show a sharpness result on the FDR control of e-LOND in
+                    Appendix C, i.e., there exists instances where the true FDR is arbitrarily close to α.
+                    2    Doubly sequential inference
+                    E-values are particularly applicable to the sequential fashion in which data is gathered in many modern
+                    applications of hypothesis testing. In the sequential setting, samples are received one at a time, e.g.,
+                    patients entering a clinical trial, users joining an A/B test, etc. To maximize efÏciency, we collect
+                    data samples X ,X ,... (here we are indexing by sample, rather than hypothesis) and stop sampling
+                                   1   2
+                    as soon as we are able to make a decision about the result of the experiment. A key concept for
+                    sequential testing is the e-process, which is a process (Mt) where Mt is a function of the first t samples
+                    (X ,...,X ) and satisfies the following property:
+                      1       t
+                                               E[M ] ≤ 1 for all stopping times τ under H .                         (4)
+                                                   τ                                     0
+                                                                    5
+                                         ⋮      dependence from 
+                                         H           overlap
+                                          5
+                                         H
+                                          4
+                                         H
+                                          3
+                                         H
+                                       Hypotheses2
+                                         H
+                                          1
+                                                           τ τ  τ     τ     τ
+                                                           1 3   2     4    5
+                                                       Samples/Time
+                 Figure 1: A cartoon of the doubly-sequential framework for experimentation. Real world time or the
+                 number of samples collected is on the x-axis — experiments run sequentially, stopping at τ when
+                                                                                               t
+                 enough samples are collected for hypothesis H . Hypotheses arriving in a stream are shown on the
+                                                        t
+                 y-axis. As a result of the overlap in time that data for different experiments is collected, dependence
+                 between hypotheses can occur.
+                 Astopping time is a random time τ that can be determined based on the data seen so far, i.e., one can
+                 determine whether τ = t solely by using (X ,...,X ). From the definition of an e-process in (4), one
+                                                     1      t
+                 can see Mτ is an e-value, so making a discovery when Mτ ≥ α−1 is a valid hypothesis test with Type I
+                 error of at most α. Consequently, a ubiquitous stopping time is the first time at which M exceeds
+                                                                                             t
+                 the test threshold α−1. Ramdas et al. (2020) showed that any admissible sequential test which allows
+                 early stopping of this sort must be derived from e-processes, making e-values a central and necessary
+                 component of sequential testing.
+                    This leads us to the doubly sequential framework (Robertson et al., 2023), where both samples are
+                 hypotheses arrive sequentially, as a widely applicable framework for how scientific experimentation is
+                 done. An online multiple testing algorithm that utilizes e-values a quite useful in this framework, since
+                 e-values are critical to sequential testing. Figure 1 illustrates this concept. Both data and hypotheses
+                 arrive in streams, and one must be able to test new hypotheses and utilize new data as evidence
+                 in an online fashion. When many experiments are run simultaneously, the data gathered for each
+                 experiment are dependent, either due noise that jointly affects samples collected at a similar time
+                 (e.g., season fluctuations affecting the e-commerce habits of users), or because some experiments might
+                 share some of the collected data (e.g., clinical endpoints that utilize data from prior trials). Thus, a
+                 common application of this framework is in large scale A/B testing at companies (Xu et al., 2015),
+                 where separate data scientists are starting new experiments regularly, and have concurrent existing
+                 experiments that gather data sequentially. Yang et al. (2017) illustrate an instance where the data for
+                 each hypothesis is collected through a multi-armed bandit.
+                    Regardless, all these scenarios can involve complicated and unknown dependence between the
+                 statistics for testing each hypothesis. Thus, our methods that are robust to dependence allow for valid
+                 inference in the doubly sequential framework, and we verify this empirically in our experiments in
+                 Section 5.
+                 3    e-LOND: FDR control via e-values
+                 To prepare ourselves for e-LOND, we first recap what the current state-of-the-art algorithms are.
+                 Let a discount sequence (γ ) be a fixed sequence of nonnegative reals that satisfy P∞ γ ≤ 1, and
+                                        t                                                t=1 t
+                 α∈[0,1] is our desired level of FDR control. For all sequences of discovery sets (R ), we let R = ∅.
+                                                                                       t        0
+                                                                    1
+                 An algorithm that produces a sequence of discovery sets (R ) strictly dominates an algorithm that
+                                                                    t
+                                                           6
+                                     2            1     2
+                       produces (R ) iff (1) R ⊇ R on all sequences of p-values (P ) (or e-values (E )) and all t ∈ N, and
+                                     t            t     t                                    t                   t
+                                                                                                                      1      2
+                       (2) there is a sequence p-values (P ) (or e-values (E )) s.t. there exists t ∈ N where R ⊃ R . Further,
+                                                             t                  t                                     t      t
+                          1                                    2
+                       (R ) is said to strictly dominate (R ) in expectation if condition (1) holds and (3) if there also exists a
+                          t                                    t
+                       sequence of p-values (P ) (or e-values (E )) and t ∈ N such that E[|R1| | (E )            ] > E[|R2| | (E )      ],
+                                                 t                  t                               t      i i∈[t]         t      i i∈[t]
+                       i.e., the expected number of discoveries is strictly larger when taken only over the randomness in the
+                       algorithm.
+                       3.1     Prior work: the LOND and r-LOND algorithms
+                       Wefirst recall the LOND algorithm. For each t ∈ N define:
+                                                                LOND :              LOND
+                                                               α        =αγ ·(|R          | + 1),
+                                                                t             t     t−1
+                       where (RLOND) are the corresponding discovery sets. The LOND algorithm requires p-values to be
+                                  t
+                       independent or positively dependent for FDR control.
+                       Fact 1 (Theorem 4 (Zrnic et al., 2021)). For p-values (P ) that satisfy (2) and are independent or
+                                                                                         t
+                       PRDS (Zrnic et al., 2021, Definition 1), FDR(RLOND) ≤ α for each t ∈ N.
+                                                                              t
+                           To achieve FDR control under arbitrary dependence, the r-LOND algorithm outputs more conser-
+                       vative test levels. For each t ∈ N, define
+                                                              r-LOND :               r-LOND
+                                                            α          =αγ ·β (|R            | + 1).                                  (5)
+                                                              t             t    t   t−1
+                       Here, (β ) is a sequence of reshaping functions (Blanchard and Roquain, 2008). A reshaping function
+                                t                                                                                      Rr
+                       β : [0,∞) 7→ [0,∞) is a nondecreasing function that can be written in the form β(r) = 0 xdν(x) where
+                                                                           r-LOND
+                       ν is any probability measure on [0,∞). Let (R               ) denote the sequence of discovery sets output by
+                                                                           t
+                       r-LOND.
+                       Fact 2 (Theorem 2.7 (Javanmard and Montanari, 2015), Theorem 4 (Zrnic et al., 2021) 1 ). Under
+                       arbitrary dependence in (P ), i.e., under (2), FDR(Rr-LOND) ≤ α for each t ∈ N.
+                                                     t                             t
+                           Atypical choice of reshaping function is
+                                                                    βBY(r) = (⌊r⌋∧t)/ℓ ,
+                                                                     t                     t
+                                    P
+                                 :     t
+                       where ℓt =      i=1 1/i — this is the choice used by the Benjamini-Yekutieli (BY) procedure (Benjamini
+                       and Yekutieli, 2001) for ofÒine FDR control. Hence, one can consider LOND and r-LOND as the online
+                       analogs of the Benjamini-Hochberg (BH) procedure (Benjamini and Hochberg, 1995) for independent
+                       or PRDS p-values and the BY procedure for arbitrarily dependent p-values, respectively.
+                       3.2     The e-LOND algorithm
+                       Our e-LOND algorithm achieves the best-of-both worlds in the sense it has the same powerful test
+                       levels as LOND, but also is valid under arbitrary dependence like r-LOND. For each t ∈ N, define
+                                                               e-LOND :             e-LOND
+                                                             α          =αγ ·(|R            | + 1).
+                                                               t              t     t−1
+                          e-LOND
+                       (R         ) denotes the resulting discovery sets. The following is our main result.
+                          t
+                       Theorem 1. Under arbitrary dependence on e-values (3), FDR(Re-LOND) ≤ α for each t ∈ N. In
+                                                                                                     t
+                       addition, e-LOND strictly dominates r-LOND applied to (1/Et) for any sequence of reshaping functions
+                       (β ).
+                         t
+                          1                                                                   r-LOND
+                           Strictly speaking, r-LOND in Zrnic et al. (2021) is formulated as α        =αγ ·β (|R       | ∨ 1) which is less
+                                                                                              t            t   t   t−1
+                       powerful than (5), the latter being the original r-LOND (Javanmard and Montanari, 2015). However, the proofs of Zrnic
+                       et al. (2021) carry through to the original r-LOND.
+                                                                               7
+                          The proof relies on a simple observation about any e-value E and test level α ∈ [0,1] that allows us
+                      to directly upper bound the indicator of whether a discovery is made or not by the e-value itself:
+                                                           1E≥α−1	=1{αE≥1}≤αE.                                                    (6)
+                      Wedefer the full proof to Section 8.1. Further, we show in Appendix C that this level of FDR control
+                      is sharp, i.e., one can design instances of e-values where the true FDR of e-LOND is arbitrarily close
+                      to the upper bound of α.
+                          The e-LOND algorithm has the same test levels (αt) as LOND, but we use different notation to
+                      emphasize that e-LOND operates on e-values with no restrictions on dependence and LOND operate
+                      on p-values that are independent or satisfy PRDS. This is similar to the relationship between the e-BH
+                      procedure (Wang and Ramdas, 2022) and BH for ofÒine FDR control.
+                          In addition, we can show r-LOND is actually a special case of e-LOND. To clarify how r-LOND is
+                      subsumed by e-LOND under arbitrary dependence, we introduce the notion of calibration. Any p-value
+                      P can be calibrated into an e-value E = f(P) using a calibrator (Vovk and Wang, 2021). A calibrator
+                      f : [0,1] 7→ [0,∞) is an nonincreasing, upper semicontinuous function that satisfies R1f(x)dx ≤ 1.
+                                                                                                                      0
+                      Wecan define a specific sequence of calibrators (ft) that transform p-values into e-values such that
+                      r-LOND is a special case of e-LOND.
+                      Corollary 1. If p-values (P ) satisfy (2), we can construct an e-value E = f (P ) for each t ∈ N from
+                                                     t                                               t    t   t
+                      a sequence of calibrators (ft). We achieve FDR(Re-LOND) ≤ α for each t ∈ N by Theorem 1. If we
+                                                                               t
+                      define ft as follows:
+                                                           f (p) = (αγ ·⌈(pℓ /(αγ ))∨1⌉)−1
+                                                            t           t      t     t
+                      we recover r-LOND for FDR control under arbitrary dependence described in Fact 2. This allows us to
+                      reap the benefits of e-LOND when only some hypotheses may have e-values, and the rest have p-values
+                     —wecancalibrate just the p-values before running e-LOND.
+                      3.3     More power through randomization
+                      Building on recent advances by Xu and Ramdas (2023) for ofÒine multiple testing, we can strictly
+                      improve both e-LOND and r-LOND by incorporating independent randomization. Let E be an e-value
+                      and αb ∈ [0,1] be a possibly random threshold that may depend on E. Let U be a uniform random
+                      variable on [0,1] that is independent of both E and αb. Define the following randomized e-value:
+                                                          :                 −1	                     −1
+                                                   Sαb(E) = (E ·1 E ≥ αb         ) ∨ (1{U ≤ Eαb}αb      ),
+                      Fact 3 (Proposition 2 (Xu and Ramdas, 2023)). Sαb(E) is also an e-value. Further, note that
+                                                                        −1	              −1    	
+                                                         1 Sαb(E) ≥ αb        =1 E≥αb ·U
+                          Wenowdefine Ue-LOND, a randomized version of e-LOND. Let (U ) be a sequence of uniform
+                                                                                                       t
+                      random variables on [0,1] that are independent of (Et).
+                                                                Ue-LOND :      e-LOND     −1
+                                                               αt         =αt          · Ut  .                                     (7)
+                              Ue-LOND
+                      Let (R           ) be the sequence of discovery sets output by Ue-LOND. The following is our second
+                              t
+                      main result.
+                                                                                                   Ue-LOND
+                      Theorem 2. Under arbitrary dependence on e-values (3), FDR(R                          ) ≤ α for each t ∈ N.
+                                                                                                   t
+                      Further, Ue-LOND strictly dominates e-LONDin expectation.
+                      Proof. Ue-LOND in (7) is equivalent to applying Ue-LOND to (Sαe-LOND(Et)). Hence, FDR control
+                                                                                                 t
+                      holds by Theorem 1. The domination is because U−1 > 1+ε with nonzero probability for all ε > 0,
+                                                                               t
+                      and is independent from (E ).
+                                                     t
+                                                                             8
+                           Note that (U ) can all be equal, i.e., U = ··· = U , or they can be drawn independently for each
+                                         t                            1            t
+                       hypothesis. To improve r-LOND, we use the following result.
+                       Fact 4 (Lemma 1 (Xu and Ramdas, 2023)). Let P be a superuniform random variable that can be
+                       arbitrarily dependent on a positive random variable R. Let U be a superuniform random variable that
+                       is independent of both P and R. Let c be a nonnegative constant and β be a reshaping function. Then,
+                       the following holds:
+                                                                E1{P ≤cβ(R/U)}≤c.
+                                                                             R
+                           Wecan define the Ur-LOND procedure as follows:
+                                                             Ur-LOND :
+                                                           α           =αγβ((|R         | + 1)/U ),
+                                                             t               t t     t−1         t
+                                Ur-LOND
+                       with (R           ) being the resulting discovery sets. We now present our third main result.
+                                t
+                       Theorem 3. Under arbitrary dependence on p-values (2), FDR(RUr-LOND) ≤ α for each t ∈ N.
+                                                                                                     t
+                       Further, Ur-LOND strictly dominates r-LOND in expectation for reshaping functions (βBY).
+                                                                                                                          t
+                           Wedefer the proof to Section 8.2.
+                       Corollary 2. If we use reshaping function βBY, Ur-LOND produces the following test levels:
+                                                                          t
+                                                     αUr-LOND = αγ (⌊(|RUr-LOND|+1)/U⌋∧t)/ℓ .
+                                                       t              t      t−1                        t
+                           Thus, by utilizing randomization, we are able to derive FDR controlling procedures that are never
+                       worse than their deterministic counterparts.
+                       4     Online FCR control with e-CIs
+                       Often, a scientist wishes not only to test the significance of an effect but also to measure the strength of
+                       the effect. Instead of receiving hypotheses in a stream, a scientist can consider a stream of parameters
+                       θ ∈Θ ,θ ∈Θ ,..., but wishes to estimate only some of them, e.g., only ones that show signficiant
+                        1     1   2     2
+                       positive effect. Here, we desire our selected CIs to be accurate in aggregate, i.e., we want to control
+                       the false coverage rate (FCR) — this problem was introduced by Weinstein and Ramdas (2020) as
+                       the the online selective-CI problem. For the tth parameter, the scientist receives some data (e.g., the
+                       results of an experiment) X ∈ X and designs a selection rule S : X 7→ {0,1} to decide whether CI
+                                                      t     t                                  t    t
+                       should be constructed for θ . If a parameter is selected, one must choose an error level α ∈ (0,1) and
+                                                     t                                                                    t
+                       construct a (1 −α )-CI for θ . Let S = S (X ) be an indicator variable that is 1 iff θ is selected for
+                                           t           t        t     t   t                                            t
+                                                                                                                            Θ
+                       CI construction. We assume that one has access to a CI constructor C : X ×[0,1] 7→ 2 t for each
+                                                                                                        t    t
+                       t ∈ N where C (X,α) satisfies the following property:
+                                       t
+                                                        P(θ ̸∈ C (X ,α)) ≤ α for every α ∈ [0,1].                                    (8)
+                                                            t     t   t
+                       Formally, the false coverage proportion (FCP), and the false coverage rate (FCR) are defined as follows:
+                                                                           X1{θ ̸∈C(α)}
+                                                                        :           i     i   i
+                                                             FCP(S ) =                           ,
+                                                                     t              |S | ∨ 1
+                                                                           i∈S         t
+                                                                              t
+                                                                            :
+                                                                 FCR(S ) =E[FCP(S )].
+                                                                         t                t
+                       The methods of Weinstein and Ramdas (2020) relied on two key assumptions. The first is an explicit
+                       assumption on the dependence between hypotheses, i.e., X were independent or that C (X ,α ) is
+                                                                                          t                                 t   t   t
+                                                                               9
+                         Algorithm 1: The e-LOND-CI and Ue-LOND-CI algorithms ensure FCR ≤ α with no
+                         restrictions on the dependence between data (X ) or the selection rules (S ). Let (U ) uniform
+                                                                               t                             t          t
+                         random variables on [0,1] and independent of (X ).
+                                                                                  t
+                              Input: E-CI constructors (C ), discount sequence (γ ), and FCR control level α.
+                                                                t                          t
+                              for each t ∈ N do
+                                 if running e-LOND-CI then
+                                       :
+                                   α =αγ(|S          | + 1).
+                                     t       t   t−1
+                                 else if running Ue-LOND-CI then
+                                       :                       −1
+                                   α =αγ(|S          | + 1) · U   .
+                                     t       t   t−1           t
+                                 end if
+                                 Receive data X .
+                                                  t
+                                                                  :
+                                 Make a selection decision S = S (X ).
+                                                                t      t   t
+                                 if St = 1 then
+                                      :
+                                   S =S         ∪{t}.
+                                     t     t−1
+                                   Construct C (X ,α ) for θ .
+                                                 t    t  t       t
+                                 else
+                                      :
+                                   S =S
+                                     t     t−1
+                                 end if
+                              end for
+                       still a valid (1−αt)-CI conditional on past selection decisions. The second is a restrictive monotonicity
+                       assumption on the selection rules S . In Algorithm 1, we devise versions of e-LOND and Ue-LOND for
+                                                               t
+                       the online selective inference problem, e-LOND-CI and Ue-LOND-CI, respectively, that is free of both
+                       restrictons.
+                           To ensure FCR control, both algorithms do require each C to a special type of CI: an e-CI (Vovk
+                                                                                              t
+                       and Wang, 2023; Xu et al., 2022) — similar to how e-LOND applies to e-values. C(X,α) is an e-CI
+                       over the universe of parameters Θ if it can be written as follows:
+                                                               C(X,α)={θ∈Θ:E <α−1},                                                      (9)
+                                                                                        θ
+                       where Eθ is an e-value when the true parameter is θ. Note that the e-CI in (9) does satisfy the CI
+                       definition in (8) by Markov’s inequality applied to Eθ∗, where θ∗ is the true parameter. Let (Se-LOND)
+                                                                                                                                   t
+                       and (SUe-LOND) denote the resulting selection sets of e-LOND-CI and Ue-LOND-CI, respectively. We
+                       now present our fourth main result, whose proof is in Section 8.3.
+                       Theorem 4. For any dependence structure among the data, (X ), and sequence of selection rules (S ),
+                                                                                                t                                        t
+                       FCR(Se-LOND),FCR(SUe-LOND) ≤ α for all t ∈ N.
+                               t                  t
+                       Remark 1. Unlike discovery sets (R ) in the the online FDR control problem, the selection sets (S )
+                                                                   t                                                                      t
+                       do not depend on (α ) — (S ) can be chosen in an arbitrary fashion based on the observed data. Thus,
+                                               t        t
+                       algorithms with online FDR control do not necessarily provide provide FCR control. However, the
+                       reverse is true — FCR control implies FDR control (Weinstein and Ramdas, 2020, Section 5.2).
+                           As discussed by Xu et al. (2022), many existing canonical CIs are e-CIs, in the same way that many
+                       p-values are implicitly inverted e-values. This gives e-LOND-CI and Ue-LOND-CI broad applicability
+                       and utility as a default online selective inference method that is robust to the unknown dependence
+                       and arbitrary user choice of selection rule.
+                       5      Numerical simulations
+                       To highlight the practical behavior of our methods, we conduct two simulations, with different depen-
+                       dence structures, where we test the null hypothesis H : µ ≤ 0, where µ is the mean of a distribution
+                                                                                     0
+                                                                                10
+                               with support bounded in [−4,4]. The first simulation is with local dependence between hypotheses,
+                               and the second is with sampling without replacement (WoR) dependence between hypotheses. In both
+                               instances, it we sample data sequentially, and hence our experiments exemplify the practicality of our
+                               new e-value based methods for the doubly sequential framework described in Section 2. In addition to
+                               simulations, we also describe an application of our methods to online model-free selective inference
+                               under covariate shift in Section 6, and compare the performance of our methods on real data from a
+                               protein prediction task from Jin and Cand`es (2023).
+                                                                     11 == 22..55              1e 1                                              11 == 33..00             1e 1
+                                     0.300                                                            2.0          0.8                                                           2.0
+                                     0.225                                                            1.5          0.6                                                           1.5
+                                    ower0.150                                                         1.0   FDR   ower0.4                                                        1.0   FDR
+                                    P                                                                             P
+                                     0.075                                                            0.5          0.2                                                           0.5
+                                     0.000                                                            0.0          0.0                                                           0.0
+                                               0       100        200       300       400       500                       0       100        200       300       400       500
+                                                                        L                                                                          L
+                                 Method           e-LOND            r-LOND           Ur-LOND           LORD*                     Metric           Power           FDR
+                               Figure 2: The power of different methods with provable FDR control against the lag parameter L in a
+                               simulation with local dependence between statistics. Empirically, the FDR of all methods is well below
+                               the desired level of α = 0.3. As L increases (i.e., more hypotheses are dependent), we can see the
+                                                       ∗
+                               power of LORD decrease, since it is essentially ignoring hypotheses with statistics that are dependent
+                               with the current hypothesis being tested. e-LOND has consistently higher power than both p-value
+                                                                                                                                            ∗
+                               procedures, r-LOND and Ur-LOND, and has higher power than LORD as L becomes large. We omit
+                               Ue-LOND since its power increase over e-LOND is very small. All Monte Carlo error from simulations
+                               is negligible (smaller than the line width in the plot).
+                               5.1        Local dependence
+                               We perform numerical simulations comparing e-LOND to other methods in a version of the local
+                               dependence setting from Zrnic et al. (2021). Here, we draw data in a sequential setting with bounded
+                               random variables, since powerful sequential p-values for testing the mean of bounded random variables
+                               are naturally derived from e-values. We let L be our local dependence lag parameter, i.e., the data for
+                               the tth hypothesis is independent of data from hypotheses that are more than L indices away. We let
+                                                                                                  3
+                               the total number of hypotheses be T = 10 . For the tth hypothesis, we consider a setup where we
+                               recieve stream of N = 200 samples (Xi)                              , where Xi for each i ∈ [N] are sampled i.i.d. from a Beta
+                                                                                         t i∈[N]                  t
+                               distribution (shifted and scaled to be on [±4]) with mean µ = 0 under the null, and µ ∈ {2.5,3}
+                                                                                                                              0                                          1
+                               otherwise. For each i ∈ [N],t ∈ [T], Xi has Gaussian copula dependence with (Xi                                                     , . . . , Xi    ), i.e,
+                                                                                          t                                                                   t−L             t+L
+                               the ith sample of data for hypotheses that are within L steps. Explicitly, the covariance matrix of
+                                                                                                          |i−j|
+                               the Gaussian distribution, Σ, is set to Σi,j = 0.5                                when |i−j| ≤ L and 0 elsewhere. We construct
+                               p-values and e-values that are valid for this setting based on Hoeffding’s inequality (see Appendix B.2
+                               for details).
+                                    Our results are averaged over 500 trials and shown in Figure 2. In addition to comparing to
+                                                                                                         ∗
+                               r-LOND and Ur-LOND, we compare to LORD , which is online FDR control algorithm from Zrnic
+                               et al. (2021) requires knowing the lag parameter L beforehand, so it can solely utilize test statistics
+                                                                                                           11
+                      from hypotheses that are independent from the current hypothesis (see Appendix B.1 for details). The
+                                        ∗
+                      power of LORD degrades as the lag parameter increases, which is expected, since it has access to a
+                      decreasing number of discoveries. e-LOND is more powerful than both r-LOND and Ur-LOND across
+                                               ∗
+                      the board, and LORD once L ≥ 250 (µ1 = 3) or L ≥ 150 (µ1 = 2). Ue-LOND only offers a small
+                      increase in power over e-LOND here so it is omitted.
+                                                11 == 11..55      1e 1                                 11 == 22..00     1e 1
+                           1.00                                        3.00       1.00                                       3.00
+                           0.75                                        2.25       0.75                                       2.25
+                          ower0.50                                     1.50 FDR  ower0.50                                    1.50  FDR
+                          P                                                      P
+                           0.25                                        0.75       0.25                                       0.75
+                           0.00                                        0.00       0.00                                       0.00
+                                0.0    0.1     0.2     0.3     0.4                    0.0     0.1     0.2     0.3     0.4
+                                                   1                                                     1
+                           Method      e-LOND      r-LOND       Ur-LOND      Ue-LOND        Metric      Power       FDR
+                      Figure 3: The power of different methods with provable FDR control against proportion of non-nulls π1
+                      in a simulation with sampling without replacement (WoR) dependence between statistics. Empirically,
+                      the FDR of all methods are below α = 0.05. e-LOND has consistently higher power than both p-value
+                      procedures, r-LOND and Ur-LOND, and Ue-LOND is consistenly more powerful than e-LOND. This
+                      makes two e-value procedures, the most powerful methods. All Monte Carlo error from simulations is
+                      negligible (smaller than the line width in the plot).
+                      5.2     Sampling WoR
+                      We construct a population such that the mean is µ0 = 0 for the data we sample WoR for the null
+                      hypotheses, positive µ1 for the non-null hypotheses. We will construct this population by discretizing
+                      a scaled and shifted Beta distribution. Let V(0),V(1) ∈ [±4]N×T be the populations created from
+                      P(µ0),P(µ1). Let Vi,t be the tth value in V (i). We set s = 0.01,µ0 = 0,µ1 ∈ {1.5,2} in our simulations.
+                      For each simulation trial, we choose a non-null proportion π ∈ [0.1,0.9], and uniformly randomly
+                                                                                           1
+                                           T
+                      choose B ∈ {0,1}       with exactly ⌈π1T⌉ ones. Let σ be a random permutation over [N × T]. Our
+                      data for the tth hypothesis is X = (V                     )     . X is a sample WoR of size N from V(0)
+                                                          t      B ,σ((t−1)·N+i) i∈[N]    t
+                                                                  t
+                      if B = 0 and V(1) if B = 1. Our e-values and p-values usiang an e-process for sampling WoR
+                           t                      t
+                      from Waudby-Smith and Ramdas (2020) — see Appendix B.3 for details.
+                          Our results, averaged over 500 trials, are in Section 5.1. Here, both e-LOND and Ue-LOND
+                      dominate in power across the board, while all methods have FDR below α = 0.05. Clearly, the
+                      theoretical improvements of our novel e-value methods translate to empirical gains.
+                      6      Application: online model-free selective inference under
+                             covariate shift
+                      As an application of our framework, we can address an online version of the model-free selective
+                      inference under covariate shift problem introduced by Jin and Cand`es (2023). To do so, we use e-LOND
+                      to directly derive an online version of the weighted conformal selection (WCS) procedure. In this
+                                                                             12
+                               setting, we consider labeled pairs (X ,Y ) ∈ X ×Y. We are given an i.i.d. calibration dataset of labeled
+                                                                                       i   i
+                               pairs {(X ,Y )}                 where (X ,Y ) ∼ P. Our goal is to perform inference on a stream of i.i.d. test
+                                              i    i    i∈[n]                 i    i
+                               data points (X              , Y       ), (X       , Y       ), . . . . For each t ∈ N, we only observe the covariates of the test
+                                                      n+1      n+1          n+2      n+2
+                               points, X           , and a potentially random threshold, c                            . Our goal is to test the following hypothesis
+                                              n+t                                                                n+t
+                               about Yn+t:
+                                                                                                Ht : Y          ≤c .
+                                                                                                   0     n+t         n+t
+                               One notable difference between the setup here and standard online multiple testing is that the null
+                               hypotheses themselves are random, as Y                                and c          are both random. However, our goal remains
+                                                                                               n+t            n+t
+                               the same: ensure FDR(R ) ≤ α for each t ∈ N where the expectation is now also taken over the
+                                                                        t
+                               randomness of whether a hypothesis is null or not. As argued in Jin and Cand`es (2023), this type
+                               of selection occurs widely in practice, e.g., screening for high performing job candidates based on
+                               interview performance, picking patients with attributes that are responsive to treatment, detecting
+                               outliers, etc. In this setting with randomized null hypotheses, we require our p-values and e-values to
+                               satisfy the following conditions instead for each t ∈ N:
+                                                                           P(Pt ≤ α,Yn+t ≤ cn+t) ≤ α for all α ∈ [0,1],                                                               (10)
+                                                                                        E[Et · 1{Yn+t ≤ cn+t}] ≤ 1.                                                                   (11)
+                                     In addition, Q results from a covariate shift on P. This means that P(Y | X = x) = Q(Y | X = x)
+                               for all x ∈ X. Further, the Radon-Nikodym derivative (w.r.t. to an arbitrary common base measure)
+                               satisfies (dQ/dP)(x,y) = w(x) for all x ∈ X, where w is a likelihood ratio dependent only on x ∈ X.
+                               Weassume we have access to w (e.g., we can esimate it from other data accurately). In addition, define
+                               a monotone score function V : X ×Y 7→ R as a function satisfying V(x,y) ≤ V(x,y′) for all x ∈ X
+                               and y,y′ ∈ Y where y ≤ y′.
+                               6.1        FDRcontrol through online multiple testing
+                               Jin and Cand`es (2023) construct the following p-value using any monotone score function V:
+                                                                                :                           b       :
+                                                                            V =V(X,Y),                      V        =V(X ,c ),
+                                                                              i             i   i             n+t               n+t n+t
+                                                                                     P
+                                                                                         n                          b
+                                                                                              w(X )1{V <V                  }+w(X )
+                                                                                :        i=1 P i             i       n+t                n+t
+                                                                           Pt =                    n    w(X )+w(X                 )            ,                                      (12)
+                                                                                                   i=1         i             n+t
+                                                                                                               b
+                               For simplicity, we assume that neither (V )                             nor (V        )       have point masses in their distributions in
+                                                                                             i i∈[n]            n+t t∈N
+                               this paper, and this assumption can be relaxed through simple modifications to the p-value formulations
+                               (Jin and Cand`es, 2023, eqs. 3 & 6).
+                               Fact 5 (Lemma 2.2 (Jin and Cand`es, 2023)). For each t ∈ N, P defined in (12) is a p-value (10).
+                                                                                                                                   t
+                                     The dependence structure among (P ) is quite complicated, and does not satisfy usual independence
+                                                                                            t
+                               or positive dependence notions that are amenable to multiple testing without correction (Jin and
+                               Cand`es, 2023, Proposition 2.4). Thus, one must apply r-LOND (or Ur-LOND) derive FDR control.
+                                                                      r-LOND                   Ur-LOND
+                               Proposition 1. Let (R                            ) and (R                   ) be the sequences of rejection sets that arise from
+                                                                      t                        t
+                                                                                                                                                                         r-LOND
+                               applying r-LOND or Ur-LOND, respectively, to (Pt) as defined in (12). Then, FDR(R                                                                   ) ≤ α
+                                                                                                                                                                         t
+                                                  Ur-LOND
+                               and FDR(R                      ) ≤ α for each t ∈ N.
+                                                  t
+                                     Wedefer the proof of this result to Section 8.4. Jin and Cand`es (2023) show that the more powerful
+                               way to utilize Pt is to view them as e-values, and we show that a similar phenomenon is also possible
+                               for online WCS. First, define the following leave-one-out conformal p-values P(t),−,P(t),+ for each
+                                                                                                                                                            j          j
+                                                                                                            13
+                 t ∈ N and j ∈ [t − 1]:
+                                               Pn               b
+                                                    w(X )1{V <V     }
+                                         (t),−   i=1    i   i    n+j
+                                             :  P
+                                       P     =    n                  ,
+                                        j            w(X )+w(X     )
+                                                  i=1    i      n+t
+                                               Pn               b
+                                                    w(X )1{V <V     }+w(X )
+                                         (t),+ : i=1 P i    i    n+j       n+t
+                                       Pj    =         n  w(X )+w(X     )     .
+                                                       i=1    i      n+t
+                       bLOND(t),−    bLOND(t),+                                             (t),−
+                    LetR         andR         bethediscoverysetobtainedfromapplyingLONDto(P    )
+                         t−1          t−1                                                  j    j∈[t−1]
+                 and (P(t),+)   , respectively. Define the test levels for the next hypothesis as
+                       j   j∈[t−1]
+                                LOND,− :       b(t),−         LOND,+ :       b(t),+
+                               αb      =αγ ·(|R     | + 1),  αb      =αγ ·(|R     | + 1).
+                                t          t    t−1           t           t   t−1
+                 Wecan now define the following e-value:
+                                            LOND :         LOND,+    LOND,−
+                                          E      =1{P ≤αb        }/αb      .
+                                            t          t   t        t
+                 Proposition 2. For each t ∈ N, ELOND is an e-value (11).
+                                              t
+                    We defer the proof of this result to Section 8.5. We can derive the FDR control of e-LOND or
+                 Ue-LOND applied to (ELOND).
+                                     t
+                                                                  e-LOND               Ue-LOND
+                 Theorem 5. Using e-values (Et) satisfying (11), FDR(R ) ≤ α and FDR(R       ) ≤ α for
+                                                                  t                    t
+                 each t ∈ N.
+                    Wedefer the proof of this result to Section 8.6. Now, we apply our online WCS techniques to some
+                 real data settings in Jin and Cand`es (2023), and use their code to calculate the weighted p-values
+                 in (12) for each setup.
+                    0.0175                                    0.35
+                    0.0150                                    0.30
+                    0.0125                        Method      0.25                           Method
+                    0.0100                          e-LOND    0.20                            e-LOND
+                   ower                             r-LOND   FDR                              r-LOND
+                   P0.0075                          Ue-LOND   0.15                            Ue-LOND
+                                                    Ur-LOND                                   Ur-LOND
+                    0.0050                                    0.10
+                    0.0025                                    0.05
+                    0.0000                                    0.00
+                 Figure 4: Average power and empirical FDR for methods applied at α = 0.5 for the drug property
+                 prediction task, with the error bars marking one standard error from Monte Carlo estimation. We can
+                 see that Ue-LOND has the largest power. E-LOND has the smallest power, due to the way (ELOND)
+                                                                                                t
+                 are formulated to almost always be below the test threshold of e-LOND itself. However, by allowing
+                 randomization in Ue-LOND, we see that this issue is fixed and Ue-LOND exceeds the power of both
+                 Ur-LOND and r-LOND.
+                 6.2   Drug property prediction
+                 Wetackle the task of predicting drug properties that uses the HIV screening dataset in the DeepPurpose
+                 library (Huang et al., 2021) — the goal is to select a subset of drug candidates that bind to a target
+                                                          14
+                     protein for HIV. The covariate X is the chemical structure of the drug, that is encoded into the form
+                     of a vector Rd, and Y ∈ {0,1} is binary label of whether it does not or does bind. In constructing the
+                     calibration set, experimenters might pick drugs that seem more likely to bind to analyze (and label)
+                     and induce a covariate shift as a result of selection bias. Thus, we construct a setup that emulates this
+                     issue. 40% of the data set is placed in Dtrain and used to train a neural network classifier µb : X 7→ R
+                     that predicts the probability of binding. 60% more of the dataset is used to construct D     by selecting
+                                                                                                             calib
+                     each point (X ,Y ) to be in D      with probability p(X ) where p(x) = σ(µb(x)−µ¯)∧0.8. Of the points
+                                   i  i            calib                     i
+                     that are neither in D     nor D     , we sample 5% randomly to constitute D        due to computational
+                                           train     calib                                          test
+                     constraints. Consequently, there is a covariate shift between the calibration and the test set, and the
+                     resulting likelihood ratio satisfies w(x) ∝ 1/p(x). The null hypothesis that we wish to test is as follows:
+                                                                  Ht : Y     =0.
+                                                                    0   n+t
+                     Controlling the FDR results in selecting a subset of drugs where only a small proportion do not bind to
+                     the protein in expectation. We average our results over 600 trials. We see that the power of Ue-LOND
+                     in Section 6.1 is the largest. On the other hand, the power of e-LOND is the smallest. This is because
+                     ELOND is either 0 or 1/αbLOND,+, and αe-LOND < αbLOND,+ holds often, as αbLOND,+ is a conservative
+                       t                       t               t          t                         t
+                     estimate of αe-LOND. The randomization from Ue-LOND alleviates this problem, hence it attaining
+                                   t
+                     the largest power. All methods also practically control FDR at the desired level of α = 0.5.
+                     7     Related work
+                     This work lies at the intersection of e-values and online multiple testing. We outline the most relevant
+                     research in each of these areas to this work.
+                     Online multiple testing Online multiple testing was first posed by Foster and Stine (2008) when
+                     they were studying computationally cheap methods for performing streamed variable selection in high
+                     dimensional things and proved mFDR control for alpha-investing. The methods were subsequently
+                     improved in several follow up works to be more powerful and also guarantee control of the FDR
+                     Aharoni and Rosset (2014); Javanmard and Montanari (2018); Ramdas et al. (2017). Ramdas et al.
+                     (2018) and Tian and Ramdas (2019) developed adaptive online multiple testing procedures based
+                     on Storey’s method (Storey, 2002) for ofÒine FDR control. With the exception of Javanmard and
+                     Montanari (2018), all these works all focus on online FDR or mFDR control under the assumption
+                     that p-values are independent or are p-values when conditioned on the information observed so far
+                     (e.g., previous p-values, rejection decisions, etc.), i.e., conditional superuniformity. As mentioned
+                     before, more recent work of Zrnic et al. (2021) considers explicitly modeling dependence relationships
+                     through conflict sets to derive algorithms that still control mFDR and FDR even when independence
+                     or conditional superuniformity is not satisfied. Another line of work considers the situation when the
+                     rejection decision of a hypothesis does not have to be made immediately, but only need to be made by
+                     a later time, such as at the end of a batch of hypotheses being jointly experimented on (Zrnic et al.,
+                     2020) or at individual future deadlines (Fisher, 2022b). This is the first work that directly targets the
+                     arbitrary dependence case. Robertson et al. (2022a) provide a R package implementing many of the
+                     aforementioned methods for online control of the FDR, in addition to other online multiple testing
+                     methods. Online multiple testing methods (including LOND) have already been applied in a variety
+                     of medicinal and biological applications (Robertson and Wason, 2018; Robertson et al., 2022b; Liou
+                     et al., 2023).
+                     E-values E-values have been applied in many ofÒine multiple testing settings such as FDR control
+                     (Wang and Ramdas, 2022; Ignatiadis et al., 2023) and closed testing (Vovk and Wang, 2023). In
+                     particular, the e-BH procedure introduced by Wang and Ramdas (2022) has been used as a subroutine
+                     in other multiple testing procedures with FDR control such as in the bandit setting (Xu et al., 2021),
+                                                                        15
+                       for the purpose of derandomizing knockoffs (Ren and Barber, 2023) or achieving optimality under
+                       a Bayesian linear model alternative (Ahn et al., 2022). Xu et al. (2022) present selective inference
+                       procedure with FCR control for e-CIs. Further, Jin and Cand`es (2023) showed that the weighted
+                       conformal selection procedure in their paper can also be viewed as an application of e-BH to e-values.
+                       This work is novel in bringing all these insights concerning e-values that have been used in ofÒine
+                       multiple testing to the online setting.
+                       8      Omitted proofs
+                       Here, we include the full proofs of the results contained in Section 3, Section 4, and Section 6.
+                       8.1     Proof of Theorem 1
+                       For brevity, we will write αe-LOND as α in the proofs in this section.
+                                                       t             t
+                                                  X 1Ei≥α−1	                    X "1Ei≥α−1	                                	#
+                                FDR(R )=E                             i    =            E               i    ×1 E ≥α−1
+                                         t                     |R | ∨ 1                           |R | ∨ 1             i     i
+                                                  i∈H ∩[t]        t              i∈H ∩[t]            t
+                                                      0                              0
+                                            (i)  X  αE                                         
+                                            ≤           E      i  i  ×1{|R |≥|R           | + 1}
+                                                           |Rt| ∨ 1           t       i−1
+                                               i∈H ∩[t]
+                                                   0
+                                            (ii)  X αγ(|R |+1)E                                             
+                                            ≤           E      i    i−1         i ×1{|R | ≥ |R        | + 1}
+                                                                |Ri−1|+1                  t        i−1
+                                               i∈H0∩[t]                          
+                                            (iii) X αγ(|R |+1)E                            X
+                                            ≤            E      i    i−1        i   =α           γiE[Ei] ≤ α.
+                                                i∈H ∩[t]         |Ri−1|+1                i∈H ∩[t]
+                                                    0                                        0
+                                                                                                −1	
+                           Inequality (i) is a result of (6) and |R | ≥ |R        | +1 E ≥α           by construction of R . Inequality
+                                                                      t       i−1          i     i                            t
+                       (i) is a result of the indicator in the expectation (i.e., making discovery at H will make R larger than
+                                                                                                              i              t
+                       Ri−1). Inequality (iii) comes from dropping the indicator term. The last inequality is due to E[Et] ≤ 1
+                       for all t ∈ H by definition of e-values (3), and because (γ ) sum up to 1. Thus, we achieve an upper
+                                     0                                                    t
+                       bound of α on the final line and have shown our desired result on FDR.
+                           To show e-LOND strictly dominates r-LOND, it is sufÏcient show that αe-LOND ≥ αr-LOND for
+                                                                                                                  t             t
+                       all t ∈ N, and there exists a sequence of e-values (E ) such that there exists t ∈ N such that
+                                                                                         t
+                       αe-LOND > αr-LOND. For any t ∈ N,
+                         t            t
+                                                                           |R    |+1
+                                                                             t−1
+                                                      β (|R     | + 1) =     Z      x dν(x) ≤ |R       | + 1,
+                                                        t    t−1                                   t−1
+                                                                              0
+                       wherethefirst equality is by definition of reshaping function, and the inequality is because x ≤ |R              |+1
+                                                                                                                                    t−1
+                       in the integrand, and ν is a probability measure that is nonnegative and integrates to 1. Thus,
+                       αe-LOND ≥ αr-LOND for all t ∈ N.
+                         t            t
+                           Next, note for β , either it satisfes (1) β (2) = 2 and β (1) = 0 or (2) β (2) < 2 — this follows from
+                                             2                          2                2                  2
+                       the definition of reshaping function, and case (1) correpsonds to putting all probability mass in ν on 2.
+                           If β satisfies case (1), then we set E = 1/(αγ )+1. This results in αe-LOND = αγ > 0 = αr-LOND.
+                               2                                    1           1                         2              2          2
+                       Otherwise, we set E = 1/(αγ ), which leads to a rejection by e-LOND, and note that αr-LOND ≤
+                                               1           1                                                                     2
+                       αγ β (2) < 2αγ = αe-LOND. Thus, we have shown that e-LOND strictly dominates r-LOND applied
+                          2 2             2     2
+                       to (1/Et) and conclude our proof.
+                                                                                16
+                                  8.2         Proof of Theorem 3
+                                  For simplicity, denote αUr-LOND,RUr-LOND as α ,R . Similar to the proof of FDR control for r-LOND
+                                                                         t                 t                     t      t
+                                  in Zrnic et al. (2021), we first show the following inequality for any i ∈ [t]:
+                                                          "1P ≤αUr-LOND	# (i)                           "1P ≤αUr-LOND	                                                            #
+                                                       E             i       i                    =E               i        i                1{|R          | ≥ |R          | + 1}
+                                                                       |Rt| ∨ 1                                       |Rt| ∨ 1                        t−1            i−1
+                                                        (ii)     1{P ≤αγβ((|R                        | + 1)/U )}                                                  
+                                                         = E              i          i   i       i−1                i    1{|R |∨1≥|R                      | + 1}
+                                                                                        |Rt| ∨ 1                                  t                 i−1
+                                                        (iii)    1{P ≤αγβ((|R                         | + 1)/U )}                                                  
+                                                         ≤ E               i          i   i       i−1                i    1{|R |∨1≥|R                      | + 1}
+                                                                                      |Ri−1|+1                                     t                 i−1
+                                                        (iv)     1{P ≤αγβ((|R                         | + 1)/U )} (v)
+                                                         ≤ E               i          i  i        i−1                i        ≤ αγ .                                                                 (13)
+                                                                                      |R        | + 1                                  t
+                                                                                          i−1
+                                  Equality (i) is because {P ≤ αUr-LOND} ⇒ {|R                                          | + 1 ≤ |R | ∨ 1} as a result of a discovery being
+                                                                              i        i                           i−1                    t                        Ur-LOND
+                                  made at the ith hypothesis. Equality (ii) is by expanding the definition of αi                                                                . Inequality (iii)
+                                  is the indicator 1{|R | ∨ 1 ≥ |R                          | + 1} being 1 iff the event it is indicating is true. Inequality (iv) is
+                                                                     t                 i−1
+                                  simply by droppign the indicator. Inequality (v) is by Fact 4. Thus, we can derive the following bound
+                                  on the FDR by (13):
+                                                                                                         X "1P ≤αUr-LOND	#
+                                                                                 FDR(R )=                          E            i        i
+                                                                                              t                                    |R | ∨ 1
+                                                                                                      i∈H ∩[t]                         t
+                                                                                                            0
+                                                                                                  ≤αXγ ≤α,
+                                                                                                                 t
+                                                                                                           [t]
+                                  which achieves our desired FDR control.
+                                        The strict dominance in expectation follows from the fact that αUr-LOND > αr-LOND with nonzero
+                                                                                                                       −1                           t                    t
+                                  probability whenever |Rt−1| < t − 1 because Ut                                             is a positive number that is at least 1, and
+                                 (|Rt−1|+1)U−1 ≥ |Rt−1|+2 (which implies βBY((|Rt−1|+1)U−1) > βBY(|Rt−1|+1)) with nonzero
+                                                        t                                                       t                            t            t
+                                  probability. Thus, we have shown strict dominance in expectation and all results in the theorem.
+                                  8.3         Proof of Theorem 4
+                                  Denote αe-LOND as α in this section. We make the following derivation for the FCR:
+                                                 t                   t
+                                                                           "X1{θ ̸∈C(X,α)}# (i) "X 1E ≥α−1	#
+                                                    FCR(S ) = E                            i        i     i    i         =E                      θi         i
+                                                                t                             |S | ∨ 1                                          |S | ∨ 1
+                                                                             i∈S                  t                               i∈S              t
+                                                                            " t                                    #                   t
+                                                                    (ii)       Xαγ(|S |+1)E (iii) X αγ(|S                                                | + 1)E 1{i ∈ S }
+                                                                    ≤ E                   i     i−1               i     =           E         i     i−1               i             t
+                                                                                              |S | ∨ 1                                                    |S | ∨ 1
+                                                                              i∈S                 t                          i∈[t]                            t
+                                                                                   t
+                                                                    (iv) X         αγ (|S            | + 1)E 1{|S | ≥ |S                    | + 1}
+                                                                                          i      i−1              θ          t          i−1
+                                                                     ≤          E                                  i
+                                                                                                                |S | ∨ 1
+                                                                          i∈[t]                                     t
+                                                                    (v) X αγ (|S                    | + 1)E 1{|S |∨1 ≥ |S                        | + 1}
+                                                                    ≤          E          i     i−1              θi         t                i−1
+                                                                                                                |S       | + 1
+                                                                         i∈[t]                                      i−1
+                                                                    (vi) X         αγ (|S            | + 1)E                  X
+                                                                                          i      i−1              θ
+                                                                     ≤          E                                  i    =α            γ E[E ] ≤ α.
+                                                                                                                                        i        θ
+                                                                                             |S       | + 1                                       i
+                                                                          i∈[t]                  i−1                           i∈[t]
+                                                                                                                     17
+                            Equality (i) is by the definition of an e-CI in (9). Inequality (ii) is by the definition of an e-LOND.
+                            Equality (iii) is simply arithmetic with the indicator of whether i is in S . Inequality (iv) is because
+                                                                                                                                 t
+                            i ∈ S implies that S gained a selected parameter, namely the ith parameter, over S                                     . Inequality (v)
+                                   t                    t                                                                                      i−1
+                            is because i ∈ S implies that S gained a selected parameter, namely the ith parameter, over S                                               .
+                                                  t                     t                                                                                          i−1
+                            Inequality (vi) follows from dropping the indicator, and the last inequality is again due to E[Eθ ] ≤ 1
+                                                                                                                                                                i
+                            for each i ∈ N by definition of e-values (3), and because (γ ) sum up to 1. Thus, we achieve our desired
+                                                                                                           t
+                            result of FCR control of α.
+                                 Ue-LOND-CI can be shown to have FCR control by following the above argument, except we can
+                            replace E        with S e-LOND(E ). Thus, we have shown our desired levels of FCR control.
+                                         θi           αt           θi
+                            8.4       Proof of Proposition 1
+                                  e :                                                                 e
+                            Let P =P ∨1{Y >c }. Note that for each t ∈ N, P satisfies the following two properties.
+                                    t       t         t      t                                          t
+                                     e                                               e         
+                                   {P ≤s}⇔{P ≤s,Y ≤c } and P P ≤s =P(P ≤s,Y ≤c )≤s for all s∈[0,1).                                                                (14)
+                                       t                t         t      t               t                  t         t      t
+                                                             e
+                            This is by definition of P and by the superuniform constraint on P in (10). Further, we can see that
+                                                              t                                                          t
+                                                                                                   e
+                                                                     {P ≤s,Y ≤c }⇒{P ≤s} when s=1,                                                                 (15)
+                                                                         t         t      t          t
+                                                   e
+                            by definition of P as well.
+                                                    t
+                                 Wealso observe the following implication holds:
+                                                                e
+                                                             {P ≤α}⇒{R ⊃R }⇒{|R|∨1≥R +1},                                                                          (16)
+                                                                 i      i           t       i−1             t             i−1
+                            for all t ≥ i simply because a discovery set grows when a a new discovery is made.
+                                                                        r-LOND          r-LOND              Ur-LOND           Ur-LOND
+                                 Let (α ),(R ) be either (α                      ),(R            ) or (α               ),(R              ).   We can make the
+                                          t       t                     t               t                   t                 t
+                            following derivation of the FDR:
+                                                                                                                                           ne             o
+                                              X                                          X                                        (i) X         1 P ≤α
+                                                        1{P ≤α ,i∈H }                              1{P ≤α ,Y ≤c }                                      i      i
+                             FDR(R )=               E         i       t         0     =        E         i       t   i      i     ≤        E                    
+                                       t                        |R | ∨ 1                                   |R | ∨ 1                                |R | ∨ 1
+                                              i∈[t]                 t                    i∈[t]                 t                     i∈[t]             t
+                                                        ne              o                  ne                                            o
+                                           (ii) X         1 P ≤α               (iii) X        1 P ≤αγ ·β ((|R                 | + 1)/U )          (iv) X
+                                           =         E         i       i   ≤           E          i        i    i      i−1             i    ≤           αγ ≤α.
+                                                           |R      | + 1                                       |R      | + 1                                    i
+                                               i∈[t]           i−1                  i∈[t]                          i−1                                 i∈[t]
+                            Inequality (i) is by a combination of (14) and (15). Inequality (ii) is because of (16). Inequality (iii) is
+                            by the definition of either choice of (α ) (U = 1 if r-LOND, and U is an independent uniform random
+                                                                                t      i                               i
+                            variable over [0,1] if Ur-LOND) and the fact that |R | ∨ 1 ≤ |R                             | + 1 by definition of discovery sets.
+                                                                                                     t              t−1               e
+                            Inequality (iv) is by Fact 4, since U is superuniform and independent of all P . The last inequality is
+                                      P                                      i                                                         i
+                            due to             γ ≤1. Thus, we have shown our desired FDR control.
+                                         i∈[t]   i
+                            8.5       Proof of Proposition 2
+                            Wefollow a similar proof structure to the proof of Theorem 3.1 in Jin and Cand`es (2023).
+                                 First, we define the following oracle p-values (that cannot be computed from the observable data)
+                            to assist with our proof:
+                                                                  P
+                                                                     n    w(X )1{V <V               }+w(X )
+                                                          ¯ :        i=1 P i            i      n+t             n+t
+                                                         P =                                                         .
+                                                           t                   n   w(X )+w(X               )
+                                                                               i=1        i           n+t
+                                                                  Pn                         b                                      b
+                                                                          w(X )1{V <V               }+w(X )1{V                  <V }
+                                                        ¯(t)         i=1        i       i      n+j             n+t         n+t       n+j
+                                                             :                        P
+                                                       P      =                           n                                                 .
+                                                         j                                     w(X )+w(X              )
+                                                                                          i=1        i           n+t
+                                                                                                18
+                                                                             b                                                                                                                         (t)
+                                  These essentially replace V                        with V            when compared to their empirical counterparts P and P                                               ,
+                                                                              n+t               n+t                                                                                       t           j
+                                  respectively. The first thing we note is the following relationship between the oracle nonconformity
+                                  score and the empirical nonconformity score at n+t:
+                                                                                                                                     b             ¯        b
+                                                                             t ∈ H ⇔Y                  ≤c          ⇒V ≤V ⇒P ≤P,
+                                                                                      0         n+t         n+t           n+t          n+t           t        t
+                                                                                                                                                     ¯(t)
+                                  since V is a monotone score function. Further, the oracle p-values (P                                                    )j∈[t−1] are bounded by their
+                                                                                                                                                      j
+                                  empirical counterparts, i.e.,
+                                                                             b(t),−         ¯(t)        b(t),+
+                                                                            P          ≤P ≤P                      for all t ∈ N and j ∈ [t − 1].                                                     (17)
+                                                                               j              j           j
+                                                     ¯                                                                                                                    ¯(t)            ¯(t)
+                                        Define Rt−1 to be the discovery set that results from applying LOND to (P                                                               , . . . , P      ), and
+                                  define                                                                                                                                    1              t−1
+                                                               LOND :                     ¯                          ¯LOND :             ¯            LOND	           LOND
+                                                             α¯           =αγ ·(|R                | + 1),           E             =1 P ≤α¯                         /α¯
+                                                               t                   t         t−1                       t                      t        t               t
+                                  to be the test level for the next hypothesis and an all-or-nothing e-value testing at that level, respectively.
+                                  By (17), we can derive that
+                                                                    b+              ¯              b−                    LOND,+              LOND             LOND,−
+                                                                  |R        | ≤ |R         | ≤ |R          |, and αb                   ≤α¯             ≤αb                .
+                                                                      t−1             t−1             t−1                t                   t                t
+                                  This gives us the following inequality:
+                                                                                                  nb            LOND,+o                                                  LOND	
+                                                                           1{t ∈ H }·1 P ≤αb                                                                    ¯
+                                                                                         0             t        t                    1{t ∈ H }·1 P ≤α¯
+                                                            LOND                                                                                   0             t        t                 ¯LOND
+                                     1{t ∈ H0}·E                      =                                                          ≤                                                     ≤E              .
+                                                            t                                 αbLOND,−                                                  α¯LOND                                t
+                                                                                                t                                                         t
+                                                                                                                                                                                                     (18)
+                                                                                   ¯LOND                                                                          :
+                                        NowweneedtoshowthatE                                   is an e-value as defined in (11). Define Z                          =(X,Y)foreachi∈N.
+                                                                                     t                                                                          i           i    i
+                                            :
+                                  LetZ =[Z ,...,Z ,Z                          ] denote the unordered set of {Z ,...,Z ,Z                                 }, and z = [z ,...,z ,z                     ] be
+                                                     1           n      n+t                                                      1           n      n+t                       1           n n+t
+                                  the unordered set of their realized values. Define ξ                                   as the event such that Z = z. Let I ∈ [n]∪{n+t}
+                                                                                                                    z,t                                                           t
+                                  be the index such that Z                        =z . Now, we note the following important facts
+                                                                            n+t         It
+                                                                                            ¯
+                                                                                           P is measurable w.r.t. Z and I .
+                                                                                             t                                                  t
+                                                                 ¯(t)                 ¯           LOND
+                                                               (P      )           , R       , α¯           are measurable w.r.t. Z and {Z                            }      .
+                                                                   j     j∈[t−1]        t−1       t                                                              n+i i̸=t
+                                  In addition, we have that
+                                                                                                     {Z        }      ⊥⊥ I | ξ         .
+                                                                                                         n+i i̸=t            t      t,z
+                                  This is a result of {Z                   }       ⊥⊥ {Z }                         since each data point is assumed to be independent.
+                                                                      n+i i̸=t               i i∈[n]∪{n+t}
+                                  As a result, we can conclude that
+                                                                                                        ¯          LOND
+                                                                                                       Pt ⊥⊥ α¯              | ξz,t.                                                                 (19)
+                                                                                                                   t
+                                                :        ¯           LOND                                                              ¯
+                                  Let F          =P P ≤α¯                      | ξ        be the conditional c.d.f. of P .
+                                           z,t              t        t             z,t                                                    t
+                                        Now, we define a randomized oracle conformal p-value:
+                                                                          P
+                                                                               n    w(X )1{V <V                    }+U∗(w(X                  ) +1{V =V                   })
+                                                                  ∗ :          i=1          i        i P n+t                t           n+t                i       n+t
+                                                               P =                                          n                                                                .
+                                                                  t                                              w(X )+w(X                    )
+                                                                                                            i=1          i              n+t
+                                  where U∗ is an independent uniform random variable on [0,1].
+                                               t
+                                        Weknowcite the following fact from Hu and Lei (2023) that arises due to weighted exchangeability
+                                  of (Z ,...,Z ,Z                  ):
+                                          1            n      n+t
+                                                                                                                     19
+                      Fact 6 (Lemmas 2 and 3 of Hu and Lei (2023)). P∗ | ξt,j is uniformly distributed over [0,1].
+                                                                               t
+                                   ∗    ¯
+                          Since Pt ≤ Pt determinstically, we have that
+                                                     F (s)≤P(P∗≤s|ξ )≤sforall s∈[0,1].                                           (20)
+                                                      z,t           t        z,t
+                          Relating this back to our e-value, we, get that
+                                                         ¯LOND                   LOND      LOND
+                                                      E[E        | ξ  ] = F    (α¯     )/α¯       ≤1                             (21)
+                                                           t        z,t     z,t  t         t
+                                              ¯LOND
+                      by (20) and (19). E[Et         ] ≤ 1 follows by the tower property of conditional expectation applied to
+                      (21). Hence, our desired result that ELOND is an e-value follows from (18).
+                                                                t
+                      8.6     Proof of Theorem 5
+                      Let α ,R be short for αe-LOND,Re-LOND. We can make the following derivation:
+                             t   t                t          t
+                                FDR(R )= XE1{Ei≥αi,i∈H0}=XE1{Ei≥αi}·1{i∈H0}
+                                         t                   |R | ∨ 1                             |R | ∨ 1
+                                              i∈[t]             t                i∈[t]               t
+                                            (i) X    1{Ei ≥αi}·1{i∈H0}                                    
+                                            =      E                              · 1{|R | ≥ |R     | + 1}
+                                                                |Rt| ∨ 1                 t       i−1
+                                              i∈[t]                                                   
+                                            (ii) X     α E ·1{i ∈ H }
+                                            ≤      E     i i           0   · 1{|R | ∨ 1 ≥ |R     | + 1}
+                                                            |Rt| ∨ 1              t           i−1
+                                               i∈[t]                                                                    
+                                            (iii) X     α E ·1{i ∈ H }       (iv) X      αγ (|R     | + 1)E · 1{i ∈ H }
+                                            ≤       E    i  i           0     =      E      i    i−1        i           0
+                                                i∈[t]      |Ri−1|+1              i∈[t]              |Ri−1|+1
+                                            =XαγE[E ·1{i∈H }]≤Xαγ ≤α.
+                                                      i    i           0             i
+                                              i∈[t]                          i∈[t]
+                      Inequality (i) is because Ei ≥ αi implies a discovery is made at the ith hypothesis. Inequality (ii) is
+                      because E ,α are nonnegative. Inequality (iii) is a result of dropping the indicator for |R | ∨ 1 ≥
+                                  i  i                                                                                       t
+                      |Ri−1| + 1 and lower bounding the denominator. Equality (iv) is by exanding the definition of αt
+                      and the final two inequalities are by the definition of an e-value from (11) and P γ ≤ 1. FDR
+                                                                                                                     i i
+                      control of Ue-LOND can be proven in a similar fashion by replacing Ei with Sαe-LOND(Ei), since
+                                                                                                                   i
+                      E[S e-LOND(E ) | E ] = E . Thus, we know that S e-LOND(E ) is also an e-value as defined in (11) by
+                          αi         i     i      i                          αi         i
+                      the tower property of conditional expectation, and the rest of the proof follows.
+                      9      Conclusion
+                      E-LOND and Ue-LOND are two novel procedures that utilize e-values to provide state-of-the-art
+                      performance, both practically and theoretically, in power while ensuring provable FDR control under
+                      arbitrary dependence. We also built on recent results in using randomization for multiple testing to
+                      develop the more powerful randomized online multiple testing procedures of Ue-LOND and Ur-LOND.
+                      One natural direction is to extend our results to the LORD family of algorithms, which are more
+                      powerful, but assign test levels based on the number of hypotheses between the current hypothesis and
+                      each of the previous rejections – more careful analysis is required to ensure FDR control. Note that the
+                      sharpness result in Appendix C does not preclude this possibility because it only shows that the FDR
+                      e-LOND is tight in one specific instance, but e-LOND could be improved in other instances (e.g., have
+                      larger test levels when at least one discovery is made). Current LORD algorithms rely on independence
+                                                                             20
+            and PRDS assumptions to have FDR control while retaining power. Another direction is to explore
+            how e-values can be incorporated with the adaptive online FDR controlling procedures of SAFFRON
+            (Ramdas et al., 2018) and ADDIS (Tian and Ramdas, 2019), which estimate the proportion of nulls in
+            the manner of Storey-BH (Storey, 2002).
+            Acknowledgements The authors acknowledge support from NSF grant DMS-1916320.
+            References
+            1000 Genomes Project Consortium. A global reference for human genetic variation. Nature, 526(7571):
+             68–74, 2015.
+            Ehud Aharoni and Saharon Rosset. Generalized α-investing: definitions, optimality results and
+             application to public databases. Journal of the Royal Statistical Society: Series B (Statistical
+             Methodology), pages 771–794, 2014.
+            Taejoo Ahn, Licong Lin, and Song Mei. Near-optimal multiple testing in Bayesian linear models with
+             finite-sample FDR control. arXiv:2211.02778, 2022.
+            A. Asuncion and D.H. Newman. UCI machine learning repository. 2007. URL http://archive.ics.
+             uci.edu/ml.
+            Yoav Benjamini and Yosef Hochberg. Controlling the False Discovery Rate: A Practical and Powerful
+             Approach to Multiple Testing. Journal of the Royal Statistical Society. Series B (Methodological),
+             57(1):289–300, 1995.
+            Yoav Benjamini and Daniel Yekutieli. The control of the false discovery rate in multiple testing under
+             dependency. The Annals of Statistics, 29(4):1165–1188, 2001.
+            Gilles Blanchard and Etienne Roquain. Two simple sufÏcient conditions for FDR control. Electronic
+             Journal of Statistics, 2:963–992, 2008.
+            Casper Solheim Bojer and Jens Peder Meldgaard. Kaggle forecasting competitions: An overlooked
+             learning opportunity. International Journal of Forecasting, 37(2):587–603, 2021.
+            M. J. Campbell, A. Donner, and N. Klar. Developments in cluster randomized trials and Statistics in
+             Medicine. Statistics in Medicine, 26(1):2–19, 2007.
+            Robin Dunn, Aditya Gangrade, Larry Wasserman, and Aaditya Ramdas. Universal Inference Meets
+             Random Projections: A Scalable Test for Log-concavity. arXiv:2111.09254, 2022.
+            Cynthia Dwork, Vitaly Feldman, Moritz Hardt, Toniann Pitassi, Omer Reingold, and Aaron Leon
+             Roth. Preserving Statistical Validity in Adaptive Data Analysis. In ACM Symposium on Theory of
+             Computing, 2015.
+            Aaron Fisher. Online False Discovery Rate Control for LORD & SAFFRON Under Positive, Local
+             Dependence. arXiv:2110.08161, 2022a.
+            AaronJ.Fisher. OnlineControloftheFalseDiscoveryRateunder“DecisionDeadlines”. InInternational
+             Conference on Artificial Intelligence and Statistics, 2022b.
+            Dean Foster and Robert A Stine. Alpha-Investing: A Procedure for Sequential Control of Expected
+             False Discoveries. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 70(2):
+             429, 2008.
+                                         21
+         Aditya Gangrade, Alessandro Rinaldo, and Aaditya Ramdas. A Sequential Test for Log-Concavity.
+          arXiv:2301.03542, 2023.
+         Xiaoyu Hu and Jing Lei. A Two-Sample Conditional Distribution Test Using Conformal Prediction
+          and Weighted Rank Sum. Journal of the American Statistical Association, 0(0):1–19, 2023.
+         Kexin Huang, Tianfan Fu, Lucas M Glass, Marinka Zitnik, Cao Xiao, and Jimeng Sun. DeepPurpose:
+          Adeep learning library for drug–target interaction prediction. Bioinformatics, 36(22-23):5545–5547,
+          2021.
+         Nikolaos Ignatiadis, Ruodu Wang, and Aaditya Ramdas. E-values as unnormalized weights in multiple
+          testing. Biometrika, 2023.
+         Adel Javanmard and Andrea Montanari. On Online Control of False Discovery Rate. arXiv:1502.06197,
+          2015.
+         Adel Javanmard and Andrea Montanari. Online rules for control of false discovery rate and false
+          discovery exceedance. The Annals of Statistics, 46(2):526–554, 2018.
+         Ying Jin and Emmanuel J. Cand`es. Model-free selective inference under covariate shift via weighted
+          conformal p-values. arXiv:2307.09291, 2023.
+         Gautier Koscielny, Gagarine Yaikhom, Vivek Iyer, Terrence F. Meehan, Hugh Morgan, Julian Atienza-
+          Herrero, Andrew Blake, Chao-Kung Chen, Richard Easty, Armida Di Fenza, Tanja Fiegel, Mark
+          Grifiths, Alan Horne, Natasha A. Karp, Natalja Kurbatova, Jeremy C. Mason, Peter Matthews,
+          Darren J. Oakley, Asfand Qazi, Jack Regnart, Ahmad Retha, Luis A. Santos, Duncan J. Sneddon,
+          Jonathan Warren, Henrik Westerberg, Robert J. Wilson, David G. Melvin, Damian Smedley, Steve
+          D. M. Brown, Paul Flicek, William C. Skarnes, Ann-Marie Mallon, and Helen Parkinson. The
+          International Mouse Phenotyping Consortium Web Portal, a unified point of access for knockout
+          mice and related phenotyping data. Nucleic Acids Research, 42(D1):D802–D809, 2014.
+         Lathan Liou, Milena Hornburg, and David S Robertson. Global FDR control across multiple RNAseq
+          experiments. Bioinformatics, 39(1), 2023.
+         Aaditya Ramdas, Fanny Yang, Martin J Wainwright, and Michael I Jordan. Online control of the false
+          discovery rate with decaying memory. In Neural Information Processing Systems, 2017.
+         Aaditya Ramdas, Tijana Zrnic, Martin Wainwright, and Michael Jordan. SAFFRON: an adaptive
+          algorithm for online control of the false discovery rate. In International Conference on Machine
+          Learning, 2018.
+         Aaditya Ramdas, Johannes Ruf, Martin Larsson, and Wouter Koolen. Admissible anytime-valid
+          sequential inference must rely on nonnegative martingales. arXiv:2009.03167, 2020.
+         Aaditya Ramdas, Johannes Ruf, Martin Larsson, and Wouter M. Koolen. How can one test if a
+          binary sequence is exchangeable? Fork-convex hulls, supermartingales and e-processes. International
+          Journal of Approximate Reasoning, 2021.
+         Aaditya Ramdas, Peter Grun¨ wald, Vladimir Vovk, and Glenn Shafer. Game-theoretic statistics and
+          safe anytime-valid inference. Statistical Science, 2023.
+         Zhimei Ren and Rina Foygel Barber. Derandomised knockoffs: Leveraging e-values for false discovery
+          rate control. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 2023.
+         David S Robertson and James Wason. Online control of the false discovery rate in biomedical research.
+          arXiv:1809.07292, 2018.
+                               22
+         David S. Robertson, Lathan Liou, Aaditya Ramdas, and Natasha A. Karp. onlineFDR: Online error
+          control, 2022a. R package 2.6.0.
+         David S. Robertson, James M. S. Wason, Franz K¨onig, Martin Posch, and Thomas Jaki. Online error
+          control for platform trials. arXiv:2202.03838, 2022b.
+         David S. Robertson, James M. S. Wason, and Aaditya Ramdas. Online multiple hypothesis testing for
+          reproducible research. Statistical Science, 2023.
+         Jerzy Splawa-Neyman, D. M. Dabrowska, and T. P. Speed. On the Application of Probability Theory
+          to Agricultural Experiments. Essay on Principles. Section 9. Statistical Science, 5(4):465–472, 1990.
+         John David Storey. False Discovery Rates Theory and Applications to DNA Microarrays. PhD thesis,
+          Stanford University, 2002.
+         Jinjin Tian and Aaditya Ramdas. ADDIS: an adaptive discarding algorithm for online FDR control
+          with conservative nulls. In Neural Information Processing Systems, 2019.
+         Vladimir Vovk and Ruodu Wang. E-values: Calibration, combination and applications. The Annals of
+          Statistics, 49(3):1736–1754, 2021.
+         Vladimir Vovk and Ruodu Wang. Confidence and discoveries with e-values. Statistical Science, 2023.
+         Ruodu Wang and Aaditya Ramdas. False discovery rate control with e-values. Journal of the Royal
+          Statistical Society: Series B (Statistical Methodology), 84:822–852, 2022.
+         Larry Wasserman, Aaditya Ramdas, and Sivaraman Balakrishnan. Universal inference. Proceedings of
+          the National Academy of Sciences, 117(29):16880–16890, 2020.
+         Ian Waudby-Smith and Aaditya Ramdas. Confidence sequences for sampling without replacement. In
+          Neural Information Processing Systems, 2020.
+         Ian Waudby-Smith and Aaditya Ramdas. Estimating means of bounded random variables by betting.
+          Journal of the Royal Statistical Society: Series B (Statistical Methodology), 2023.
+         Asaf Weinstein and Aaditya Ramdas. Online control of the false coverage rate and false sign rate. In
+          International Conference on Machine Learning, 2020.
+         The Wellcome Trust Case Control Consortium. Genome-wide association study of 14,000 cases of
+          seven common diseases and 3,000 shared controls. Nature, 447(7145):661–678, 2007.
+         Ya Xu, Nanyu Chen, Addrian Fernandez, Omar Sinno, and Anmol Bhasin. From infrastructure to
+          culture: A/B testing challenges in large scale social networks. In ACM SIGKDD Conference on
+          Knowledge Discovery and Data Mining, 2015.
+         Ziyu Xu and Aaditya Ramdas. More powerful multiple testing under dependence via randomization.
+          arXiv:2305.11126, 2023.
+         Ziyu Xu, Ruodu Wang, and Aaditya Ramdas. A unified framework for bandit multiple testing. In
+          Neural Information Processing Systems, 2021.
+         Ziyu Xu, Ruodu Wang, and Aaditya Ramdas. Post-selection inference for e-value based confidence
+          intervals. arXiv:2203.12572, 2022.
+         Fanny Yang, Aaditya Ramdas, Kevin G Jamieson, and Martin J Wainwright. A framework for Multi-
+          A(rmed)/B(andit) Testing with Online FDR Control. In Neural Information Processing Systems,
+          2017.
+                               23
+               Tijana Zrnic, Daniel Jiang, Aaditya Ramdas, and Michael Jordan. The Power of Batching in Multiple
+                 Hypothesis Testing. In International Conference on Artificial Intelligence and Statistics, 2020.
+               Tijana Zrnic, Aaditya Ramdas, and Michael I. Jordan. Asynchronous Online Testing of Multiple
+                 Hypotheses. Journal of Machine Learning Research, 22(33):1–39, 2021.
+               A Comments on the online multiple testing problem
+               Weprovide additional comments on the motivation behind the formlation of the online multiple testing
+               problem in this section by discussing why FDR is our target error metric and the relationship between
+               online multiple testing and adaptive data analysis.
+               A.1 Additional remarks on online FDR control
+               One might wonder why we wish to simply ensure FDR control, and not prove guarantees about the
+               power of our algorithms as well, e.g., the expected proportion of non-null hypotheses that we actually
+               discover with our algorithm. This is because the in scientific discovery, we cannot know the exact
+               distribution of the statistic under the true distribution when the null hypothesis is false—that would
+               defeat the purpose of testing if the null hypothesis is true in the first place. Prior knowledge or
+               assumptions about the distribution of the true distribution when the null hypothesis is false is often
+               already incorporated by the scientist when designing the individual statistics that are passed to the
+               online multiple testing algorithm. Hence, our framework for online FDR control allows for the user to
+               flexibily change αt to be large or small based on what they expect the signal of the hypothesis to be.
+               A.2 Relating online multiple testing and adaptive data analysis
+               There is a rich literature on adaptive data analysis (Dwork et al., 2015) that explicitly tackles the data
+               reuse problem, but it is orthogonal to our setup as it focused on the problem of estimation, makes
+               assumptions about the statistic (e.g., bounded) being tested, and focuses on the relation between
+               the number of adaptively chosen parameters can be accurately estimated and the number of i.i.d.
+               samples that have been gathered. On the other hand, online multiple testing is agnostic to the exact
+               data generating mechanism (e.g., single dataset, data gathered in a correlated fashion, datasets being
+               merged together, etc.), assumes access to the data only through a statistic (i.e., p-value, e-value, or
+               CI), and maintains error control for a potentially infinite stream of hypotheses, which are not assumed
+               to be adaptively or adversarially chosen. Hence, these two approaches are complementary to each
+               other — adaptive data analysis focuses on what is the max number of parameters one can estimate for
+               a fixed set of data, while online multiple testing aims to ensure Type I error control regardless of the
+               underlying data sampling method used to test each hypothesis.
+               B Simulation details
+               Weprovide the details of our simulations (in Section 5) in this section. In this section, any references
+               to discount sequence (γ ) is referring to the same choice of (γ ) used in the corresponding algorithm
+                                t                           t
+               (i.e., e-LOND, Ue-LOND, r-LOND, or Ur-LOND) that is acting on the e-values or p-values. In all our
+               simulations, we let γ = 1/(t(t + 1)). We ran the simulations on a 12 core, 60GB RAM cloud server.
+                              t
+                                                   24
+                        B.1      Definition of LORD∗
+                                                ∗
+                        Werecall the LORD algorithm of Zrnic et al. (2021) as follows:
+                                           ∗                                                                   X              
+                                    LORD :                                                                                    
+                                   α         =α w γ +1{|R |≥1,1̸∈C }(α−w )γ                            +                  γ       .
+                                    t                 0 t          t−1              t          0  t−r1                     t−i
+                                                                                                          i∈R    \[1],i̸∈C
+                                                                                                              t−1        t
+                        Here w ∈[0,α] is an algorithm parameter — we set w = 0.9 in all our simulations. r is the index
+                                0                                                       0                                     1
+                                                                   ∗
+                        of the first discovery made by LORD . (Ct) are a sequence of “conflict sets” that dictate hypothesis
+                        indices that the current hypothesis has dependence or “conflict” with. In our local dependence setting,
+                        Ct = {t −L,...,t−1}.
+                        B.2      Local dependence simulation details
+                        Each Xi is a sample from Beta(a,b) distribution, where we let a+b = 10−2, that is shifted and rescaled
+                                t
+                        to be supported on [−4,4]. The following Hoeffding-based process (Mi) was shown by Waudby-Smith
+                                                                                                        t i
+                        and Ramdas (2023) to be an e-process for random variables bounded in [ℓ,u] if E[Xi] = 0 for i ∈ [N].
+                                                                                                                         t
+                                                                        i                j          2
+                                                           Mi=expXλjXj−(λt(u−ℓ)) ,
+                                                              t                 t  t          8
+                                                                          j=1
+                                                  j                                     j                              1        j−1
+                        for any sequence of (λ )j∈[N] that is predictable, i.e., λ can be determined by X ,...,X                    . We let
+                              p                   t                                     t                             t         t
+                        λj =     8log(1/(αγ ))/((u−ℓ)2N) as per Waudby-Smith and Ramdas (2023, eq. 3.6).
+                         t                    t
+                            Our e-values, and p-values are defined as follows:
+                                                               E =Mτt and P =                1        ,
+                                                                 t      t         t    max       Mi
+                                                                                            i≤N     t
+                        The stopping time τE defined the in the following recursive fashion:
+                                               t
+                                                       τ =min{i∈[N]:Mi ≥1/αbe-LOND(i)}∪{N},
+                                                        t                       t        t
+                                                                                                                              τ ∧i         τ    ∧i
+                        wherewedefineαbe-LOND(i)tobethetestleveloutputbye-LONDafterbeingappliedto(M 1 ,...,M t−1 ),
+                                           t                                                                                  1            t−1
+                                                                          τ ∧i         τt−1∧i
+                        where ∧ denotes minimum. Note that (M 1 ,...,M                        ) can be computed using only the first i
+                                                                          1            t−1
+                        samples of the data for the first t−1 hypotheses, i.e., {Xj}                    . Hence, these are valid stopping
+                        times.                                                           k j∈[i],k∈[t−1]
+                        B.3      Sampling WoR simulation details
+                        Let [ℓ,u] be the support of the population, and in our case, we set ℓ = −4,u = 4. Let P(µ) be the
+                        distribution X = (u−ℓ)Y +u , where Y ∼ Beta((µ−ℓ)·s/(u−ℓ),(u−µ)·s/(u−ℓ)), i.e., P(µ) is the
+                        Beta distribution scaled to be supported on [ℓ,u] with mean µ, and variance scaling factor s (where
+                        a smaller s results in population values concentrating at the support limits). Next, take a discrete
+                        grid of size N × T that is uniformly spread over [0,1], and compute the quantiles of the grid values of
+                        P(µ). We then shift all quantile values below (or above) µ by the same amount, so the mean of the
+                        grid quantiles is equal to µ.
+                            The e-values and p-values we use in this setup are derived from the following e-process from
+                        Waudby-Smith and Ramdas (2020) for sampling WoR:
+                                                                  i                            j          2
+                                                     Mi=expXλjXj+µj−1(0)−(λt(u−ℓ)) ,
+                                                        t                t   t     t                8
+                                                                    j=1
+                                                                                 25
+                                                                                            P
+                                                           i                i           1      i     j
+                      for any predictable sequence (λ )            where µ (0) =                   X is an adjustment term for
+                                                           t i∈[N]          t        N−i+1     j=1   t
+                      sampling WoR. We also set λj = p8log(1/(αγ ))/((u−ℓ)2N) here. We define our e-values and
+                                                         t                   t
+                      p-values likewise:
+                                                           E =Mτt and P =               1       ,
+                                                             t      t        t    max       Mi
+                                                                                       i≤N     t
+                      where τ = min{i ∈ [N] : Mi ≥ 1/(αγ )}∪{N} is the first time the (Mi)                    crosses the threshold
+                               t                     t          t                                     t i∈[N]
+                      1/(αγ ) or reaches the maximum sample size N.
+                             t
+                      C FDRcontrol of e-LOND is sharp
+                      Here we show that there exists a sequence of e-values (E1,...,Et) such that the FDR control of
+                      e-LOND is sharp.
+                      Theorem 6. If the discount sequence (γ ) satisfies P           γ =1, there exists a joint distribution over a
+                                                                  t              t∈N t
+                      sequence of e-values (Et)t∈N such that for every ε > 0, there exists t′ ∈ N such that FDR(Re-LOND) >
+                                                                                                                          t
+                      α−εfor all t ≥ t′.
+                                                                  e-LOND
+                      Proof. We write Rt as shorthand for R              . We let null be true at every hypothesis, i.e., H0 = N,
+                                                                  t
+                      and construct the joint distribution over e-values is characterized as follows:
+                                      :               −1                                      :
+                                   ξ ={E =(αγ )           and E =0 for all i ̸= t},        ξ  ={E =0forall t∈N}
+                                    t       t       t            i                          0       t
+                                                    P(ξ ) = αγ for each t ∈ N,          P(ξ ) = 1−α.
+                                                        t       t                           0
+                      Note that ξ are disjoint events for t ∈ N ∪ {0}, and P(ξ ) + P            P(ξ ) = 1−ααP           γ . — hence
+                                   t                                                 0      t∈N     t               t∈N t
+                      this characterizes a complete distribution over (E )        . Further, E[E ] = (αγ )−1 · P(ξ ) = 1, for each
+                                                                             t t∈N                t        t         t
+                      t ∈ N, so (Et)t∈N is provably a sequence of e-values.
+                          Wenote that FDP(R ) = max              1{ξ }, i.e., the FDP is 1 iff ξ    for some t ∈ [t] occurs. Hence,
+                                                  t        t ∈[t]    t                           t             1
+                                                            1         1                           1
+                                                                         [  X                            X
+                                      FDR(R )=E max1{ξ } =P                      ξ =          P(ξ ) = α         γ .            (22)
+                                               t                 t                 t                t              t
+                                                       t ∈[t]     1                 1                1              1
+                                                        1                    t ∈[t]        t ∈[t]            t ∈[t]
+                                                                              1             1                1
+                          Hence, for a fixed ε > 0, if we define t′(ε) to be the smallest t ∈ N such that P          γt >1−(ε/α)
+                                                                                           P                    t1∈[t] 1
+                      —note such a t always exists because (γt) is nonnegative and            t∈Nγt = 1. We can see as a result of
+                      (22), FDR(Rt) > α−ϵ for all t ≥ t′(ϵ). Thus, we have shown our desired result.
+                          Asimilar argument can be made to argue that Ue-LOND is sharp as well, as well as FCR control
+                      of e-LOND-CI and Ue-LOND-CI.
+                                                                             26

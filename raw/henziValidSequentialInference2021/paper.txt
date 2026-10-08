@@ -1,0 +1,1300 @@
+                           Valid sequential inference on probability forecast
+                                                     performance
+                                         Alexander Henzi and Johanna F. Ziegel
+                                             University of Bern, Switzerland
+                         alexander.henzi@stat.unibe.ch johanna.ziegel@stat.unibe.ch
+                                                       July 4, 2022
+                                                         Abstract
+                            Probability forecasts for binary events play a central role in many applications.
+                         Their quality is commonly assessed with proper scoring rules, which assign fore-
+                         casts a numerical score such that a correct forecast achieves a minimal expected
+                         score. In this paper, we construct e-values for testing the statistical signiﬁcance of
+                         score diﬀerences of competing forecasts in sequential settings. E-values have been
+                         proposed as an alternative to p-values for hypothesis testing, and they can easily
+                         be transformed into conservative p-values by taking the multiplicative inverse. The
+                         e-values proposed in this article are valid in ﬁnite samples without any assumptions
+                         on the data generating processes. They also allow optional stopping, so a forecast
+                         user may decide to interrupt evaluation taking into account the available data at
+                         any time and still draw statistically valid inference, which is generally not true for
+                         classical p-value based tests. In a case study on postprocessing of precipitation
+                         forecasts, state-of-the-art forecasts dominance tests and e-values lead to the same
+                         conclusions.
+                   1    Introduction
+                   Consider a forecast user who compares probability predictions p ,q ∈ [0,1], t ∈ N, for a
+                                                                                 t  t
+                   binary event Y    ∈{0,1}, where h ≥ 1 is the time lag between the forecasts and obser-
+                                 t+h
+                   vations. At time t, the forecasts p ,q as well as any predictions and observations before
+                                                    t t
+                   t are known. This setting encompasses many practical situations such as probability of
+       arXiv:2103.08402v3  [stat.ME]  1 Jul 2022precipitation forecasts h days ahead or predictions of negative economic growth in the
+                   next quarter. The forecast user wants to draw conclusions on the relative performance
+                   of p and q , that is, identify the better of the two forecasts.
+                       t     t
+                      Probability forecasts for binary events are arguably the simplest and best understood
+                   type of probabilistic forecasts; see Winkler (1996) for an earlier overview and more
+                   recent reviews in Gneiting and Raftery (2007), Ranjan and Gneiting (2010) and Lai
+                   et al. (2011). The key requirements for probability forecasts are calibration, meaning
+                   that events with a predicted probability of p should occur at a frequency of p, and
+                   sharpness, which requires the forecast probabilities to be as informative as possible,
+                   i.e. close to 0 or 1. These properties are simultaneously assessed with proper scoring
+                   rules (Gneiting and Raftery, 2007), which coincide with consistent scoring functions for
+                                                             1
+                         the mean (Gneiting, 2011) in the case of probability forecasts and will be simply referred
+                         to as scoring functions in this article. A scoring function S = S(p,y) maps a forecast
+                         probability p and an observation y to a numerical score, with smaller scores indicating
+                         a better forecast. More precisely, S satisﬁes
+                                                                 E {S(π,Y)} ≤ E {S(p,Y)}                                                 (1)
+                                                                   π                   π
+                         for all p,π ∈ [0,1], where Eπ(·) denotes the expected value under the assumption that
+                         Y =1withprobabilityπ. Thatis, the true event probability attains a minimal expected
+                         score, and S is strictly consistent if equality in (1) only holds for p = π. Well-known
+                         examples are the Brier score (y −p)2 and the logarithmic score −log(|1−y −p|).
+                              For comparing the predictions p and q , the forecast user would therefore col-
+                                                                           t         t
+                         lect a sample (y           , p , q ), t = 1,...,T, and compute the empirical score diﬀerence
+                            P                   t+h    t  t
+                          1     T {S(p ,y        ) −S(q ,y        )}. To take into account the sampling uncertainty, such
+                          T     t=1      t   t+h           t  t+h
+                         score diﬀerences are accompanied with p-values indicating whether the mean score sig-
+                         niﬁcantly diﬀers from zero. If the observations are not independent, as usual in se-
+                         quential settings, a number of asymptotic tests are available to compute p-values, with
+                         prominent ones being the Diebold-Mariano test (Diebold and Mariano, 1995) and the
+                         test of conditional predictive ability by Giacomini and White (Giacomini and White,
+                         2006). Further examples are the martingale-based approaches by Seillier-Moiseiwitsch
+                         andDawid(1993)orLaietal.(2011), and more recent tests of forecast dominance (Ehm
+                         and Kruger¨     , 2018; Yen and Yen, 2021).
+                              In this article, we expand the tools for drawing inference on probability forecast per-
+                         formance by e-values. E-values, with ‘e’ referring to ‘expectation’, have been introduced
+                         as an alternative to p-values for testing. The term e-value was used ﬁrst in the litera-
+                         ture by Vovk and Wang (2021), but the concept also appears in Shafer (2021), under
+                         the name ‘betting score’, and in Grun¨ wald et al. (2020); see also the series of working
+                         papers on http://alrw.net/e/. In brief, an e-value is a random variable E ≥ 0 sat-
+                         isfying E(E) ≤ 1 under a given null hypothesis. By Markov’s inequality, this implies
+                         P(E >1/α)≤αforanyα∈(0,1),i.e. large realizations of an e-value can be considered
+                         as evidence against the null hypothesis, and the value 1/E is a conservative p-value. A
+                         mainmotivation for using e-values instead of p-values, explained in more detail in Shafer
+                         (2021), Grun¨ wald et al. (2020) and Wang and Ramdas (2020), is their simple behaviour
+                         under combinations. The arithmetic average of e-values is again an e-value, and so is
+                         the product of independent or sequential e-values. E-values also have advantages over
+                         p-values with respect to false discovery rate control (Wang and Ramdas, 2020), which
+                         may be beneﬁcial for the comparison of forecasts over many locations such as a ﬁne
+                         latitute-longitude grid around the globe. The central property for this article is that
+                         e-values are valid under optional stopping and continuation, that is, the collection of
+                         data for computing an e-value may be stopped or continued based on seeing the past
+                         observations and e-values. It is well known that p-values in general do not satisfy these
+                         properties.
+                              Our main contribution is the result that for any scoring rule S and forecasts p,q for
+                         Y ∈{0,1}, there exists an e-value which satisﬁes Eπ(E) ≤ 1 if and only if Eπ{S(p,Y)−
+                         S(q,Y)} ≤ 0. This e-value allows one to draw inference on the relative performance of
+                         the forecasts p and q with respect to S with only a single observation. In a sequential
+                         setting, e-values from diﬀerent time points can be merged by products into a non-
+                         negative supermartingale or test-martingale, which are analysed in detail by Ramdas
+                         et al. (2020). This gives a statistical test of forecast dominance which is valid in ﬁnite
+                                                                                  2
+                  samples without any further assumptions on the data generating process. Moreover, the
+                  constructed e-values are valid under optional stopping, so a forecast user may decide to
+                  continue or stop forecast comparison based on only a part of the data. These advantages
+                  are inherent to any e-value, but we believe that they make e-values a particularly at-
+                  tractive tool in sequential forecast evaluation. The above mentioned tests for comparing
+                  probability forecasts are all only asymptotically valid, and the underlying assumptions
+                  are often diﬃcult or impossible to verify. In the case of tests with asymptotic normality,
+                  the selection of the variance estimator for the test statistic may have a dramatic impact
+                  on the test validity (see for example Lazarus et al., 2018, Table 1). More serious is the
+                  problem of optional stopping. In a simple but realistic simulation example in this article,
+                  we demonstrate that commonly used tests for forecast superiority at the level of 0.05
+                  may yield rejection rates of up to 0.15 under optional stopping, grossly misleading and
+                  invalidating statistical inference. Although statisticians and practitioners should know
+                  that the sample size for classical tests must be determined in advance, we believe that
+                  optional stopping is quite common in forecast evaluation, where data arrives sequentially
+                  and it might be tempting to stop, or continue, an expensive or time consuming experi-
+                  ment upon seeing enough, or just not enough, evidence against a hypothesis. Moreover,
+                  also in the analysis of past datasets, optional continuation may occur implicitly, in that
+                  methods are often ﬁrst evaluated on a smaller, manageable part of the data and the
+                  analysis is continued if the results are promising. Last but not least, even to a statisti-
+                  cian fully aware of the problem of optional stopping, it may be desirable to have a tool
+                  that allows stopping an evaluation when enough evidence is collected, without having
+                  to bother about the implications for inference.
+                      Theadvantages of e-values for forecast comparison relative to the currently available
+                  methods come at a price, namely, lower power. This is well known not only for e-
+                  values, but a general phenomenonwhentoolsforanytime-validinferencearecomparedto
+                  methodsforinferencewithaﬁxedsamplesize; seeforexampleFigure1inWaudby-Smith
+                  and Ramdas (2021) displaying the widths of time uniform and ﬁxed time conﬁdence
+                  intervals for a mean. However, in the case study in this article, p-values from classical
+                  tests and e-values lead to qualitatively the same results.
+                  2    Preliminaries
+                  2.1   Scoring functions for probabilities
+                  Throughout the article, EQ(·) denotes the expected value of the quantity in parentheses
+                  under the probability distribution Q. If the measure Q is the probability π ∈ [0,1] of a
+                  binary event, we simply write Eπ(·).
+                      Whencomparing probability forecasts with scoring functions, the choice of the scor-
+                  ing function plays a crucial role. While (1) guarantees that the true event probability
+                  always achieves a minimal expected score, diﬀerent scoring functions may yield diﬀerent
+                  rankings when misspeciﬁed forecasts are compared (Patton, 2020). This problem can
+                  be avoided by basing forecast comparison on several or all scoring rules simultaneously.
+                  For probabilities of binary events, under mild regularity conditions stated in Gneiting
+                  et al. (2007, Theorem 2.3), all consistent scoring functions are of the form
+                                              S(p,y) = Z    Sθ(p,y)dν(θ),                        (2)
+                                                        (0,1)
+                                                          3
+                    where ν is a locally ﬁnite Borel measure on (0,1) and
+                                                                        
+                                                                        
+                                                                          θ,        y = 0, p > θ,
+                             S (p,y) = (θ −y){1(p > θ)−1(y > θ)} =                                      (3)
+                              θ                                           1−θ,      y = 1, p ≤ θ,
+                                                                        
+                                                                        
+                                                                          0,        otherwise.
+                    In the equation above, 1 denotes the indicator function. This representation originally
+                    dates back to Schervish (1989); see also Ehm et al. (2016). The scoring function S is
+                    strictly consistent if and only if ν assigns positive mass to all non-degenerate intervals
+                    in (0,1).
+                    2.2   Forecast dominance and hypotheses
+                    Let (Ω,F,Q) be a probability space with a ﬁltration F , t ∈ N. We assume that the
+                                                                             t
+                    competing forecasts p ,q and the observation Y are a random vector (Y ,p ,q ) adapted
+                                         t  t                      t                       t  t  t
+                    to F , and (p ,q ) are forecasts for Y    for some integer lag h ≥ 1. The measure Q
+                        t        t  t                     t+h
+                    describes the joint dynamics of the forecasts and the observations.
+                       When comparing forecasts using a given scoring function S, the quantity of interest
+                    is often not the unconditional expected score diﬀerence E {S(p ,Y      ) − S(q ,Y    )},
+                                                                               Q     t  t+h        t  t+h
+                    which describes the average relative performance of pt and qt. More interesting is the
+                    question whether given the information at the time of forecasting, F , the conditional
+                                                                                          t
+                    event probability is closer to p than to q , i.e. E {S(p ,Y   ) − S(q ,Y   ) | F } ≤ 0.
+                                                   t          t       Q     t  t+h       t  t+h     t
+                    This notion of forecast dominance is called conditional forecast dominance and has been
+                    introduced by Giacomini and White (2006).
+                       Thedeﬁnition of forecast dominance used here does not require knowledge about the
+                    processes generating (Y ,p ,q ), which are often unknown or not well enough understood
+                                           t  t  t
+                    to formulate a suitable stochastic model. The relative performance of the forecasts p ,q
+                                                                                                        t  t
+                    is governed by the underlying distribution Q, and hypotheses about forecast dominance
+                    are hypotheses about the data generating process. Denoting by P the set of probability
+                    measures on (Ω,F), we will construct tests for the following hypotheses:
+                          H =[P∈P:cE {S(p,Y )−S(q,Y )|F}≤0a.s.,t∈N]                                      (4)
+                            S;c  "         t P     t  t+h       t  t+h     t                        #
+                           H = P∈P: sup cE {S (p ,Y              ) −S (q ,Y    ) | F } ≤ 0 a.s.,t ∈ N    (5)
+                             c                   t  P  θ  t  t+h      θ t   t+h    t
+                                           θ∈[0,1]
+                    Here, (ct)   is a sequence of Ft-measurable random variables ct ∈ {0,1}. If ct = 1 for all
+                             t∈N
+                    t, we write H   =H andHc=H. Inthiscase, Hypothesis (4) states that at all times
+                                 S;c    S
+                    t, forecast p is at least as good as q under the scoring rule S, given the information
+                                t                        t
+                    available at the time of forecasting. Hypothesis (5) is stronger and states that p is
+                                                                                                        t
+                    preferred over qt under all elementary scores (3), and it corresponds to what is denoted
+                    by Hs in Ehm and Kruger¨   (2018, formula (2.5)). Recently, hypotheses of the type of H
+                         −
+                    or H havebeenputinquestionbyZhuandTimmermann(2020),whodemonstratethat
+                        S
+                    the null hypothesis of equal conditional predictive accuracy is basically never satisﬁed
+                    in realistic settings. Their criticism does not directly apply to one-sided hypotheses, but
+                    we emphasize that the null hypotheses H or H are rather strong in that they require
+                                                              S
+                    conditional dominance at all time points. Tests for these hypotheses are therefore most
+                    suitable for the comparison of a new method to an established benchmark or state-of-
+                    the-art method, where rejecting the null means that the new method outperforms the
+                    benchmark at least in some situations – a minimal requirement.
+                                                               4
+                      The classical example for a situation with P ∈ H is p = P(Y    =1|F), i.e. p is
+                                                                          t       t+h        t      t
+                   the ideal forecast in the sense of Gneiting and Ranjan (2013). For the hypotheses H ,
+                                                                                                      S
+                   one may easily construct situations with dominance relations also among non-calibrated
+                   forecasts; see the simulation examples in Section 4.
+                      In many practical situations, it cannot be expected that a forecast method always
+                   outperforms another one, and forecast users are rather interested in the question under
+                   whatconditions a particular forecast should be preferred. Choosing the sequence (ct)
+                                                                                                    t∈N
+                   such that ct = 1 if the condition holds and ct = 0 otherwise allows to formalize this
+                   question. Here the variables ct must be Ft-measurable, that is, known at the time of
+                   forecasting. In practice this is not a severe limitation, since the information that one
+                   forecast is more accurate than another one under a given condition is only useful if
+                   this condition is known at the time of forecasting, and not ex post. But also from a
+                   theoretical point of view, forecast evaluation should only be conditioned on the forecasts
+                   themselves, and not on the observations or on information not available at the time of
+                   forecasting; see Lerch et al. (2017) for a detailed analysis of this issue in the case of
+                   extreme events.
+                   3    E-values for testing forecast dominance
+                   3.1   One-period setting
+                   We ﬁrst construct e-values for the comparison of probability forecasts in a one-period
+                   setting where Y = 1 with probability π and the forecasts p,q are assumed to be ﬁxed
+                   numbers in (0,1). These e-values give an absolute and valid interpretation of predictive
+                   performance with only a single observation, e.g. for a single time point in the sequential
+                   setting of Section 2.2, or in binary classiﬁcation problems with independent forecast-
+                   observation pairs, where the competing forecasts are based on covariates and π is the
+                   probability that Y = 1 conditional on the covariate values. The null hypotheses that p
+                   is a better forecast than q with respect to a given score S, or with respect to all scoring
+                   functions simultaneously, here correspond to
+                                   HS =[π ∈[0,1] : Eπ{S(p,Y)−S(q,Y)} ≤ 0],
+                                        "                                            #
+                                   H= π∈[0,1]: sup Eπ{S (p,Y)−S (q,Y)}≤0 .
+                                                               θ         θ
+                                                    θ∈[0,1]
+                   For p < q, a direct computation shows that H is the interval [0,κ {[p,q)}] with
+                                                               S                   ν
+                                         κ {[a,b)} = R[a,b) θdν(θ), 0 < a < b < 1.
+                                          ν            ν{[a,b)}
+                   The stronger null hypothesis H is the intersection of these intervals for all mixing mea-
+                   sures ν, that is, [0,p]. In the case q > p, the intervals take the form [κ {[q,p)},1] or
+                                                                                          ν
+                   [p,1], respectively.
+                      For a set P of probability measures and disjoint H,H0 ⊂ P, we say that an e-value
+                   E has null hypothesis H and alternative H0 if EP(E) ≤ 1 for all P ∈ H and EQ(E) > 1
+                   for all Q ∈ H0. The following theorem characterizes e-values for testing H .
+                                                                                          S
+                   Theorem 3.1. Let S be a consistent scoring function and p,q ∈ (0,1), p 6= q. Assume
+                                                                                	
+                   that the mixing measure ν of S satisﬁes ν [min(p,q),max(p,q)) > 0. Then a function
+                                                            5
+                    E = E(y) is an e-value with null hypothesis H and alternative [0,1] \ H , if and only
+                                                                      S                          S
+                    if for some λ ∈ (0,1],
+                                   E(y) = Ep,q;λ(y) = 1+λ             S(p,y)−S(q,y)             .            (6)
+                                                              |S(p,1{p > q})−S(q,1{p > q})|
+                        Theorem 3.1 gives a family of e-values for testing forecast dominance with a given
+                    score S, and in a next step, we tune the parameter λ in (6) such that the corresponding
+                    e-value has maximal ‘power’ against a given alternative. The notion of power for e-
+                    values diﬀers from the classical power of p-values, and it is motivated in detail by Shafer
+                    (2021) and Grun¨ wald et al. (2020). An e-value can be interpreted as a bet against the
+                                                      Q
+                    null hypothesis, and a product      T   E of e-values represents the accumulated capital
+                                                        t=1  t
+                    at time if T the initial capital is 1 and all money is invested in the bet at each step.
+                    Maximizing the gains is equivalent to maximizing the ‘growth rate’ (1/T)logQT          E =
+                           P                                                                           t=1  t
+                    (1/T)    T   log(E ), a strategy which is sometimes called Kelly betting, in reference to
+                             t=1       t
+                    Kelly Jr (1956). If an e-value maximizes E {log(E)} under a measure P representing
+                                                                   P
+                    an alternative hypothesis, it is called growth rate optimal or simply GROW (Grun¨ wald
+                    et al., 2020). One such alternative could be that Y = 1 with probability q, but one can
+                    maximize the power under any other alternative π 6∈ H .
+                                                                         1     S
+                    Theorem3.2. UndertheassumptionsofTheorem3.1, foranyπ1 6∈ HS, Eπ {log(Ep,q;λ)}
+                                                                                                   1
+                    is maximal in λ if and only if
+                                                              S(p,1)−S(q,1)
+                                               
+                                               
+                                                 (1−π1)+π1                     ,   p > q,
+                                          λ=                  S(p,0)−S(q,0)
+                                                              S(p,0)−S(q,0)
+                                               
+                                               
+                                                 π1 +(1−π1)S(p,1)−S(q,1),          p < q.
+                    The corresponding e-value equals
+                                                               1−π1
+                                                 
+                                                                                  ,   y = 0,
+                                                 1−κ {[min(p,q),max(p,q))}
+                                       Eπ1(y) =          ν
+                                        p,q                    π1
+                                                                            	,        y = 1.
+                                                 κ {[min(p,q),max(p,q))
+                                                     ν
+                        Theorem 3.2 shows that the GROW e-values for the comparison of probability fore-
+                    casts take the form of likelihood ratios with the alternative probability in the numer-
+                    ator and the integral of the mixing measure ν (suitably normalized) over the interval
+                    [min(p,q),max(p,q)) in the denominator. It is possible to obtain this result directly by
+                    applying Theorem 1 in Grun¨ wald et al. (2020), since κ {[min(p,q),max(p,q))} is the
+                                                                                ν
+                    boundary of the null-hypothesis H . We chose the indirect but more instructive ap-
+                                                         S
+                    proach via Theorem 3.1 since to the best of our knowledge, this is the ﬁrst application
+                    of e-values to forecast comparison, and similar approaches might be used to construct e-
+                    values for score diﬀerences in more general settings than the evaluation of binary event
+                    forecasts.  In fact, Waudby-Smith and Ramdas (2021, Proposition 2) have a similar
+                    representation as in (6) for e-values for testing hypotheses about a constant mean.
+                        For the test of the null hypothesis H, applying Grun¨ wald et al. (2020, Theorem 1)
+                    shows that the GROW e-value is the likelihood ratio.
+                    Theorem 3.3. Let p,q ∈ (0,1). Then the GROW e-value with null hypothesis H and
+                    alternative hypothesis that Y = 1 with probability π1 6∈ H is given by
+                                              Eπ1∗(y) = ((1−π1)/(1−p),          y = 0,
+                                               p,q         π /p,                y = 1.
+                                                            1
+                                                                 6
+                    Table1: CommonlyusedscoringrulesandthecorrespondingdenominatorintheGROW
+                    e-value under the assumption p < q. The case p > q is obtained by interchanging the
+                    roles of p and q. The mixing measure ν is given in the form of its Lebesgue density h(θ),
+                                                                   2           1/2
+                    θ ∈ (0,1). For the spherical score, kpk := (2p −2p+1)         denotes the Euclidean norm
+                    of the vector (p,1 − p).
+                           Score             S(p,y)           Mixing density ν             κ {[p,q)}
+                                                                                            ν
+                           Brier             (p−y)2                   2                    (p+q)/2
+                                                                 −1        −1          1−p.       q(1−p)
+                       Logarithmic      −log(|1−y−p|)           θ   (1−θ)          log  1−q     log  p(1−q)
+                         Spherical     1−|1−y−p|/kpk (2θ2−2θ+1)−3/2                     (q−1)kpk−(p−1)kqk
+                                                                                       (2q−1)kpk−(2p−1)kqk
+                        In testing with e-values, the GROW e-value for testing the point null hypothesis {p}
+                    against the alternative π1 is exactly the likelihood ratio, and Theorem 3.3 states that
+                    this is equivalent to testing forecast dominance with respect to all scoring functions.
+                    Dominance with respect to all scoring functions is a very strong requirement on p, since
+                    the null hypothesis is false as soon as the true probability π is on the same side of p as
+                    q, that is, in (p,1] for p < q or in [0,p) for q < p, and the choice of π1 is restricted to
+                    these sets. Unlike the e-values Eπ1, Eπ1∗ does not depend directly on q, but indirectly
+                                                       p,q  p,q
+                    via the admissible values for π1.
+                    3.2    Sequential inference
+                    We now turn to the sequential model with observations Y and forecasts p ,q deﬁned
+                                                                                  t                 t  t
+                    on a probability space (Ω,F,Q) with a ﬁltration F , t ∈ N. In the case h = 1, for any
+                                                                          t
+                    Q∈H andanyadaptedsequence λt ∈[0,1], t∈N, with E                       as deﬁned in (6),
+                           S;c                                                      p ,q ;λ
+                                                                                     t t  t
+                            (T                 )          "    (T                       )#
+                        E     YE         (Y    )   = E E YE                 (Y   ) | F
+                          Q        p ,q ;λ t+1          Q    Q        p ,q ;λ t+1     T
+                                    t t t                              t t t
+                              t=1                         "      t=1                                     #
+                                                           T−1
+                                                   = E     YE          (Y    )E {E          (Y    ) | F } .
+                                                        Q        p ,q ;λ  t+1  Q    p ,q ;λ   T+1      T
+                                                                  t t t              T T T
+                                                           t=1
+                    If c = 0, then there is no hypothesis about p and q . For these cases, the deﬁnition
+                        t                                            t       t
+                    at (6) may be extended to λ = 0, so that Ep ,q ;0 ≡ 1 if ct = 0. Then, if λT = 0 when
+                                                                    t t
+                    cT = 0,
+                           E {E           (Y    ) | F } = (1 −c )+c E {E               (Y    ) | F } ≤ 1
+                             Q    p ,q ;λ   T+1      T           T     T Q     p ,q ;λ   T+1      T
+                                   T T T                                        T T T
+                    almost surely for Q ∈ H     , so
+                                              S;c
+                                         (T                  )         (T−1                )
+                                      E    YE          (Y   )   ≤ E      YE          (Y   )  .
+                                        Q        p ,q ;λ t+1         Q        p ,q ;λ  t+1
+                                                  t t t                        t  t t
+                                           t=1                           t=1
+                        Iterating this argument shows that the product QT       E       (Y    ) is an e-value for
+                                                                                  p ,q ;λ t+1
+                                                        Qt                   t=1   t t t
+                    H ; more precisely, the process           E        (Y   ), t = 2,3,..., is a non-negative
+                      S;c                                       p ,q ;λ  j+1
+                                                           j=1   j j  j
+                    supermartingale with respect to (F )       . For general lag h, sequential conditioning at
+                                                          t t∈N
+                    time steps of 1 is not possible, and one option is to average the products of all e-values
+                                                                 7
+                           with time diﬀerence of h, in the spirit of the U-statistics merging functions suggested
+                           by Vovk and Wang (2021). We summarize this in the following proposition.
+                           Proposition 3.4. Let (Y ,c ,p ,q ,λ ) ∈ {0,1}2×(0,1)2×[0,1] be deﬁned on a measur-
+                                                               t   t   t   t    t
+                           able space (Ω,F) and adapted to the ﬁltration F , t ∈ N, and assume λ = 0 if c = 0.
+                                                                                                 t                                t            t
+                           Let further S be a strictly consistent scoring function. Then for all T ≥ h + 1, with
+                           Ik = {k +hs : s = 0,...,b(T −k)/hc−1},
+                                                                                  h
+                                                                     e = 1 XYE                       (Y      )
+                                                                       T                     p ,q ;λ    l+h
+                                                                             h                l  l  l
+                                                                                k=1l∈Ik
+                           are F -measurable and are e-values under H                          .
+                                   T                                                       S;c
+                                Proposition 3.4 is an analogous result to Theorem 3.1 in the sense that it only
+                           characterizes possible e-values for testing forecast dominance, but the parameters λt
+                           could be any adapted sequence (λt)                        ⊂[0,1]. E-values for dominance testing under
+                                                                               t∈N
+                           the conditions (ct)              are obtained by setting all e-values where the condition is not
+                                                      t∈N
+                           satisﬁed to 1. The forecast user may, and in fact, has to, tune the (λt)                                     in order to
+                                                                                                                                  t∈N
+                           attain a good power against a given alternative. Recall that at any t, the λt may be a
+                           function of all the forecasts and observations before time t. Instead of the parameters
+                           λt, it is usually more intuitive to think about an alternative probability ηt for the event
+                           Y       = 1, and then directly use the GROW e-values Eηt                                  constructed in Theorem
+                             t+h                                                                              p ,q
+                                                                                                               t  t
+                           3.2. In that respect, testing forecast dominance with e-values diﬀers from p-value based
+                           tests of a zero score diﬀerence, which do not require the user to explicitly specify an
+                           alternative hypothesis. In the applications in Sections 4 and 5, we will give guidance on
+                           the selection of alternative hypotheses, and show that reasonable power may be attained
+                           with simple heuristic methods.
+                                As a side remark, choosing an alternative hypothesis for e-values in sequential fore-
+                           cast dominance testing is similar to the conditional predictive ability tests by Giacomini
+                           and White (2006), where Ft-measurable test functions are used to weight score diﬀer-
+                           ences and improve power. While the selection of the test functions in the Giacomini-
+                           White test is delicate, because they may have an impact on the variance estimates and
+                           the ﬁnite-sample validity of the tests, e-values remain valid under any choice of adapted
+                           weights (λt)          .
+                                             t∈N
+                                Our last theoretical result states that the e-values e                           constructed above are also
+                                                                                                             T
+                           valid when T is replaced by a stopping time τ. For h = 1, this is a consequence of the
+                           fact that (e )          is a non-negative supermartingale (see Ramdas et al., 2020, Section 3).
+                                            t t≥2
+                           Proposition 3.5. Let τ ∈ N be a stopping time. Then under the assumptions of
+                           Proposition 3.4,
+                                                                       E (e           ) ≤ 1, Q ∈ H .
+                                                                         Q τ+h−1                         S
+                                To understand validity under optional stopping intuitively, recall that at time t, the
+                           forecast user has to determine the parameter λt in the e-value E                                     (Y      ). Optional
+                                                                                                                       p ,q ;λ     t+h
+                                                                                                                         t  t  t
+                           stopping at t0 corresponds to setting λt ≡ 0, or equivalently E                                       (Y      ) ≡ 1, for
+                                                                                                                         p ,q ;λ    t+h
+                                                                                                                          t  t  t
+                           t ≥ t , i.e. ignoring all observations starting from time t + h. In the case h = 1, this
+                                   0                                                                         0
+                           allows the forecast user to stop evaluation at any time, since λ in E                                           (Y      ) is
+                                                                                                                          t        p ,q ;λ    t+1
+                                                                                                                                    t  t  t
+                           deﬁned at the same time as Yt is observed. However, when h > 1, the coeﬃcients λt in
+                           E          (Y      ) for t = t −h+1,...,t −1 have already been determined in the past and
+                              p ,q ;λ    t+h                0                   0
+                               t  t  t
+                           may not be set to zero at t , since they must be (F )                           -adapted. This implies that the
+                                                                 0                                  t t∈N
+                                                                                         8
+                      stopped e-value depends on the unknown, future observations Yt0+1,...,Yt0+h−1, so it
+                      is not deterministic at time t0.
+                          In the case h = 1, optional stopping is a powerful strategy when the goal is to assess
+                      forecast superiority at a signiﬁcance level α ∈ (0,1), since the stopping time
+                                                    τα = min{T, inf(t ≥ 2 : et ≥ 1/α)}
+                      allows to reject the null hypothesis as soon as the sequential e-value et exceeds 1/α. If
+                      h>1,one may similarly deﬁne
+                             τ    =minT, inft ≥ h+1 : e ≥               max     E        {1(p >q )}−1/α,
+                              α,h                               t                   p ,q ;λ     j     j
+                                                                     j=t−h+1,...,t−1 j j j
+                      which guarantees that when stopping at t , the level 1/α is exceeded no matter what val-
+                                                                    0
+                      ues Y     , . . . , Y     take; see Appendix A.2. Instead of specifying a signiﬁcance level
+                            t0+1        t0+h−1
+                      αinadvance, one mayaswelltransformthesequence(e )                   into so-called anytime valid
+                                                                                    t t∈N
+                      p-values, which are valid simultaneously for all t ≥ h+1 (see Ramdas et al., 2020, Sec-
+                                                                            0
+                      tion 3.1). For h = 1, an anytime-valid p-value is given by p          =min{1,inf            1/e }.
+                                                                                         t0               s=1,...,t0  s
+                      For h > 1, one may apply the same correction as in the stopping time τα,h, namely,
+                                                                                                   −1
+                      deﬁne p    =min(1,inf            [max                 E        {1(p >q )} /e ])
+                               t0              s=1,...,t0    j=s−h+1,...,s−1  p ,q ;λ     j     j        s
+                                                                               j j  j
+                      4     Simulation examples
+                      4.1    Basic properties
+                      Forthesimulationexamplesinthisandinthenextsubsection, wewilltransforme-values
+                      E into p-values by taking their inverse 1/E, so that direct comparisons with p-values
+                      are possible. Further variations of these simulation examples are presented in B. An R
+                      package for the proposed methods and replication material for all results in this article
+                      are available on GitHub (https://github.com/AlexanderHenzi/eprob).
+                          In the ﬁrst example, for varying µ ∈ (0,1), we simulate independent forecasts p , q ∼
+                                                                                                                  t  t
+                      Unif(0,1), deﬁne π = µq +(1−µ)p , and generate independent Bernoulli observations
+                                           t      t            t
+                      Y     withmeanπ conditionalonp ,q . Thisrepresentsasituationwhereforecastersonly
+                       t+1               t                   t  t
+                      have access to partial information and both forecasts are not calibrated, i.e. P(Y               =
+                                                                                                                   t+1
+                      1 | p ) 6= p and P(Y        =1|q)6= q . We choose S to be the Brier score, so that p
+                           t      t           t+1         t      t                                                      t
+                      outperforms q if and only if π ∈ [0,(p +q )/2] if p < q or π ∈ [(p +q )/2,1] if p > q ,
+                                      t                 t        t    t        t    t      t      t   t           t     t
+                      i.e. if and only if µ ≤ 0.5. When µ > 0.5, the GROW e-value is obtained by choosing πt
+                      as alternative hypothesis probability, but in practice, πt is not known. The forecast user
+                      might assume that the true probability of Y          =1lies somewhere in between (p +q )/2
+                                                                       t+1                                      t    t
+                      and q , and choose a convex mixture η (ξ) = ξ(p +q )/2+(1−ξ)q with some ξ ∈ (0,1)
+                            t                                    t          t    t               t
+                      as alternative. Proposition 3.4 implies that for k ∈ N and ξ1,...,ξk ∈ (0,1),
+                                                          t                            k
+                                                e     =YEηi(ξj)(Y        ),   e = 1 Xe
+                                                  t;ξ         p ,q    i+1      t           t;ξ
+                                                    j          i i                  k         j
+                                                        i=1                           j=1
+                      are e-values under HS. In Figure 1, we compare the rejection rates at the 5% level,
+                      corresponding to e-values greater or equal to 20, when the ξj are k equispaced weights
+                      in (0,1) for k = 1 and k = 5, i.e. ξ = 0.5 if k = 1 and ξ = l/6, l = 1,...,5, in the case
+                                                             1                       l
+                      k = 5. We computed both the unstopped e-value e and the stopped variant e                    , and
+                                                                               T                               τ
+                                                                                                                0.05
+                      the e-values under alternatives η = π and η = q . The rejection rates are compared
+                                                           t      t       t     t
+                                                                       9
+                    to those of one-sided t-tests of the null hypothesis that the mean Brier score diﬀerence
+                    is non-positive. Additionally, we show the rejection rates when the p-value is used for
+                    optional stopping at given time points upon seeing a signiﬁcant diﬀerence.
+                              (a)                                      (b)
+                           0.25                                     1.00
+                           0.20                                     0.75
+                           ate
+                           0.15
+                                                                    0.50
+                           0.10
+                           Rejection r0.05                          0.25
+                           0.00                                     0.00
+                               0.3        0.4        0.5       0.6           0.4        0.6        0.8
+                                                µ                                        µ
+                              (c)                                      (d)
+                           1.00                                     1.00
+                           ate0.75                                  0.75
+                           0.50                                     0.50
+                           Rejection r0.25                          0.25
+                           0.00                                     0.00
+                                     0.4       0.6        0.8                0.4        0.6        0.8
+                                                µ                                        µ
+                    Figure 1: Rejection rates of e-values and Student’s t-test for the hypothesis that p
+                                                                                                                t
+                    dominates qt with respect to the Brier score in the simulation of Section 4.1. Sample
+                    size is T = 600 for the panels (a)-(c) and the signiﬁcance level is α = 0.05 for all
+                    panels. (a) Rejection rate of t-test under optional stopping at 1, 3, and 5 equispaced
+                    time points (triangles, squares, crosses) in between 1 and T = 600, and without optional
+                    stopping (dots). (b) Rejection rates of stopped (dots) and unstopped (triangles) e-value
+                    with k = 1. (c) Rejection rates of e-values with diﬀerent alternative hypotheses (q :
+                                                                                                               t
+                    triangles, πt: dots, k = 1: crosses, k = 5: squares). (d) Rejection rates of e-value
+                    (k = 5; normal lines) and t-test (without stopping; dot-dashed lines) for varying sample
+                    size T (dots: 300, triangles: 600, squares: 1200).
+                        Our simulations illustrate the known fact that classical statistical tests are not valid
+                    under stopping. At the boundary of the null hypothesis, the rejection rate of the t-test
+                    amounts to 0.12 for T = 600 and optional stops at times 150, 300 and 450; given the
+                    number of optional stops, this phenomenon occurs independently of the sample size. As
+                    for the e-values, stopping (e     ) is always a more powerful but valid strategy compared
+                                                  τ
+                                                   0.05
+                    to the e-value e . While the heuristic alternatives achieve a power close to the power
+                                     T
+                    under the correct alternative hypothesis, the misspeciﬁed hypothesis η = q is clearly
+                                                                                                t    t
+                    weaker. Interestingly, the correct alternative ηt = πt has a lower power than the heuristic
+                    alternatives close to the boundary of the null hypothesis. This is not an error: Specifying
+                    ηt = πt yields the optimal growth rate for the e-value, but this does not necessarily mean
+                    that it gives optimal power for the stopped e-value at the threshold 1/α = 20 in ﬁnite
+                    samples. The t-test generally achieves a higher power than the e-values, which has to
+                    be expected given the absence of assumptions on the data generating process and the
+                    validity under optional stopping; see also Waudby-Smith and Ramdas (2021).
+                                                                 10
+                     Figure 2: Rejection rates of e-value (dots) and Diebold-Mariano test (triangles) in Ex-
+                     ample (7) at the 5% level for diﬀerent sample sizes (panel rows) and lags h (panel
+                     columns).
+                                       1                         2                         3
+                        1.00
+                        0.75
+                        0.50                                                                             300
+                        0.25
+                        0.00
+                        1.00
+                        0.75
+                        0.50                                                                             600
+                       ate0.25
+                        0.00
+                        1.00
+                        0.75
+                       Rejection r0.50                                                                   1200
+                        0.25
+                        0.00
+                        1.00
+                        0.75
+                        0.50                                                                             2400
+                        0.25
+                        0.00
+                           0.0    0.2   0.4    0.6   0.0    0.2   0.4    0.6   0.0    0.2   0.4    0.6
+                                                                 θ
+                     4.2    Time series example
+                                                                                      P
+                     Wesimulate Z from a moving average process Z =  +θ                 4      , and deﬁne
+                                     t                                     t    t        j=1 t−j
+                               Y =1{Z >0}, π =P(Z >0|Z ,j=h,...,4), h=1,...,4.                                    (7)
+                                 t        t          t;h       t         t−j
+                     The probability πt;h corresponds to the ideal forecast at lag h. We compare qt;h = πt;h
+                     and p     = π        for lags h = 1,...,3, so that q         always outperforms p      .  With
+                            t;h     t;h+1                                     t;h                         t;h
+                     decreasing parameter θ, serial dependence decreases and the forecast skill of p             and
+                                                                                                             t;h
+                     qt;h becomes similar. The alternative hypothesis for the e-values is the correct alternative
+                     ηt;h = qt;h, so that the eﬀect of a higher lag can be analyzed isolated from the question
+                     how to choose the alternative hypothesis. Rejection rates are compared to the Diebold-
+                     Mariano test at the 5%-level.
+                         Figure 2 shows the rejection rates depending on the parameter θ for diﬀerent sample
+                     sizes T. The e-values use the stopping time τ0.05 for lag 1 and τ0.05;h for lags h = 2 and
+                     h = 3. As in the previous simulations, the power of the e-values is below the p-values
+                     for the lag 1 forecasts, where the Diebold-Mariano test essentially coincides with the
+                     t-test.  For lags 2 and 3, this diﬀerence increases, since the combination method for
+                     e-values becomes less powerful. With increasing lag, the rejection rates of both methods
+                     decrease, but the diﬀerence to lag 1 is smaller for the Diebold-Mariano test compared
+                     to the e-value. In this example, the Diebold-Mariano test is valid because the forecasts
+                     are ideal and the data generating process is stationary. For the e-values, validity is
+                     guaranteed without such assumptions, which may be of great advantage in applications.
+                                                                    11
+                5   Case study
+                5.1   Data and methods
+                Henzi et al. (2021) have compared postprocessing methods for precipitation forecasts
+                with lag 1 to 5 days at the airports Brussels (BRU), Frankfurt (FRA), London Heathrow
+                (LHR)andZurich(ZRH).Intheircasestudy,probabilityofprecipitation(PoP)forecasts
+                have been evaluated with the Brier score, but no tests for signiﬁcance of score diﬀerences
+                have been performed. We will illustrate here how to apply e-values for probability
+                forecasts, and compare the results to state-of-the-art forecast dominance tests.
+                   A detailed description of the dataset and methods is given in Section 5 of Henzi
+                et al. (2021), and we only summarise the key information here. The dataset covers the
+                period from January 06, 2007 to January 01, 2017, and accounting for missing values,
+                the numbers of available observations are 3406 for Brussels, 3617 for Frankfurt, 2256 for
+                London and 3241 for Zurich airport. Postprocessing is applied to the ensemble forecasts
+                of the European Centre for Medium-Range Weather Forecasts (ECMWF; Molteni et al.,
+                1996; Buizza et al., 2005), which are issued on a latitude-longitude grid and consist of
+                a high resolution forecast, 50 perturbed ensemble forecasts at a lower resolution, and
+                the control run for the perturbed forecasts. In simple words, ensemble forecasts account
+                for uncertainty by running a numerical weather prediction (NWP) model several times,
+                each time under slightly perturbated initial conditions, and each run of the model yields
+                a diﬀerent forecast, which together form a so-called ensemble (Leutbecher and Palmer,
+                2008). Ensemble forecasts are usually subject to biases and dispersion errors, which can
+                be corrected by estimating the conditional distribution of the weather variable given
+                the NWP ensemble. This statistical procedure is known as postprocessing of ensemble
+                forecasts (Vannitsem et al., 2018).
+                   Henzi et al. (2021) propose isotonic distributional regression (IDR) as a benchmark
+                for such postprocessing methods. IDR estimates conditional distributions nonparamet-
+                rically and without any tuning parameters. The method is not speciﬁcally tailored to
+                forecasting precipitation, and one would expect that a parametric model designed for
+                this purpose gives more precise forecasts. One such method is heteroscedastic censored
+                logistic regression (HCLR; Messner et al., 2014), which assumes that the square root of
+                the precipitation follows a logistic distribution censored at zero. The implementation
+                is as in Henzi et al. (2021). While the covariates in IDR are only the high resolution
+                forecast, the control forecast, and the ensemble mean, the HCLR model additionally
+                includes a scale parameter depending on the ensemble standard deviation.
+                   Diﬀerent from the study in Henzi et al. (2021), who use an expanding window for
+                the postprocessing, we estimate both postprocessed forecasts on half of the data for each
+                airport for simplicity, and keep the remaining half for validation.
+                5.2   Hypothesis tests
+                We illustrate the usage of e-values in the following hypothesis tests. Firstly, we try to
+                reject the null hypothesis that IDR probability of precipitation forecasts are better than
+                the HCLR PoP forecasts with respect to the Brier score. Secondly, we modify HCLR
+                by dropping the scale parameter. It is expected that this variant, denoted by HCLR−
+                subsequently, is outperformed by HCLR including the ensemble-dependent scale param-
+                eter, and also by IDR, since the models are based since both IDR and HCLR− assume
+                a monotone relationship between the covariates and the PoP, but the nonparametric
+                IDR can estimate a broader class of functions. And ﬁnally, we further investigate the
+                                                    12
+                              eﬀect of the scale parameter on HCLR predictions for high precipitation. Suppose a
+                              weather forecaster issues a warning if the probability that the precipitation exceeds a
+                              high threshold is more than 50%. As thresholds, we chose the empirical 90% quantile of
+                              precipitation in the training data for each airport. Intuitively, the HCLR model should
+                              yield more accurate warnings than HCLR−, because it includes the ensemble standard
+                              deviation as an uncertainty measure.
+                                    The ﬁrst and second set of hypotheses are tested with the Brier score and the
+                              corresponding e-values. As alternative probability, we take the convex mixtures ηt =
+                              0.25p +0.75q , which have been explored in Section 4, denoting by p the forecasting
+                                      t             t                                                                                       t
+                              methodthat is expected to have a better performance than qt under the null hypothesis.
+                              The hypothesis about the extreme precipitation warnings is a conditional comparison
+                              with the conditions c = 1{max(p ,q ) ≥ 0.5}. For this hypothesis, instead of dominance
+                                                              t                   t   t
+                              with respect to the Brier score, we test the stronger hypothesis of forecast dominance
+                              with respect to all scoring rules. The rationale is that the forecast dominance hypoth-
+                              esis should be easily rejected if the HCLR model truly issues the better tail forecasts,
+                              and on the other hand, failing to reject may indicate that either even with data of 10
+                              years it is not possible to clearly discriminate the quality of such warnings, or that the
+                              ensemble standard deviation does not bring a beneﬁt. For this hypothesis we deﬁne
+                              ηt = qt, assuming that the conditional event probabilities should be much closer to the
+                              ones issued by HCLR than by HCLR−. No optional stopping is applied in all e-values.
+                                    For comparison, we also compute p-values for the signiﬁcance of score diﬀerences.
+                              The ﬁrst two hypotheses are tested with one-sided Diebold-Mariano tests (Diebold and
+                              Mariano,1995; see also Giacomini and White, 2006). To estimate the variance of the test
+                              statistics, we use the heteroskedasticity and autocorrelation consistent estimator with
+                              Bartlett weights, see Lerch et al. (2017, Equation 2.18). For testing dominance of the tail
+                              probability forecasts, the test by Yen and Yen (2021) would allow arbitrary forecast lags,
+                              but it assumes strict stationarity. Since the sequence c selects only particular instances,
+                                                                                                                  t
+                              with possibly strongly varying time gaps in between, stationarity is highly questionable.
+                              Wetherefore apply the dominance test by Ehm and Kruger¨                                      (2018), which is valid under
+                              weaker assumptions but limited to lag 1. Strictly speaking, both the Diebold-Mariano
+                              test and the forecast dominance test are valid under larger null hypotheses than the
+                              e-values, as they only require the average score diﬀerence between p and q to be non-
+                                                                                                                                         t         t
+                              positive, whereas the null hypothesis for the e-values asks for conditional superiority at
+                              each time point. A comparison is nevertheless interesting, since these two tests represent
+                              commonly used methods that are applied to test the signiﬁcance of score diﬀerences.
+                                    Tables 2 and 3 show the e-values and one-sided p-values for the hypotheses described
+                              above, computed separately for each airport and forecast lag. The e-values are not trans-
+                              formed to p-values here. For interpretation, Vovk and Wang (2020, Section 3) suggest
+                              the discrete scale such that e-values in (0,1], (1,3.16], (3.16,10], (10,31.6], (31.6,100],
+                              and (100,∞) represent no, poor, substantial, strong, very strong, and decisive evidence
+                              against the null hypothesis, respectively. E-values larger than 100 are not displayed to
+                              improve readability, but an untruncated variant of Table 2 is contained in C so that it is
+                              possible to update the e-values with more recent data. For all hypotheses, the p-values
+                              and e-values largely lead to the same conclusions. HCLR does not outperform IDR for
+                              PoPforecasts at lags 1 to 3, but for the airports Brussels and Zurich there is substantial
+                              to strong evidence that it achieves lower Brier scores at the lags 4 and 5. HCLR− is
+                              clearly outperformed by the more complex variant with the ensemble-dependent scale
+                              parameter at short lags, and also for the longer lead times there is some evidence that
+                              including the scale parameter improves the forecasts, except for London airport. As for
+                                                                                                13
+                      Table 2: Brier scores for diﬀerent probability of precipitation forecasting methods, and
+                      e-values (E) and p-values (p) for testing signiﬁcance of score diﬀerences. The columns
+                      HCLR/IDR show e-values and p-values for tests of the null hypothesis that IDR prob-
+                      ability of precipitation forecasts achieve a lower Brier score the HCLR forecasts; the
+                      interpretation is analogous for the other forecast pairs.
+                                         Average Brier score         HCLR/IDR           IDR/HCLR−         HCLR/HCLR−
+                               Lag    IDR HCLR HCLR−                 E         p         E         p         E          p
+                       BRU      1    0.107   0.117      0.118         0   0.9998     >100 <10−4          >100      0.0702
+                                2    0.119   0.123      0.125      0.01   0.9471     >100     0.0101     13.602    0.0294
+                                3    0.134   0.133      0.136     0.425   0.4405     >100     0.1916     15.185    0.0019
+                                4    0.152   0.145      0.148     4.804   0.0138      1.943   0.9358      5.165    0.0074
+                                5    0.171   0.161      0.164    16.969   0.0002      0.415   0.9965      3.436    0.0003
+                       FRA      1    0.109   0.111      0.114         0   0.7784     >100     0.0213     >100     <10−4
+                                2    0.114   0.119      0.122     0.054   0.9643     >100     0.0002     >100      0.0004
+                                3    0.123   0.127      0.132     0.078   0.9352     >100     0.0001     26.569   <10−4
+                                4    0.147   0.144      0.147     2.291   0.0966      9.618   0.5245       5.54    0.0001
+                                5    0.166   0.161      0.163     1.526   0.0305      2.362   0.8871      3.227    0.0051
+                       LHR      1    0.135   0.138      0.139     0.029   0.8136     14.979   0.1314      2.845    0.3721
+                                2    0.138   0.143      0.143     0.188   0.9189     >100     0.0509      2.868    0.4369
+                                3    0.152   0.154      0.155     0.734   0.7549     40.905   0.1394      2.488    0.3400
+                                4    0.169   0.167      0.169     1.429   0.2455        1.7   0.5442      1.744    0.0785
+                                5    0.186   0.181      0.182     1.577   0.0753      0.379   0.9288      1.118    0.3216
+                       ZRH      1    0.104   0.108      0.110     0.003   0.9306     >100     0.0055     61.747    0.0003
+                                2    0.110   0.112      0.114     0.116   0.7219     36.891   0.0304     10.276    0.0001
+                                3    0.121   0.118      0.121     1.516   0.0892     31.924   0.4410      5.098    0.0001
+                                4    0.138   0.132      0.134     4.069   0.0027      1.276   0.9588      2.771    0.0015
+                                5    0.165   0.156      0.159    15.151   <10−4       0.842   0.9978      2.383    0.0002
+                                                                       14
+                    Figure 3: E-values for the hypotheses tests at lag 1 for Brussels (dots), Frankfurt (tri-
+                    angles), London (squares), and Zurich (crosses). The abbreviation of the hypotheses is
+                    as in Table 2.
+                                        HCLR IDR                 IDR HCLR−               HCLR HCLR−
+                           1e+02
+                          alues1e+00
+                          E−v
+                           1e−02
+                              2012     2014     2016   2012     2014     2016   2012     2014     2016
+                                                                  Year
+                    the diﬀerence between IDR and HCLR−, both the e-values and the p-values suggest
+                    that IDR yields the better forecasts at lags 1 to 3, but at lags 4 and 5, there are no
+                    rejections of the null hypothesis. Figure 3 shows how the cumulative products of the
+                    e-values for the hypotheses tests at lag 1 evolve over time. If the goal was to accumulate
+                    strong evidence against the hypotheses, say exceeding the level 10, then the hypothesis
+                    that IDR outperforms HCLR− could already be rejected with only 9% or 27% of the
+                    data, respectively, which is where the corresponding lines ﬁrst cross the level 10. For
+                    Zurich airport, rejection happens at 85% of the total sample size.
+                        Interestingly, in the comparison of HCLR and HCLR for Brussels, lag 1, the p-value
+                                                                             −
+                    is non-signiﬁcant (0.07) but the e-value gives decisive evidence (> 100). We attribute
+                    this to the diﬀerent null hypotheses of the tests: The mean diﬀerence in Brier score
+                    is only 0.001 with an estimated standard deviation of 0.03, giving only little evidence
+                    against the null hypothesis of the Diebold-Mariano test. However, the null hypothesis
+                    for the e-value is smaller, requiring that HCLR    outperforms HCLR at all time points.
+                                                                     −
+                    Even if the score diﬀerences are only small, evidence eventually accumulates over the
+                    whole time period; see the rightmost panel of Figure 3. The fact the e-values in the
+                    comparison HCLR/HCLR decreasewiththeforecastlagisaneﬀectofthelesspowerful
+                                               −
+                    merging method for e-values with higher lag.
+                        In the comparisons of extreme precipitation warnings, the p-value gives some evi-
+                    dence against the null hypothesis for Brussels airport, and the corresponding e-value is
+                    decisive, E = 3703. For the other lag 1 forecasts, both p-values and e-values do not
+                    indicate that including the ensemble standard deviation brings a beneﬁt. As for the
+                    higher lags, for London and Zurich airport there is no evidence that HCLR outperforms
+                    HCLR−, and for Brussels and Frankfurt airport there is only evidence at lags 2 and
+                    3. Overall, the evidence in favour of the HCLR model for issuing extreme precipitation
+                    warnings as compared to HCLR is surprisingly weak.
+                                                     −
+                    Acknowledgement
+                    A. Henzi and J. F. Ziegel gratefully acknowledge ﬁnancial support from the Swiss Na-
+                    tional Science Foundation. The authors are grateful to Ruodu Wang for introducing
+                    them to e-values for hypothesis testing, and to Tobias Fissler and Aaditya Ramdas for
+                                                                15
+                     Table 3: Sample sizes, e-values and p-values for the comparison of tail probabil-
+                     ity forecasts.  The sample size is the number of observations where the condition
+                     min(p ,q ) ≥ 0.5 holds.
+                           t  t
+                            Brussels                Frankfurt            London               Zurich
+                      Lag   n     E (p)             n   E (p)            n    E (p)           n    E (p)
+                      1     116   >100 (0.050)      79  0.175 (0.814)    72   0.45 (0.724)    92   0.047 (0.892)
+                      2     88    23.409            87  3.327            69   1.332           99   2.961
+                      3     68    10.704            62  3.542            60   1.429           75   0.567
+                      4     49    2.338             53  1.166            39   0.868           52   0.773
+                      5     28    1.029             26  1.033            30   1.077           36   1.073
+                     helpful comments.
+                     References
+                     R. Buizza, P. L. Houtekamer, G. Pellerin, Z. Toth, Y. Zhu, and M. Wei. A comparison
+                       of the ECMWF, MSC, and NCEP global ensemble prediction systems. Mon. Weather
+                       Rev., 133:1076–1097, 2005.
+                     F. X. Diebold and R. S. Mariano. Comparing predictive accuracy. J. Bus. Econ. Stat.,
+                       13:253–263, 1995.
+                     W. Ehm and F. Kruger.¨     Forecast dominance testing via sign randomization. Electron.
+                       J. Stat., 12:3758–3793, 2018.
+                     W.Ehm,T.Gneiting, A.Jordan, and F. Kruger.¨         Ofquantiles and expectiles: consistent
+                       scoring functions, Choquet representations and forecast rankings. J. R. Stat. Soc. Ser.
+                       B. Stat. Methodol., 78:505–562, 2016.
+                     R. Giacomini and H. White. Tests of conditional predictive ability. Econometrica, 74:
+                       1545–1578, 2006.
+                     T. Gneiting. Making and evaluating point forecasts. J. Amer. Statist. Assoc., 106:
+                       746–762, 2011.
+                     T. Gneiting and A. E. Raftery. Strictly proper scoring rules, prediction, and estimation.
+                       J. Amer. Statist. Assoc., 102:359–378, 2007.
+                     T. Gneiting and R. Ranjan. Combining predictive distributions. Electron. J. Stat., 7:
+                       1747–1782, 2013.
+                     T. Gneiting, F. Balabdaoui, and A. E. Raftery. Probabilistic forecasts, calibration and
+                       sharpness. J. R. Stat. Soc. Ser. B Stat. Methodol., 69:243–268, 2007.
+                     P. Grun¨ wald, R. de Heide, and W. M. Koolen. Safe testing. In 2020 Information Theory
+                       and Applications Workshop (ITA), pages 1–54. IEEE, 2020.
+                     A. Henzi, J. F. Ziegel, and T. Gneiting. Isotonic distributional regression. J. R. Stat.
+                       Soc. Ser. B Stat. Methodol., forthcoming, 2021.
+                                                                  16
+         J. L. Kelly Jr. A new interpretation of information rate. Bell System Technical Journal,
+          35:917–926, 1956.
+         T. Z. Lai, S. T. Gross, and D. B. Shen. Evaluating probability forecasts. Ann. Statist.,
+          39:2356–2382, 2011.
+         E. Lazarus, D. J. Lewis, J. H. Stock, and M. W. Watson. HAR inference: Recommen-
+          dations for practice. J. Bus. Econ. Stat., 36:541–559, 2018.
+         S. Lerch, T. L. Thorarinsdottir, F. Ravazzolo, and T. Gneiting. Forecaster’s dilemma:
+          Extreme events and forecast evaluation. Statist. Sci., 32:106–127, 02 2017.
+         M. Leutbecher and T. N. Palmer. Ensemble forecasting. J. Comput. Phys., 227:3515–
+          3539, 2008.
+         J. W. Messner, G. J. Mayr, D. S. Wilks, and A. Zeileis. Extending extended logistic
+          regression: Extended versus separate versus ordered versus censored. Mon. Weather
+          Rev., 142:3003–3014, 2014.
+         F. Molteni, R. Buizza, T. N. Palmer, and T. Petroliagis. The ECMWF ensemble pre-
+          diction system: Methodology and validation. Q. J. R. Meteorol. Soc., 122:73–119,
+          1996.
+         A. J. Patton. Comparing Possibly Misspeciﬁed Forecasts. J. Bus. Econom. Statist., 38:
+          796–809, 2020.
+         A. Ramdas, J. Ruf, M. Larsson, and W. Koolen. Admissible anytime-valid sequential
+          inference must rely on nonnegative martingales. arXiv preprint arXiv:2009.03167,
+          2020.
+         R. Ranjan and T. Gneiting. Combining probability forecasts. J. R. Stat. Soc. Ser. B
+          Stat. Methodol., 72:71–91, 2010.
+         M. J. Schervish. A general method for comparing probability assessors. Ann. Statist.,
+          17:1856–1879, 1989.
+         F. Seillier-Moiseiwitsch and A. P. Dawid. On testing the validity of sequential probability
+          forecasts. J. Amer. Statist. Assoc., 88:355–359, 1993.
+         G. Shafer. Testing by betting: A strategy for statistical and scientiﬁc communication.
+          J. R. Stat. Soc. Ser. A Stat. in Society, 184:407–431, 2021.
+         S. Vannitsem, D. S. Wilks, and J. Messner, editors. Statistical Postprocessing of En-
+          semble Forecasts. Elsevier, 2018.
+         V. Vovk and R. Wang. True and false discoveries with independent e-values. arXiv
+          preprint arXiv:2003.00593, 2020.
+         V. Vovk and R. Wang. E-values: Calibration, combination, and applications. Ann.
+          Statist., forthcoming, 2021.
+         R. Wang and A. Ramdas. False discovery rate control with e-values. arXiv preprint
+          arXiv:2009.02824, 2020.
+                            17
+                    I. Waudby-Smith and A. Ramdas. Estimating means of bounded random variables by
+                      betting. arXiv preprint arXiv:2010.09686, 2021.
+                    R. L. Winkler. Scoring rules and the evaluation of probabilities. Test, 5:1–60, 1996.
+                    Y. Yen and T. Yen. Testing forecast accuracy of expectiles and quantiles with the
+                      extremal consistent loss functions. Int. J. Forecast., 37:733–758, 2021. ISSN 0169-
+                      2070.
+                    Y. Zhu and A. Timmermann. Can two forecasts have the same conditional expected
+                      accuracy? arXiv preprint arXiv:2006.03238, 2020.
+                    A Proofs
+                    A.1 Proofs in Section 3
+                    Proof Theorem 3.1. If E(y) is of the stated form, then E(y) ≥ E{1(p > q)} = 1−λ ≥ 0,
+                    and one can easily verify that E has the given null hypothesis. Assume that p < q; the
+                    case p > q is analogous. Deﬁne d    (y) = S(p,y)−S(q,y) and, for π ∈ [0,1],
+                                                      p,q
+                                        f(π) = E {d     (Y)} = (1−π)d (0)+πd (1).                          (8)
+                                                  π  p,q                 p,q        p,q
+                    The elementary score representation (2) and ν{[p,q)} > 0 imply that d          (0) < 0 <
+                                                                                                 p,q
+                    dp,q(1), so f(π) is strictly increasing in π and equal to zero for some π0 ∈ (0,1). Let
+                    E=E(y)beane-value under HS with alternative Hc, i.e. E(y) ≥ 0 and
+                                                                           S
+                                     Eπ{E(Y)}=(1−π)E(0)+πE(1)≤1 ⇐⇒ f(π)≤0.                                 (9)
+                    Condition (9) implies that Eπ{E(Y)} = 1 if and only if f(π) = 0, which yields
+                                                     d (0)            E(0)−1
+                                                      p,q         =              .                        (10)
+                                                dp,q(1) − dp,q(0)   E(1)−E(0)
+                    Rearranging this equation gives E(1) = 1−{1−E(0)}·dp,q(1)/dp,q(0). It follows from (9)
+                    and(10)thatE(0) ∈ (0,1), so with λ = 1−E(0), we obtain E(y) = 1+λdp,q(y)/|dp,q(0)|.
+                    Similar arguments for the case p > q show that in general,
+                                                  E(y) = 1+λ        dp,q(y)     .
+                                                               |dp,q{1(p > q)}|
+                    Proof Theorem 3.2. All e-values for the given null hypothesis are of the form (6). To
+                    ﬁnd the GROW e-value under the alternative that Y = 1 with probability π1, we have
+                    to maximize
+                                                                d (0)                         d (1)      
+                    E [log{E      (Y)}] = (1−π )log 1−λ            p,q        +π log 1−λ          p,q        ,
+                      π1      p,q;λ             1            d {1(p>q)}          1           d {1(p>q)}
+                                                              p,q                             p,q
+                    where again dp,q(y) = S(p,y) − S(q,y). Let p < q; the case p > q is analogous. Under
+                    this assumption dp,q(0) < 0 < dp,q(1), and g(λ) = Eπ [log{E        (Y)}] is continuous in
+                                                                            1      p,q;λ
+                                                                18
+                                      λ with g(0) = 0 and limλ→1g(λ) = −∞, so a maximum is attained at some λ ∈ [0,1).
+                                      Deﬁne h = dp,q(1)/dp,q(0) < 0, so that
+                                                  g(λ) = (1−π1)log(1−λ)+π1log(1−λh),                                                         g0(λ) = −1−π1 −π1                                h       ,
+                                                                                                                                                                  1−λ                   1−λh
+                                      and g0(λ0) = 0 is equivalent to λ0 = π1+(1−π1)/h. By deﬁnition of HS, π1 6∈ HS holds
+                                      if and only if Eπ {dp,q(Y )} > 0, which is equivalent to π1 + (1 − π1)/h > 0, so indeed
+                                                                       1
+                                      λ0 > 0 for all π1 6∈ HS, and                                                                 
+                                                                                                                                  1                           d (1)−d (0)
+                                                          E            (0) = 1 −λ = (1−π ) 1−                                            =(1−π ) p,q                               p,q        ,
+                                                             p,q;λ                           0                   1                                        1
+                                                                     0                                                           h                                      d (1)
+                                                                                                                                                                          p,q
+                                                                                               d (1)                    d (0)−d (1)
+                                                          E            (1) = 1 −λ                 p,q         =π p,q                         p,q        .
+                                                             p,q;λ0                          0d (0)                  1           d (0)
+                                                                                                  p,q                              p,q
+                                      With d (y) = R 1{p ≤ θ < q}(θ −y)dν(θ), it now follows that
+                                                    p,q
+                                                               d (1)−d (0)                                          −ν{[p,q)}                                              1
+                                                                 p,q               p,q          =                              R                        =
+                                                                        d (1)                        −ν{[p,q)}+                          θdν(θ)              1−κ {[p,q)}}
+                                                                          p,q                                                    [p,q)                                  ν
+                                                                                                                                              −1            −1
+                                      and 1 − h = (d                      (0) − d            (1))/d           (0) = κ {[p,q)}                       > π , which gives the desired
+                                                                     p,q                p,q              p,q                 ν                              1
+                                      result.
+                                      Proof Theorem 3.3. A direct computation shows that H = [0,p] if p < q and H = [p,1]
+                                      if p > q, and that Eπ{Eπ1∗(Y)} ≤ 1 for all π ∈ H and Eπ{Eπ1∗(Y)} > 1 for π 6∈ H. The
+                                                                                    p,q                                                                     p,q
+                                      result then follows by Theorem 1 of Grun¨ wald et al. (2020), with W being the Dirac
+                                                                                                                                                                                1
+                                      measure of the point {π1}.
+                                      Proof of Proposition 3.4. Recall that the process (Y ,p ,q ,λ )                                                                        is adapted to F =
+                                                                                                                                                t     t    t     t t∈N
+                                      (F )           . Let h > 1. For k = 1,...,h, deﬁne I (t) = {k +hs: s = 0,...b(t−k)/hc−1},
+                                           t t∈N                                                                                k
+                                                                       M[k] = Y Ep,q;λ (Yl+h),                                      F[k] = F t−k                              ,
+                                                                            t                          l   l   l                                      b h ch+k t∈N
+                                                                                      l∈Ik(t)
+                                                Q                                                                                            P                 [k]
+                                      with              := 1 and F := {Ω,∅} for j ≤ 0. Then e =                                                   h       M /h. Fork =1,...,h, the
+                                                    ∅                        j                                                        t           k=1         t
+                                      process (M[k])                      is a nonnegative supermartingale with respect to F[k] for any Q ∈ H ,
+                                                            t     t∈N                                                                                                                                           S
+                                      and therefore satisﬁes E (M[k] ) ≤ 1 for any F[k]-stopping time τ[k]. So
+                                                                                      Q        τ[k]
+                                                                                                              h                       !
+                                                                                                      E          1 XM[k]                   ≤1.
+                                                                                                         Q h                    τ[k]
+                                                                                                                     `=1
+                                      for F[k]-stopping times τ[k], k = 1,...,h. If τ is an F-stopping time, then
+                                                                      τ −k−1+1h+k=:f (τ)∈{τ,...,τ +h−1}
+                                                                                    h                                             k
+                                      is an F[k]-stopping time. To see this, let t = k + hs + j for s ∈ N0, k ∈ {1,...,k},
+                                      j ∈ {0,...,h − 1}. Then b(t − k)/hch + k = k + hs, and f (τ) ≤ t if and only if
+                                                                                                                                                                    k
+                                      τ ≤ k +hs, so
+                                                                           {f (τ) ≤ t} = {τ ≤ k +hs} ∈ F                                            =F t−k                   .
+                                                                                k                                                          k+hs             b       ch+k
+                                                                                                                                                                h
+                                                                                                                          19
+                                      This implies that for any F-stopping time τ, we obtain
+                                                                                                                  h                         !
+                                                                          E (M                    ) = E             1 XM[k]                      ≤1, Q∈H ,
+                                                                             Q        τ+h−1                 Q h                     fk(τ)                                   S
+                                                                                                                        k=1
+                                                                                                  P                [k]
+                                      using the fact that M                                  = h M /hfort∈N.
+                                                                                 t+h−1                 k=1        fk(t)
+                                      A.2 Optional stopping for lags h > 1
+                                      In Section 3.2, the stopping rule
+                                                  τ       =minT, inft ≥ h+1 : e ≥                                             max            E               {1(p >q )}−1/α,
+                                                    α,h                                                         t                                 p ,q ;λ               j         j
+                                                                                                                        j=t−h+1,...,t−1 j j j
+                                      is deﬁned for e-values of the form
+                                                                                                              h
+                                                                                             e = 1 X Y E                                       (Y        ),
+                                                                                               T                                    p ,q ;λ        l+h
+                                                                                                        h                            l   l   l
+                                                                                                            k=1l∈Ik(T)
+                                      whereIk(T) = {k+hs : s = 0,...,b(T−k)/hc−1}. Assumethatattimet, itisobserved
+                                      that e ≥ max                                             E              {1(p > q )}−1/α, and that optional stopping is
+                                                   t                 j=t−h+1,...,t−1              p ,q ;λ              j           j
+                                                                                                    j   j   j
+                                      applied, i.e. E                         (Y        ) ≡ 1 for s ≥ t. The claim is that then e                                                 ≥1/αnomatter
+                                                                 p ,q ;λ          t+s                                                                                 t+h−1
+                                                                   s s s
+                                      what values Y                     , . . . , Y              take. Because E                             (Y         ) ≡ 1, we have e                             =e .
+                                                                  t+1               t+h−1                                        p ,q ;λ          t+h                                   t+h−1               t+h
+                                                                                                                                   t   t    t
+                                      For k = 1,...,h, let sk = k + hb(t − k)/hc, so that {s1,...,sh} = {t − h + 1,...,t}.
+                                      Then, using that Ik(t +h)\{sk} = Ik(t),
+                                                                                        h                                                                                                
+                                                                                  1 X                                                         Y                                          
+                                                e             =e            =                    E                    (Y           )                           E              (Y        )
+                                                  t+h−1              t+h                            p    ,q     ;λ         s +h                                   p ,q ;λ         l+h
+                                                                                                      s     s      s        k                                       l   l   l
+                                                                                 h            k k k                                                                                      
+                                                                                     k=1                                             l∈Ik(t+h)\{sk}                                     
+                                                                                        h
+                                                                            ≥ 1 XE                                  {1(p          >q )} Y E                                 (Y         )
+                                                                                                   p    ,q     ;λ             s           s                       p ,q ;λ        l+h
+                                                                                                     s     s      s             k           k                       l  l    l
+                                                                                 h                    k     k      k
+                                                                                     k=1                                                           l∈Ik(t)
+                                                                                                                                                              h
+                                                                            ≥             min              E               {1(p >q )}· 1 X Y E                                               (Y         )
+                                                                                                               p ,q ;λ              j         j                                   p ,q ;λ         l+h
+                                                                                 j=t−h+1,...,t−1                 j   j   j                              h                           l   l   l
+                                                                                                                                                            k=1l∈Ik(t)
+                                                                                                                                                          
+                                                                                                                                                      −1 −1
+                                                                            =               max               E               {1(p >q )}                           e     ≥ 1/α.
+                                                                                                                 p ,q ;λ               j         j                   t
+                                                                                   j=t−h+1,...,t−1                 j   j    j
+                                      B Simulation examples: Additional ﬁgures
+                                      The simulation example in Section 4.1 in the article has been tested for robustness with
+                                      respect to various parameters:
+                                          (i) Signiﬁcance levels: α: 0.001, 0.01, 0.05
+                                         (ii) Scoring functions: Brier score, spherical score, logarithmic score
+                                        (iii) Sample sizes: 150, 300, 600, 1200, 2400
+                                        (iv) Tests for computing p-values: Student’s t-test, Wilcoxon’s signed rank test
+                                                                                                                          20
+                                (v) Alternative hypotheses for e-values: parameter k (as explained in Section 4.1 in
+                                       the article)
+                                    For the spherical and the logarithmic score, the probability πt was computed in such
+                              a way that µ = 0.5 corresponds to a score diﬀerence of zero, namely, with r = E θ |
+                                                                         	                                                                            t       ν
+                              θ ∈ [min(p ,q ),max(p ,q )) , we set π = p for µ = 0, π = r for µ = 0.5, π = q for
+                                               t   t             t   t                     t       t                    t       t                       t      t
+                              µ=1,and interpolate linearly in between these three points for the other µ.
+                              Figure 4 demonstrates that the rejection rates of the e-values are almost the same for
+                              all scoring functions.
+                              Figure 5 shows how the rejection rates vary with the alternative hypothesis for the e-
+                              value. In particular, it can be seen that the alternative πt is superior and qt is inferior
+                              for all sample sizes and signiﬁcance levels. As for the alternatives with the parameter
+                              k, smaller k give higher rejection rates for small sample sizes and lower rejection rates
+                              for larger samples.
+                              Figure 6 shows that also the rejection rates of Student’s t-test are essentially equal for
+                              the diﬀerent scoring functions.
+                              In Figure 7, it can be seen that the rejection rates of Student’s t-test and Wilcoxon’s
+                              signed rank test for this simulation are almost equal.
+                              Figure 8 shows that close to µ = 0.05, Student’s t-test under optional stopping has too
+                              high rejection rates independent of the signiﬁcance level and the sample size.
+                              The simulation example in Section 4.2 was tested with diﬀerent signiﬁcance levels and
+                              scoring functions.
+                              Figure 9 shows that the choice of the scoring function has a minor inﬂuence on the
+                              rejection rates for the sample sizes 300 and 600, and almost no eﬀect for 1200 and 2400.
+                              Figure 10 compares the rejection rates of the Diebold-Mariano test and the e-values for
+                              diﬀerent signiﬁcance levels.
+                              C Case study: Additional material
+                              Table 4 contains the e-vales and p-values of Table 2 in scientiﬁc digit notation.
+                                                                                                21
+                  Table 4: Brier scores for diﬀerent probability of precipitation forecasting methods, and
+                  e-values (E) and p-values (p) for testing signiﬁcance of score diﬀerences. The columns
+                  HCLR/IDR show e-values and p-values for tests tests of the null hypothesis that IDR
+                  probability of precipitation forecasts achieve a lower Brier score the HCLR forecasts;
+                  the interpretation is analogous for the other forecast pairs.
+                                    Brier score       HCLR/IDR         IDR/HCLR        HCLR/HCLR
+                                                                                −                 −
+                         Lag   IDR HCLR HCLR−            E        p      E        p       E        p
+                   BRU    1   0.107  0.117   0.118  5.6e−08 1.0e+00  5.0e+09 1.3e−05 1.3e+02  7.0e−02
+                          2   0.119  0.123   0.125  9.5e−03 9.5e−01  2.2e+02 1.0e−02 1.4e+01  2.9e−02
+                          3   0.134  0.133   0.136  4.3e−01 4.4e−01  5.4e+02 1.9e−01 1.5e+01  1.9e−03
+                          4   0.152  0.145   0.148  4.8e+00 1.4e−02  1.9e+00 9.4e−01 5.2e+00  7.4e−03
+                          5   0.171  0.161   0.164  1.7e+01 2.3e−04 4.1e−01  1.0e+00 3.4e+00  3.3e−04
+                   FRA    1   0.109  0.111   0.114  1.4e−06 7.8e−01  1.6e+11 2.1e−02 2.4e+03  2.8e−06
+                          2   0.114  0.119   0.122  5.4e−02 9.6e−01  1.3e+06 2.3e−04 2.5e+02  4.2e−04
+                          3   0.123  0.127   0.132  7.8e−02 9.4e−01  3.8e+04 1.3e−04 2.7e+01  5.4e−06
+                          4   0.147  0.144   0.147  2.3e+00 9.7e−02  9.6e+00 5.2e−01 5.5e+00  5.9e−05
+                          5   0.166  0.161   0.163  1.5e+00 3.0e−02  2.4e+00 8.9e−01 3.2e+00  5.1e−03
+                   LHR    1   0.135  0.138   0.139  2.9e−02 8.1e−01  1.5e+01 1.3e−01 2.8e+00  3.7e−01
+                          2   0.138  0.143   0.143  1.9e−01 9.2e−01  1.2e+02 5.1e−02 2.9e+00  4.4e−01
+                          3   0.152  0.154   0.155  7.3e−01 7.5e−01  4.1e+01 1.4e−01 2.5e+00  3.4e−01
+                          4   0.169  0.167   0.169  1.4e+00 2.5e−01  1.7e+00 5.4e−01 1.7e+00  7.8e−02
+                          5   0.186  0.181   0.182  1.6e+00 7.5e−02 3.8e−01  9.3e−01 1.1e+00  3.2e−01
+                   ZRH    1   0.104  0.108   0.110  3.0e−03 9.3e−01  3.0e+04 5.5e−03 6.2e+01  3.2e−04
+                          2   0.110  0.112   0.114  1.2e−01 7.2e−01  3.7e+01 3.0e−02 1.0e+01  5.0e−05
+                          3   0.121  0.118   0.121  1.5e+00 8.9e−02  3.2e+01 4.4e−01 5.1e+00  1.0e−04
+                          4   0.138  0.132   0.134  4.1e+00 2.7e−03  1.3e+00 9.6e−01 2.8e+00  1.5e−03
+                          5   0.165  0.156   0.159  1.5e+01 2.3e−05 8.4e−01  1.0e+00 2.4e+00  1.7e−04
+                                                           22
+                                      Figure 4: Rejection rate of stopped e-value (alternative hypothesis with k = 1 as ex-
+                                      plained in the article) for Brier score (dots), spherical score (squares), logarithmic score
+                                      (triangles), and diﬀerent signiﬁcance levels (columns) and sample sizes (rows).
+                                                                             0.005                                           0.01                                           0.05
+                                                   1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               150
+                                                   0.25
+                                                   0.00
+                                                   1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               300
+                                                   0.25
+                                                   0.00
+                                                  ate1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               600
+                                                   0.25
+                                                  Rejection r0.00
+                                                   1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               1200
+                                                   0.25
+                                                   0.00
+                                                   1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               2400
+                                                   0.25
+                                                   0.00
+                                                         0.5      0.6     0.7     0.8      0.9     1.0  0.5      0.6     0.7     0.8      0.9     1.0   0.5     0.6     0.7     0.8      0.9     1.0
+                                                                                                                              µ
+                                      Figure 5: Rejection of stopped e-values based on Brier score for diﬀerent alternative
+                                      hypotheses and diﬀerent sample sizes and signiﬁcance levels. The alternatives are πt
+                                      (dots), qt (triangles), k = 1 (ﬁlled squares), k = 3 (crosses), k = 5 (squares with cross).
+                                                                             0.005                                           0.01                                           0.05
+                                                   1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               150
+                                                   0.25
+                                                   0.00
+                                                   1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               300
+                                                   0.25
+                                                   0.00
+                                                  ate1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               600
+                                                   0.25
+                                                  Rejection r0.00
+                                                   1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               1200
+                                                   0.25
+                                                   0.00
+                                                   1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               2400
+                                                   0.25
+                                                   0.00
+                                                         0.5      0.6     0.7     0.8      0.9     1.0  0.5      0.6     0.7     0.8      0.9     1.0   0.5     0.6     0.7     0.8      0.9     1.0
+                                                                                                                              µ
+                                                                                                                          23
+                                      Figure 6: Rejection rate of Student’s t-test for Brier score (dots), spherical score
+                                      (squares), and logarithmic score (triangles) diﬀerences, for diﬀerent signiﬁcance levels
+                                      and sample sizes.
+                                                                             0.005                                           0.01                                           0.05
+                                                   1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               150
+                                                   0.25
+                                                   0.00
+                                                   1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               300
+                                                   0.25
+                                                   0.00
+                                                  ate1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               600
+                                                   0.25
+                                                  Rejection r0.00
+                                                   1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               1200
+                                                   0.25
+                                                   0.00
+                                                   1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               2400
+                                                   0.25
+                                                   0.00
+                                                         0.5      0.6     0.7     0.8      0.9     1.0  0.5      0.6     0.7     0.8      0.9     1.0   0.5     0.6     0.7     0.8      0.9     1.0
+                                                                                                                              µ
+                                      Figure 7: Rejection rates of Student’s t-test (circles) and Wilcoxon’s signed rank test
+                                      (triangles) for Brier score diﬀerences, for diﬀerent signiﬁcance levels and sample sizes.
+                                                                             0.005                                           0.01                                           0.05
+                                                   1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               150
+                                                   0.25
+                                                   0.00
+                                                   1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               300
+                                                   0.25
+                                                   0.00
+                                                  ate1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               600
+                                                   0.25
+                                                  Rejection r0.00
+                                                   1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               1200
+                                                   0.25
+                                                   0.00
+                                                   1.00
+                                                   0.75
+                                                   0.50                                                                                                                                               2400
+                                                   0.25
+                                                   0.00
+                                                         0.5      0.6     0.7     0.8      0.9     1.0  0.5      0.6     0.7     0.8      0.9     1.0   0.5     0.6     0.7     0.8      0.9     1.0
+                                                                                                                              µ
+                                                                                                                          24
+                                    Figure 8: Rejection rates of Student’s t-test under optional stopping, for diﬀerent signif-
+                                    icance levels and sample sizes. Optional stops are included at 1 (triangles), 3 (squares)
+                                    and 5 equispaced time points in between 1 and the sample size T. Dots show the
+                                    rejection rates without optional stopping.
+                                                                 150                        300                        600                       1200                       2400
+                                                 0.15
+                                                 0.10
+                                                                                                                                                                                             0.005
+                                                 0.05
+                                                 0.00
+                                                 0.15
+                                                ate0.10
+                                                                                                                                                                                             0.01
+                                                 0.05
+                                                Rejection r
+                                                 0.00
+                                                 0.15
+                                                 0.10
+                                                                                                                                                                                             0.05
+                                                 0.05
+                                                 0.00
+                                                     0.40    0.45    0.50   0.550.40    0.45    0.50   0.550.40    0.45   0.50    0.550.40    0.45   0.50    0.550.40    0.45   0.50    0.55
+                                                                                                                        µ
+                                    Figure 9: Rejection rates of Diebold-Mariano test (dashed lines) and e-values (normal
+                                    lines) for the Brier score (dots), spherical score (squares), and the logarithmic score
+                                    (triangles), and for diﬀerent lags (columns) and sample sizes (rows).
+                                                                           1                                            2                                            3
+                                                 1.00
+                                                 0.75
+                                                 0.50                                                                                                                                        300
+                                                 0.25
+                                                 0.00
+                                                 1.00
+                                                 0.75
+                                                 0.50                                                                                                                                        600
+                                                ate0.25
+                                                 0.00
+                                                 1.00
+                                                 0.75
+                                                Rejection r0.50                                                                                                                              1200
+                                                 0.25
+                                                 0.00
+                                                 1.00
+                                                 0.75
+                                                 0.50                                                                                                                                        2400
+                                                 0.25
+                                                 0.00
+                                                       0.0        0.2        0.4        0.6        0.0         0.2        0.4        0.6        0.0         0.2        0.4        0.6
+                                                                                                                        θ
+                                                                                                                    25
+                    Figure 10: Rejection rates of the Diebold-Mariano test and E-values for the signiﬁcance
+                    levels 0.005 (dots), 0.01 (triangles), and 0.05 (squares), based on Brier score diﬀerences
+                    and a sample size of 600.
+                                         1                        2                       3
+                           1.00
+                           0.75
+                                                                                                       E−v
+                           0.50                                                                        alue
+                           0.25
+                          ate
+                           0.00
+                           1.00
+                          Rejection r
+                           0.75                                                                        Diebold−Mar
+                           0.50
+                                                                                                       iano
+                           0.25
+                           0.00
+                              0.0   0.2   0.4    0.6   0.0   0.2   0.4   0.6   0.0   0.2   0.4    0.6
+                                                                  θ
+                                                                26
