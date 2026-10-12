@@ -1,8 +1,8 @@
 ---
 slug: k-sample-and-contingency-table-e-values
 title: k-sample and contingency-table e-values
-sources: 8
-updated: 2026-10-08
+sources: 9
+updated: 2026-10-12
 ---
 
 # k-sample and contingency-table e-values
@@ -22,6 +22,7 @@ The problem is to test that k ≥ 2 independent i.i.d. streams share one distrib
 - SWEPIS stillbirth re-analysis: the effect-restricted e-variable stops before the sixth event in all permutations, any rejection means e ≥ 20 [turnerGenericEvariablesExact2024, Sec. 7].
 - GRO e-variables for 2 × 2 and 2 × k binary tables from the maximum-entropy viewpoint: exact microcanonical forms and canonical approximations with NML and Beta priors, a regime where k grows with m, and a regret-slope dichotomy at γ = 1 that differs from the γ ≈ 0.18 REGROW prior of the block construction because the e-variable and the criterion differ [giuffridaTestingMaximumEntropy2025, eqs 62–68, 75–85, 90–107]; see [mdl-and-maximum-entropy-e-values](mdl-and-maximum-entropy-e-values.md).
 - Contrast case where GROW ≠ REGROW, unlike group-invariant problems [perezortizEstatisticsGroupInvariance2024, below Cor. 3].
+- ECMO 2 × 2 analysis with the Turner–Grünwald e-variable at β = 0.18, with and without a knowledge-based regularizer [martinRegularizedEprocessesAnytime2024, Sec. 5].
 
 ## Variants and related concepts
 - [exponential-family-e-values](exponential-family-e-values.md), [survival-e-values](survival-e-values.md).
@@ -36,6 +37,7 @@ The problem is to test that k ≥ 2 independent i.i.d. streams share one distrib
 - [haoEValuesExponentialFamilies2025](../sources/haoEValuesExponentialFamilies2025.md) — e-process property in Gaussian/Poisson cases.
 - [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — maximum-entropy 2 × k tests.
 - [perezortizEstatisticsGroupInvariance2024](../sources/perezortizEstatisticsGroupInvariance2024.md) — GROW vs REGROW contrast.
+- [martinRegularizedEprocessesAnytime2024](../sources/martinRegularizedEprocessesAnytime2024.md) — ECMO application.
 
 ## Disagreements / open issues
 - Theorem 2 of the confidence-sequence paper is proved only for the 2 × 2 table [turnerExactAnytimevalidConfidence2023].

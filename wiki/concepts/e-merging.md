@@ -1,8 +1,8 @@
 ---
 slug: e-merging
 title: Merging e-values and p-values
-sources: 9
-updated: 2026-10-08
+sources: 21
+updated: 2026-10-12
 ---
 
 # Merging e-values and p-values
@@ -21,6 +21,9 @@ An e-merging function F produces an [e-variable](e-variable.md) F(E_1, …, E_K)
 - Survey: averaging arbitrarily dependent e-values with weights fixed in advance; multiplication of independent or conditionally valid e-values [ramdasGametheoreticStatisticsSafe2023, Secs 2.9–2.10].
 - Closure of the arithmetic mean over all index sets with |R \ I| = j gives FDP-type bounds; Bonferroni and Simes e-mergers as lower bounds with tight ratios ln n + 1 and n; e-Bonferroni far worse than averaging for FDP control; U-statistic merger under independence [vovkConfidenceDiscoveriesEvalues2023, Sec. 6, App. B, Remark 6.5].
 - The arithmetic mean as local e-value makes closed e-BH valid under arbitrary dependence; admissible procedures reduce to weighted affine mergers via Clerico's characterisation [xuBringingClosureFalse2025, eq. 6, Thm 17, App. B, Prop. 51]; e_S as the mean merger of indicator e-values certifies a whole range of nested rejection sets via the horizon lemma [goemanUniformImprovementBenjaminiHochberg2026, eq. 9, Lemma 10]; group-level averaging or products before post-selection e-BH [wangFalseDiscoveryRate2021, Sec. 5.1].
+- Primary source now ingested: every e-merging function valid under arbitrary dependence is dominated by a weighted average M_λ(e) = Σλ_k e_k + λ_{K+1}, and F is admissible iff F = M_λ; removes the symmetry assumption of Vovk and Wang; proof by multi-marginal optimal transport duality, Sion's minimax theorem and a one-dimensional line bound for binary inputs; the same proof shows weighted averaging is the only admissible way to merge level-α tests; subclass mergers (fixed marginals, second moments, identical, exchangeable) are admissible but not unique [wangOnlyAdmissibleWay2024, Thm 1, Lemmas 2, 4–6, Remark 3, Sec. 5]. Source of the book's Theorem 8.4 and Lemma 11.1.
+- Four admissible one-p-one-e combiners: h(p)e and (p/e) ∧ 1 under independence, λh(p) + (1 − λ)e and {2(p ∧ 1/e)} ∧ 1 under dependence; the randomised calibrator Q(U, E) dominates 1/e ∧ 1 [ignatiadisEvaluesUnnormalizedWeights2022, Thm 3.1, Remark 3.2]. Products of independent and harmonic means of arbitrary post-hoc p-values are post-hoc p-values; geometric e-values multiply under dependence [koningPosthocAlphaHypothesis2023, Props 2–3, 9]. e-weighted p-merging functions from compound e-values [ignatiadisAsymptoticCompoundEvalues2024, Prop. C.2].
+- Weighted arithmetic means as the local test of every intersection hypothesis in e-closed FWER testing, dominating weighted Bonferroni on inverse-e p-values; the mean merger is not consonant, which is the computational price [hartogFamilyWiseError2025, eq. 3.2, Sec. 6.1]. Products of sequential e-values as the core online merge, with weighted means of test martingales replacing union bounds [fischerAdmissibleOnlineClosed2024, S.3.2]. Averaging over knockoff draws preserves the compound condition; runs may use different generators and statistics [renDerandomizedKnockoffsLeveraging2022, Thm 3, Remark 3]. e-d-GNT is the arithmetic mean applied to e-detectors [dandapanthulaMultipleTestingMultistream2025, Alg. 4]. Averaging h lagged products for lag-h forecasts [henziValidSequentialInference2021, Prop. 3.4]; harmonic p-merging and min/max merging for the lag-h weak null [choeComparingSequentialForecasters2021, Prop. 6]. GREM as an average of two betting e-processes, valid by martingale merging [wangEbacktesting2022, Sec. 5.1]. Re-merging functions and the no-domination result for the regularizer product [martinRegularizedEprocessesAnytime2024, Prop. 3].
 
 ## Variants and related concepts
 - [e-bh](e-bh.md), merging for multiple testing rather than a single decision.
@@ -32,6 +35,9 @@ An e-merging function F produces an [e-variable](e-variable.md) F(E_1, …, E_K)
 - [shaferTestingBettingStrategy2021](../sources/shaferTestingBettingStrategy2021.md), [koolenLogoptimalAnytimevalidEvalues2022](../sources/koolenLogoptimalAnytimevalidEvalues2022.md) — averaging vs product.
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — survey summary.
 - [vovkConfidenceDiscoveriesEvalues2023](../sources/vovkConfidenceDiscoveriesEvalues2023.md), [xuBringingClosureFalse2025](../sources/xuBringingClosureFalse2025.md), [goemanUniformImprovementBenjaminiHochberg2026](../sources/goemanUniformImprovementBenjaminiHochberg2026.md), [wangFalseDiscoveryRate2021](../sources/wangFalseDiscoveryRate2021.md) — batch-3 contributions.
+- [wangOnlyAdmissibleWay2024](../sources/wangOnlyAdmissibleWay2024.md) — primary source for admissible e-merging.
+- [ignatiadisEvaluesUnnormalizedWeights2022](../sources/ignatiadisEvaluesUnnormalizedWeights2022.md), [koningPosthocAlphaHypothesis2023](../sources/koningPosthocAlphaHypothesis2023.md), [ignatiadisAsymptoticCompoundEvalues2024](../sources/ignatiadisAsymptoticCompoundEvalues2024.md) — combiners and merging on other scales.
+- [hartogFamilyWiseError2025](../sources/hartogFamilyWiseError2025.md), [fischerAdmissibleOnlineClosed2024](../sources/fischerAdmissibleOnlineClosed2024.md), [renDerandomizedKnockoffsLeveraging2022](../sources/renDerandomizedKnockoffsLeveraging2022.md), [dandapanthulaMultipleTestingMultistream2025](../sources/dandapanthulaMultipleTestingMultistream2025.md), [henziValidSequentialInference2021](../sources/henziValidSequentialInference2021.md), [choeComparingSequentialForecasters2021](../sources/choeComparingSequentialForecasters2021.md), [wangEbacktesting2022](../sources/wangEbacktesting2022.md), [martinRegularizedEprocessesAnytime2024](../sources/martinRegularizedEprocessesAnytime2024.md) — batch-4 wave-2 contributions.
 
 ## Disagreements / open issues
-- Primary sources not yet in the bib: Vovk and Wang 2021 is in the bib; Wang 2025 "The only admissible way of merging arbitrary e-values", Vovk, Wang and Wang 2022 on p-merging, and Vovk and Wang 2024 on martingale merging are not.
+- Vovk, Wang and Wang 2022 on p-merging and Vovk and Wang 2024 on martingale merging are not in the bib.

@@ -1,8 +1,8 @@
 ---
 slug: mdl-and-maximum-entropy-e-values
 title: MDL, regret, and e-values for maximum entropy models
-sources: 2
-updated: 2026-10-08
+sources: 3
+updated: 2026-10-12
 ---
 
 # MDL, regret, and e-values for maximum entropy models
@@ -19,6 +19,7 @@ Maximum entropy models maximise Shannon entropy under constraints on observables
 - Network dictionary: Erdős–Rényi vs stochastic block model is a 2 × k test; bipartite ER vs partial configuration model is 2 × k with equal group sizes; same for stationarity of binary time series [giuffridaTestingMaximumEntropy2025, Sec. IV.C].
 - The ingest agent's own observation, not in the paper: the microcanonical GRO e-variable is the conditional e-variable of Hao and Grünwald with Z = c_0 and a Bayes or NML numerator, hence generally not an e-process [haoEValuesExponentialFamilies2025, Prop. 7].
 - Safe Testing's REGROW for a simple null is the redundancy–capacity problem, with Jeffreys' prior asymptotically optimal and regret (d/2) log n [grunwaldSafeTesting2024, Example 5]; the maximum-entropy results refine this for two-model tests; see [gro-criterion](gro-criterion.md).
+- Finite minimax regret with the NML (Shtarkov) distribution in the null certifies RIPr existence [lardyReverseInformationProjections2023, Prop. 4].
 
 ## Variants and related concepts
 - [k-sample-and-contingency-table-e-values](k-sample-and-contingency-table-e-values.md), the 2 × k instances.
@@ -27,6 +28,7 @@ Maximum entropy models maximise Shannon entropy under constraints on observables
 ## Sources
 - [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — all results above.
 - [grunwaldSafeTesting2024](../sources/grunwaldSafeTesting2024.md) — REGROW as redundancy–capacity.
+- [lardyReverseInformationProjections2023](../sources/lardyReverseInformationProjections2023.md) — NML certificate.
 
 ## Disagreements / open issues
 - Optional stopping and e-process-ness are not discussed in the paper; products across independent studies are valid, within-study stopping is not addressed.

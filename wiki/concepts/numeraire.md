@@ -1,8 +1,8 @@
 ---
 slug: numeraire
 title: Numeraire e-variable
-sources: 7
-updated: 2026-10-08
+sources: 13
+updated: 2026-10-12
 ---
 
 # Numeraire e-variable
@@ -25,6 +25,9 @@ For a composite null and a point alternative Q, the numeraire is the Q-almost-su
 - Explicit nonparametric numeraires: bounded mean 1 + λ*(Z − μ) with λ* solving (1 + λ*(1 − μ))/(1 − λ*μ) = e^{λ*}; sub-Gaussian nonpositive mean e^{μZ − μ²/2} with RIPr N(0,1); symmetry 2q(Z)/(q(Z) + q(−Z)), the e-variable class being exactly {X ≤ 1 + φ(Z), φ odd}; Gaussian pair vs Cauchy with RIPr (P1 + P2)/2 [larssonNumeraireEvariableReverse2025, Secs 5.1–5.4].
 - Power utility x^{1−γ}/(1 − γ), γ > 1, gives U-optimal e-variables and reverse Rényi projections of order 1/γ, always existing; the Lardy et al. e-variable is strictly smaller [larssonNumeraireEvariableReverse2025, Thm 6.1]. Universal inference is dominated, hence inadmissible for nondegenerate composite nulls [larssonNumeraireEvariableReverse2025, Sec. 7, Lemma 7.1].
 - The log-optimal e-value is the unique utility-optimal e-value preserved under conditioning [koningAnytimeValidityFree2026, Thm 7].
+- Predecessor: the RIPr defined by vanishing maximum description gain D(P ‖ Q ⇝ C), with the 'strongest e-statistic' criterion ∫ln(E*/E) dP ≥ 0 extending GRO to infinite e-power; existence certificates via finite hulls and finite minimax regret with NML; the RIPr can be a strict sub-probability even with finite KL on a countable space; a Li–Barron greedy algorithm at rate 1/k; the proposed reverse Rényi e-statistic is strictly dominated by the power-utility-optimal one [lardyReverseInformationProjections2023, Thms 3–7, Def. 2, Prop. 5, Example 2, Sec. V].
+- Testability: the effective null equals co*(P) on probability measures and is the solid hull of the countably additive parts of co*(P); the TV-quantitative testability theorem cannot use the effective null even for a point alternative [larssonCompleteCharacterizationTestable2026, Thms 3.3–3.4, Example 3.5]; see [testability-and-existence](testability-and-existence.md). Positive e-power attainable iff Q ∉ Conv P for finite nulls is the exact-e-variable analogue of Remark 3.10 [zhangExistencePowerfulPvalues2023, Thm 3.4]. The log-utility optimiser over compact parameterisations is the numeraire, with existence by compactness and an explicit sub-ψ example e^{λ*x − ψ(λ*)} [larssonTestingHypothesesGenerated2025, Example 7.1, Thms 7.3–7.6, Example 7.5]. The RIPr of N(μ, σ²) onto {N(0, σ²)} is N(0, σ² + μ²) and its likelihood ratio the numeraire [wangAnytimevalidTtestsConfidence2023, Prop. 6.5].
+- For every compact-group invariance null the numeraire is dQ/dQ̄ with Q̄ = E_G[GQ]; the symmetry numeraire is the sign-flip case and softmax the permutation case against a Gaussian shift; the book's soft-rank numeraire and the softmax e-value are numeraires for different alternatives [koningMeasuringEvidenceExchangeability2023, Cor. 3, Secs 8.6–8.7, Remark 15].
 
 ## Variants and related concepts
 - [gro-criterion](gro-criterion.md).
@@ -38,6 +41,9 @@ For a composite null and a point alternative Q, the numeraire is the Q-almost-su
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — endorsement and caveat.
 - [larssonNumeraireEvariableReverse2025](../sources/larssonNumeraireEvariableReverse2025.md) — primary source.
 - [koningAnytimeValidityFree2026](../sources/koningAnytimeValidityFree2026.md) — conditioning invariance.
+- [lardyReverseInformationProjections2023](../sources/lardyReverseInformationProjections2023.md) — description-gain RIPr, predecessor.
+- [larssonCompleteCharacterizationTestable2026](../sources/larssonCompleteCharacterizationTestable2026.md), [zhangExistencePowerfulPvalues2023](../sources/zhangExistencePowerfulPvalues2023.md), [larssonTestingHypothesesGenerated2025](../sources/larssonTestingHypothesesGenerated2025.md), [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md) — effective null, existence, examples.
+- [koningMeasuringEvidenceExchangeability2023](../sources/koningMeasuringEvidenceExchangeability2023.md) — invariance numeraires.
 
 ## Disagreements / open issues
 - Book numbering (Def 6.1, Thm 6.4, Prop 6.6, Thm 6.13, Thm 6.15) maps to the paper's Def 2.1, Thm 2.6, Lemma 3.3/Def 3.4, Thm 3.6, Thm 4.1.

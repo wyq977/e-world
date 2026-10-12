@@ -1,8 +1,8 @@
 ---
 slug: test-induction
 title: Test induction: anytime validity without e-values
-sources: 1
-updated: 2026-10-08
+sources: 2
+updated: 2026-10-12
 ---
 
 # Test induction: anytime validity without e-values
@@ -19,12 +19,14 @@ Given a terminal [0,1]-valued test φ valid at level α for a simple null P and 
 - SPRT as a limit of Neyman–Pearson: with α_N = exp{−N·D(Q ‖ P)}, induced NP tests on the e-scale converge almost surely to the likelihood ratio at every n, strengthening Breiman 1961 [koningAnytimeValidityFree2026, Thm 8].
 - Motivating numbers for N(μ, 1), μ = 0 vs 0.3, N = 100: z-test power 91%, oracle SPRT 79% (84% randomised), running-MLE SPRT 47% [koningAnytimeValidityFree2026, Sec. 1].
 - Precursors: stochastic curtailment and conditional power (Lan, Simon, Halperin 1982; Müller and Schäfer 2004) [koningAnytimeValidityFree2026, Sec. 1.4]; see [martingale-history](martingale-history.md).
+- Per-orbit Doob-martingale induction from a terminal orbit-wise optimal e-value, converging to the terminal e-value once the orbit is measurable; on a single orbit after an inversion kernel this is exactly Koning–van Meer induction [koningMeasuringEvidenceExchangeability2023, Sec. 5.3, Sec. 9.1].
 
 ## Variants and related concepts
 - [e-process](e-process.md), [test-martingale](test-martingale.md), [group-invariance-e-statistics](group-invariance-e-statistics.md).
 
 ## Sources
 - [koningAnytimeValidityFree2026](../sources/koningAnytimeValidityFree2026.md) — sole source.
+- [koningMeasuringEvidenceExchangeability2023](../sources/koningMeasuringEvidenceExchangeability2023.md) — orbit-wise induction.
 
 ## Disagreements / open issues
 - The authors call it a "myth" that anytime validity and optional continuation belong to the e-value paradigm, treating e-values as tests rescaled to [0, 1/α]; the rest of the wiki, following the survey and the book, treats e-processes as primary and tests as derivative. Both views agree on the mathematics: the induced test is a bounded e-process scaled by α. The authors do not advocate NP-induced tests in practice, since they stop at N and may hit zero, and say they personally prefer the e-scale [koningAnytimeValidityFree2026, Sec. 7].

@@ -1,8 +1,8 @@
 ---
 slug: e-posterior
 title: E-posterior and post-hoc decisions
-sources: 5
-updated: 2026-10-08
+sources: 8
+updated: 2026-10-12
 ---
 
 # E-posterior and post-hoc decisions
@@ -20,6 +20,8 @@ An e-collection assigns one [e-variable](e-variable.md) S_θ to every parameter 
 - For simple nulls GRO e-variables are pure Savage–Dickey, which assess estimation worse (R̄ ≳ n^{−1/2}) than the two-point collection (1.45/n), so GRO is not the design criterion for e-collections and no reference-e-collection theory exists [grunwaldEposterior2023, Example 11, Conclusion].
 - The reply to the Safe Testing discussion uses the e-posterior to answer the (1 − α)/α threshold question and to remove right-Haar non-uniqueness [grunwaldAuthorsReplyDiscussion2024, Secs 3, 5]; the survey's appendices present the e-posterior as the decision-theoretic summary where Neyman–Pearson is inadequate [ramdasGametheoreticStatisticsSafe2023, Apps A–B].
 - Koning and van Meer's test induction reports a whole family of tests per null element for continuation, a construction they connect to the e-posterior [koningAnytimeValidityFree2026, Thm 6].
+- Koning's binary setting is the two-action special case; the roving α̂ = ℓ/S(y) and 'reject at level p = 1/e' are the same device [koningPosthocAlphaHypothesis2023, App. A]. The betting paper's plots of 1/K_t(m) against m, an unnormalised 'confidence distribution' whose superlevel sets are confidence sequences, are the independent e-posterior plot credited on this page [waudbysmithEstimatingMeansBounded2020, App. D.5].
+- The capped e-posterior min{1, 1/e_θ} is the contour of an anytime-valid possibilistic inferential model; its Choquet upper-expected-loss guarantee generalises the capped e-posterior risk bound and allows data-dependent actions; with a knowledge-based regularizer the same holds under an upper joint distribution [martinRegularizedEprocessesAnytime2024, Thms 2–4, Sec. 4.3]; see [regularized-e-processes](regularized-e-processes.md).
 
 ## Variants and related concepts
 - [post-hoc-validity](post-hoc-validity.md), [confidence-sets-and-sequences](confidence-sets-and-sequences.md), [bayes-factor-e-variable](bayes-factor-e-variable.md).
@@ -30,6 +32,8 @@ An e-collection assigns one [e-variable](e-variable.md) S_θ to every parameter 
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — uses in the reply.
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — appendices.
 - [koningAnytimeValidityFree2026](../sources/koningAnytimeValidityFree2026.md) — families of tests and continuation.
+- [koningPosthocAlphaHypothesis2023](../sources/koningPosthocAlphaHypothesis2023.md), [waudbysmithEstimatingMeansBounded2020](../sources/waudbysmithEstimatingMeansBounded2020.md) — related constructions.
+- [martinRegularizedEprocessesAnytime2024](../sources/martinRegularizedEprocessesAnytime2024.md) — inferential-model reading.
 
 ## Disagreements / open issues
 - GRO e-values are unavailable for GLMs and Cox models without model-X; the authors see the bigger obstacle as sociological [grunwaldBeyondNeymanPearsonEvalues2024, Secs 4.1, 5.4].

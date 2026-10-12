@@ -1,8 +1,8 @@
 ---
 slug: optional-continuation
 title: Optional continuation
-sources: 13
-updated: 2026-10-08
+sources: 15
+updated: 2026-10-12
 ---
 
 # Optional continuation
@@ -22,6 +22,7 @@ Optional continuation is deciding after each study whether to run another one, w
 - The reply insists continuation across studies is the target, distinct from restricted optional stopping and interim analysis; continuation arises automatically in meta-analysis; the sceptical p-value is not designed for repeated continuation [grunwaldAuthorsReplyDiscussion2024, Secs 2, 4]. Per-batch e-variables for maximum entropy models multiply across independent studies [giuffridaTestingMaximumEntropy2025, Sec. II].
 - Test-scale formulation: a [0,1]-valued outcome serves as a conditional significance level for the next test, equivalent on the e-scale to multiplying sequential e-values; data-dependent level switching via E[φ_2/α′] ≤ 1; reporting the whole family (φ^P) dominates continuing from the infimum [koningAnytimeValidityFree2026, Thms 4–6, Remark 13, Sec. 5.1]; see [test-induction](test-induction.md).
 - Product property with a data-dependently chosen next e-statistic, including 'do not continue' [perezortizEstatisticsGroupInvariance2024, Sec. 2.3]; a single factor 2 on the capped e-posterior risk is continuation-friendly without modifying each study's e-value [grunwaldEposterior2023, Prop. 2]; e-BH accepts stopped e-processes from continued studies [wangFalseDiscoveryRate2021, Sec. 7].
+- Products of independent one-step e-values give power-one test martingales under the span condition [zhangExistencePowerfulPvalues2023, Cor. 7.1]; e-BY handles continued studies through stopped e-processes [xuPostselectionInferenceEvalue2022, Sec. 4].
 
 ## Variants and related concepts
 - [e-merging](e-merging.md), for combining without a sequential structure.
@@ -34,6 +35,7 @@ Optional continuation is deciding after each study whether to run another one, w
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md), [terschureAnytimevalidLogrankTest2024](../sources/terschureAnytimevalidLogrankTest2024.md), [turnerGenericEvariablesExact2024](../sources/turnerGenericEvariablesExact2024.md) — meta-analysis.
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md), [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — continuation as the target.
 - [koningAnytimeValidityFree2026](../sources/koningAnytimeValidityFree2026.md), [perezortizEstatisticsGroupInvariance2024](../sources/perezortizEstatisticsGroupInvariance2024.md), [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md), [wangFalseDiscoveryRate2021](../sources/wangFalseDiscoveryRate2021.md) — batch-3 contributions.
+- [zhangExistencePowerfulPvalues2023](../sources/zhangExistencePowerfulPvalues2023.md), [xuPostselectionInferenceEvalue2022](../sources/xuPostselectionInferenceEvalue2022.md) — minor.
 
 ## Disagreements / open issues
 - Whether conditional e-variables are the right building blocks when e-variable types switch across studies is raised but not settled [grunwaldSafeTesting2024, Sec. 1.3].

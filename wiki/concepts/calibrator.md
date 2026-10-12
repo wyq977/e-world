@@ -1,8 +1,8 @@
 ---
 slug: calibrator
 title: Calibrators between p-values and e-values
-sources: 13
-updated: 2026-10-08
+sources: 26
+updated: 2026-10-12
 ---
 
 # Calibrators between p-values and e-values
@@ -25,6 +25,9 @@ A p-to-e calibrator is a decreasing function f with ∫_0^1 f ≤ 1, so that f(P
 - Round-trip inefficiency: 1/VS(0.005) ≈ 0.072, VS(0.05) ≈ 2.456; Jeffreys (5% ~ √10, 1% ~ 10) and Good correspondences; the harmonic-mean p-value is the 1/e image of averaging [vovkConfidenceDiscoveriesEvalues2023, Sec. 3, eqs 6–12, App. B].
 - Two new |S|-dependent p-to-e calibrators for closed BY and closed Su; calibrate-then-average is weaker than tailoring the local e-value; calibrators with a level must keep it fixed for post-hoc α [xuBringingClosureFalse2025, Lemmas 27, 32, Remarks 31, 49]; the extreme calibrator 1_{[0,a]}/a with a random threshold [goemanUniformImprovementBenjaminiHochberg2026, eq. 9].
 - Adjusters a with ∫ a(x)/x² dx ≤ 1 on running maxima of e-processes, equivalently calibrators under x = 1/p; growth-preserving example a(x) = 2x/(2 + log x)² [sahaNonpartitionedEdetectorsNonparametric2026, Def. 6.1, Lemma 6.2]; calibrating then applying the e-rule is the only known Type-I-risk-safe use of a p-value and is usually suboptimal [grunwaldBeyondNeymanPearsonEvalues2024, Sec. 1.2]; whole-process calibration both ways [ramdasAdmissibleAnytimevalidSequential2022, Props 12, 14].
+- Randomised e-to-p calibrator Q(U, E) = (U/E) ∧ 1 dominates the deterministic one; every p-to-e calibrator satisfies h(p) ≤ 1/p [ignatiadisEvaluesUnnormalizedWeights2022, Remark 3.2, S3.1]. Any nonincreasing continuous-from-below confidence interval becomes an e-CI via C(f^{−1}(1/α)); the step-function BY calibrator f^{BY(K,α)}(p) = (K/α)(⌈Kℓ_K p/α⌉ ∨ 1)^{−1} 1{p ≤ α/ℓ_K} with ∫f = 1 makes e-BY on calibrated intervals exactly assumption-free BY [xuPostselectionInferenceEvalue2022, Thm 1, Prop. 3, Cor. 2].
+- The reciprocal p = 1/e is argued to be a change of representation, not a calibration; the randomised improvement α ↦ αe ∧ 1 is post-hoc valid [koningPosthocAlphaHypothesis2023, Sec. 7.4, Thm 11, Cor. 5]. Calibration commutes with compound, approximate and asymptotic relaxations [ignatiadisAsymptoticCompoundEvalues2024, Thms 2.3, 3.3, Prop. 3.16]. E = 2 − 2X maps an exact nontrivial p-variable to a pivotal exact bounded e-variable [zhangExistencePowerfulPvalues2023, Prop. A.5]. Adjusters applied to running maxima lock in wealth at a squared-log price [ramdasTestingExchangeabilityForkconvexity2021, Sec. 4.7].
+- A possibility contour is a prior-relative p-value, so ρ = 1/γ(q) with an admissible calibrator γ is a regularizer [martinRegularizedEprocessesAnytime2024, Prop. 1]. Grid calibrator f_t(p) = (αγ_t ⌈(pℓ_t/(αγ_t)) ∨ 1⌉)^{−1} makes r-LOND an instance of e-LOND [xuOnlineMultipleTesting2023, Cor. 1]; a per-hypothesis calibration condition under which online e-BH on ψ_t(P_t) recovers BH, BY and r-LOND [fischerOnlineGeneralizationEBH2024, Prop. 2.5]; online-simple as a binary p-to-e calibrator and the martingale Stouffer calibrator [fischerAdmissibleOnlineClosed2024, eq. 14, S.4]. Adjusters on running maxima as e-to-e calibrators [hartogFamilyWiseError2025, Thm B.1]. Lag-h forecast comparison converts a harmonic-merged p-process back to an e-process with (1 − p + p log p)/(p (log p)²) [choeComparingSequentialForecasters2021, Props 5–6]. κp^{κ−1} with κ = 1/2 turns conformal p-values into a conformal Shiryaev–Roberts e-detector [dandapanthulaMultipleTestingMultistream2025, Sec. 9.3].
 
 ## Variants and related concepts
 - [e-variable](e-variable.md), [e-merging](e-merging.md).
@@ -37,6 +40,8 @@ A p-to-e calibrator is a decreasing function f with ∫_0^1 f ≤ 1, so that f(P
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — uses.
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — lottery-ticket argument.
 - [wangFalseDiscoveryRate2021](../sources/wangFalseDiscoveryRate2021.md), [vovkConfidenceDiscoveriesEvalues2023](../sources/vovkConfidenceDiscoveriesEvalues2023.md), [xuBringingClosureFalse2025](../sources/xuBringingClosureFalse2025.md), [goemanUniformImprovementBenjaminiHochberg2026](../sources/goemanUniformImprovementBenjaminiHochberg2026.md), [sahaNonpartitionedEdetectorsNonparametric2026](../sources/sahaNonpartitionedEdetectorsNonparametric2026.md), [grunwaldBeyondNeymanPearsonEvalues2024](../sources/grunwaldBeyondNeymanPearsonEvalues2024.md), [ramdasAdmissibleAnytimevalidSequential2022](../sources/ramdasAdmissibleAnytimevalidSequential2022.md) — batch-3 contributions.
+- [ignatiadisEvaluesUnnormalizedWeights2022](../sources/ignatiadisEvaluesUnnormalizedWeights2022.md), [xuPostselectionInferenceEvalue2022](../sources/xuPostselectionInferenceEvalue2022.md), [koningPosthocAlphaHypothesis2023](../sources/koningPosthocAlphaHypothesis2023.md), [ignatiadisAsymptoticCompoundEvalues2024](../sources/ignatiadisAsymptoticCompoundEvalues2024.md), [zhangExistencePowerfulPvalues2023](../sources/zhangExistencePowerfulPvalues2023.md), [ramdasTestingExchangeabilityForkconvexity2021](../sources/ramdasTestingExchangeabilityForkconvexity2021.md) — batch-4 contributions.
+- [martinRegularizedEprocessesAnytime2024](../sources/martinRegularizedEprocessesAnytime2024.md), [xuOnlineMultipleTesting2023](../sources/xuOnlineMultipleTesting2023.md), [fischerOnlineGeneralizationEBH2024](../sources/fischerOnlineGeneralizationEBH2024.md), [fischerAdmissibleOnlineClosed2024](../sources/fischerAdmissibleOnlineClosed2024.md), [hartogFamilyWiseError2025](../sources/hartogFamilyWiseError2025.md), [choeComparingSequentialForecasters2021](../sources/choeComparingSequentialForecasters2021.md), [dandapanthulaMultipleTestingMultistream2025](../sources/dandapanthulaMultipleTestingMultistream2025.md) — batch-4 wave-2 contributions.
 
 ## Disagreements / open issues
 - None recorded.

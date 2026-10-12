@@ -1,8 +1,8 @@
 ---
 slug: e-bh
 title: e-BH, compound e-values and multiple testing
-sources: 7
-updated: 2026-10-08
+sources: 17
+updated: 2026-10-12
 ---
 
 # e-BH, compound e-values and multiple testing
@@ -22,6 +22,10 @@ The e-Benjamini–Hochberg procedure rejects the k* hypotheses with the largest 
 - Primary source now ingested: e-BH rejects the k* largest with k* = max{k : k e_[k]/K ≥ 1/α}, equivalently e_k ≥ t_α with t_α R(t_α) = K/α; FDR ≤ K_0 α/K under arbitrary dependence in three lines from self-consistency, where self-consistent p-procedures only reach α(1 + log(1/α)); boosting by factors b_k with E[T(αb_kE_k)] ≤ α, typical gains 1.3–10; exact FDR identity and sharpness; PRDS version; e-BH dominates every FDR procedure applying a common increasing transform; structured, post-selection, focused and grouped variants valid under any selection; bandit and cryptocurrency applications [wangFalseDiscoveryRate2021, eq. 1, Props 1–4, Thms 2–5, Secs 4.2, 5.1, 7–8].
 - Closed e-BH uniformly improves e-BH and equals e-BH on compound e-values; closed BY and closed Su; BH-type e-collections give no gain [xuBringingClosureFalse2025, Thms 17, 25, 28, 34, 37]; closed BH as the p-value counterpart, gaining only when BH already rejects at least √m [goemanUniformImprovementBenjaminiHochberg2026, Props 16, 18]; see [e-closure-principle](e-closure-principle.md).
 - The confidence-bound alternative: discovery e-matrices compared with BH/BY rejection counts, and the generalized Bayes factor with learning rate η showing the likelihood ratio can be far from optimal as a base e-value in multiple testing [vovkConfidenceDiscoveriesEvalues2023, Tables 2, 4, 5, App. D].
+- e-values as unnormalised weights: running a p-procedure on (p_k/E_k) ∧ 1 is weighted BH or Bonferroni with weights E_k that need not sum to K; FDR ≤ ℓ_K π_0 α under arbitrary dependence given only null independence of p and e, π_0 α under PRDS of the p-vector, with Storey adaptivity and Simes/Hochberg FWER variants; the first minimally adaptive e-BH; pe-BH valid but dominated; mouse striatum data 2387 vs 1973 discoveries [ignatiadisEvaluesUnnormalizedWeights2022, Def. 4.2, Thms 4.3, 4.7, 4.9, 4.10, Prop. S3.3, Thm S3.2, Table 1].
+- e-BY, the parent of e-BH: reporting selected e-confidence intervals at level α|S|/K controls the false coverage rate under arbitrary dependence and arbitrary selection; sharp and admissible; weighted version; indicator e-CIs recover e-BH's FDR and a directional e-BH; the post-hoc level bound E[sup_α FCP(α)/α] ≤ 1 [xuPostselectionInferenceEvalue2022, Thms 2–5, Cors 1, 3, 4]. Compound e-values, universality and derandomisation [ignatiadisAsymptoticCompoundEvalues2024, Thms 4.3–4.4, App. C]; see [approximate-and-asymptotic-e-values](approximate-and-asymptotic-e-values.md). Post-hoc FWER and FDP as post-hoc validity of sup_i φ_i and of a p-function [koningPosthocAlphaHypothesis2023, Thms 7–8].
+- The model-X knockoff filter is literally e-BH on e_j = p·1{W_j ≥ T}/(1 + Σ_k 1{W_k ≤ −T}), which are not e-values individually but satisfy Σ_{H_0} E[e_j] ≤ p, nearly saturating the e-BH proof inequality; derandomisation by averaging per-run e-values over M knockoff draws then e-BH, FDR ≤ α for any M and any inner level, converging to a deterministic selection as M → ∞; the inner level must be reduced (α_kn ≈ α/2); strictly more powerful than data-splitting inclusion rates; fixed-X, robust, multi-environment and side-information extensions [renDerandomizedKnockoffsLeveraging2022, Thms 1–3, Remark 1, Secs 3.1–3.3, App. A].
+- Online: e-LOND, Ue-LOND, e-LOND-CI and online e-BH with SupFDR control [xuOnlineMultipleTesting2023, Thms 1–4; fischerOnlineGeneralizationEBH2024, Thm 2.2]; see [online-multiple-testing](online-multiple-testing.md). Closed e-BH and the inadmissibility of e-BH and BY [xuBringingClosureFDR2025, Props 2, 5]. Multi-stream change detection feeds e-detector values into e-BH with error-over-patience control [dandapanthulaMultipleTestingMultistream2025, Thm 4.2]. Example where 300 e-values of 0.9 and 700 of 1.1 give 306 discoveries by online closed testing while e-BH rejects nothing [fischerAdmissibleOnlineClosed2024, Example 2].
 
 ## Variants and related concepts
 - [e-merging](e-merging.md), [post-hoc-validity](post-hoc-validity.md).
@@ -32,6 +36,11 @@ The e-Benjamini–Hochberg procedure rejects the k* hypotheses with the largest 
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — survey statement.
 - [wangFalseDiscoveryRate2021](../sources/wangFalseDiscoveryRate2021.md) — primary source.
 - [xuBringingClosureFalse2025](../sources/xuBringingClosureFalse2025.md), [goemanUniformImprovementBenjaminiHochberg2026](../sources/goemanUniformImprovementBenjaminiHochberg2026.md), [vovkConfidenceDiscoveriesEvalues2023](../sources/vovkConfidenceDiscoveriesEvalues2023.md) — closure and confidence-bound views.
+- [ignatiadisEvaluesUnnormalizedWeights2022](../sources/ignatiadisEvaluesUnnormalizedWeights2022.md) — e-weighted BH.
+- [xuPostselectionInferenceEvalue2022](../sources/xuPostselectionInferenceEvalue2022.md) — e-BY.
+- [ignatiadisAsymptoticCompoundEvalues2024](../sources/ignatiadisAsymptoticCompoundEvalues2024.md), [koningPosthocAlphaHypothesis2023](../sources/koningPosthocAlphaHypothesis2023.md) — compound e-values, post-hoc multiple testing.
+- [renDerandomizedKnockoffsLeveraging2022](../sources/renDerandomizedKnockoffsLeveraging2022.md) — knockoffs as e-BH, derandomisation.
+- [xuOnlineMultipleTesting2023](../sources/xuOnlineMultipleTesting2023.md), [fischerOnlineGeneralizationEBH2024](../sources/fischerOnlineGeneralizationEBH2024.md), [xuBringingClosureFDR2025](../sources/xuBringingClosureFDR2025.md), [dandapanthulaMultipleTestingMultistream2025](../sources/dandapanthulaMultipleTestingMultistream2025.md), [fischerAdmissibleOnlineClosed2024](../sources/fischerAdmissibleOnlineClosed2024.md) — online, closed and multi-stream variants.
 
 ## Disagreements / open issues
-- Ignatiadis, Wang and Ramdas 2024 on weights and compound e-values and Xu, Wang and Ramdas 2024 on e-BY are candidates, not yet in the bib; Xu, Fischer and Ramdas 2025 on closed e-BH is subsumed by the e-Closure paper.
+- The 2026 online e-closure papers are in the reading queue, not ingested.

@@ -1,8 +1,8 @@
 ---
 slug: mixture-and-plug-in-methods
 title: Mixture and plug-in methods for composite alternatives
-sources: 17
-updated: 2026-10-08
+sources: 26
+updated: 2026-10-12
 ---
 
 # Mixture and plug-in methods for composite alternatives
@@ -24,6 +24,8 @@ When the alternative is composite, two standard devices produce a single likelih
 - 'Empirical E': renormalise a data-optimised e-variable by its supremum null expectation, turning redundancy into regret; predictive recursion praised as an alternative to Robbins mixtures and plug-in; learning the robustification weight by mixtures [grunwaldAuthorsReplyDiscussion2024, Secs 2–4].
 - Composite alternatives handled only by Bayes mixtures and NML, whose redundancy bounds the e-variable's regret [giuffridaTestingMaximumEntropy2025, eq. 22, Thm 1].
 - Improper mixtures of increments ∫(L_n(η) − 1) dη/|η| with the Feynman-trick closed form M_n = I(S_n/√(n + 1)) − ln(1 + n)/√(2π) [koolenGeneralisationVilleInequality2025, eq. 8, Lemma B.2]; method of mixtures over δ for composite invariant parameters [perezortizEstatisticsGroupInvariance2024, Sec. 3.3]; mixtures over a grid are e-detectors while the supremum is not, with adaptive re-weighting on growing supports [shinEdetectorsNonparametricFramework2023, Remark 3.1, Prop. 3.3]; Gaussian, arcsine universal-portfolio and Jeffreys-beta mixtures as restarted primitives [sahaNonpartitionedEdetectorsNonparametric2026, eqs 6, 18, 51]; the numeraire paper leaves mixtures and plug-in for composite alternatives to future work [larssonNumeraireEvariableReverse2025, Sec. 8].
+- Jeffreys/Krichevsky–Trofimov mixtures over Markov transition probabilities with universal-coding regret, double mixtures with 6/(π²k²) weights over countable alternatives, predictable mixtures as bets, and the fork-convex hull read as a predictable mixture of distributions [ramdasTestingExchangeabilityForkconvexity2021, Secs 2.2–2.7, 5.1]. 'Betting can be viewed as building up a data-dependent mixture on the fly'; plug-in traced to Wald, Robbins–Siegmund, Dawid, Lorden–Pollak and Rissanen; diversified and hedged Kelly as mixtures of strategies [waudbysmithEstimatingMeansBounded2020, Secs 2.1, 3.1, App. B]. Flat (Lai), Gaussian, half-Gaussian and Cauchy/JZS mixtures over the effect size for the t-test; the JZS Bayes factor is the reciprocal of a scale-invariant martingale, hence an anytime-valid p-value [wangAnytimevalidTtestsConfidence2023, Thms 4.1, 4.9, 4.11, Remark IV]. The RIPr as a possibly countable mixture over the null with the Li–Barron greedy algorithm [lardyReverseInformationProjections2023, Sec. III-B, Alg. 1]. ODP compound e-values as ratios of mixture likelihoods with the NPMLE plugged in [ignatiadisAsymptoticCompoundEvalues2024, Sec. 5.2, Thm 6.3].
+- Predictive recursion as a non-Bayesian recursive plug-in whose predictive density is nonetheless a mixture density; the oracle gap n K(p*, q̂) with n^{1/3} to n^{2/3} rates is the nonparametric analogue of the (d/2) log n plug-in cost [dixitAnytimeValidAsymptotically2023, eqs 4–5, Sec. 3.3]. GREE and GREL plug-in estimates of the alternative law in backtesting, built on GRAPA, with a cap to avoid ruin [wangEbacktesting2022, eqs 13–14, Remark 7]. Adaptive heuristic alternatives averaged over mixing weights for forecast comparison [henziValidSequentialInference2021, Sec. 4.1]. Gamma-exponential mixture with closed form and Lambert-W tuning [choeComparingSequentialForecasters2021, Prop. 3, App. B.1].
 
 ## Variants and related concepts
 - [universal-inference](universal-inference.md), [exponential-family-e-values](exponential-family-e-values.md).
@@ -39,6 +41,8 @@ When the alternative is composite, two standard devices produce a single likelih
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — empirical E, predictive recursion.
 - [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — universal numerators.
 - [koolenGeneralisationVilleInequality2025](../sources/koolenGeneralisationVilleInequality2025.md), [perezortizEstatisticsGroupInvariance2024](../sources/perezortizEstatisticsGroupInvariance2024.md), [shinEdetectorsNonparametricFramework2023](../sources/shinEdetectorsNonparametricFramework2023.md), [sahaNonpartitionedEdetectorsNonparametric2026](../sources/sahaNonpartitionedEdetectorsNonparametric2026.md), [larssonNumeraireEvariableReverse2025](../sources/larssonNumeraireEvariableReverse2025.md) — batch-3 contributions.
+- [ramdasTestingExchangeabilityForkconvexity2021](../sources/ramdasTestingExchangeabilityForkconvexity2021.md), [waudbysmithEstimatingMeansBounded2020](../sources/waudbysmithEstimatingMeansBounded2020.md), [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md), [lardyReverseInformationProjections2023](../sources/lardyReverseInformationProjections2023.md), [ignatiadisAsymptoticCompoundEvalues2024](../sources/ignatiadisAsymptoticCompoundEvalues2024.md) — batch-4 contributions.
+- [dixitAnytimeValidAsymptotically2023](../sources/dixitAnytimeValidAsymptotically2023.md), [wangEbacktesting2022](../sources/wangEbacktesting2022.md), [henziValidSequentialInference2021](../sources/henziValidSequentialInference2021.md), [choeComparingSequentialForecasters2021](../sources/choeComparingSequentialForecasters2021.md) — batch-4 wave-2 contributions.
 
 ## Disagreements / open issues
 - RIPr for plug-in alternatives and sequential RIPr for Bayesian alternatives are not analysed [haoEValuesExponentialFamilies2025, Remark 3].

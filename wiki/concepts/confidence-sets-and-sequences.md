@@ -1,8 +1,8 @@
 ---
 slug: confidence-sets-and-sequences
 title: E-confidence sets and confidence sequences
-sources: 13
-updated: 2026-10-08
+sources: 23
+updated: 2026-10-12
 ---
 
 # E-confidence sets and confidence sequences
@@ -25,6 +25,9 @@ An e-confidence set inverts a family of [e-variables](e-variable.md) indexed by 
 - E-confidence regions {θ : E_θ(ω) < α} for arbitrary parameter sets, read through the Fisher disjunction 'covers θ unless ω is α-strange', nested in α and simultaneously valid for every derived parameter g(θ); Jeffreys's levels √10, 10, 10^{3/2}, 100; toy intervals x ± 2.11/2.50/2.88/3.27 vs x ± 2.58 for p = 0.01 [vovkConfidenceDiscoveriesEvalues2023, Sec. 4, eqs 15–21].
 - Formal (φ, P, α)-confidence sequence definition, inversion of tests and the equivalence of admissibility of a confidence sequence with that of its inverted tests; no convex-hull closure for confidence sequences; admissible sequence for the centre of symmetry [ramdasAdmissibleAnytimevalidSequential2022, Lemma 2, Prop. 13, Thm 30, Examples 43, 48].
 - E-collections and e-confidence sets with data-dependent loss on the interval; e-CI about 1.4 times wider than the classical one but valid at unknown stopping times; the e-posterior as the family of all e-CIs [grunwaldBeyondNeymanPearsonEvalues2024, Sec. 3, Examples 4–5; grunwaldEposterior2023, Sec. 4]; see [e-posterior](e-posterior.md).
+- e-confidence intervals as a named class: C(α) = {θ : E(θ) < 1/α}; universal-inference sets, stopped e-processes and Chernoff/Hoeffding intervals are already e-CIs; a realised set function is a possible e-CI iff nonincreasing and continuous from below, so e-CIs cannot be told from CIs by inspection; any such CI becomes an e-CI by calibration; e-BY for false coverage rate under arbitrary dependence and selection, sharp and admissible; conditional coverage is impossible under unknown selection [xuPostselectionInferenceEvalue2022, Defs 2–4, Lemmas 1–2, Thms 1–5, App. F].
+- Confidence sequences for the Bernoulli parameter from the exchangeability e-process, with the test equivalent to emptiness of the sequence [ramdasTestingExchangeabilityForkconvexity2021, Sec. 4.6]. Three anytime-valid t-sequences with width that must grow polynomially in 1/α, minimax (6α − 9α²)^{−2/n} − 1; universal inference attains α^{−1/n}, the classical t-interval only α^{−1/(n−1)} and is vacuous at n = 1, where a one-observation e-CI exists [wangAnytimevalidTtestsConfidence2023, Thms 3.2, 4.1, 4.9, 6.1, Cor. 6.2, Sec. 6.2]. Generic inversion of e-processes with running intersection and the duality p_t = sup_m 1/K_t(m) [waudbysmithEstimatingMeansBounded2020, Thm 1, Sec. 5.4]; see [betting-confidence-sequences](betting-confidence-sequences.md) and [asymptotic-confidence-sequences](asymptotic-confidence-sequences.md). A confidence sequence is admissible iff its inverted tests are; no convex-hull closure [zhangExistencePowerfulPvalues2023, Cor. 7.1; see testability].
+- Backward confidence sequences, the CS-width functional, and sequences for running averages of drifting parameters, with CS inconsistency across time itself a test [shekharSequentialChangeDetection2023, Defs 5, 11, 27, App. A]. Online selective confidence intervals via e-LOND-CI with FCR control under any dependence and selection [xuOnlineMultipleTesting2023, Thm 4]. Hoeffding-style and empirical-Bernstein sequences for a time-varying score differential, read as two simultaneous one-sided tests of the weak null; one-sided Winkler-score sequences [choeComparingSequentialForecasters2021, Thms 1–2, Cor. 1, Prop. 4]. Regularized confidence sets {θ : e^reg ≤ 1/α} as level sets of an inferential-model contour [martinRegularizedEprocessesAnytime2024, eq. 16]. Conformal prediction sets as inverted permutation tests [koningMeasuringEvidenceExchangeability2023, Examples 4, 6].
 
 ## Variants and related concepts
 - [universal-inference](universal-inference.md), [villes-inequality](villes-inequality.md), [post-hoc-validity](post-hoc-validity.md).
@@ -41,6 +44,9 @@ An e-confidence set inverts a family of [e-variables](e-variable.md) indexed by 
 - [vovkConfidenceDiscoveriesEvalues2023](../sources/vovkConfidenceDiscoveriesEvalues2023.md) — e-confidence regions.
 - [ramdasAdmissibleAnytimevalidSequential2022](../sources/ramdasAdmissibleAnytimevalidSequential2022.md) — formal definitions and admissibility.
 - [grunwaldBeyondNeymanPearsonEvalues2024](../sources/grunwaldBeyondNeymanPearsonEvalues2024.md), [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md) — e-CIs and e-posteriors.
+- [xuPostselectionInferenceEvalue2022](../sources/xuPostselectionInferenceEvalue2022.md) — e-confidence intervals and e-BY.
+- [ramdasTestingExchangeabilityForkconvexity2021](../sources/ramdasTestingExchangeabilityForkconvexity2021.md), [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md), [waudbysmithEstimatingMeansBounded2020](../sources/waudbysmithEstimatingMeansBounded2020.md), [waudbysmithTimeuniformCentralLimit2021](../sources/waudbysmithTimeuniformCentralLimit2021.md) — specific sequences.
+- [shekharSequentialChangeDetection2023](../sources/shekharSequentialChangeDetection2023.md), [xuOnlineMultipleTesting2023](../sources/xuOnlineMultipleTesting2023.md), [choeComparingSequentialForecasters2021](../sources/choeComparingSequentialForecasters2021.md), [martinRegularizedEprocessesAnytime2024](../sources/martinRegularizedEprocessesAnytime2024.md), [koningMeasuringEvidenceExchangeability2023](../sources/koningMeasuringEvidenceExchangeability2023.md) — batch-4 wave-2 contributions.
 
 ## Disagreements / open issues
 - Estimation is declared out of scope by the book, so confidence sequences are only sketched there [ramdasHypothesisTestingEvalues2025, Sec. 13.1.1].

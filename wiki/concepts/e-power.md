@@ -1,8 +1,8 @@
 ---
 slug: e-power
 title: E-power and sample size
-sources: 12
-updated: 2026-10-08
+sources: 18
+updated: 2026-10-12
 ---
 
 # E-power and sample size
@@ -26,6 +26,9 @@ The e-power of an [e-variable](e-variable.md) E against an alternative Q is E_Q[
 - The reply calls e-power a 'sore point': defined for single e-variables but meaningful only under optional continuation; Wang's examples of e-power −∞ for an almost-surely growing e-variable and +∞ for its reciprocal are recorded, Rényi-projection utilities proposed as remedy, GRO predicted to remain the default; for d × d Gaussians the finite-n e-power gap between GRO and universal inference is 'extreme' when n is not much larger than d [grunwaldAuthorsReplyDiscussion2024, Secs 1–2].
 - E-power of the microcanonical approximation is sandwiched between its own value and that of a non-e-variable pseudo approximation; the gap is the convergence diagnostic [giuffridaTestingMaximumEntropy2025, eqs 43–49].
 - Strong duality identifies the supremum e-power with the minimum relative entropy over the effective null; positive e-power is attainable iff Q lies outside the effective null, extending the finite-null result of Zhang, Ramdas and Wang [larssonNumeraireEvariableReverse2025, Thm 3.6, Remark 3.10, Cor. 4.6].
+- First adoption of the term in print and the shrinking lemma: nontrivial mean and nontrivial e-power coincide for finite alternatives but differ for infinite ones; maximal pivotal exact e-power is superadditive over batches [zhangExistencePowerfulPvalues2023, Sec. 4, Prop. A.2, Example A.4, Prop. 4.11]. A bounded uniformly e-powered e-variable exists iff d_TV(co*(P), co*(Q)) > 0, with no reference measure [larssonCompleteCharacterizationTestable2026, Cor. 3.7]; see [testability-and-existence](testability-and-existence.md).
+- Description-gain rates between closeness and E_Q′[p/q] − 1; a uniform-vertex-mixture RIPr ratio can have infinite e-power at every vertex of a polytope alternative [lardyReverseInformationProjections2023, Thm 6, Sec. IV-C]. E-power ½ log(1 + μ²/σ²) for all three anytime-valid t-tests, defined as the a.s. limit of (1/n) log M_n, with Wald's identity linking it to rejection time [wangAnytimevalidTtestsConfidence2023, Def. 2.3, Props 3.3, 4.8, 4.10]. Compounding loses e-power when nulls are known and gains only through learnability [ignatiadisAsymptoticCompoundEvalues2024, Thm 5.2].
+- Backtesting defines e-power as E_Q[log E], ties it to Kelly and GRO, and attributes the term to Vovk and Wang's nonparametric e-tests, which conflicts with this page's earlier attribution to e-backtesting; v1 of the backtesting paper is not in raw/, so the priority is unresolved [wangEbacktesting2022, Secs 3.2, 5.1, Open questions]. Asymptotic equivalence of betting processes by (1/T)(log M_T(λ) − log M_T(λ′)) → 0 in L¹ [wangEbacktesting2022, Def. 3].
 
 ## Variants and related concepts
 - [gro-criterion](gro-criterion.md), optimising e-power.
@@ -42,6 +45,8 @@ The e-power of an [e-variable](e-variable.md) E against an alternative Q is E_Q[
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — concessions and the GRO vs UI gap.
 - [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — sandwich diagnostic.
 - [larssonNumeraireEvariableReverse2025](../sources/larssonNumeraireEvariableReverse2025.md) — duality and attainability.
+- [zhangExistencePowerfulPvalues2023](../sources/zhangExistencePowerfulPvalues2023.md), [larssonCompleteCharacterizationTestable2026](../sources/larssonCompleteCharacterizationTestable2026.md), [lardyReverseInformationProjections2023](../sources/lardyReverseInformationProjections2023.md), [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md), [ignatiadisAsymptoticCompoundEvalues2024](../sources/ignatiadisAsymptoticCompoundEvalues2024.md) — batch-4 contributions.
+- [wangEbacktesting2022](../sources/wangEbacktesting2022.md) — term attribution, asymptotic equivalence.
 
 ## Disagreements / open issues
 - Whether log growth is the right objective is contested: the Safe Testing authors concede GRO rests on independence and bounded variance of log E and that it fails to explain stitching rates [grunwaldSafeTesting2024, Sec. 8]; Wang's Pareto counterexamples show rejection probability and e-power can point in opposite directions.

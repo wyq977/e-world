@@ -1,8 +1,8 @@
 ---
 slug: testing-by-betting
 title: Testing by betting
-sources: 14
-updated: 2026-10-08
+sources: 21
+updated: 2026-10-12
 ---
 
 # Testing by betting
@@ -23,6 +23,8 @@ Testing by betting represents a hypothesis test as a sequential game: a bettor s
 - The payout is E, not log E; agreement with Shafer that free continuation is best treated game-theoretically [grunwaldAuthorsReplyDiscussion2024, Secs 1, 4].
 - The numeraire property is the numeraire-portfolio property (any wealth divided by the numeraire is a supermartingale), its existence theorem the e-variable fundamental theorem of asset pricing, and the numeraire is the optimal Kelly bet against P when reality follows Q [larssonNumeraireEvariableReverse2025, Def. 2.1, Thm 2.6].
 - One-dollar-per-day skeptic reading of e-detectors: Shiryaev–Roberts is total wealth, CUSUM max-minus-min wealth [shinEdetectorsNonparametricFramework2023, Sec. 6.1]; receding floors in the generalised Ville inequality are deterministic subsidies funding repeated attempts, i.e. multiple testing [koolenGeneralisationVilleInequality2025, Sec. 5]; bounded conditional-mean nulls tested by wealth Π(1 + λ(X − θ)) with betting information governing delay [sahaNonpartitionedEdetectorsNonparametric2026, eq. 17, Thm 4.2]; the De Finetti-style bookie game behind the e-posterior risk bound [grunwaldEposterior2023, Sec. 2].
+- Parallel games for every candidate mean, bets as signed capital fractions, the constrained adversary who sees disclosed bets, and the four-thread history (probability, statistics, information theory, online learning) that 'rarely cited each other' [waudbysmithEstimatingMeansBounded2020, Secs 4.1, 4.3, 6, App. F]. Parallel-games protocol for a null that is a convex hull of sub-nulls, with skeptic wealth the worst game [ramdasTestingExchangeabilityForkconvexity2021, Sec. 5.4]. Inverse capital measure as minimal super-replicating capital, 1/ν(A) as maximal wealth [rufCompositeGeneralizationVille2022, Cor. 3.10, Lemma 3.11]. Betting e-variables as all admissible e-variables for a bounded mean [larssonTestingHypothesesGenerated2025, Example 3.8].
+- Game-theoretic forecast comparison with adversarial Reality choosing outcomes after seeing both forecasts [choeComparingSequentialForecasters2021, Game 1]; cumulative capital reaching level 10 with 9–27% of the data in the precipitation study [henziValidSequentialInference2021, Fig. 3]; the regulator bets a fraction λ_t of capital on each day's exceedance, may announce λ after seeing the forecast, and the bank's ignorance of λ deters gaming [wangEbacktesting2022, Sec. 4.1, App. E].
 
 ## Variants and related concepts
 - [e-power](e-power.md), [gro-criterion](gro-criterion.md), [e-process](e-process.md).
@@ -36,6 +38,8 @@ Testing by betting represents a hypothesis test as a sequential game: a bettor s
 - [villeEtudeCritiqueNotion1939](../sources/villeEtudeCritiqueNotion1939.md) — the original gambler.
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — payout and game-theoretic framing.
 - [larssonNumeraireEvariableReverse2025](../sources/larssonNumeraireEvariableReverse2025.md), [shinEdetectorsNonparametricFramework2023](../sources/shinEdetectorsNonparametricFramework2023.md), [koolenGeneralisationVilleInequality2025](../sources/koolenGeneralisationVilleInequality2025.md), [sahaNonpartitionedEdetectorsNonparametric2026](../sources/sahaNonpartitionedEdetectorsNonparametric2026.md), [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md) — betting readings.
+- [waudbysmithEstimatingMeansBounded2020](../sources/waudbysmithEstimatingMeansBounded2020.md), [ramdasTestingExchangeabilityForkconvexity2021](../sources/ramdasTestingExchangeabilityForkconvexity2021.md), [rufCompositeGeneralizationVille2022](../sources/rufCompositeGeneralizationVille2022.md), [larssonTestingHypothesesGenerated2025](../sources/larssonTestingHypothesesGenerated2025.md) — batch-4 contributions.
+- [choeComparingSequentialForecasters2021](../sources/choeComparingSequentialForecasters2021.md), [henziValidSequentialInference2021](../sources/henziValidSequentialInference2021.md), [wangEbacktesting2022](../sources/wangEbacktesting2022.md) — forecasting and backtesting games.
 
 ## Disagreements / open issues
 - Shafer 2021 (in the bib) and Shafer and Vovk 2019 (not in the bib) are the primary sources and are not yet ingested.

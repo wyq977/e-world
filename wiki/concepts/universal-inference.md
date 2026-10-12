@@ -1,8 +1,8 @@
 ---
 slug: universal-inference
 title: Universal inference and the split likelihood ratio
-sources: 13
-updated: 2026-10-08
+sources: 19
+updated: 2026-10-12
 ---
 
 # Universal inference and the split likelihood ratio
@@ -25,6 +25,8 @@ A procedure is universal when its type-I error or coverage guarantee holds in fi
 - Asymptotically equal e-power to GRO but extreme finite-n loss for multivariate Gaussians; UI is coherent across subsets of the null where GRO is not, a power–coherence trade-off; a GRO analogue of empirical-risk universal inference is called for [grunwaldAuthorsReplyDiscussion2024, Secs 2, 4, 5].
 - Inadmissibility proved: p* ≤ p_max μ-a.s. so X* ≥ X_UI with strict inequality with positive probability for nondegenerate composite nulls; explicit example 2q/(p1 + p2) vs q/max(p1, p2) [larssonNumeraireEvariableReverse2025, Sec. 7, Lemma 7.1, Sec. 5.1].
 - Universal-inference t e-process for Gaussian means with unknown variance, growth ½ log(1 + (m − θ)²/v) [sahaNonpartitionedEdetectorsNonparametric2026, Prop. 5.1]; universal-inference e-processes where no supermartingale exists (log-concavity) serve as e-detector inputs [shinEdetectorsNonparametricFramework2023, Remark 2.10]; per-P induction generalises UI beyond log utility [koningAnytimeValidityFree2026, Remark 6]; UI named as the generic computable design but not power-competitive in regression [grunwaldBeyondNeymanPearsonEvalues2024, Sec. 4.1].
+- Sequential universal-inference t e-process in closed form with e-power ½ log(1 + μ²/σ²) under any finite-variance law, its one-sided version, the power-preserving translation rule for null μ_0, prior sensitivity and burn-in, and α-growth α^{−1/n} that beats the classical t-interval and works at n = 1 [wangAnytimevalidTtestsConfidence2023, Thms 3.2, 3.4, Props 3.3, 3.5, eq. 11, Secs 5.2, 6.2]. Sequential UI for exchangeability: null maximum likelihood with a mixture or predictable numerator, and smoothed non-anticipating MLEs for change points [ramdasTestingExchangeabilityForkconvexity2021, Secs 2.1, 2.7, 4.4]. Split-LR e-value families give e-confidence intervals for any fitting rule [xuPostselectionInferenceEvalue2022, Prop. 2]. Localised UI (minimise the null likelihood over a confidence set) and compound UI give (0, δ)-approximate e-values, well below the empirical-Bayes plug-in in simulations [ignatiadisAsymptoticCompoundEvalues2024, Props 5.5–5.6, Fig. 1].
+- The predictive-recursion e-process is the running-MLE variant with a nonparametric-mixture numerator fitted recursively: valid for any composite null, first-order optimal relative to its mixture model, 50–50 splitting halves the growth slope, oracle gap O(n^{2/3}) proved and n^{1/3} conjectured; applied to log-concavity, monotone densities, von Mises–Fisher mixtures and time homogeneity; the authors decline to swap the MLE denominator for the RIPr [dixitAnytimeValidAsymptotically2023, Thms 1–2, Secs 3.1, 3.3, 5.1]; see [regularized-e-processes](regularized-e-processes.md). Generalised universal inference on risk minimisers used for the median example [martinRegularizedEprocessesAnytime2024, Sec. 4.5].
 
 ## Variants and related concepts
 - [reverse-information-projection](reverse-information-projection.md), for the RIPr split LRT and misspecification.
@@ -42,6 +44,8 @@ A procedure is universal when its type-I error or coverage guarantee holds in fi
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md) — finite-n loss and coherence.
 - [larssonNumeraireEvariableReverse2025](../sources/larssonNumeraireEvariableReverse2025.md) — inadmissibility.
 - [sahaNonpartitionedEdetectorsNonparametric2026](../sources/sahaNonpartitionedEdetectorsNonparametric2026.md), [shinEdetectorsNonparametricFramework2023](../sources/shinEdetectorsNonparametricFramework2023.md), [koningAnytimeValidityFree2026](../sources/koningAnytimeValidityFree2026.md), [grunwaldBeyondNeymanPearsonEvalues2024](../sources/grunwaldBeyondNeymanPearsonEvalues2024.md) — uses and caveats.
+- [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md), [ramdasTestingExchangeabilityForkconvexity2021](../sources/ramdasTestingExchangeabilityForkconvexity2021.md), [xuPostselectionInferenceEvalue2022](../sources/xuPostselectionInferenceEvalue2022.md), [ignatiadisAsymptoticCompoundEvalues2024](../sources/ignatiadisAsymptoticCompoundEvalues2024.md) — batch-4 contributions.
+- [dixitAnytimeValidAsymptotically2023](../sources/dixitAnytimeValidAsymptotically2023.md), [martinRegularizedEprocessesAnytime2024](../sources/martinRegularizedEprocessesAnytime2024.md) — predictive recursion, risk minimisers.
 
 ## Disagreements / open issues
 - The original authors say they do not fully understand how close to optimal the split LRT is beyond uniform and Gaussian cases [wassermanUniversalInference2020, Sec. 2]; the later numeraire and exponential-family results quantify the loss.

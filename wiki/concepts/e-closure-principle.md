@@ -1,8 +1,8 @@
 ---
 slug: e-closure-principle
 title: The e-Closure principle and true-discovery guarantees
-sources: 5
-updated: 2026-10-08
+sources: 11
+updated: 2026-10-12
 ---
 
 # The e-Closure principle and true-discovery guarantees
@@ -20,6 +20,10 @@ An e-collection is a family (e_S)_{S ⊆ [m]} of nonnegative statistics with E_P
 - Computation: O(m²) subsets suffice for monotone local e-values; closed e-BH in O(m² log m), closed BY in O(m³); R package eClosure and Python eclosure [xuBringingClosureFalse2025, Sec. 10].
 - Admissible procedures on arbitrary e-values have weighted affine local e-values; Sun and Wang 2026 prove a complete-class theorem for weighted-mean closed e-BH [xuBringingClosureFalse2025, App. B].
 - FWER closure of e-merging functions, the precursor [vovkEvaluesCalibrationCombination2021, Thm 5.1].
+- Complementary universality: e-BH on compound e-values (single rejected set, FDR) versus the e-Closure principle (simultaneous sets, any expected loss), with the dictionary e_S = K^{-1} Σ_{i ∈ S} ẽ_i [ignatiadisAsymptoticCompoundEvalues2024, Thm 4.4]; see [approximate-and-asymptotic-e-values](approximate-and-asymptotic-e-values.md). Weighted averaging as the only admissible dependence-free local e-value, justifying closed e-BH's arithmetic mean [wangOnlyAdmissibleWay2024, Thm 1].
+- Origin of the FDR closure idea: closed e-BH with the arithmetic mean per intersection, restricted to top-k sets, FDR ≤ α under arbitrary dependence; e-BH and minimally adaptive e-BH are strictly contained (E = (60, 39, 11), α = 0.05 gives 1, 2, 3 rejections); BY is inadmissible even among deterministic procedures; every FDR procedure is e-closed via E_A = FDP_A(R)/α; an α-free e-collection from post-hoc FDP families can add power; general expectation-based metrics and post-hoc choice of the error metric; O(K³) dynamic programme; compound equality conjectured and later proved [xuBringingClosureFDR2025, Prop. 1–6, Thms 1–3, Example 1, Alg. 1].
+- FWER-only e-closed testing: adjusted e*_i = min_{I ∋ i} e_I, everything inherited from the single e-value e_{H_0}; post-hoc strong FWER E[1{max e*_i ≥ 1/α̂}/α̂] ≤ 1 where p-Holm has infinite post-hoc risk; post-hoc anytime-valid and always-valid FWER, the latter needing adjusters on running maxima to be post hoc; weighted e-Bonferroni local tests dominate weighted p-Bonferroni on inverse-e p-values; running maxima of independent e-processes give FWER ≤ α + ((n_0 − 1)/n_0) α² log(1/α) via a Pareto coupling; e-Holm by an O(n) threshold rule adapting to the number of nulls; averaging is not consonant, so e-Fallback needs an O(n) stack and arbitrary DAGs an O(n|E|) dynamic programme; the authors concede optimal fixed-sample p-values can beat e-values by more than aggregation recovers [hartogFamilyWiseError2025, Lemma 2.1, Thms 2.3–2.5, 3.1, 4.2, 6.4, B.1, Algs 1–4, Secs 1.4, 8.4].
+- Online closed testing: coherent online true-discovery procedures are dominated by online closed ones; admissibility forces products of sequential e-values; SeqE-Guard shortcut [fischerAdmissibleOnlineClosed2024, Thms 2.1–2.3, 3.1]; see [online-multiple-testing](online-multiple-testing.md). Closed knockoffs use the same sign-flip e-values, and since these are compound e-values closed e-BH collapses to e-BH, so derandomised knockoffs gain simultaneity but not power from closure [renDerandomizedKnockoffsLeveraging2022, Sec. 1; xuBringingClosureFalse2025, Thm 38].
 
 ## Variants and related concepts
 - [e-bh](e-bh.md), [e-merging](e-merging.md), [calibrator](calibrator.md).
@@ -30,7 +34,11 @@ An e-collection is a family (e_S)_{S ⊆ [m]} of nonnegative statistics with E_P
 - [vovkConfidenceDiscoveriesEvalues2023](../sources/vovkConfidenceDiscoveriesEvalues2023.md) — discovery e-vectors and e-matrices.
 - [vovkEvaluesCalibrationCombination2021](../sources/vovkEvaluesCalibrationCombination2021.md) — FWER closure precursor.
 - [ramdasHypothesisTestingEvalues2025](../sources/ramdasHypothesisTestingEvalues2025.md) — closed e-BH in Section 9.6.
+- [ignatiadisAsymptoticCompoundEvalues2024](../sources/ignatiadisAsymptoticCompoundEvalues2024.md), [wangOnlyAdmissibleWay2024](../sources/wangOnlyAdmissibleWay2024.md) — universality and admissibility.
+- [xuBringingClosureFDR2025](../sources/xuBringingClosureFDR2025.md) — origin of FDR closure, closed e-BH.
+- [hartogFamilyWiseError2025](../sources/hartogFamilyWiseError2025.md) — e-closed FWER, e-Holm, graphical procedures.
+- [fischerAdmissibleOnlineClosed2024](../sources/fischerAdmissibleOnlineClosed2024.md), [renDerandomizedKnockoffsLeveraging2022](../sources/renDerandomizedKnockoffsLeveraging2022.md) — online closure, knockoffs.
 
 ## Disagreements / open issues
 - Closed BH is a uniform improvement classically but not in the simultaneity sense of the e-Closure paper [goemanUniformImprovementBenjaminiHochberg2026, Thm 19].
-- Online e-closure (Fischer, Ramdas; Xu, Fischer, Ramdas 2026) and the Sun–Wang complete-class paper are in the reading queue, not ingested.
+- The 2026 online e-closure papers and the Sun–Wang complete-class paper are in the reading queue, not ingested.

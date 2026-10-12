@@ -1,8 +1,8 @@
 ---
 slug: reverse-information-projection
 title: Reverse information projection (RIPr)
-sources: 17
-updated: 2026-10-08
+sources: 23
+updated: 2026-10-12
 ---
 
 # Reverse information projection (RIPr)
@@ -28,6 +28,9 @@ The reverse information projection of an alternative Q onto a convex set of null
 - Assumption-free definition dP*/dQ = 1/X* on the effective null; P* coincides with Li's and with Lardy–Grünwald–Harremoës's RIPr whenever those exist, can be a proper sub-probability, and H(Q | P) can be infinite for every P in the null while H(Q | P*) is finite or zero [larssonNumeraireEvariableReverse2025, Lemma 3.3, Def. 3.4, Thm 4.7, Cors 4.10–4.11, Examples 4.4, 4.9, Table 1].
 - Under group invariance the infimum KL over null-and-alternative mixtures equals the invariant KL and is approached, not attained, by truncated right-Haar priors when the group is non-compact [perezortizEstatisticsGroupInvariance2024, Thm 2].
 - Betting-information identity I_bet(Q, θ) = inf_{R : E_R X = θ} D(Q ‖ R) with explicit minimiser dR*/dQ = 1/f_{λ*} [sahaNonpartitionedEdetectorsNonparametric2026, Lemma C.4]; RIPr block e-values multiply into supermartingales usable as e-detector baselines [shinEdetectorsNonparametricFramework2023, Sec. 2.6]; RIPr e-variables supply e-collections with nuisance parameters for the e-posterior [grunwaldEposterior2023, Sec. 5].
+- Description-gain definition: the RIPr is the unique limit, in an averaged Bregman metric equivalent to L₁(P) convergence of logs, of sequences with vanishing maximum description gain; it subsumes Li's definition, with existence via finite convex hulls or finite minimax regret with NML in the null; a strict sub-probability RIPr can occur on a countable space with finite KL, ruled out by a constraint-domination condition; e-statistics of a null equal those of its convex, σ-convex and Choquet-convex hulls, RIPrs on different hulls agree when they exist, but an RIPr may exist on the σ-convex hull and not on the convex hull; description-gain closeness δ transfers to e-statisticity at rate δ^{β/(1+β)} under moment bounds; a gap in Li's convergence proof is repaired [lardyReverseInformationProjections2023, Thms 3–7, Props 2–5, Examples 2–4, Sec. III-C].
+- Finite nulls: exact e-variables exist iff Span P ∩ Conv Q = ∅, with the finite-sample e-variable 1 + (orthogonal component of Q) [zhangExistencePowerfulPvalues2023, Thm 3.1, Remark 3.7]. The RIPr of μ_{λ*} onto a one-sided sub-ψ null is μ_0; a reference-measure version of the finite-constraint theory adds indicators of null sets as constraints [larssonTestingHypothesesGenerated2025, Example 7.5, Thm 3.10]. RIPr of N(μ, σ²) onto the scale family is N(0, σ² + μ²) [wangAnytimevalidTtestsConfidence2023, Prop. 6.5, C.3].
+- The Haar average Q̄ = E_G[GQ] of the alternative is the RIPr onto the G-invariant laws; an invariant σ-finite reference measure may replace Q̄ in densities [koningMeasuringEvidenceExchangeability2023, Cor. 3, Lemma 3, Prop. 2]. Whether replacing the null MLE by the RIPr keeps the predictive-recursion statistic an e-process is open [dixitAnytimeValidAsymptotically2023, Sec. 3.1].
 
 ## Variants and related concepts
 - [gro-criterion](gro-criterion.md), [numeraire](numeraire.md).
@@ -47,6 +50,9 @@ The reverse information projection of an alternative Q onto a convex set of null
 - [larssonNumeraireEvariableReverse2025](../sources/larssonNumeraireEvariableReverse2025.md) — assumption-free RIPr.
 - [perezortizEstatisticsGroupInvariance2024](../sources/perezortizEstatisticsGroupInvariance2024.md) — invariant case.
 - [sahaNonpartitionedEdetectorsNonparametric2026](../sources/sahaNonpartitionedEdetectorsNonparametric2026.md), [shinEdetectorsNonparametricFramework2023](../sources/shinEdetectorsNonparametricFramework2023.md), [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md) — applied uses.
+- [lardyReverseInformationProjections2023](../sources/lardyReverseInformationProjections2023.md) — description-gain RIPr.
+- [zhangExistencePowerfulPvalues2023](../sources/zhangExistencePowerfulPvalues2023.md), [larssonTestingHypothesesGenerated2025](../sources/larssonTestingHypothesesGenerated2025.md), [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md) — finite-null and worked RIPrs.
+- [koningMeasuringEvidenceExchangeability2023](../sources/koningMeasuringEvidenceExchangeability2023.md), [dixitAnytimeValidAsymptotically2023](../sources/dixitAnytimeValidAsymptotically2023.md) — invariance RIPr, open question.
 
 ## Disagreements / open issues
 - No general fast algorithm for computing the RIPr prior is given; numerical accuracy for infinite sample spaces is unclear [grunwaldSafeTesting2024, Sec. 2]; direct computation is infeasible for large effect sizes in the simulations [haoEValuesExponentialFamilies2025, Sec. 4].
