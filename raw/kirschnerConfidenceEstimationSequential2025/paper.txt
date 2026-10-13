@@ -1,0 +1,969 @@
+Preprint. 2025
+Confidence Estimation via Sequential Likelihood Mixing
+Johannes Kirschner JOHANNES.KIRSCHNER@SDSC.ETHZ.CH Swiss Data Science Center
+Andreas Krause KRAUSEA@ETHZ.CH ETH Zurich, Department of Computer Science
+Michele Meziu MEZIUM@STUDENT.ETHZ.CH ETH Zurich, Department of Computer Science
+Mojmir Mutn ́y MMUTNY@INF.ETHZ.CH ETH Zurich, Department of Computer Science
+Abstract
+We present a universal framework for constructing confidence sets based on sequential likelihood mixing. Building upon classical results from sequential analysis, we provide a unifying perspective on several recent lines of work, and establish fundamental connections between sequential mixing, Bayesian inference and regret inequalities from online estimation. The framework applies to any realizable family of likelihood functions and allows for non-i.i.d. data and anytime validity. Moreover, the framework seamlessly integrates standard approximate inference techniques, such as variational inference and sampling-based methods, and extends to misspecified model classes, while preserving provable coverage guarantees. We illustrate the power of the framework by deriving tighter confidence sequences for classical settings, including sequential linear regression and sparse estimation, with simplified proofs. Keywords: confidence sequences, likelihood ratios, Bayesian inference, online estimation
+1. Introduction
+Estimating model uncertainty is a fundamental challenge in machine learning and data science. Uncertainty quantification is essential for assessing model accuracy and robustness, particularly in safety-critical domains such as medical diagnosis, drug discovery, and autonomous driving. Uncertainty quantification also plays a key role in guiding exploration in sequential decision-making algorithms, including active learning, adaptive experimental design and reinforcement learning. Significant efforts have been devoted to developing scalable uncertainty estimation techniques for modern machine learning applications. However, most existing work on uncertainty quantification focuses on narrow function classes and specific noise distributions, or relies on asymptotic expansions or adhoc approximations. Moreover, AI systems are often deployed in interactive settings, where data is generated sequentially, introducing complex data dependencies that render any i.i.d. assumption invalid. Constructing practical, non-asymptotic, any-time valid confidence sets under universal assumptions on the stochastic model class remains a major challenge. Classical uncertainty quantification methods originate in the field of statistics and are typically classified into Bayesian and frequentist approaches. In frequentist uncertainty estimation, only the data is random, imposing a distribution on the estimator constructed from the data. Confidence sets are derived by modeling the randomness of the data generating process, most commonly by specifying tail bounds on the error distribution. This approach relies on propagating the noise distribution through the estimator, often (though not always) leveraging central limit arguments, i.i.d.
+© 2025 J. Kirschner, A. Krause, M. Meziu & M. Mutn ́y.
+arXiv:2502.14689v1 [stat.ML] 20 Feb 2025
+
+
+KIRSCHNER KRAUSE MEZIU MUTN  ́Y
+assumptions, and strong regularity conditions on the model class to ensure tractability. Moreover, this approach is invariably dependent on the estimator that one chooses. Bayesian statistics, on the other hand, introduces a prior distribution over the unknown parameter and updates the posterior using Bayes’ rule and the likelihood. The posterior distribution over the model parameters can be interpreted as a measure of uncertainty. Notably, Bayesian inference is a ‘universal recipe’, in the sense that it does not require i.i.d. data or specific assumptions on the likelihood. Obtaining the Bayesian posterior is therefore a purely computational problem, and much work has been done to develop computationally efficient methods and approximations. Despite its popularity, the Bayesian approach is often referred to as subjective, as it depends on the choice of the prior. In fact, it is well understood that Bayesian credible sets do not attain frequentist coverage in general, and arguably, the Bayesian view-point is only viable assuming that the true parameter is randomly sampled from the prior distribution. It therefore seems to be a common misconception that Bayesian inference cannot easily lead to confidence sets when frequentist coverage is required. As we will see soon, the opposite is true:
+Any Bayesian inference model can be turned into a frequentist confidence set, and a frequentist confidence set can be constructed using Bayesian inference, preserving provable coverage even if approximate inference is used or the model is misspecified.
+In this work, we revisit classical ideas from sequential analysis (Wald, 1947) for constructing confidence sets using likelihood ratio martingales and Ville’s inequality (Ville, 1939), tracing back to early works by Darling and Robbins (1968); Robbins (1970). In its simplest form, the confidence sets are level sets of the negative log-likelihood function Lt(θ) = Lt(θ|x1, y1, . . . , xt, yt),
+Ct = θ ∈ Θ : Lt(θ) ≤ βt(δ) , (1)
+with a confidence coefficient βt(δ) that scales with the failure probability δ ∈ (0, 1), and the complexity of the model class. To build intuition, a typical confidence coefficient will take the following approximate form,
+βt(δ) ≈ log 1
+δ + Lt(θˆMLE
+t ) + Bt ,
+where θˆMLE
+t is the maximum likelihood estimator, and Bt ≥ 0 is a complexity term that depends on the model class. Written like this, the confidence coefficient defines a relative likelihood that allows us to interpret the confidence level of a candidate model θ ∈ Θ by comparing Lt(θ) to Lt(θˆMLE
+t ). In practice, however, a worst-case bound on the model complexity might lead to overly conservative confidence sets, or tight bounds may not be easily available for complex function classes. Therefore, it is beneficial to define the confidence coefficient βt(δ) in a data-dependent way. Importantly, a smaller βt(δ) directly translates into a tighter confidence set. A key insight is the use of sequential mixing distributions over the likelihood ratio martingale (formally introduced in Section 2.3), which allows to define a data-dependent confidence coefficient applicable to general model classes. Moreover, sequential mixing establishes a fundamental connection between Bayesian inference and frequentist confidence estimation. The estimation framework is not limited to Bayesian inference, and integrates with established approximate inference techniques such as variational inference and sampling based techniques, while maintaining provable coverage. The framework is universal in the sense that it does not require i.i.d. data, any assumptions on the family of likelihood functions, and applies to any sequence of estimators. Further, using standard regret inequalities from online density estimation, the construction establishes a strong connection to classical maximum likelihood estimation.
+2
+
+
+CONFIDENCE ESTIMATION VIA SEQUENTIAL LIKELIHOOD MIXING
+Related Work The core constructions in this paper go back to classical works, e.g., by Wald (1945); Darling and Robbins (1968); Robbins (1970), and has seen revived interest in more recent literature (e.g., Wasserman et al., 2020; Emmenegger et al., 2023; Flynn et al., 2024; Lee et al., 2024b). More broadly, sequential mixing appears in online convex optimization, e.g., online aggregation, F-weighted portfolios (c.f., Orabona, 2019), and prediction with expert advice (CesaBianchi and Lugosi, 2006). Closely related is also the emerging literature on sequential testing using e-values (see, e.g., Gru ̈nwald et al., 2020) and PAC-Bayes bounds (e.g., Lugosi and Neu, 2023; Chugg et al., 2023). Different to these works, here we focus on constructing confidence set for model parameters, with typical applications including inverse problems and compressed sensing. We will refer to further related works in the relevant context, and defer a more complete historic account to Appendix A.
+Contributions Our first contribution is to review classical and more recent results, establishing tight connections between seemingly disconnected works, and offering a unified framework for constructing confidence sequences using likelihood ratio martingales. The specific application of sequential mixing distributions to likelihood ratios, along with subsequent equivalence results and connections to Bayesian (approximate) inference, appears novel in this generality, to the best of our knowledge. We demonstrate the strength of the formulation by deriving improved confidence sets for sequential linear regression and for sparse estimation, with simplified proofs.
+2. Confidence Estimation via Sequential Likelihood Mixing
+We study the sequential confidence estimation problem in which the learner is given a set of model parameters Θ, and a family of conditional densities M = {pθ(y|x) : θ ∈ Θ}. The learner observes a data stream x1, y1, x2, y2, . . . , xt, yt, . . . , where xt is a covariate and yt ∼ pθ∗(·|xt) is an observation sampled from a distribution with a ground-truth parameter θ∗ ∈ Θ. We make no assumptions on how the covariates a generated, in particular, allow for an arbitrary dependence between xt and all prior data. The role of xt is secondary and is mostly introduced to match standard machine learning settings. For simplicity, we suppress the dependence on xt and denote pt(y|θ) = pθ(y|xt). Our objective is to construct an anytime (1 − δ)-confidence sequence: In each round t ≥ 1, the learner outputs a set Ct ⊂ Θ, such that θ∗ ∈ Ct for all t ≥ 1 holds with probability at least 1 − δ.
+Setting Formally, we let Y be a measurable observation space and X be a measurable covariate space. Let P be the true data generating distribution over (X × Y)∞, with the data stream (xt, yt)∞
+t=1 ∼ P. Unless stated otherwise, all probabilistic statements are with respect to this measure. The filtration corresponding to the observation sequence is Ft = {x1, y1, . . . , xt−1, yt−1, xt}. We abbreviate the marginal distribution over the outcome yt, conditioned on past data, with Pt = Pyt(·|Ft). We assume that Pt is dominated by a base measure ξ over Y for all t ≥ 1. We require that Θ is a measurable space and the density pt(y|θ) defines a probability kernel pt(y|θ)dξ(y) from Θ to Y. We consider both, finite and continuous Θ, and let ω be a base measure over Θ (typically the counting measure for finite Θ, or the Lebesgue measure for Θ ⊂ Rd). The space of probability distributions over Θ is P(Θ). The Kullback-Leibner (KL) divergence between
+two distributions ρ, μ ∈ P(Θ) with ρ, μ ≪ ω is KL(ρ∥μ) =
+R
+ρ(θ) log ρ(θ)
+μ(θ) dω(θ). We make the following realizability assumption (which we will relax in Appendix D),
+Assumption 1 (Realizability) There exists a θ∗ ∈ Θ such that pt(·|θ∗) = dPt
+dξ .
+3
+
+
+KIRSCHNER KRAUSE MEZIU MUTN  ́Y
+We remark that realizability and our definition of the model class imply that the distribution yt conditioned on xt is stationary and independent of past data, Pt(·|Ft) = Pt(·|xt) = pθ∗(·|xt)dξ. This requirement can be relaxed by defining a model class that is conditioned on the full history.
+Confidence Sequences Let δ ∈ (0, 1) be a failure probability. Our a goal is to construct a Ftadapted sequence of confidence sets C1, C2, · · · ⊂ Θ, such that
+P[∃t ≥ 1 s.t. θ∗ ∈/ Ct] ≤ δ .
+In other words, the Type-I error over all time steps is at most δ. We briefly remark that coverage can be achieved trivially, e.g., Ct = Θ for all t ≥ 1 is a (1 − δ)-confidence sequence, and so is a randomly choosing (1 − δ)-fraction of Θ, such that the probability {θ ∈ Ct} is 1 − δ for any θ ∈ Θ. While these maintain coverage, they are not useful in practice because they do not control the Type-II error, or equivalently, the size of the confidence set, in a meaningful way. Hence, we aim to construct a (1 − δ)-confidence sequence and make Ct as small as possible at the same time.
+2.1. Ville’s Inequality and Sequential Likelihood Ratios
+We start by reviewing confidence sets based on sequential likelihood ratios (Robbins, 1970; Lai and Robbins, 1985). Assume that in each round t ≥ 1, after observing the data {x1, y1, . . . xt, yt}, we have a way to construct an estimator θˆt ∈ Θ. Formally, the estimation sequence θˆ1, θˆ2, . . . is an Ft-adapted process in Θ. In addition, we include a prior estimate θˆ0 ∈ Θ that is chosen before any data is observed. Define the sequential likelihood ratio process for θ ∈ Θ,
+Rt(θ) =
+t
+Y
+s=1
+ps(ys|θˆs−1)
+ps(ys|θ) . (2)
+It is important to note that the likelihood of ys is evaluated under the estimate θˆs−1, making the predicted density ps(·|θˆs−1) independent of the observation ys. It is straightforward to verify that Rt(θ∗) is a non-negative martingale with respect to the filtration Ft, i.e.
+E [Rt(θ∗)|Ft] = Rt−1(θ∗)
+Z pt(y|θˆs−1)
+pt(y|θ) dPt(y)
+(∗=) Rt−1(θ∗)
+Z pt(y|θˆs−1)
+pt(y|θ) pt(y|θ)dξ(y) = Rt−1(θ∗) . (3)
+The second equality (∗) uses realizability (Assumption 1). The tail event that Rt(θ∗) growths large is bounded using Ville’s inequality (Ville, 1939), which generalizes Markov’s inequality to nonnegative supermartingales.
+Lemma 1 (Ville’s Inequality (Ville, 1939)) Let (Mt)t≥1 be a non-negative supermartingale. For any α > 0,
+P sup
+t≥1
+Mt ≥ α ≤ E[M1]
+α . (4)
+4
+
+
+CONFIDENCE ESTIMATION VIA SEQUENTIAL LIKELIHOOD MIXING
+Applying Ville’s inequality to Rt(θ∗), noting that Rt(θ∗) ≥ 0 and E [R1] = 1, we get that
+P sup
+t≥1
+Rt(θ∗) ≥ 1
+δ ≤δ.
+By inverting the inequality, we obtain a (1 − δ)-confidence sequence Ct = {θ ∈ Θ : Rt(θ) ≤ 1
+δ }. As a last step, we re-write the inequality using the negative log-likelihood,
+Lt(θ) = L(θ|x1, y1, . . . , xt, yt) = −
+t
+X
+s=1
+log pt(yt|θ) .
+We summarize the construction in the next theorem. Similar constructions have gained renewed interest more recently (e.g., Wasserman et al., 2020; Emmenegger et al., 2023).
+Theorem 2 (Sequential Likelihood-Ratio (Robbins, 1970)) Let θˆ0, θˆ1, θˆ2, . . . be an estimation sequence adapted to the filtration Ft. Define
+Ct =
+(
+θ ∈ Θ : Lt(θ) ≤ log 1
+δ−
+t
+X
+s=1
+log ps(ys|θˆs−1)
+)
+.
+Then Ct is a (1 − δ)-confidence sequence for θ∗, i.e. P[∀t ≥ 1, θ∗ ∈ Ct] ≥ 1 − δ.
+The confidence set defined in Theorem 2 does not require any assumptions on the family of likelihood functions other than realizability, and makes no assumptions on how the covariates x1, x2, . . . are generated, or how the estimation sequence θˆ0, θˆ1, . . . , θˆt is chosen. The size of the confidence set depends on the ability of the learner to produce an estimation sequence that maximizes the loglikelihood Pt
+s=1 log ps(ys|θˆs−1). Since the estimated density pt(·|θˆs−1) is evaluated under the next observation ys, it measures the accuracy of the learner to predict the next outcome.
+2.1.1. MAXIMUM LIKELIHOOD ESTIMATION
+Maximum likelihood estimation is a cornerstone of classical frequentist statistics and closely related to sequential likelihood ratios. Formally, we define the maximum likelihood estimate (MLE) as a minimizer of the negative log-likelihood,
+θˆMLE
+t = arg min
+θ∈Θ
+Lt(θ) .
+Further, define the likehood ratio for ν, θ ∈ Θ,
+Rt(ν, θ) =
+t
+Y
+s=1
+ps(ys|ν)
+ps(ys|θ) . (5)
+It is tempting to use the maximum likelihood estimator in the construction of Theorem 2. However, this fails because Rt(θˆMLE
+t ; θ∗) = maxν∈Θ Rt(ν; θ∗) is not a super-martingale. Fortunately, there are several ways to proceed, and we will come back to this in later sections. To set expectations, note that Rt(ν; θ∗) is a martingale for any fixed ν ∈ Θ. Ville’s inequality implies that P[supt≥1 Rt(ν; θ∗) ≥ 1
+δ ] < δ. For finite Θ, a union bound over Θ suffices to obtain a bound for
+5
+
+
+KIRSCHNER KRAUSE MEZIU MUTN  ́Y
+all ν ∈ Θ simultaneously, and, in particular, for any estimator θˆt. The resulting (1 − δ)-confidence sequence is
+Ct = {θ : Lt(θ) ≤ log 1
+δ + Lt(θˆt) + log(|Θ|)} . (6)
+Note that Ct is a log-likelihood level set as in Eq. (1) with coefficient βt(δ) = log |Θ|
+δ + Lt(θˆt). The difference to Theorem 2 is that the union bound allows to compare directly to the log-likelihood Lt(θˆt) for any estimator θˆt computed in hindsight, using all observed data. The coefficient is minimized (resulting in the smallest confidence set) by the maximum likelihood estimator θˆMLE
+t . For continuous parameter sets, the argument extends using a suitable covering for Θ.
+2.2. Prior Likelihood Mixing
+We now introduce a second approach to construct an anytime confidence sequence using the idea of ‘mixing’. Again, we make use of a martingale process, defined by integrating the likelihood ratio over a given prior distribution. An early reference to this idea is by Robbins and Siegmund (1970), who use mixture martingales to prove law-of-the-iterated-logarithm type bounds. Mixture martingales were popularized in the context of self-normalized bounds by Pen ̃a et al. (2009) as the ‘method of mixtures’, with repeated interest in the machine learning community (e.g., AbbasiYadkori et al., 2011). Formally, let μ0 ∈ P(Θ) be a data-independent prior distribution. Recall the definition of Rt(ν; θ) from Eq. (5), and define the marginal likelihood ratio,
+Qt(θ) =
+Z
+Rt(ν; θ)dμ0(ν) =
+R Qt
+s=1 ps(ys|ν)dμ0(ν)
+Qt
+s=1 ps(ys|θ)
+.
+Using Fubini’s theorem, it follows that Qt(θ∗) is a non-negative martingale with E[Q1(θ∗)] = 1. Once again, we use Ville’s inequality to bound the deviation,
+P sup
+t≥0
+Qt(θ∗) ≥ 1
+δ ≤δ.
+The next theorem summarizes this result.
+Theorem 3 (Prior Likelihood Mixing) For any data-independent prior μ0 ∈ P(Θ), define
+Ct =
+(
+θ ∈ Θ : Lt(θ) ≤ log 1
+δ − log
+Zt Y
+s=1
+ps(ys|ν)dμ0(ν)
+)
+.
+Then Ct is a (1 − δ)-confidence sequence.
+Note that the size of the confidence set is determined by the logarithm of the marginal likelihood under the prior μ0, also referred to as Bayesian evidence. To understand intuitively why the marginal likelihood offers a reasonable confidence threshold, assume that Θ ⊂ Rd. A second-order Taylor expansion of Lt(θ) around the maximum likelihood estimate θˆMLE
+t allows to compute the marginal likelihood in closed-form as a Gaussian integral. This is known as Laplace’s method (Laplace, 1774). Under suitable technical regularity assumptions (e.g., Shun and McCullagh, 1995), the
+6
+
+
+CONFIDENCE ESTIMATION VIA SEQUENTIAL LIKELIHOOD MIXING
+following asymptotic expansion holds, where It(θ) = ∂2
+∂θ2 Lt(θ) ∈ Rd×d is the empirical Fisher information matrix:
+− log
+Z
+exp(−Lt(ν))h(ν)dθ ≈ Lt(θˆMLE
+t )+ 1
+2 log det It(θˆMLE
+t )− d
+2 log(2π) − log μ0(θˆMLE
+t ).
+This should be compared to the discussion in Section 2.1.1. Although maxν Rt(ν, θ∗) is not a martingale, the marginal likelihood ratio offers an approximation while preserving the martingale property. Further details are in Appendix B, and for an elementary introduction to Laplace’s method and its relation to the method of mixtures, we refer to Lattimore and Szepesv ́ari (2020, Chapter 20).
+2.3. Sequential Likelihood Mixing
+We now generalize the idea of mixing to the sequential setting. Formally, let μ1, μ2, . . . be an Ftadapted sequence of mixing distributions in P(Θ), and μ0 ∈ P(Θ) a ‘prior’ mixing distribution that is chosen before any data is observed. We define the sequential marginal likelihood ratio,
+St(θ) =
+t
+Y
+s=1
+R
+ps(ys|ν)dμs−1(ν)
+ps(ys|θ) .
+One can think of the mixing distribution μs−1 as a weighted prediction, aggregation over parameters in Θ. As before, Fubini’s theorem is used to show that St(θ∗) is a non-negative martingale under Ft with E [S0(θ∗)] = 1, and therefore Ville’s inequality implies that
+P sup
+t≥0
+St(θ∗) ≥ 1
+δ ≤δ.
+Rewriting the concentration inequality using the negative log-likelihood yields the following result.
+Theorem 4 (Sequential Likelihood Mixing) Let μ0, μ1, μ2, . . . be a sequence of Ft-adapted mixing distributions in over Θ. Define for t ≥ 1,
+Ct =
+(
+θ ∈ Θ : Lt(θ) ≤ log 1
+δ−
+t
+X
+s=1
+log
+Z
+ps(ys|ν)dμs−1(ν)
+)
+.
+Then Ct is a (1 − δ)-confidence sequence.
+Theorem 4 can be understood as a sequential analog of the method of mixtures (Theorem 3), and recovers the sequential likelihood ratio confidence set (Theorem 2) as a special case by setting μt to a Dirac measure on θˆt. The use of sequential mixing distributions has appeared in the literature before (e.g., Kirschner and Krause, 2018; Emmenegger et al., 2023; Flynn and Reeb, 2024), but we are not aware of a reference that applies mixing directly to the sequential likelihood ratio.
+3. Applications, Connections and New Perspectives
+Sequential mixing provides a versatile framework for constructing confidence sequences for general parametric model classes via Theorem 4. A natural candidate for the mixing distribution is the Bayesian posterior, which we analyze in subsequent subsections. However, the range of possible mixing distributions extends far beyond Bayesian inference, often offering computational and
+7
+
+
+KIRSCHNER KRAUSE MEZIU MUTN  ́Y
+statistical trade-offs. While there is no universally optimal choice, a key consideration is that the resulting confidence set is typically tighter when the mixing distribution μt is concentrated around the true parameter θ∗. For completeness, we list several possible choices below, noting that all of these, including point estimates and sampling-based approximations (e.g., Monte Carlo methods), yield valid (1 − δ)-confidence sequences.
+• Bayesian Inference: A natural approach is updating the mixing distributions via Bayes’ rule: μt(θ) ∝ Qt
+s=1 pt(yt|θ)μ0(θ). This is discussed in detail in Section 3.1.
+• Variational Inference: When the marginal likelihood is intractable, variational inference methods provide computational lower bounds on the evidence, see Section 3.2 below.
+• Posterior Sampling: Using sampling-based approximations, such as Langevin dynamics (Dwivedi et al., 2019), we can set μt(θ) = 1
+N
+PN
+i=1 δθ ̃i
+t for N samples θ ̃1
+t , . . . , θ ̃N
+t ∈ Θ.
+• Online Estimation: Complexity bounds from online density estimation allow to relate the sequential mixing confidence set to classical supervised estimation, see Section 3.3.
+3.1. From Bayesian to Frequentist Inference
+A natural choice for the mixing distribution is the Bayesian posterior, which establishes a fundamental connection between frequentist confidence estimation and Bayesian inference. To explore this relationship, we first formally define the Bayesian inference model.
+Assumption 2 (Bayesian Inference) In the Bayesian inference model, the learner defines a prior distribution μ0 ∈ P(Θ) over model parameters (independent of the data), and predicts using the
+posterior distribution μt(θ) ∝ Qt−1
+s=1 ps(ys|θ)μ0(θ).
+The main result of this section establishes that if the mixing distributions are computed according to Bayes’ rule, then prior likelihood mixing (Theorem 3) and sequential likelihood mixing (Theorem 4) are equivalent. A further application of Bayes rule shows that any (realizable) Bayesian model can be turned into a (1 − δ)-confidence sequence by comparing the log posterior probability log μt(θ) to the log prior probability log μ0(θ). This is known as prior-posterior ratio confidence set (WaudbySmith and Ramdas, 2020):
+Ct = θ ∈ Θ : − log μt(θ) ≤ log 1
+δ − log μ0(θ) .
+The equivalence result is foreshadowed in the works by Waudby-Smith and Ramdas (2020) and Neiswanger and Ramdas (2021), who establish the posterior-ratio confidence set and the connection to the marginal likelihood. The explicit equivalence to the sequential mixing framework, however seems to be absent in prior works, and is formally given in Theorem 5 below.
+Theorem 5 (Mixing Equivalence) If the mixing distributions are chosen according to Bayes’ rule, prior likelihood mixing (Theorem 3) and sequential mixing (Theorem 4) are equivalent.
+Proof The result follows by applying Bayes’ rule recursively to show the following equality,
+Pt
+s=1 log
+R
+ps(ys|ν)dμs−1(ν) = log
+R Qt
+s=1 ps(ys|ν)dμ0(ν).
+8
+
+
+CONFIDENCE ESTIMATION VIA SEQUENTIAL LIKELIHOOD MIXING
+The surprising consequence is, that within the Bayesian inference model, sequential mixing provides no statistical advantage compared to averaging the likelihood over the prior. Less surprisingly though, Bayes’ rule can be understood as an incremental update rule to compute the marginal likelihood. In this sense, the equivalence can be re-stated as recovering prior mixing (Theorem 3) as a special case of sequential mixing (Theorem 4). However, note that for mixing distributions outside the Bayesian model, the equivalence does not hold in general, leaving the possibility to find non-Bayesian mixing distributions that achieve faster convergence. We come back to this idea in Section 3.3. Next, we state a second implication of Bayes’ rule, the prior-posterior ratio confidence set.
+Lemma 6 (Prior-Posterior Ratio Confidence Set (Waudby-Smith and Ramdas, 2020)) For any realizable Bayesian model, the following defines a (1 − δ)-confidence sequence:
+Ct = θ ∈ Θ : − log μt(θ) ≤ log 1
+δ − log μ0(θ) .
+Moreover, the confidence set is equivalent to the construction in Theorems 3 and 4.
+Proof Note that log μt(θ) = log μ0(θ) + Lt(θ) − log
+R Qt
+s=1 ps(ys|ν)dμ0(ν) holds for all θ ∈ Θ by Bayes’ rule. Substituting the equality into Theorem 3 gives the result.
+The remarkable conclusion is that any realizable Bayesian model can be turned into a frequentist confidence set by thresholding the log posterior probability relative to the log prior probability. As a caveat, it is tempting to think of Ct as a Bayesian credible region, however, the posterior credible probability μt−1(Ct) is typically not 1 − δ. Further, the confidence set, by construction, never rejects parameters in the null set of the prior distribution, unlike in classical Bayesian inference. In any case, a sensible choice is Θ = supp(μ0), as long as the realizability condition (Assumption 1) is satisfied, that is, θ∗ ∈ Θ defines the true likelihood of the data. For an application of the priorposterior confidence set to sequential sampling without replacement, we refer to Waudby-Smith and Ramdas (2020). As a consequence of the prior-posterior ratio confidence set and the mixing equivalence, the confidence sets for sequential linear regression by Neiswanger and Ramdas (2021); Flynn et al. (2024); Flynn and Reeb (2024) and earlier work by Abbasi-Yadkori et al. (2011) are essentially equivalent, as we demonstrate below. Moreover, a lower bound by Lattimore and Szepesv ́ari (2020) shows that the construction is tight without further assumptions on the data generation distribution.
+Sequential Linear Regression To illustrate the utility of the Bayesian perspective, we consider sequential linear regression with a Gaussian prior and likelihood. To preempt any concerns, we remark that the Gaussian assumption can be relaxed to sub-Gaussian distributions, as we explain in Section D.1. Formally, let θ∗ ∈ Θ = Rd, with multivariate Gaussian prior N (θ0, V −1
+0 ) centered
+at θ0 ∈ Rd and prior precision matrix V0 ∈ Rd×d, where commonly V0 = λ1d ∈ Rd×d for a regularizer λ > 0. The observation likelihood is Gaussian, yt ∼ N (x⊤
+t θ∗, σ2) for a feature vector
+xt ∈ Rd and known observation variance σ2 > 0. The Gaussian posterior is μt = N (θˆRLS
+t , V −1
+t ),
+where θˆRLS
+t is the regularized least squares (RLS) estimate,
+θˆRLS
+t = arg min
+θ∈Rd
+1
+2σ2
+t
+X
+s=1
+⟨xs, θ⟩ − ys
+2+ 1
+2 ∥θ − θ0∥2
+V0 .
+9
+
+
+KIRSCHNER KRAUSE MEZIU MUTN  ́Y
+Here, Vt = 1
+σ2
+Pt
+s=1 xsx⊤
+s + V0 is the posterior precision matrix, and we use the notation ∥ν∥2
+A=
+ν⊤Aν for ν ∈ Rd and A ∈ Rd×d. The prior and posterior densities are explicitly given as follows:
+μ0(θ) = (2π)−2/k(det V0)1/2 exp − 1
+2 ∥θ − θ0∥2
+V0
+μt(θ) = (2π)−2/k(det Vt)1/2 exp − 1
+2 ∥θ − θˆRLS
+t ∥2
+Vt
+Applying Lemma 6 with the Gaussian posterior, we get the following (1 − δ)-confidence sequence:
+C RLS
+t = θ ∈ Rd : 1
+2 ∥θ − θˆRLS
+t ∥2
+Vt ≤ log 1
+δ+1
+2 log det Vt − 1
+2 log det V0 + 1
+2 ∥θ − θ0∥2
+V0 .
+An important feature of the bound is that it scales with the effective dimension or total information gain γt = 1
+2 log det Vt − 1
+2 log det V0 of the data (c.f. Huang et al., 2021), which can be much smaller than the parameter dimension d (Srinivas et al., 2009). Note also that the confidence set does not require a known bound on the norm ∥θ∗∥2 ≤ S, which is required in all prior work that we are aware of. If such a bound is available, a direct approach is to define the Gaussian prior and posterior directly over the restricted set BS = {θ ∈ Rd : ∥θ∥2 ≤ S}. However, in this case, the normalization constant is not easily computed in closed form. Instead, we intersect CRLS
+t with the norm ball BS. Relaxing the confidence set further, and choosing V0 = λ1d and θ0 = 0, we eventually arrive at
+C RLS
+t ∩ BS ⊂ θ ∈ Rd : 1
+2 ∥θ − θˆRLS
+t ∥2
+Vt ≤ log 1
+δ+1
+2 log det Vt − d
+2 log λ + λ
+2 S2 .
+The last line essentially recovers the influential result by Abbasi-Yadkori et al. (2011), albeit avoiding a lower-order cross-term, improving the bound by up to a factor of two. The proof of AbbasiYadkori et al. (2011) uses the method of mixtures, but mixing the noise martingale St = Pt
+s=1 εsxt
+over a centered prior, instead of directly mixing the likelihood ratio. More recent work by Flynn et al. (2024) achieves the tighter result using a similar sequential mixing idea, however, the likelihood framework and connection to Bayesian inference is not mentioned. A direct extension is to heteroscedastic noise, yt ∼ N (x⊤
+t θ∗, σ2
+t ) with known variance σ2
+t (c.f., Kirschner and Krause, 2018). Another, more involved extension is to unknown mean and variance (c.f., Chowdhury et al., 2023).
+Gaussian Process Regression We remark that the confidence set for sequential linear regression can be equivalently stated for non-parametric Gaussian processes regression in infinite-dimensional kernel Hilbert spaces (RKHS) using the ‘kernel trick’. Our derivation improves (up to a factor of two) the results by Abbasi-Yadkori (2012); Chowdhury and Gopalan (2017); Whitehouse et al. (2023) and recovers more recent results by Neiswanger and Ramdas (2021); Flynn and Reeb (2024), who do not state the equivalence.
+3.2. Variational Confidence Sets
+While the confidence set construction and its relation to Bayesian inference is universal and holds for any prior and family of likelihood functions, the price to pay is that computing the marginal likelihood, or equivalently, the posterior distribution, is intractable in general. Fortunately, approximate inference methods have been well studied in the field of Bayesian inference. Our starting point is a variational inequality for the marginal likelihood
+R Qt
+s=1 ps(ys|θ)dμ0(θ) =
+R
+exp(−Lt(θ))dμ0(θ) and the Kullback-Leibner (KL) divergence, often attributed to Donsker and Varadhan (1976).
+10
+
+
+CONFIDENCE ESTIMATION VIA SEQUENTIAL LIKELIHOOD MIXING
+Lemma 7 (Variational Inequality) For any two distributions μ, ρ ∈ P(Θ) and any measurable function g : Θ → R,
+log
+Z
+exp(g(θ))dμ ≥
+Z
+g(θ)dρ(θ) − KL(ρ∥μ) .
+Moreover, the inequality becomes an equality for dρ(θ) ∝ exp(g(θ))dμ(θ).
+The inequality plays a central role in variational inference, and is typically stated as the evidence lower bound (ELBO), by specializing Lemma 7 using g(θ) = −Lt(θ) and μ = μ0,
+log
+Z
+exp(−Lt(θ))dμ0 ≥ ELBOt(ρ) := −
+Z
+Lt(θ)dρ(θ) − KL(ρ∥μ0) .
+For the given choices, the inequality becomes tight when ρ = μt is the Bayesian posterior. Variational inference aims at numerically maximizing the evidence lower bound over a parametric family of posterior distributions (Jordan et al., 1999), see also (Blei et al., 2017). In the context of confidence estimation, the key insight is that the variational inequality allows to relax the marginal likelihood that defines the confidence sequence in Theorem 3. This result has been recently stated by Lee et al. (2024a) in the specialized context of logistic and multinomial bandits, and similar bounds are well-known in the PAC-Bayes literature (e.g., Zhang, 2006; Chen et al., 2022; Alquier et al., 2024). Here, we emphasize the connection to variational inference and the evidence lower bound as a way to define a confidence coefficient with valid anytime coverage.
+Theorem 8 (Evidence Lower Bound Confidence Set) For any Ft-adapted sequence of distributions μt ∈ P(Θ) and a data-independent prior μ0 ∈ P(Θ), define
+Ct = θ ∈ Θ : Lt(θ) ≤ log 1
+δ − ELBOt(μt) .
+Then Ct defines a (1 − δ)-confidence sequence. Moreover, if ρt is chosen as the Bayesian posterior, the result is equivalent to the marginal likelihood confidence set in Theorem 3.
+The practical implication of this result is that it provides a tool to trade off computational tractability and statistical efficiency. In particular, standard variational inference methods can be converted into a confidence set with provable coverage, simply by thresholding the negative log-likelihood by the attained evidence lower bound. Another possibility is to make ad-hoc choices for the posterior to obtain closed-form expressions for confidence sets, e.g. for logistic regression (Lee et al., 2024b).
+3.3. Oracle Complexity Bounds via Online Estimation
+The size of the sequential mixing confidence set in Theorem 4 depends on the ability of the learner to produce a sequence of mixing distributions that minimize the cumulative log loss,
+t
+X
+s−1
+ls(μs−1) = −
+t
+X
+s=1
+log
+Z
+ps(ys|ν)dμs−1(ν) .
+The field of online density estimation studies algorithms for minimizing the cumulative log loss, and offers a rich literature on complexity bounds for the regret (e.g., Vovk, 1990, 1997; Zhang, 2006;
+11
+
+
+KIRSCHNER KRAUSE MEZIU MUTN  ́Y
+Rakhlin and Sridharan, 2014). Here, regret is defined as the difference between the cumulative log loss, and the best prediction in hindsight, which, in the simplest case, coincides with the maximum likelihood estimate. Specifically, we assume that the mixing distributions μ1, μ2, . . . are chosen by an online estimation algorithm, in a way that ensures a bound Bt ≥ 0 on the log-regret,
+Λt =
+t
+X
+s=1
+ls(μs−1) − mθin Lt(θ) ≤ Bt .
+For a complete introduction, we refer the reader to the standard literature (e.g., Cesa-Bianchi and Lugosi, 2006; Orabona, 2019; Shalev-Shwartz et al., 2012). The next result demonstrates how the sequential likelihood mixing framework relates to maximum likelihood estimation, using regret inequalities from online estimation.
+Theorem 9 (Regret-To-Confidence) Assume there exists an online estimation algorithm such that the log-regret is bounded almost-surely, Λt ≤ Bt, for a predictable sequence Bt ≥ 0. Define
+Ct = θ ∈ Θ : Lt(θ) ≤ log 1
+δ + Lt(θˆMLE
+t ) + Bt .
+Then Ct defines a (1 − δ)-confidence sequence.
+Proof The result follows directly from Theorem 4, by introducing Lt(θˆMLE
+t ) and using the definition of the regret.
+The importance of the result is that the existence of an online estimation algorithm with a known regret bound, allows to define a valid (1 − δ)-confidence sequence, relative to the log-likelihood of the MLE and the complexity bound for online estimation. In particular, the construction does not require access to the predictions of the online learning algorithm. Moreover, the confidence coefficient can be computed using standard supervised learning algorithms, eliminating the need for computing the marginal likelihood. Lastly, the complexity term offers a more interpretable bound on the confidence coefficient. We will come back to several concrete examples below. The use of regret inequalities to derive concentration inequalities goes back to at least Dekel et al. (2010); Abbasi-Yadkori et al. (2012). The “Online-to-Confidence-Set” conversion by AbbasiYadkori et al. (2012) is, however, different in a subtle way, and requires access to the predictions of the online learning algorithm. We recover (and improve upon) their result using a generalization of Theorem 9 in Section E.2. Later works extend this idea, for example, to (multinomial) logistic bandits (Lee et al., 2024a). A similarly flavoured result is by Abeles et al. (2024) in the context of PAC-Bayes generalization bounds. Worth mentioning is also the work by Rakhlin and Sridharan (2017), who prove an equivalence between regret bounds and tail inequalities.
+Logistic Regression We illustrate Theorem 9 in the sequential logistic regression setting. Let Θ = {θ ∈ Rd : ∥θ∥2 ≤ S} for a norm bound S > 0. The likelihood is a Bernoulli distribution, pt(y|θ) = B(φ(⟨θ, xt⟩)) with the logistic link function φ(z) = (1 + e−z)−1 and the covariates xt ∈ Rd. Following along the lines of Lee et al. (2024a), we invoke a regret bound for logistic regression by Foster et al. (2018), who prove an online learning algorithm that achieves Λt ≤ 10d log e + St
+2d .
+Theorem 9 immediately implies the following (1 − δ)-confidence sequence:
+Ct = θ ∈ Θ : Lt(θ) ≤ log 1
+δ + Lt(θˆMLE
+t ) + 10d log e + St
+2d .
+12
+
+
+CONFIDENCE ESTIMATION VIA SEQUENTIAL LIKELIHOOD MIXING
+We remark that the confidence coefficient above improves upon the result of Lee et al. (2024a, Theorem 1), as a consequence of directly applying Ville’s inequality to the likelihood ratio.
+Compressed Sensing We come back to the sequential linear regression setting described below Lemma 6, with the additional assumption that the true parameter θ∗ is k-sparse, i.e. ∥θ∗∥0 ≤ k. One way to account for the sparsity assumption is to set Θk = {θ ∈ Rd : ∥θ∥0 < k, ∥θ∥2 ≤ S}. For sparse linear regression, (Gerchinovitz, 2011) proposes online learning algorithm that achieves Λt ≤ C0k log(t) for a constant C0 > 0. Theorem 9 implies the following a confidence sequence,
+Ct = θ ∈ Θ : Lt(θ) ≤ log 1
+δ + Lt(θˆMLE
+t ) + C0k log(t) .
+Note that here MLE is defined over the sparse set Θk, which poses computational challenges. On the other hand, the confidence set by Abbasi-Yadkori et al. (2012) requires access to the predictions of the online learning algorithm. The construction therefore suffers a similar fate, as finding a computationally efficient algorithm for sparse linear prediction is still an open problem.
+Finite Model Identification Assume that the parameter set Θ is finite, i.e. |Θ| < ∞. The key insight is to note that the log-loss is η-exp-concave for η ≤ 1, i.e. exp(−ηlt(μ)) is concave in μ ∈ P(Θ) for all η ≤ 1 (in fact, it is linear for η = 1). This highlights the importance of using mixing distributions, as, in general, − log pt(yt|θ) is not exp-concave as a function of θ. The standard approach for online learning with exp-concave functions is the exponential weights algorithm (EWA, Littlestone and Warmuth, 1994; Freund and Schapire, 1997), see also the book by Cesa-Bianchi and Lugosi (2006). For η = 1, EWA is equivalent to Bayesian inference and the prediction μt is equal to the Bayesian posterior (see Algorithm 1). With a uniform prior, the regret of EWA satisfies Λt ≤ log(|Θ|), uniformly over all data sequences. The proof is provided for completeness in Appendix C. Using Theorem 9, we obtain the following (1 − δ)-confidence sequence
+Ct = {θ ∈ Θ : Lt(θ) ≤ log 1
+δ + Lt(θˆMLE
+t ) + log |Θ|} .
+The result should be compared to the standard union bound argument (Section 2.1.1). While the bound is the same, note that we obtained Theorem 9 as a relaxation of Theorem 4. Hence, the sequential mixing confidence set (with the Bayesian posterior as mixing distributions) is never worse, and possibly tighter for benign data and structured model classes (e.g., Auer et al., 2002; CesaBianchi et al., 2007; De Rooij et al., 2014). The confidence set can also be written for the maximum a-posteriori estimate (MAP), in which case the role of the prior distribution becomes more apparent:
+Ct = θ ∈ Θ : Lt(θ) ≤ log 1
+δ + min
+ν∈Θ Lt(ν) − log μ0(ν) .
+Lastly, we remark that the exponential weights algorithm can be generalized to the continuous setting. The confidence sequence derived from the regret bound of continuous exponential weights is equivalent to the ELBO confidence set in Theorem 8. This is another consequence of the mixing equivalence. We refer to Appendix C for further details.
+4. Conclusion
+We presented a unifying framework for constructing confidence sequences using sequential likelihood mixing, with deep connections to Bayesian inference, maximum likelihood estimation and
+13
+
+
+KIRSCHNER KRAUSE MEZIU MUTN  ́Y
+regret inequalities from online convex optimization. Many of the results presented here have appeared in some form in the literature before, although scattered and seemingly disconnected, or in specialized settings. An inevitably incomplete overview of related works is given in Appendix A. Of course, the story does not end here. Importantly, the realizability assumption can be relaxed, for example, to sub-Gaussian families (Appendix D.1) and convex model classes (Appendix D.2). The sequential likelihood ratio is not the only martingale that can be turned into a confidence sequence. Another natural extension to tempered likelihood ratios is discussed in Appendix E, which has been suggested as a way to make the Bayesian model update more robust (e.g., Gru ̈nwald, 2012). The essentially equivalent setting of sequential testing, and the literature on e-values is another staring point for further investigation (Gru ̈nwald et al., 2020). One of the main objection against the Bayesian approach is often that it is generally subjective, as it depends on the choice of prior. As we demonstrate here, this does not prevent us from constructing frequentist confidence sets, as long as the prior is chosen independently of the data. Although the confidence sets depend explicitly on the Bayesian posterior, the random deviations are controlled in the frequentist sense, with respect to the true data distribution. Nevertheless, it is true that the size of the confidence set depends on how well the prior is concentrated on the true data distribution, but this is analogous to specifying structural model assumptions in a purely frequentist setup. In a similar spirit, Wasserman et al. (2020) briefly mentions the prior likelihood mixing for constructing a confidence set, noting that it “requires specifying a prior and doing an integral”. We certainly do not deny the challenges associated with computing the marginal likelihood, but would argue that the marginal likelihood appears as a natural quantity in the construction of confidence sequences, and establishes a fundamental connection to Bayesian inference. Approximate inference techniques (e.g., variational inference and sampling-based approximations) make this idea viable, maintaining provable coverage guarantees. Moreover, in settings where prior data is available, a promising direction is to learn structured priors from the data.
+Acknowledgments
+We thank Guillaume Obozinski for helpful discussions on the topic.
+References
+Yasin Abbasi-Yadkori. Online Learning for Linearly Parametrized Control Problems. PhD thesis, Citeseer, 2012.
+Yasin Abbasi-Yadkori, D ́avid P ́al, and Csaba Szepesv ́ari. Improved algorithms for linear stochastic bandits. Advances in neural information processing systems, 24, 2011.
+Yasin Abbasi-Yadkori, David Pal, and Csaba Szepesvari. Online-to-confidence-set conversions and application to sparse stochastic bandits. In Artificial Intelligence and Statistics, pages 1–9. PMLR, 2012.
+Baptiste Abeles, Eugenio Clerico, and Gergely Neu. Generalization bounds for mixing processes via delayed online-to-pac conversions. arXiv preprint arXiv:2406.12600, 2024.
+Alekh Agarwal, Nan Jiang, Sham M Kakade, and Wen Sun. Reinforcement learning: Theory and algorithms. CS Dept., UW Seattle, Seattle, WA, USA, Tech. Rep, 32:96, 2019.
+14
+
+
+CONFIDENCE ESTIMATION VIA SEQUENTIAL LIKELIHOOD MIXING
+Pierre Alquier and James Ridgway. Concentration of tempered posteriors and of their variational approximations. 2020.
+Pierre Alquier et al. User-friendly introduction to pac-bayes bounds. Foundations and Trends® in Machine Learning, 17(2):174–303, 2024.
+Anastasios N Angelopoulos and Stephen Bates. A gentle introduction to conformal prediction and distribution-free uncertainty quantification. arXiv preprint arXiv:2107.07511, 2021.
+Anastasios N Angelopoulos, Rina Foygel Barber, and Stephen Bates. Theoretical foundations of conformal prediction. arXiv preprint arXiv:2411.11824, 2024.
+P Auer. Finite-time analysis of the multiarmed bandit problem, 2002.
+Peter Auer, Nicolo Cesa-Bianchi, and Claudio Gentile. Adaptive and self-confident on-line learning algorithms. Journal of Computer and System Sciences, 64(1):48–75, 2002.
+Katy S Azoury and Manfred K Warmuth. Relative loss bounds for on-line density estimation with the exponential family of distributions. Machine learning, 43:211–246, 2001.
+Anirban Bhattacharya, Debdeep Pati, and Yun Yang. Bayesian fractional posteriors. 2019.
+David M Blei, Alp Kucukelbir, and Jon D McAuliffe. Variational inference: A review for statisticians. Journal of the American statistical Association, 112(518):859–877, 2017.
+Nicolo Cesa-Bianchi and G ́abor Lugosi. Prediction, learning, and games. Cambridge university press, 2006.
+Nicolo Cesa-Bianchi, Yishay Mansour, and Gilles Stoltz. Improved second-order bounds for prediction with expert advice. Machine Learning, 66:321–352, 2007.
+Fan Chen, Song Mei, and Yu Bai. Unified algorithms for rl with decision-estimation coefficients: No-regret. PAC, and Reward-Free Learning. arXiv e-prints, 2022.
+Sayak Ray Chowdhury and Aditya Gopalan. On kernelized multi-armed bandits. In International Conference on Machine Learning, pages 844–853. PMLR, 2017.
+Sayak Ray Chowdhury, Patrick Saux, Odalric Maillard, and Aditya Gopalan. Bregman deviations of generic exponential families. In The Thirty Sixth Annual Conference on Learning Theory, pages 394–449. PMLR, 2023.
+Ben Chugg, Hongjian Wang, and Aaditya Ramdas. A unified recipe for deriving (time-uniform) pac-bayes bounds. Journal of Machine Learning Research, 24(372):1–61, 2023.
+Thomas Cover. An algorithm for maximizing expected log investment return. IEEE Transactions on Information Theory, 30(2):369–373, 1984.
+Thomas M Cover. Universal portfolios. Mathematical finance, 1(1):1–29, 1991.
+DA Darling and Herbert Robbins. Some further remarks on inequalities for sample sums. Proceedings of the National Academy of Sciences, 60(4):1175–1182, 1968.
+15
+
+
+KIRSCHNER KRAUSE MEZIU MUTN  ́Y
+Steven De Rooij, Tim Van Erven, Peter D Gru ̈nwald, and Wouter M Koolen. Follow the leader if you can, hedge if you must. The Journal of Machine Learning Research, 15(1):1281–1316, 2014.
+Ofer Dekel, Claudio Gentile, Karthik Sridharan, et al. Robust selective sampling from single and multiple teachers. In COLT, pages 346–358, 2010.
+M. D. Donsker and S. R. S. Varadhan. Asymptotic evaluation of certain markov process expectations for large time—iii. Communications on Pure and Applied Mathematics, 29(4):389–461, 1976. doi: https://doi.org/10.1002/cpa.3160290405. URL https://onlinelibrary.wiley.
+com/doi/abs/10.1002/cpa.3160290405.
+Raaz Dwivedi, Yuansi Chen, Martin J Wainwright, and Bin Yu. Log-concave sampling: Metropolishastings algorithms are fast. Journal of Machine Learning Research, 20(183):1–42, 2019.
+Nicolas Emmenegger, Mojmı ́r Mutny ́, and Andreas Krause. Likelihood ratio confidence sets for sequential decision making, 2023.
+Louis Faury, Marc Abeille, Clement Calauzenes, and Olivier Fercoq. Improved Optimistic Algorithms for Logistic Bandits. In ICML’20: Proceedings of the 37th International Conference on International Conference on Machine Learning, 2020.
+Hamish Flynn and David Reeb. Tighter confidence bounds for sequential kernel regression. arXiv preprint arXiv:2403.12732, 2024.
+Hamish Flynn, David Reeb, Melih Kandemir, and Jan R Peters. Improved algorithms for stochastic linear bandits using tail bounds for martingale mixtures. Advances in Neural Information Processing Systems, 36, 2024.
+Dylan J Foster and Alexander Rakhlin. Foundations of reinforcement learning and interactive decision making. arXiv preprint arXiv:2312.16730, 2023.
+Dylan J Foster, Satyen Kale, Haipeng Luo, Mehryar Mohri, and Karthik Sridharan. Logistic regression: The importance of being improper. In Conference on learning theory, pages 167–208. PMLR, 2018.
+Dylan J Foster, Sham M Kakade, Jian Qian, and Alexander Rakhlin. The statistical complexity of interactive decision making. arXiv preprint arXiv:2112.13487, 2021.
+Dylan J Foster, Noah Golowich, and Yanjun Han. Tight guarantees for interactive decision making with the decision-estimation coefficient. In The Thirty Sixth Annual Conference on Learning Theory, pages 3969–4043. PMLR, 2023.
+Yoav Freund and Robert E Schapire. A decision-theoretic generalization of on-line learning and an application to boosting. Journal of computer and system sciences, 55(1):119–139, 1997.
+Se ́bastien Gerchinovitz. Sparsity regret bounds for individual sequences in online linear regression. In Proceedings of the 24th Annual Conference on Learning Theory, pages 377–396. JMLR Workshop and Conference Proceedings, 2011.
+Peter Gru ̈nwald. The safe bayesian: learning the learning rate via the mixability gap. In International Conference on Algorithmic Learning Theory, pages 169–183. Springer, 2012.
+16
+
+
+CONFIDENCE ESTIMATION VIA SEQUENTIAL LIKELIHOOD MIXING
+Peter Gr ̈unwald, Rianne de Heide, and Wouter M Koolen. Safe testing. In 2020 Information Theory and Applications Workshop (ITA), pages 1–54. IEEE, 2020.
+Maxime Haddouche and Benjamin Guedj. Online pac-bayes learning. Advances in Neural Information Processing Systems, 35:25725–25738, 2022.
+Chris C Holmes and Stephen G Walker. Assigning a value to a power likelihood in a general bayesian model. Biometrika, 104(2):497–503, 2017.
+Steven R. Howard, Aaditya Ramdas, Jon McAuliffe, and Jasjeet Sekhon. Time-uniform, nonparametric, nonasymptotic confidence sequences.
+Steven R Howard, Aaditya Ramdas, Jon McAuliffe, Jasjeet Sekhon, et al. Time-uniform Chernoff bounds via nonnegative supermartingales. Probability Surveys, 17:257–317, 2020.
+Kaixuan Huang, Sham M Kakade, Jason D Lee, and Qi Lei. A short note on the relationship of information gain and eluder dimension. arXiv preprint arXiv:2107.02377, 2021.
+Michael I Jordan, Zoubin Ghahramani, Tommi S Jaakkola, and Lawrence K Saul. An introduction to variational methods for graphical models. Machine learning, 37:183–233, 1999.
+Kwang-Sung Jun, Aniruddha Bhargava, Robert Nowak, and Rebecca Willett. Scalable generalized linear bandits: Online computation and hashing. Advances in Neural Information Processing Systems, 30, 2017.
+Johannes Kirschner and Andreas Krause. Information directed sampling and bandits with heteroscedastic noise. In Conference On Learning Theory, pages 358–384. PMLR, 2018.
+Tze Leung Lai. On confidence sequences. The Annals of Statistics, pages 265–280, 1976.
+Tze Leung Lai. Adaptive treatment allocation and the multi-armed bandit problem. The annals of statistics, pages 1091–1114, 1987.
+Tze Leung Lai. Sequential analysis: some classical problems and new challenges. Statistica Sinica, pages 303–351, 2001.
+Tze Leung Lai. Martingales in sequential analysis and time series, 1945–1985. Electronic Journal for history of probability and statistics, 5(1), 2009.
+Tze Leung Lai and Herbert Robbins. Asymptotically efficient adaptive allocation rules. Advances in applied mathematics, 6(1):4–22, 1985.
+Tze Leung Lai and Limin Zhang. A modification of schwarz’s sequential likelihood ratio tests in multivariate sequential analysis. Sequential Analysis, 13(2):79–96, 1994.
+Pierre Simon Laplace. Me ́moire sur la probabilite ́ de causes par les  ́evenements. M ́emoire de l’acad ́emie royale des sciences, 1774.
+Tyron Lardy, Peter Gru ̈nwald, and Peter Harremoe ̈s. Reverse information projections and optimal e-statistics. IEEE Transactions on Information Theory, 2024.
+17
+
+
+KIRSCHNER KRAUSE MEZIU MUTN  ́Y
+Tor Lattimore and Csaba Szepesv ́ari. Bandit algorithms. Cambridge University Press, 2020.
+Junghyun Lee, Se-Young Yun, and Kwang-Sung Jun. Improved regret bounds of (multinomial) logistic bandits via regret-to-confidence-set conversion. In International Conference on Artificial Intelligence and Statistics, pages 4474–4482. PMLR, 2024a.
+Junghyun Lee, Se-Young Yun, and Kwang-Sung Jun. A unified confidence sequence for generalized linear models, with applications to bandits. arXiv preprint arXiv:2407.13977, 2024b.
+Qiang Jonathan Li. Estimation of mixture models. Yale University, 1999.
+Nick Littlestone and Manfred K Warmuth. The weighted majority algorithm. Information and computation, 108(2):212–261, 1994.
+Ga ́bor Lugosi and Gergely Neu. Generalization bounds via convex analysis. In Conference on Learning Theory, pages 3524–3546. PMLR, 2022.
+Ga ́bor Lugosi and Gergely Neu. Online-to-pac conversions: Generalization bounds via regret analysis. arXiv preprint arXiv:2305.19674, 2023.
+Mojmı ́r Mutn ́y and Andreas Krause. No-regret Algorithms for Capturing Events in Poisson Point Processes. In Marina Meila and Tong Zhang, editors, Proceedings of the 38th International Conference on Machine Learning (ICML 2021), volume 139 of Proceedings of Machine Learning Research, pages 7894–7904. PMLR, 18–24 Jul 2021. URL https://proceedings.mlr.
+press/v139/mutny21a.html.
+Willie Neiswanger and Aaditya Ramdas. Uncertainty quantification using martingales for misspecified gaussian processes. In Algorithmic learning theory, pages 963–982. PMLR, 2021.
+Francesco Orabona. A modern introduction to online learning. arXiv preprint arXiv:1912.13213, 2019.
+Francesco Orabona and Kwang-Sung Jun. Tight concentrations and confidence sequences from the regret of universal portfolio. IEEE Transactions on Information Theory, 2023.
+Victor H Pen ̃a, Tze Leung Lai, and Qi-Man Shao. Self-normalized processes: Limit theory and Statistical Applications. Springer, 2009.
+Alexander Rakhlin and Karthik Sridharan. Online non-parametric regression. In Conference on Learning Theory, pages 1232–1264. PMLR, 2014.
+Alexander Rakhlin and Karthik Sridharan. On equivalence of martingale tail bounds and deterministic regret inequalities. In Conference on Learning Theory, pages 1704–1722. PMLR, 2017.
+Aaditya Ramdas and Ruodu Wang. Hypothesis testing with e-values. arXiv preprint arXiv:2410.23614, 2024.
+Herbert Robbins. Statistical methods related to the law of the iterated logarithm. The Annals of Mathematical Statistics, 41(5):1397–1409, 1970.
+18
+
+
+CONFIDENCE ESTIMATION VIA SEQUENTIAL LIKELIHOOD MIXING
+Herbert Robbins and David Siegmund. Boundary crossing probabilities for the wiener process and sample sums. The Annals of Mathematical Statistics, pages 1410–1429, 1970.
+Herbert Robbins, David Siegmund, et al. A class of stopping rules for testing parametric hypotheses. In Proceedings of the Sixth Berkeley Symposium on Mathematical Statistics and Probability, Volume 4: Biology and Health. The Regents of the University of California, 1972.
+J Jon Ryu and Alankrita Bhatt. On confidence sequences for bounded random processes via universal gambling strategies. IEEE Transactions on Information Theory, 2024.
+Glenn Shafer and Vladimir Vovk. Game-theoretic foundations for probability and finance, volume 455. John Wiley & Sons, 2019.
+Shai Shalev-Shwartz et al. Online learning and online convex optimization. Foundations and Trends® in Machine Learning, 4(2):107–194, 2012.
+Zhenming Shun and Peter McCullagh. Laplace approximation of high dimensional integrals. Journal of the Royal Statistical Society Series B: Statistical Methodology, 57(4):749–760, 1995.
+Niranjan Srinivas, Andreas Krause, Sham M Kakade, and Matthias Seeger. Gaussian process optimization in the bandit setting: No regret and experimental design. arXiv preprint arXiv:0912.3995, 2009.
+Tim Van Erven and Peter Harremos. R ́enyi divergence and kullback-leibler divergence. IEEE Transactions on Information Theory, 60(7):3797–3820, 2014.
+Jean Ville. Etude critique de la notion de collectif. Gauthier-Villars Paris, 1939.
+Vladimir Vovk. Aggregating strategies. In M. Fulk and John Case, editors, Proceedings of the Third Annual Workshop on Computational Learning Theory, pages 371–383. Morgan Kaufmann, 1990.
+Vladimir Vovk and Glenn Shafer. Game-theoretic probability. Introduction to Imprecise Probabilities, pages 114–134, 2014.
+Volodya Vovk. Competitive on-line linear regression. Advances in Neural Information Processing Systems, 10, 1997.
+Andrew J Wagenmaker and Dylan J Foster. Instance-optimality in interactive decision making: Toward a non-asymptotic theory. In The Thirty Sixth Annual Conference on Learning Theory, pages 1322–1472. PMLR, 2023.
+A Wald. Sequential tests of statistical hypotheses. The Annals of Mathematical Statistics, 16(2): 117–186, 1945.
+Abraham Wald. Sequential analysis. 1947.
+Ruodu Wang and Aaditya Ramdas. False discovery rate control with e-values. Journal of the Royal Statistical Society Series B: Statistical Methodology, 84(3):822–852, 2022.
+Larry Wasserman, Aaditya Ramdas, and Sivaraman Balakrishnan. Universal inference. Proceedings of the National Academy of Sciences, 117(29):16880–16890, 2020.
+19
+
+
+KIRSCHNER KRAUSE MEZIU MUTN  ́Y
+Ian Waudby-Smith and Aaditya Ramdas. Confidence sequences for sampling without replacement. Advances in Neural Information Processing Systems, 33:20204–20214, 2020.
+Justin Whitehouse, Aaditya Ramdas, and Steven Z Wu. On the sublinear regret of gp-ucb. Advances in Neural Information Processing Systems, 36:35266–35276, 2023.
+Tong Zhang. From ε-entropy to kl-entropy: Analysis of minimum information complexity density estimation. The Annals of Statistics, pages 2180–2210, 2006.
+20
+
+
+CONFIDENCE ESTIMATION VIA SEQUENTIAL LIKELIHOOD MIXING
+Appendix A. Related Literature
+The likelihood principle is at the core of modern statistics. It is only natural that it features in tasks associated with modern statistical decision theory such as the likelihood ratio test. Its history dates back to Wald (1945) who considered sequential likelihood ratios for hypothesis testing rather than constructing confidence sequences. One of the earliest references that explicitly considers confidence sets constructed from likelihood ratios is by Darling and Robbins (1968); Robbins (1970). The difference in treatment persists in literature till today. However, the difference is mostly superficial. There is a tight link between confidence sets (or sequences thereof) and statistical tests (and sequential execution of those). Given any of a confidence set, we can directly construct a test, and any family of point-wise tests can be turned into a confidence set. The literature is split between analyzing sequential confidence sets and sequential testing. Yet, more splits occurs when we look at different fields. A large portion of contributions are made within the field of mathematical statistics, which does not always overlap with modern machine learning theory and sequential decision making. Below we will try to provide links to works from both branches in the literature, and explain differences and similarities, giving the hint of historical, but not yet exhaustive, timeline.
+Sequential Likelihood Ratios: Origins While ideas of sequential likelihood ratios were explored earlier, the work by Robbins (1970) is the foundational pillar of later works. This work already contains the ideas of combining Ville’s inequality and likelihood ratios to obtain anytime-valid confidence sequences. Mixing with a prior distribution is also presented, which stems from Robbins and Siegmund (1970), with example calculations for example densities, including Gaussian, along with the derivation of the law-of-iterated-logarithm. The work lacks explicit extensions to multiparameter probability distributions, (un-controlled) covariates. Robbins (1970) does not discuss relation to marginal likelihood and Bayesian inference. Later, Robbins et al. (1972) shows how to construct testing scheme with increasing thresholds using these martingale techniques, and proves asymptotic power of these tests. Lai (1976) builds upon these works and considers the likelihood ratio for exponential families explicitly. This is later used in order to derive asymptotically optimal bandit algorithm in Lai and Robbins (1985). This is by no mean exhaustive list, however to the best our knowledge this line of work always concerns itself with single parameter families with the notable exception Lai and Zhang (1994). The reviews of Lai (2001, 2009) summarizes the above results from the past decades. Basic martingale tools such such as method of mixtures are extensively used. Closely related to the current work is also the work by Wasserman et al. (2020) on universal inference, which uses the sequential likelihood ratio tests to construct confidence sets, building on the ideas of Robbins (1970). The work heavily focuses on the i.i.d. setting and the split likelihood ratio test, but refers also a sequential treatment in later sections.
+Mathematical Statistics: Sequential Testing, Mixing and E-Values That the likelihood ratio is a martingale under the true distribution as has been clearly demonstrated in the above works. However, other random processes can act as testing martingales, and are referred to in this context as e-values. For example, testing sequences can be constructed for classes of likelihood functions (e.g., sub-Gaussian, symmetric, etc). In this context, the method of mixtures and self-normalized processes are extensively used in the seminal work by Pen ̃a et al. (2009). These ideas were further generalized by Howard et al., 2020); Chowdhury et al. (2023) for many other sub-families, different spaces of random variables beyond Hilbert spaces. The modern treatment of safe anytime inference and game-theoretic interpretation using e-values was initiated in a sequence of works by Vovk and
+21
+
+
+KIRSCHNER KRAUSE MEZIU MUTN  ́Y
+Shafer (2014); Gru ̈nwald et al. (2020); Wang and Ramdas (2022); Shafer and Vovk (2019). The very recent book by Ramdas and Wang (2024) provides an excellent overview, and includes more complete historic account and recent developments.
+Online Estimation, Regret Bounds and Universal Portfolios There is a rich history on works that study the problem of minimizing the log loss. Regret bounds for online aggregation and online density estimation were pioneered in early works by Vovk (1990); Littlestone and Warmuth (1994). A standard reference is the book by Cesa-Bianchi and Lugosi (2006). In mathematical finance, minimizing the log-loss is equivalently interpreted as maximizing the log return of an allocation strategy, and mixing algorithms are already used by Cover (1984), most famously for the universal portfolio algorithm (Cover, 1991). The use of regret bounds for constructing concentration inequalities however seems to appear much later in works by Rakhlin and Sridharan (2017); Orabona and Jun (2023); Ryu and Bhatt (2024). For an introductory text, we refer to Orabona (2019). A notable result by Rakhlin and Sridharan (2017) establishes an equivalence between regret bounds and martingale concentration inequalities.
+The idea of using regret bounds for constructing confidence sequences for parametric inverse problems, similar to Theorem 9, is by Abbasi-Yadkori et al. (2012), who use regret bounds for deriving confidence sets sparse linear regression in the context of linear bandits. We re-derive their result in the mixing framework, with improved constants (see Section E.2). These ideas were further extended to generalized linear models, albeit without the use of mixing in by Jun et al. (2017); Lee et al. (2024a). Lastly, Emmenegger et al. (2023) builds on this with likelihood ratios, and interpret the sequential likelihood ratio in Theorem 2 as an online prediction game, and analyze the regret of follow-the-regularized leader algorithm which coincides with the running MLE. Different to this work, they analyze it in terms of the parameters of the distribution instead of using mixing distributions, as done in this work.
+Sequential Decision Making Anytime confidence sets play a central role in sequential decision making, including bandit algorithms (Lattimore and Szepesva ́ri, 2020) and reinforcement learning theory (Agarwal et al., 2019; Foster and Rakhlin, 2023). There is a large variety of settings and assumptions, but shared is that the learning algorithms controls, to varying degree, the evolution of covariates (e.g., evolving a state by choosing actions). The consequence is that the observation at step t, in general, depends on the previous observation history. The data becomes inherently non-i.d.d., and tools such as those described in this work, are essential. Uncertainty estimates or often explicitly used to balance exploration and a goal-driven objective, or to account for safety constraints. Confidence intervals are famously used in the family of upper confidence bound algorithms for action selection (Lai and Robbins, 1985; Lai, 1987; Auer, 2002). In this context, Abbasi-Yadkori et al. (2011) uses the method of mixtures to construct improved bounds for the linear bandit. There is a large body of subsequent works, and we can only list a few examples (e.g., Chowdhury and Gopalan, 2017; Kirschner and Krause, 2018; Faury et al., 2020; Mutny ́ and Krause, 2021; Flynn et al., 2024; Flynn and Reeb, 2024). Lee et al. (2024b) uses the variational inequality as in Lemma 7 to derive confidence sets for logistic regression. By using the regularity of the likelihood, namely smoothness, and boundedness of the parameter set, they derive tight bounds on the log-likelihood relative to the maximum likelihood estimate. Closely related is the work by Emmenegger et al. (2023), who study the sequential likelihood ratio test of Robbins (1970) with an explicit application to sequential decision making.
+22
+
+
+CONFIDENCE ESTIMATION VIA SEQUENTIAL LIKELIHOOD MIXING
+Bayesian Inference and Frequentist Statistics Links between Bayesian inference and (frequentist) worst-case bounds are well-known and appear, more or less explicitly (e.g., Zhang, 2006), although, we believe, not in the generality for constructing confidence sequences as presented here. Arguably, the tight relationship is not as well-known as perhaps it should be, and it provides a powerful tool to derive anytime-valid confidence sequences in general parametric settings. The priorposterior ratio confidence set is by Waudby-Smith and Ramdas (2020). Surprisingly, we could not find earlier references, and the connection was clearly not apparent in earlier works (e.g., AbbasiYadkori et al., 2011). The prior-posterior confidence set is applied to Gaussian process regression by Neiswanger and Ramdas (2021), however, the work does again not mention the (near-)equivalence to earlier results (including, for example, closed-form expressions for confidence intervals in the kernelized setting).
+Generalization Bounds: PAC-Bayes and Conformal Prediction Generalization and shrinking confidence sets are tightly related. Given a confidence set, the image of the confidence set under a forward operator yields bounds on the generalization error. However, this construction is not always practical, and can lead to suboptimal bounds that scale with the model class complexity. A more direct analysis of the generalization error, possibly with additional assumptions, often leads to tighter bounds. Generalization bounds are the main objective in the field of PAC-Bayes learning (e.g., Alquier et al., 2024). Not surprisingly, PAC-Bayes bounds, regret inequalities and variational bounds are tightly connected as well (Lugosi and Neu, 2022; Haddouche and Guedj, 2022; Chugg et al., 2023). Notably, Lugosi and Neu (2023) derive generalization bounds that rely purely on the existence of a regret inequality, similar to Theorem 9. The emphasize that the main difference between this line of work and the current work is to goal of obtaining generalization bounds, opposed to confidence sets on the model parameters. The difference manifests in the loss function used (in particular, we use the log-loss which is exp-concave and allows for fast rates). Yet another line of work is on conformal prediction (Angelopoulos and Bates, 2021; Angelopoulos et al., 2024), which again targets the generalization error in a distribution free setting.
+Appendix B. Laplace’s method
+Recall from section Section 2.1.1 that maxν Rt(ν; θ∗) is not a martingale, which prevents a direct application of Ville’s inequality. Laplace’s method uses the observation that, under suitable regularity assumptions on a sequence functions fn : Rd → R with unique maximizer x∗
+n and positive
+definite Hessian Hn(x) = ∂2
+∂x2 fn(x) ∈ Rd×d, the following asymptotic expansion provides an
+approximation of the maximizer fn(x∗
+n),
+Z
+Θ
+h(x)e−fn(x)dx ∼ (2π)d/2h(x∗
+n)
+p
+det Hn(x∗n)
+e−fn(x∗
+n)
+To apply this idea to the marginal likelihood that appears in the confidence coefficient in Theorem 3, assume that Θ ⊂ Rd and μ0 admits a density h(θ) w.r.t. to the Lebesgue measure. Let θˆMLE
+n be
+the maximum likelihood estimate, and It(θ) = ∂2
+∂θ2 Lt(θ) the empirical Fischer information matrix.
+23
+
+
+KIRSCHNER KRAUSE MEZIU MUTN  ́Y
+Laplace’s methods gives the following approximation
+βt(δ) = log 1
+δ − log
+Z
+exp(−Lt(ν))h(ν)dθ
+≈ log 1
+δ + Lt(θˆMLE
+t )+ 1
+2 log det It(θˆMLE
+n )− d
+2 log(2π) − log μ0(θˆMLE
+n)
+Note that the confidence coefficient is smaller (resulting in a smaller confidence set) the more mass h(θˆ∗
+n) places on the maximizer. An similar (and perhaps more natural) argument can be made for the maximum a-posteriori estimate. Unfortunately, making these approximation rigorous is challenging without placing further assumptions on the data generating distribution and function class (e.g., Shun and McCullagh, 1995). We will not pursue this any further here, however point out that regret inequalities (Section 3.3) provide an alternative way to control the error w.r.t. the MLE, including in finite time.
+Appendix C. Continuous Exponential Weights
+Continuous exponential weights (Algorithm 1) is a direct generalization of the classical exponential weights algorithm (also known as Hedge) by Freund and Schapire (1997); Littlestone and Warmuth (1994). For a standard reference, see the book by Cesa-Bianchi and Lugosi (2006). Recall the definition of the log-loss, defined for distributions μ ∈ P(Θ),
+lt(μ) = − log
+Z
+Θ
+pt(yt|θ)dμ(θ)
+Note that lt(μ) is η-exp-concave for η ≤ 1, since exp(−ηlt(μ)) is concave in μ : P(Θ) → R. The (continuous) exponential weights algorithm satisfies the following regret bound, that holds for any sequence of η-exp-concave loss functions.
+Theorem 10 (Regret of Continuous Exponential Weights) For any distribution ρ ∈ P(Θ), and any sequence of η-exp-concave loss functions l1, . . . , lt, the regret of the exponential weights algorithms with prior μ0 ∈ P(Θ) and learning rate η satisfies
+t
+X
+s=1
+ls(μs−1) −
+Z
+Lt(θ)dρ ≤ 1
+η KL(ρ, μ0)
+Moreover, for finite Θ and any ν ∈ Θ,
+t
+X
+s=1
+ls(μs−1) − Lt(ν) ≤ 1
+η log 1
+ρ(ν)
+Proof Denote by δθ ∈ P(Θ) the Dirac measure on θ ∈ Θ. Define the unnormalized measure
+μ ̃t(dθ) =
+t
+Y
+s=1
+exp(−η ls (δθ ))μ0 (dθ)
+24
+
+
+CONFIDENCE ESTIMATION VIA SEQUENTIAL LIKELIHOOD MIXING
+Algorithm 1: Continuous Exponential Weights
+Input: Prior μ0 ∈ P(Θ), learning rate η > 0 1 for t ← 1, 2. . . . do 2 Predict: μt−1 3 Observe: xt, yt 4 Receive (log) loss:
+lt(μt−1) = − log
+Z
+pt(yt|θ)dμt−1(θ)
+5 Update μt(dθ) ∝ exp − η Pt
+s=1 ls(dθ) μ0(dθ) :
+μt(dθ) = exp η log pt(yt|θ) μt−1(dθ)
+R
+exp η log pt(yt|ν) dμt−1(ν)
+Note that μt(dθ) = μ ̃t(dθ)
+μ ̃t(Θ) . To prove the regret bound note that by η-exp-concavity of lt,
+μ ̃t(Θ)
+μ ̃t−1(Θ) =
+Z
+exp(−ηlt(δθ))dμt−1(θ) ≤ exp(−ηlt(μt−1))
+Further, for any ρ ∈ P(Θ), the variational inequality (Lemma 7) implies
+μ ̃t(Θ) ≥ exp − η⟨Ln, ρ⟩ − KL(ρ, μ0)
+Combining the last two inequalities and telescoping, we get
+t
+X
+s=1
+ls(μs−1) −
+Z
+Ls(θ)dρ(θ) ≤ 1
+η KL(ρ, μ0)
+This completes the first part of the proof. The second part follows by setting ρ = δν.
+Confidence Sequences using Continuous Exponential Weights Substituting the regret bound from Theorem 10 into Theorem 4 yields the following (1 − δ)-confidence sequence, which holds for any Ft-adapted sequence μ1, μ2, · · · ∈ P(Θ):
+Ct = θ ∈ Θ : Lt(θ) ≤ log 1
+δ+
+Z
+Lt(θ)dμt(θ) + KL(μt∥μ0) .
+Note that we have recovered the ELBO-confidence set from Theorem 8. In other words, the regret bound of continuous exponential weights is the sequential analog of the variational inequality Lemma 7, and because of the mixing equivalence (Theorem 5), the resulting confidence sets are the same. Unfortunately, for continuous Θ, the bound becomes vacuous when ρ is set to a Dirac measure. This prevents us from using μt = δθˆMLE
+t to derive a confidence set that directly compares to the
+maximum likelihood estimate. A more careful analysis using additional smoothness assumptions is a possible way forward (c.f., Lee et al., 2024b).
+25
+
+
+KIRSCHNER KRAUSE MEZIU MUTN  ́Y
+Appendix D. Misspecified Model Classes
+So far, we have assumed that the model class is realizable, that is, there exists a parameter θ∗ ∈ Θ such that pt(y|θ∗) = dPt
+dξ represents the density of the true data generating distribution. The realizability assumption is used to show that the sequential likelihood ratio is a (super)martingale. The can be significantly relaxed, and there are several ways in which we can construct supermartingales for misspecified model classes, as we elaborate now.
+D.1. Sub-Gaussian Distributions
+In this section, we let Y = R and assume that the true data generating distribution Pt is σ-subGaussian for all t ≥ 1, that is εt = yt − E [yt|Ft] satisfies,
+E [eεtη|Ft] ≤ e σ2η2
+2 for all η ∈ R .
+Further assume that we have a parametrized family of mean functions fθ : X → R, and there exists a θ∗ ∈ Θ such that E [yt|Ft] = fθ∗(xt). For any F -adapted sequence of mixing distributions μ0, μ1, · · · ∈ P(Θ), define
+Et(θ) =
+t
+Y
+s=1
+R
+exp(− 1
+2σ2 (fν (xs) − ys)2)dμs−1(ν)
+exp(− 1
+2σ2 (fθ(xs) − ys)2) .
+As we will see shortly, Et(θ∗) is a Ft adapted supermartingale, and E [E1(θ∗)] ≤ 1. Two remarks before we prove the claim. First, if the true data distribution is Gaussian with mean fθ(x) and variance σ2, then Et(θ) is just the sequential marginal likelihood ratio, and the σ-sub-Gaussian condition holds with equality. Second, the result implies that we can proceed in constructing our confidence set as if the the Gaussian likelihood model was correct, and the coverage results remain true.
+Theorem 11 For any F -adapted sequence of distributions μ0, μ1, μ2, . . . in P(Θ), define
+Ct =
+(
+θ∈Θ:
+t
+X
+s=1
+1
+2σ2 (fθ(xs) − ys)2 ≤ log 1
+δ+
+t
+X
+s=1
+log
+Z
+exp(− 1
+2σ2 (fν (xs) − ys)2)dμs−1(ν)
+)
+Then Ct defines a (1 − δ)-confidence sequence.
+Proof We start by showing that Et(θ∗) is a super-martingale. Fubini’s theorem implies that
+E [Et(θ∗)|Ft−1] = Et−1(θ∗)
+Z
+E
+h
+exp − 1
+2σ2 fν (xt) − yt
+2+ 1
+2σ2 fθ∗ (xt) − yt
+2 |Ft
+i
+dμt−1 (ν )
+From here, we compute the conditional expectation inside the integral. We expand the squares, simplify and substitute yt = fθ∗(xt) + εt. After a bit of work we arrive at
+E
+h
+exp − 1
+2σ2 fν (xt) − yt
+2+ 1
+2σ2 fθ∗ (xt) − yt
+2 |Ft
+i
+= exp − 1
+2σ2 fθˆt−1 (xt) − fθ∗ (xt) 2 E
+h
+exp εt · 1
+σ2 fθˆt−1 (xt) − fθ∗ (xt) |Ft
+i
+.
+Next, we use that εt is σ2-sub-Gaussian, which, by definition, implies that
+E
+h
+exp εt · 1
+σ2 fθˆt−1 (xt) − fθ∗ (xt)
+i
+≤ exp 1
+2σ2 fθˆt−1 (xt) − fθ∗ (xt) 2 .
+We conclude that E [Et(θ∗)|Ft−1] ≤ Et−1(θ∗) and E [E1(θ∗)] ≤ 1. The claim follows using Ville’s inequality.
+26
+
+
+CONFIDENCE ESTIMATION VIA SEQUENTIAL LIKELIHOOD MIXING
+D.2. Convex Model Classes
+We return to the original definition of the model class as a parameterized family of conditional densities M = {pθ(y|x) : θ ∈ Θ}. Moreover, assume that there exists a conditional density p∗(y|x) such that for all t ≥ 1, dPt
+dξ = p∗(·|xt)dξ. Crucially, we do not require that p∗ ∈ M. Throughout this section, we make the assumption that M is convex. Note that convexity is required in the space of distributions, i.e., all finite mixtures of densities in M are contained in M. In general, convexity of Θ does not imply convexity of M. Nevertheless, there are many examples of convex model classes, including, for example, all finite mixtures of any family of distributions. Our main tool is the reverse information projection theorem by Li (1999), see also Lardy et al. (2024). Applied to our setup, the theorem states that for any sequence qn ∈ M such that
+nli→m∞ KL(p∗∥qn) = inf
+q∈M KL(p∗∥q) < ∞ ,
+there exists a unique (sub-)probability measure q∗dξ such that KL(p∗∥q∗) = infq∈M KL(p∗∥q). Moreover, the reverse information projection theorem shows that for any qθ ∈ M,
+E pθ(yt|xt)
+q∗(yt|xt) Ft ≤ 1 . (7)
+A technical condition is required to ensure that the limiting element q∗ is contained M. If we require that Y is a complete separable metric space, and M is sequentially compact (with respect to the weak topology), then Prokhorov’s theorem implies that q∗ ∈ M. A similarly flavoured result (stated without mixing distributions) is by Wasserman et al. (2020, Proposition 7)
+Theorem 12 (Convex Model Classes) Assume that M is convex and there exists q∗ ∈ M such that KL(p∗∥q∗) = infq∈M KL(p∗∥q). Then the sequential likelihood mixing confidence set, defined for any Ft-adapted sequence of distributions μ0, μ1, μ2, . . . in P(Θ) (see Theorem 4), defines a (1 − δ)-confidence sequence for q∗ ∈ M, i.e., P[q∗ ∈ Ct, ∀t ≥ 1] ≥ 1 − δ.
+Proof Define the sequential marginal likelihood ratio w.r.t. to a conditional density q(·|x),
+Jt(q) =
+t
+Y
+s=1
+R
+pν (ys|xs)dμs−1(ν)
+q(ys|xs)
+The reverse information projection theorem, specifically Eq. (7), implies that Jt(q∗) is a nonnegative supermartingale with E [J1] ≤ 1. The theorem follows using Ville’s inequality.
+Appendix E. Tempered Likelihood Ratios
+The Bayesian update rule can be generalized by introducing a temperature parameter β > 0,
+μt(θ) ∝
+t
+Y
+s=1
+ps(ys|θ)βμ0(θ) .
+The generalized update rule has been studied under various names, e.g. as fractional posteriors (Bhattacharya et al., 2019), powered likelihoods Holmes and Walker (2017) and tempered posteriors (Alquier and Ridgway, 2020), often in the context of adding robustness to misspecification in the Bayesian model (Gru ̈nwald, 2012). The result presented below are similar in spirit to the work by Zhang (2006), who studies complexity bounds for density estimation in the classical i.i.d. setting.
+27
+
+
+KIRSCHNER KRAUSE MEZIU MUTN  ́Y
+Divergences A few more definitions will be useful, we follow the exposition of Van Erven and Harremos (2014). Let p, q ∈ P(Y) be two distributions over the observation space Y. We assume that p, q admit densities w.r.t. a common base measure. We define the R ́enyi divergence for p, q and parameter 0 ≤ ζ ≤ 1,
+Dζ(p∥q) = 1
+ζ − 1 log
+Z
+p(x)ζ q(x)1−ζ dx .
+For 0 < ζ < 1, it holds that
+(1 − ζ)Dζ (p∥q) = ζD1−ζ (q∥p) .
+Moreover, the Hellinger distance is given by
+H2(p∥q) =
+Z
+p
+p(x) −
+p
+q(x) 2dx .
+Hellinger and Re ́nyi divergences satisfy the following relation:
+1
+2 H2(p∥q) ≤ D1/2(p∥q) .
+For notational convenience, we define
+Dζ,t(θ∥ν) := Dζ (pt(·|θ)∥pt(·|ν)) ,
+H2
+t (θ∥ν) := H2(pt(·|θ)∥pt(·|ν)) .
+E.1. Tempered Confidence Sequences
+Let θˆ0, θˆ1, . . . be an Ft-adapted sequence of estimators. Define the tempered log-ratio,
+Aβ
+t (θ) = −β log pt(yt|θˆt−1)
+pt(yt|θ) . (8)
+In particular, by applying the exponential function, we get the tempered likelihood ratio,
+exp(−Aβ
+t (θ)) = pt(yt|θˆt−1)
+pt(yt|θ)
+!β
+As a side remark, Jensen’s inequality implies that E[exp(−Aβ
+t (θ∗))] ≤ E pt(yt|θˆt−1)
+pt(yt|θ∗)
+β = 1. Hence
+Qt
+s=1 Aβ
+t (θ∗) is a super-martingale, and all results presented in the main paper continue to hold for the tempered ratio. However, we can strengthen the construction by enforcing the martingale property. Define
+Mt(θ) = exp(− Pt
+s=1 Aβ
+t (θ))
+Qt
+s=1
+R
+exp(−Aβ
+t (θ))pt(y|θ)dy
+.
+28
+
+
+CONFIDENCE ESTIMATION VIA SEQUENTIAL LIKELIHOOD MIXING
+By definition, Mt(θ∗) is a non-negative martingale. Hence, Ville’s inequality implies that
+P
+"
+−
+t
+X
+s=1
+log
+Z
+exp(−Aβ
+s (θ∗))ps(y|θ∗)dy −
+t
+X
+s=1
+As(θ∗) ≥ log 1
+δ
+#
+≤ δ.
+Finally, we note that
+− log
+Z
+exp(−Aβ
+t (θ))pt(y|θ)dy = (1 − β)Dβ,t(θˆt−1∥θ) = βD1−β,t(θ∥θˆt−1) .
+Theorem 13 (Tempered Confidence Set) Let θˆ0, θˆ1, . . . be an Ft-adapted sequence of estima
+tors. Define the log regret Λt(θ) = − Pt
+s=1 log ps(ys|θˆs−1) − Lt(θ) for θ ∈ Θ, and
+Cβ
+t=
+(
+θ∈Θ:
+t
+X
+s=1
+D1−β,s(θ∥θˆs−1) − Λt(θ) ≤ 1
+β log 1
+δ
+)
+.
+Then Cβ
+t defines a (1 − δ)-confidence sequence. Moreover, define
+CH
+t=
+(
+θ∈Θ:
+t
+X
+s=1
+H2
+s (θ∥θˆs−1) − Λt(θ) ≤ 2 log 1
+δ
+)
+.
+Then CH
+t defines a (1 − δ)-confidence sequence.
+As a consequence of the result, assume that the estimation sequence is constructed to achieve bounded regret, Λt(θ) ≤ Bt for a predictable sequence Bt ≥ 0, typically related to the complexity of the model class (c.f., Section 3.3 and Theorem 9), see also Zhang (2006). Then Theorem 13 provides confidence sequences that only depend on the Hellinger or Renyi divergences. The advantage is, that unlike the likelihood ratios, the divergence is predictable quantity under the filtration Ft, hence can be used in sequential decision making setting to control the state xt. This is one of the reasons why similar bounds have recently gained interest in the sequential decision-making literature (e.g., Chen et al., 2022; Foster et al., 2021, 2023; Wagenmaker and Foster, 2023). In the next section, we provide another application to sparse estimation.
+E.2. Online Linear Prediction
+Recall the sequential linear regression setting from Section 3.1. Specifically, assume that Θ ⊂ Rd, and Gaussian likelihood pt(y|θ) ∼ N (⟨θ, xt⟩, 1) for θ ∈ Θ and covariates xt ∈ Rd. Everything in this section generalizes to σ-sub-Gaussian noise distribution using the same arguments as in Section D.1. In a slight generalization to earlier results, assume that an online learning algorithm produces predictions yˆt ∈ Y (opposed to θˆt ∈ Θ), in way such that the regret satisfies the following bound for any θ ∈ Θ,
+Λt(θ) =
+t
+X
+s=1
+1
+2 (yˆs−1 − ys)2 − 1
+2 (⟨θ, xs⟩ − ys)2 ≤ Bt(θ) .
+For a concrete instantiation in the linear setting, we refer to the famous Vovk-Azoury-Warmuth forecaster (Vovk, 1997; Azoury and Warmuth, 2001). We remark that the bound has been further generalized to non-parametric settings by Rakhlin and Sridharan (2014). We are now in place to generalize the online-to-confidence set conversion by Abbasi-Yadkori et al. (2012).
+29
+
+
+KIRSCHNER KRAUSE MEZIU MUTN  ́Y
+Lemma 14 (Online-To-Confidence Convertion) Assume the sequential linear regression setup defined above with a known bound Λt(θ∗) ≤ Bt. For any Ft-adapted sequence yˆ0, yˆ1, yˆ2, . . . , and 0 < β < 1, let
+Ct =
+(
+θ∈Θ:
+t
+X
+s=1
+1
+2 yˆs−1 − ⟨θ, xs⟩ 2 ≤ 1
+β − β2 log 1
+δ+ β
+β − β2 Bt
+)
+Then Ct defines a (1 − δ)-confidence sequence.
+Proof The plan is to compute − log
+R
+exp(−Aβ
+t (θ))pt(y|θ)dy for the Gaussian distribution, and
+then invoke Theorem 13. It is useful to note that for Gaussian distributed variable ε ∼ N (0, σ2) the moment generating function is E[exp(tε)] = exp( 1
+2 σ2t2). A short calculation reveals that
+Z
+exp − Aβ
+t (θ) pt(y|θ)dy
+=
+Z
+exp − β
+2 yˆs−1 − y 2 + β
+2 ⟨θ, xt⟩ − y 2 pt(y|θ)dy
+=
+Z
+exp − β
+2 yˆs−1 − θ, xt
+2 + βεt ⟨θ, xt⟩ − ⟨θ, xt⟩ pt(y|θ)dy
+= exp − β − β2
+2 yˆs−1 − ⟨θ, xt⟩ 2 .
+Hence,
+− log
+Z
+exp − Aβ
+t (θ) pt(y|θ)dy = β − β2
+2
+Yˆs−1 − ⟨θ, xt⟩ 2 .
+Lastly, we make use of the assumption that Λt(θ∗) ≤ Bt. The result follows by intersecting the
+confidence set Cβ
+t from Theorem 13 with {θ ∈ Θ : Λt(θ) ≤ Bt}.
+Sparse Linear Regression We make the additional assumption that the true parameter θ∗ ∈ Θ is k-sparse, i.e. ∥θ∗∥0 ≤ k. The key insight is that Gerchinovitz (2011) provides an online algorithm, producing the sequence yˆ0, yˆ1, . . . , for which Bt(θ∗) ≤ O(k log(t)). We compare to the result by Abbasi-Yadkori et al. (2012) in the same setting. For β = 1
+2 , our result reads
+Ct =
+(
+θ∈Θ:
+t
+X
+s=1
+1
+2 (yˆs−1 − ⟨θ, xs⟩)2 ≤ 4 log 1
+δ + 2Bt(θ∗)
+)
+.
+In comparison, the result by Abbasi-Yadkori et al. (2012, Theorem 1) reads, in our notation,
+Ct =
+(
+θ ∈ Rd :
+t
+X
+s=1
+1
+2 (yˆs−1 − ⟨θ, xt⟩)2 ≤ 16 log 1
+δ+1
+2 + 2Bt(θ∗) + 16 log(
+√
+8+
+p
+1 + 2Bt(θ∗))
+)
+The additional terms stem from using recursive inequality on the square-error, which we avoid using the more direct argument via the tempered likelihood ratio. This demonstrates the benefit of the sequential likelihood framework for deriving confidence sets via the online-to-confidence set conversion.
+30
