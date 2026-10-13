@@ -120,6 +120,9 @@ suppress-bibliography: true
 * [@ignatiadisEvaluesUnnormalizedWeights2022]
     When every hypothesis comes with a p-value and an independent e-value, the e-values can be used as weights for Benjamini–Hochberg or Bonferroni without being normalised to sum to the number of hypotheses, which the paper turns into a meta-analysis combiner, a data-driven weighting scheme via compound e-values, and a gene-expression case study with more discoveries. [PDF](https://arxiv.org/pdf/2204.12447v6) [arXiv](https://arxiv.org/abs/2204.12447) [DOI](10.48550/arXiv.2204.12447)
 
+* [@kirschnerConfidenceEstimationSequential2025]
+    One recipe for anytime-valid confidence sequences in any realizable likelihood model: threshold the negative log-likelihood by log(1/δ) minus the log of a predictable mixture predictive density, which recovers Robbins' likelihood-ratio and prior-mixture sequences, the prior-posterior ratio set, ELBO and regret-to-confidence sets, and tightens the Abbasi-Yadkori linear-bandit ellipsoid by up to a factor two. [PDF](https://arxiv.org/pdf/2502.14689v1) [arXiv](https://arxiv.org/abs/2502.14689) [DOI](10.48550/arXiv.2502.14689)
+
 * [@koningMeasuringEvidenceExchangeability2023]
     Turns permutation tests into e-values: every exact e-value for invariance under a compact group is a statistic divided by its average over the group orbit, the log-optimal one is the likelihood ratio against the group-averaged alternative, and e-processes are infima of orbit-wise Doob martingales. [PDF](https://arxiv.org/pdf/2310.01153v5) [arXiv](https://arxiv.org/abs/2310.01153) [DOI](10.48550/arXiv.2310.01153)
 

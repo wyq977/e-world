@@ -1,8 +1,8 @@
 ---
 slug: confidence-sequence-boundaries
 title: Confidence sequence boundaries and sub-ψ supermartingales
-sources: 13
-updated: 2026-10-12
+sources: 14
+updated: 2026-10-13
 ---
 
 # Confidence sequence boundaries and sub-ψ supermartingales
@@ -24,6 +24,7 @@ A sub-ψ process is a pair (S_t, V_t) such that exp{λS_t − ψ(λ)V_t} is domi
 - Boundary technology transferred to change detection: geometric grids, zeta weights and stitching-style boundary functions for mixture e-detectors [shinEdetectorsNonparametricFramework2023, Def. 4.1, eqs 53, 59–61]; restarted Gaussian-mixture supermartingale [sahaNonpartitionedEdetectorsNonparametric2026, eq. 6].
 - Predictable plug-ins as a device alongside mixtures and stitching, with closed-form Hoeffding and empirical-Bernstein boundaries and rate table; a zeta-weighted discrete-mixture betting process attains the LIL rate by dominating a stitched boundary [waudbysmithEstimatingMeansBounded2020, Prop. 1, Thm 2, Table 1, Prop. 7]. Robbins' normal mixture in closed form, delayed-start and folded-Gaussian one-sided boundaries, Lambert-W tuning, and the fact that any Gaussian boundary becomes an asymptotic-sequence boundary through strong approximation [waudbysmithTimeuniformCentralLimit2021, App. A.1, B.1, B.2, Sec. 2.6, Thm 2.4]; see [asymptotic-confidence-sequences](asymptotic-confidence-sequences.md). Normal-mixture and one-sided closed-form supermartingales as explosion witnesses for the composite Ville theorem [rufCompositeGeneralizationVille2022, Sec. 3.2]. Stitched variance and median sequences restated with their large constants [wangAnytimevalidTtestsConfidence2023, App. A].
 - Converting any c√((log log t + log(1/α))/t) boundary into a detection-delay sample size O(c²(log log(c/Δ) + log(1/α))/Δ²), and the empirical-Bernstein width in terms of the true post-change variance [shekharSequentialChangeDetection2023, Props 29–30]. Sub-exponential supermartingale with predictable bounds, closed-form gamma-exponential mixture with the bound ≤ 1 when the data support the null, explicit stitched sequence [choeComparingSequentialForecasters2021, Prop. 1, Prop. 3, eq. 53].
+- Mixing the likelihood ratio directly rather than the sub-Gaussian noise martingale avoids a lower-order cross term and a norm bound in the linear-regression ellipsoid; a sub-Gaussian exponential supermartingale for arbitrary mean functions with any adapted mixing sequence [kirschnerConfidenceEstimationSequential2025, Sec. 3.1, Thm 11].
 
 ## Variants and related concepts
 - [confidence-sets-and-sequences](confidence-sets-and-sequences.md), the object these boundaries produce.
@@ -37,6 +38,7 @@ A sub-ψ process is a pair (S_t, V_t) such that exp{λS_t − ψ(λ)V_t} is domi
 - [ramdasAdmissibleAnytimevalidSequential2022](../sources/ramdasAdmissibleAnytimevalidSequential2022.md), [shinEdetectorsNonparametricFramework2023](../sources/shinEdetectorsNonparametricFramework2023.md), [sahaNonpartitionedEdetectorsNonparametric2026](../sources/sahaNonpartitionedEdetectorsNonparametric2026.md) — admissibility, change detection.
 - [waudbysmithEstimatingMeansBounded2020](../sources/waudbysmithEstimatingMeansBounded2020.md), [waudbysmithTimeuniformCentralLimit2021](../sources/waudbysmithTimeuniformCentralLimit2021.md), [rufCompositeGeneralizationVille2022](../sources/rufCompositeGeneralizationVille2022.md), [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md) — batch-4 contributions.
 - [shekharSequentialChangeDetection2023](../sources/shekharSequentialChangeDetection2023.md), [choeComparingSequentialForecasters2021](../sources/choeComparingSequentialForecasters2021.md) — batch-4 wave-2 contributions.
+- [kirschnerConfidenceEstimationSequential2025](../sources/kirschnerConfidenceEstimationSequential2025.md) — likelihood-ratio vs noise mixing.
 
 ## Disagreements / open issues
 - Howard et al. 2020, "Time-uniform Chernoff bounds via nonnegative supermartingales", defines the sub-ψ condition and is not in the bib; see gaps.

@@ -38,6 +38,7 @@ Only the human adds to the bib or raw/. Rows 49 and 83 were removed on the human
 | 10 | Estimating means of bounded random variables by betting | Waudby-Smith, Ramdas 2024 | A | ingested | book:4, SAVI |
 | 11 | A composite generalization of Ville's martingale theorem using e-processes | Ruf, Larsson, Koolen, Ramdas 2023 | A | ingested | SAVI |
 | 85 | A generalisation of Ville's inequality to monotonic lower bounds and thresholds | Koolen, Pérez-Ortiz, Lardy 2025 | B | ingested | arXiv 2502.16019; finite-time LIL |
+| 87 | Confidence estimation via sequential likelihood mixing | Kirschner, Krause, Meziu, Mutny 2025 | B | ingested | arXiv 2502.14689; requested by the human 2026-10-13 |
 | 86 | Anytime validity is free: inducing sequential tests | Koning, van Meer 2026 | B | ingested | JRSSB; optional continuation without explicit e-values |
 | 27 | Testing exchangeability: fork-convexity, supermartingales and e-processes | Ramdas, Ruf, Larsson, Koolen 2022 | B | ingested | book:2, SAVI |
 | 28 | Testing randomness online | Vovk 2021 | B | missing | book:7 |

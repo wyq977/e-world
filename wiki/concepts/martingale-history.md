@@ -1,8 +1,8 @@
 ---
 slug: martingale-history
 title: History: from collectives to safe anytime-valid inference
-sources: 12
-updated: 2026-10-12
+sources: 13
+updated: 2026-10-13
 ---
 
 # History: from collectives to safe anytime-valid inference
@@ -19,6 +19,7 @@ The lineage of test martingales and e-values as recorded by the sources: von Mis
 - Independent discovery in physics: Zhang, Glancy and Knill 2011 proved a special case of the GRO theorem for rejecting local realism [grunwaldSafeTesting2024, Sec. 7].
 - Wald's likelihood-ratio martingale and his awareness of Ville; Darling and Robbins's 1967 union-bound definition of a confidence sequence; Robbins's tests of power one versus Wald's SPRT; Johari et al. as modern proponents of always-valid p-values [ramdasAdmissibleAnytimevalidSequential2022, Secs 2.1, 3.2]. Stochastic curtailment and conditional power (Lan, Simon, Halperin 1982; Müller, Schäfer 2004) as an unnoticed precursor of test induction, and Breiman 1961 as the precursor of the SPRT-as-limit theorem [koningAnytimeValidityFree2026, Sec. 1.4, Remark 14]. Lai 1976 made the first anytime-valid use of the right-Haar t-test ratio [perezortizEstatisticsGroupInvariance2024, Sec. 2].
 - Four-thread timeline (probability, statistics, information theory, online learning), Doob 'stripped martingales of their betting roots', Wald's eq. 10:10 as the first predictable plug-in [waudbysmithEstimatingMeansBounded2020, Sec. 6, App. F, Fig. 9]. Ville's theorem on coin flips and the LIL, Doob 1940 crediting the inequality to Ville, the strategy-vs-wealth terminology switch, Ville's 1984–85 recollections [rufCompositeGeneralizationVille2022, Sec. 5]. Fork-convexity traced to Žitković, Delbaen's m-stability and Epstein–Schneider rectangularity [ramdasTestingExchangeabilityForkconvexity2021, Sec. 3.1]. Lai 1976 dissected [wangAnytimevalidTtestsConfidence2023, Sec. 4].
+- Wald 1945 → Darling–Robbins 1968 → Robbins 1970 (Ville plus likelihood ratio plus prior mixing) → Lai 1976, Lai–Robbins 1985 → Peña–Lai–Shao 2009, Howard et al. 2020 → the modern e-value literature, with the parallel online-learning and universal-portfolio line (Vovk 1990, Cover 1991, Cesa-Bianchi–Lugosi 2006, Rakhlin–Sridharan 2017) [kirschnerConfidenceEstimationSequential2025, App. A].
 
 ## Variants and related concepts
 - [villes-inequality](villes-inequality.md), [test-martingale](test-martingale.md), [testing-by-betting](testing-by-betting.md).
@@ -31,6 +32,7 @@ The lineage of test martingales and e-values as recorded by the sources: von Mis
 - [vovkEvaluesCalibrationCombination2021](../sources/vovkEvaluesCalibrationCombination2021.md) — naming and calibrator history.
 - [ramdasAdmissibleAnytimevalidSequential2022](../sources/ramdasAdmissibleAnytimevalidSequential2022.md), [koningAnytimeValidityFree2026](../sources/koningAnytimeValidityFree2026.md), [perezortizEstatisticsGroupInvariance2024](../sources/perezortizEstatisticsGroupInvariance2024.md) — further history.
 - [waudbysmithEstimatingMeansBounded2020](../sources/waudbysmithEstimatingMeansBounded2020.md), [rufCompositeGeneralizationVille2022](../sources/rufCompositeGeneralizationVille2022.md), [ramdasTestingExchangeabilityForkconvexity2021](../sources/ramdasTestingExchangeabilityForkconvexity2021.md), [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md) — further history.
+- [kirschnerConfidenceEstimationSequential2025](../sources/kirschnerConfidenceEstimationSequential2025.md) — the regression and online-learning lineage.
 
 ## Disagreements / open issues
 - Wald 1947 (in the bib) and Wald 1945, Kelly 1956, Robbins 1970, Darling and Robbins 1967, Lai 1976, Shafer and Vovk 2019 and Shafer et al. 2011 (not in the bib) are the primary documents for most of this page; none is ingested yet.

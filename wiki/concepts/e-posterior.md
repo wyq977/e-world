@@ -1,8 +1,8 @@
 ---
 slug: e-posterior
 title: E-posterior and post-hoc decisions
-sources: 8
-updated: 2026-10-12
+sources: 9
+updated: 2026-10-13
 ---
 
 # E-posterior and post-hoc decisions
@@ -22,6 +22,7 @@ An e-collection assigns one [e-variable](e-variable.md) S_θ to every parameter 
 - Koning and van Meer's test induction reports a whole family of tests per null element for continuation, a construction they connect to the e-posterior [koningAnytimeValidityFree2026, Thm 6].
 - Koning's binary setting is the two-action special case; the roving α̂ = ℓ/S(y) and 'reject at level p = 1/e' are the same device [koningPosthocAlphaHypothesis2023, App. A]. The betting paper's plots of 1/K_t(m) against m, an unnormalised 'confidence distribution' whose superlevel sets are confidence sequences, are the independent e-posterior plot credited on this page [waudbysmithEstimatingMeansBounded2020, App. D.5].
 - The capped e-posterior min{1, 1/e_θ} is the contour of an anytime-valid possibilistic inferential model; its Choquet upper-expected-loss guarantee generalises the capped e-posterior risk bound and allows data-dependent actions; with a knowledge-based regularizer the same holds under an upper joint distribution [martinRegularizedEprocessesAnytime2024, Thms 2–4, Sec. 4.3]; see [regularized-e-processes](regularized-e-processes.md).
+- The prior–posterior ratio confidence set is the level set of the Savage–Dickey ratio μ_t(θ)/μ_0(θ), reached from the mixing side, with the caveat that it never excludes the prior's null set [kirschnerConfidenceEstimationSequential2025, Lemma 6].
 
 ## Variants and related concepts
 - [post-hoc-validity](post-hoc-validity.md), [confidence-sets-and-sequences](confidence-sets-and-sequences.md), [bayes-factor-e-variable](bayes-factor-e-variable.md).
@@ -34,6 +35,7 @@ An e-collection assigns one [e-variable](e-variable.md) S_θ to every parameter 
 - [koningAnytimeValidityFree2026](../sources/koningAnytimeValidityFree2026.md) — families of tests and continuation.
 - [koningPosthocAlphaHypothesis2023](../sources/koningPosthocAlphaHypothesis2023.md), [waudbysmithEstimatingMeansBounded2020](../sources/waudbysmithEstimatingMeansBounded2020.md) — related constructions.
 - [martinRegularizedEprocessesAnytime2024](../sources/martinRegularizedEprocessesAnytime2024.md) — inferential-model reading.
+- [kirschnerConfidenceEstimationSequential2025](../sources/kirschnerConfidenceEstimationSequential2025.md) — Savage–Dickey level sets.
 
 ## Disagreements / open issues
 - GRO e-values are unavailable for GLMs and Cox models without model-X; the authors see the bigger obstacle as sociological [grunwaldBeyondNeymanPearsonEvalues2024, Secs 4.1, 5.4].

@@ -1,8 +1,8 @@
 ---
 slug: reverse-information-projection
 title: Reverse information projection (RIPr)
-sources: 23
-updated: 2026-10-12
+sources: 24
+updated: 2026-10-13
 ---
 
 # Reverse information projection (RIPr)
@@ -31,6 +31,7 @@ The reverse information projection of an alternative Q onto a convex set of null
 - Description-gain definition: the RIPr is the unique limit, in an averaged Bregman metric equivalent to L₁(P) convergence of logs, of sequences with vanishing maximum description gain; it subsumes Li's definition, with existence via finite convex hulls or finite minimax regret with NML in the null; a strict sub-probability RIPr can occur on a countable space with finite KL, ruled out by a constraint-domination condition; e-statistics of a null equal those of its convex, σ-convex and Choquet-convex hulls, RIPrs on different hulls agree when they exist, but an RIPr may exist on the σ-convex hull and not on the convex hull; description-gain closeness δ transfers to e-statisticity at rate δ^{β/(1+β)} under moment bounds; a gap in Li's convergence proof is repaired [lardyReverseInformationProjections2023, Thms 3–7, Props 2–5, Examples 2–4, Sec. III-C].
 - Finite nulls: exact e-variables exist iff Span P ∩ Conv Q = ∅, with the finite-sample e-variable 1 + (orthogonal component of Q) [zhangExistencePowerfulPvalues2023, Thm 3.1, Remark 3.7]. The RIPr of μ_{λ*} onto a one-sided sub-ψ null is μ_0; a reference-measure version of the finite-constraint theory adds indicators of null sets as constraints [larssonTestingHypothesesGenerated2025, Example 7.5, Thm 3.10]. RIPr of N(μ, σ²) onto the scale family is N(0, σ² + μ²) [wangAnytimevalidTtestsConfidence2023, Prop. 6.5, C.3].
 - The Haar average Q̄ = E_G[GQ] of the alternative is the RIPr onto the G-invariant laws; an invariant σ-finite reference measure may replace Q̄ in densities [koningMeasuringEvidenceExchangeability2023, Cor. 3, Lemma 3, Prop. 2]. Whether replacing the null MLE by the RIPr keeps the predictive-recursion statistic an e-process is open [dixitAnytimeValidAsymptotically2023, Sec. 3.1].
+- For convex model classes sequential mixing covers the RIPr of the truth time-uniformly via E[p_θ/q*] ≤ 1, a sequential mixed analogue of Wasserman et al.'s Proposition 7 [kirschnerConfidenceEstimationSequential2025, Thm 12].
 
 ## Variants and related concepts
 - [gro-criterion](gro-criterion.md), [numeraire](numeraire.md).
@@ -53,6 +54,7 @@ The reverse information projection of an alternative Q onto a convex set of null
 - [lardyReverseInformationProjections2023](../sources/lardyReverseInformationProjections2023.md) — description-gain RIPr.
 - [zhangExistencePowerfulPvalues2023](../sources/zhangExistencePowerfulPvalues2023.md), [larssonTestingHypothesesGenerated2025](../sources/larssonTestingHypothesesGenerated2025.md), [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md) — finite-null and worked RIPrs.
 - [koningMeasuringEvidenceExchangeability2023](../sources/koningMeasuringEvidenceExchangeability2023.md), [dixitAnytimeValidAsymptotically2023](../sources/dixitAnytimeValidAsymptotically2023.md) — invariance RIPr, open question.
+- [kirschnerConfidenceEstimationSequential2025](../sources/kirschnerConfidenceEstimationSequential2025.md) — RIPr coverage under misspecification.
 
 ## Disagreements / open issues
 - No general fast algorithm for computing the RIPr prior is given; numerical accuracy for infinite sample spaces is unclear [grunwaldSafeTesting2024, Sec. 2]; direct computation is infeasible for large effect sizes in the simulations [haoEValuesExponentialFamilies2025, Sec. 4].
