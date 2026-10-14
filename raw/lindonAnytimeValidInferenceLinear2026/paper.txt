@@ -1,0 +1,3434 @@
+Anytime-Valid Inference in Linear Models
+and Regression-Adjusted Causal Inference
+Michael Lindon∗, Dae Woong Ham†, Martin Tingley⋆,
+and Iavor Bojinov⋄
+September 10, 2025
+Abstract
+Linear models are foundational tools in statistics and ubiquitous across the applied sciences. However, conventional statistical inference —such as t-tests and F -tests— are only valid at fixed sample sizes, making them unsuitable for sequential settings such as online A/B testing. We develop an anytime-valid theory of inference for the linear model, introducing sequential analogues of classical tests and confidence sets that provide Type-I error control and coverage guarantees uniformly over all sample sizes. Our construction is based on likelihood ratios of invariantly sufficient statistics, yielding simple closed-form expressions of ordinary least squares estimators and standard errors. The resulting tests are optimal in the GROW/REGROW sense for both frequentist and Bayesian alternative hypotheses. We then relax the linear model assumptions to provide heteroskedasticity-robust asymptotic sequential tests and confidence sequences, which enable sequential regression-adjusted inference for causal estimands in randomized controlled experiments. This formally allows experiments to be continuously monitored for significance, stopped early, and safeguards against statistical malpractices in data collection. We demonstrate the practical utility of our approach through simulations and applications to real A/B test data from Netflix.
+Keywords: e-processes, safe testing, martingales, Bayes factors, sequential testing, confidence sequences, anytime-valid
+∗Netflix, Los Gatos, CA. michael.s.lindon@gmail.com
+†Ross School of Business, Ann Arbor, MI. daewoong@umich.edu
+⋆Microsoft, Redmond, WA. martin.tingley@gmail.com
+⋄Harvard School of Business, Harvard, MA. ibojinov@hbs.edu
+1
+arXiv:2210.08589v5 [stat.ME] 7 Jul 2025
+
+
+1 Introduction
+We develop an anytime-valid approach to inference in linear models using e-variables.
+Linear regression models are fundamental to statistics with many practical applications
+across the applied sciences. In causal inference they are often employed to estimate and test
+hypotheses about treatment effects in randomized experiments (Lin 2013). Their ability
+to achieve variance reduction through regression adjustment and their robustness to model
+misspecification under randomized assignment result in their widespread recommendation
+in many official research guidelines (Ye et al. 2022). Linear models can also be computed
+recursively, updating parameters as new data arrives, making them a scalable option for
+the analysis of streaming data common in online A/B tests.
+However, current testing and interval estimation procedures are limited in that their
+Type-I error and coverage guarantees only hold at a fixed, often pre-determined, sample
+size (which we refer to as “fixed-n”). This is a severe limitation in online A/B tests,
+where data arrives sequentially, as it is desirable to continuously monitor experiments for
+nonzero treatment effects. It also causes problems in connection with the replication crisis
+of published research (Wasserstein & Lazar 2016, Benjamin et al. 2018, Sagarin et al. 2014).
+For example, it is estimated that only one-third of statistically significant results published
+in top psychology journals can be reproduced in follow-up experiments (Collaboration
+2015). A recognized issue is that researchers often do not disclose details of the data
+collection process at the time of submission (Ioannidis 2005). In an anonymous survey of
+2000 published researchers in psychology, approximately 60% of respondents admitted to
+collecting more data after seeing whether the results were significant, with approximately
+20% admitting to stopping data collection after achieving a significant result (John et al.
+2012). The high numbers of published false positives can at least partially be attributed
+2
+
+
+to the inability of current methods to control Type-I errors under optional stopping.
+The paper is structured as follows. In Section 2 we review the literature and key con
+cepts of safe anytime-valid inference. In Section 3 we introduce the prerequisites of group
+invariance and its applications to statistics. In Section 4 we develop anytime-valid inference
+for the linear model through group-invariance principles, presenting sequential analogues
+of classical t−tests, F −tests, and confidence sets. In Section 5 we relax the assumption
+of homoskedasticity and provide robust standard errors, while also introducing asymptotic
+“t” confidence sequences. In Section 6 we consider randomized experiments, in which we
+are able to completely relax the assumptions of the linear model, providing asymptotic
+confidence sequences and e-processes for causal estimands. In Section 7 we provide both
+simulated and real examples, which demonstrate robustness to model misspecification and
+the practical utility of our approach.
+2 Safe Testing and Anytime-Valid Inference
+In this section we introduce key concepts and definitions for safe anytime-valid inference
+(see Ramdas & Wang (2024) for a thorough introduction) Consider a set of probability
+measures P with a subset H0 ⊂ P defining a null hypothesis. An e-variable (Gru ̈nwald
+et al. 2021) relative to a collection of distributions H0 is a nonnegative random variable
+satisfying EP [E] ≤ 1 for all P ∈ H0. e-variables are used to reject the null hypothesis when
+E ≥ α−1, obtaining a Type-I error guarantee PP [E ≥ α−1] ≤ EP [E]/α−1 = α for all P ∈ H0
+by Markov’s inequality. A conditional e-variable Cn on a sample space equipped with a
+filtration Fn, is a nonnegative Fn-measurable random variable satisfying EP [Cn|Fn−1] ≤ 1
+for all P ∈ H0. A sequence (En)∞
+n=1 adapted to Fn is a test martingale (Shafer et al. 2011)
+relative to H0 if En is a nonnegative supermartingale for all P ∈ H0. Clearly, En := Qn
+i=1 Ci
+3
+
+
+defines a test-martingale because EP [En|Fn−1] ≤ En−1 for all P ∈ H0. Test martingales
+are used to reject the null hypothesis when En ≥ α−1, obtaining a Type-I error guarantee
+PP [∃n ∈ N : En ≥ α−1] ≤ α for all P ∈ H0 by Ville’s inequality (Ville 1939). Alternatively
+we may say that the stopped process Eτ , for any stopping time τ with respect to Fn, is an
+e-variable relative to H0 (Howard et al. 2021).
+A test martingale is actually a stronger condition than necessary to obtain the former
+time-uniform Type-I error guarantee. Instead, it suffices to show that for all P ∈ H0 there
+exists a P -nonnegative supermartingale (M P
+n )∞
+n=1 such that En ≤ M P
+n ∀n ∈ N P -almost
+surely. Such a process is called an e-process (Ramdas et al. 2023). A p-process (pn)∞
+n=1
+is a sequence of nonnegative random variables satisfying PP [∃n ∈ N : pn ≤ α] ≤ α for
+all P ∈ H0, and is readily obtained using pn = 1/En. Similarly, the stopped process pτ
+is a p-variable (more commonly p-value). A confidence sequence (Cα
+n )∞
+n=1 for a sequence
+of estimands (θn)∞
+n=1 is a sequence of sets satisfying PP [θn ∈ Cα
+n ∀n ∈ N] ≥ 1 − α for all
+P ∈ H0, providing a time-uniform 1−α coverage guarantee. Consider the α-level sequential
+test which rejects the null hypothesis using the stopping time τ = inf{n ∈ N : En ≥ α−1}.
+Such a test is said to be power 1 (Robbins & Siegmund 1974) if PP [τ < ∞] = 1 for all
+P ∈ H1 := P \ H0. A sufficient condition for power 1 is to show nli→m∞(1/n) log En = c > 0
+P -almost surely for all P ∈ H1.
+In the second half of this paper we leverage asymptotic arguments. A process (E ̄n)∞
+n=1 is
+an asymptotic e-process (Waudby-Smith et al. 2021) for H0 if there exists a nonasymptotic
+e-process (En)∞
+n=1 for H0 such that log(E ̄n)/ log(En) → 1 P -almost surely for all P . Sim
+ilarly a sequence of sets (C ̄α
+n )∞
+n=1 is an asymptotic confidence sequence for (θn)∞
+n=1 if there
+exists a nonasymptotic confidence sequence (Cα
+n )∞
+n=1 such that the normalized measure of
+the symmetric difference vanishes almost surely i.e. μ(Cα
+n ∆C ̄α
+n )/μ(Cα
+n ) → 0 almost surely
+4
+
+
+for an appropriate measure μ.
+3 Composite Nulls and Group-Invariance
+Constructing a valid e-process for a composite null (i.e. with nuisance parameters so
+that H0 is not a singleton) can be challenging. Instead, we seek to construct a sequence
+of statistics (mi(Yi))∞
+i=1 whose distribution does not depend on the nuisance parameters,
+reducing a composite null to a simple null. Additionally, we further desire that the reduction
+of the data to a statistic retains as much information about the parameters of interest as
+possible, being optimal in some sense to be defined. To this end we appeal to group
+invariance principles.
+Let P = {Pθ : θ ∈ Θ} be a parametric family of probability measures defined on a
+measurable space (Y, B). Let G be a group of transformations such that every g ∈ G is a
+a one-to-one measurable function from Y to Y. For any P ∈ P and g ∈ G the probability
+measure gP is defined by gP (B) = P (g−1B) for any B ∈ B. A statistical model is G
+invariant if for each P ∈ P, gP ∈ P for all g ∈ G. For parametric models this implies
+that if y ∼ Pθ for some θ ∈ Θ, then for any g ∈ G, we have gy ∼ Pθ′ for some θ′ ∈ Θ
+i.e. the law of gy belongs to the same parametric family. This in turn induces a group of
+transformations on the parameter space defined by θ′ = gθ.
+Now consider a sequence (yi)∞
+i=1 of i.i.d. outcomes from Pθ for some θ ∈ Θ and let
+Yn = (y1, . . . , yn) ∈ Rn denote first n outcomes. A statistic mn(Yn) is said to be invariant
+if mn(gYn) = mn(Yn) for all g ∈ G. The orbit of Yn is the set O(Yn) = {gYn : g ∈ G}. A
+maximal invariant statistic is an invariant statistic that is constant on orbits and assigns
+a unique value to each orbit i.e., m(Y ′
+n) = m(Yn) ⇒ Y ′
+n = gYn for some g ∈ G. A
+standard result is that any invariant statistic can be written as a function of a maximal
+5
+
+
+invariant statistic. An invariant statistic can be written mn(Yn) ∼ Pt(θ) where t(θ) is an
+invariant function of the parameters i.e. t(gθ) = t(θ). Without loss of generality it is
+helpful to simply redefine the parameter space as θ = (ρ, ξ) where ρ ∈ P is a vector of
+nuisance parameters and ξ ∈ Ξ is a G-invariant function of the parameters of interest. For
+example, if yi ∼ N (μ, σ2), we may write θ = (σ, μ/σ). The group action g : Yn → cYn
+sends (σ, μ/σ) → (cσ, μ/σ), as the standardized mean ξ := μ/σ is invariant under G. The
+statistic mn(Yn) = (y1/|y1|, . . . , yn/|y1|) is a maximal invariant under G, whose distribution
+depends only on the parameter of interest ξ and not on the nuisance parameter σ.
+Consider testing H0 : ξ = ξ0 against either a frequentist alternative H1 : ξ = ξ1 or a
+Bayesian alternative H1 : ξ ∼ Π. In either case the only free parameters are the nuisance
+parameters ρ, so we can write H0 : Yn ∼ Pρ vs H1 : Yn ∼ Qρ for some ρ ∈ P (Qρ is the
+Bayes marginal for the Bayesian alternative)1. If mn(Yn) is a maximal invariant then we
+can simply write mn(Yn) ∼ P and mn(Yn) ∼ Q (dropping the index ρ) as the distribution
+of mn(Yn) is unaffected by ρ.
+Lemma 3.1. Let (mi(Yi))∞
+i=1 be a sequence of invariant statistics. The likelihood ratio
+En := q(m1(Y1), . . . , mn(Yn))
+p(m1(Y1), . . . , mn(Yn)) (1)
+is a test martingale for H0 with respect to the filtration Fn = σ(mi(Yi) : i ≤ n). If mi(Yi)
+are maximally invariant, then equation (1) simplifies to
+En = q(mn(Yn))
+p(mn(Yn)) . (2)
+The first result follows because the factor q(mn(Yn)|m1(Y1),...,mn−1(Yn−1))
+p(mn(Yn)|m1(Y1),...,mn−1(Yn−1)) is a conditional
+e-variable. The second result follows because mi(Yi) for i < n are invariant functions of
+1Note we refrain from introducing additional notation to distinguish between the probability measures
+for single outcomes P , vectors P (n), and sequences P (∞), as it is clear from the context.
+6
+
+
+Yn and can therefore be written as functions of mn(Yn). Hence En is both by itself an
+e-variable and the sequence (En)n∈N is a test martingale (and therefore also an e-process)
+for H0. The advantage of working with an invariant statistic, therefore, is that it reduces
+a composite null to a simple null, permitting the use of En in equation (1) to test H0. The
+advantage of working with a maximal invariant statistic, is that it simplifies computation of
+En to equation (2). The primary advantage of working with a maximal invariant statistic,
+however, is that the resulting e-process is GROW and REGROW optimal (Pe ́rez-Ortiz
+et al. 2022).
+Definition 3.2 (GROW/REGROW e-Variable (Gru ̈nwald et al. 2021)). Let E0 = {Tn :
+EPρ[Tn] ≤ 1 ∀ρ ∈ P} denote the set of e-variables for {Pρ}ρ∈P. The growth rate optimal in
+the worst case (GROW) e-variable En for {Pρ}ρ∈P against {Qρ}ρ∈P satisfies
+inρf EQρ[log En] = sup
+Tn∈E0
+inρf EQρ[log Tn], (3)
+and the relatively GROW e-variable En satisfies
+inρf{EQρ[log En] − sup
+T ′n∈E0
+[EQρ log T ′
+n]} = sup
+Tn∈E0
+inρf{EQρ[log Tn] − sup
+T ′n∈E0
+EQρ[log T ′
+n]} (4)
+The GROW e-variable maximizes the worst case expected logarithmic growth, while
+the REGROW e-variable maximizes the worst case expected logarithmic growth relative
+to an oracle that knows the values of the nuisance parameters.
+The challenge remains in identifying maximal invariant statistics in general. There are
+at least three approaches to finding maximal invariant statistics. The first approach is via
+Ansatz — postulate a statistic via problem intuition, verify that it is a maximal invariant,
+and derive the densities under null and alternative. The second approach is constructive
+via the following lemma.
+7
+
+
+Lemma 3.3 (Wijsman’s Representation Theorem). Let π(ρ) denote the corresponding
+right-Haar prior for the group G, then
+q(mn(Yn))
+p(mn(Yn)) =
+R
+qρ(Yn)π(ρ)dρ
+R
+pρ(Yn)π(ρ)dρ , (5)
+The proof can be read in Andersson (1982). While lemma 3.3 does not require finding a
+maximal invariant statistic upfront, the integral representation can be difficult to calculate
+in closed form.
+The third path proceeds via a reduction to sufficient statistics first, followed by applying
+invariance arguments. Let Sn(Yn) ∈ S denote a set of sufficient statistics for the parameters.
+The group of transformations on the outcome space induces a group of transformations on
+the space of sufficient statistics. For example, consider yi ∼ N (μ, σ2) with θ = (σ, μ/σ).
+The sufficient statistic is Sn = (y ̄n, Pn
+i=1 y2
+i ). The group action g : Y → cY induces a
+group action g : (y ̄n, Pn
+i=1 y2
+i ) → (cy ̄n, c2 Pn
+i=1 y2
+i ).
+Theorem 3.4 (C. Stein). Under the assumptions of Hall et al. (1965, Section II.3), if Sn
+is sufficient for θ, and ms
+n(Sn) is a maximal invariant under the induced group action on
+Sn, then ms
+n(Sn) is sufficient for the invariant parameter ξ and
+En = q(mn(Yn))
+p(mn(Yn)) = q(ms
+n(Sn))
+p(ms
+n(Sn)) . (6)
+A maximal invariant statistic ms
+n(Sn) that is sufficient for ξ is called invariantly suf
+ficient. As the distribution of mn(Yn) depends only on ξ under both the null and al
+ternative, and ms
+n(Sn) is sufficient for ξ, the identity in equation (6) follows from the
+Fisher-Neyman factorization theorem. For example, the usual t-statistic tn(y ̄n, Pn
+i=1 y2
+i) =
+y ̄n/
+pPn
+i=1 y2
+i − y ̄2
+n is an invariantly sufficient statistic, and the likelihood ratio of this is
+arguably easier to calculate than the likelihood ratio of the maximal invariant mn(Yn) =
+(y1/|y1|, . . . , yn/|y1|)
+8
+
+
+4 Anytime-Valid Inference for Linear Models
+Consider a sequence of observations from the parametric (relaxed later) linear model
+yi|β, δ, σ2 ii∼d N (x′
+iβ + z′
+iδ, σ2), (7)
+with β ∈ Rp and δ ∈ Rd. The parameterization in (7) splits the parameters into those
+of interest, δ, and those that are nuisance, ρ = (β, σ2). In matrix notation, Yn|β, δ, σ2 ∼
+N (Xnβ + Znδ, σ2In), which we write concisely as Yn|γ, σ2 ∼ N (Wnγ, σ2In) where Wn =
+[Xn, Zn] and γ′ = [β′, δ′]. Let C(A) = {P
+i ciAi : ci ∈ R, Ai = Aei} denote the column
+space of a matrix A, C(A)⊥ the orthogonal complement of C(A), and PA = A(A′A)−1A′
+the orthogonal projection operator onto C(A).
+Without loss of generality we take the null hypothesis H0 : δ = δ0 = 0 as a test for
+nonzero δ0 can be obtained by applying the resulting test to Yn −Znδ0. To apply invariance
+arguments we redefine the parameters as (β, σ, ξ), where ξ = δ/σ are the standardized
+coefficients and ρ = (β, σ) are the nuisance parameters, so that the null becomes H0 : ξ =
+ξ0 = 0. Notice that the transformation g : Yn → cYn + Xα leaves the model invariant
+by inducing a group on the parameters defined by g : (β, σ, ξ) → (cβ + Xnα, cσ, ξ) and
+that the standardized coefficients ξ are G-invariant. The set of summary statistics is
+S(Yn) = (βˆn, δˆn, s2
+n) ∈ S := Rp × Rd × R≥0. The induced group action on S is g :
+(βˆn, δˆn, s2
+n) → (cβˆn + α, cδˆn, c2s2
+n).
+Recall in a classical linear model theory the sampling distribution of the ordinary least
+squares estimator for δ is δˆn|σ2 ∼ N (δ, σ2(Z ̃′
+nZ ̃n)−1), where Z ̃′
+nZ ̃n = Z′
+n(PWn − PXn )Zn =
+Z′
+n(In − PXn)Zn. Let s2
+n(Yn) = Y ′
+n(In − PWn)Yn/νn where νn = n − p − d denote the linear
+model estimator of σ2. We can estimate the parameter ξ via ξˆn = δˆn/
+p
+s2
+n(Yn) and form
+9
+
+
+the F -statistic
+Fn =
+ξˆn Z ̃ ′
+nZ ̃nξˆn
+d = Yn(PWn − PXn)Yn/d
+Yn(In − PWn)Yn/(n − p − d) , (8)
+which has a noncentral F -distribution Fn|ξ ∼ F (d, νn, ξ′Z ̃′
+nZ ̃nξ) (see Appendix A for a
+review). Hence, we can test the null hypothesis ξ = 0 by comparing Fn to an F (d, νn)
+distribution.
+We now turn our attention to the anytime-valid analogue of this procedure. A null
+hypothesis on the vector H0 : δ = δ0 implies a collection of null probability measures H0 =
+Nδ0. It is pedagogically easier to first consider Bayesian alternatives with δ ∼ N (0, σ2Φ−1)
+and then frequentist point alternatives in Section 4.1. Let p(Yn|β, σ2) and q(Yn|β, σ2)
+denote N (Xnβ, σ2In) and Bayes marginal N (Xnβ, σ2(In + ZnΦ−1Z′
+n)) densities, respec
+tively. Let tνn(·|0, Σ) denote a multivariate t-density with νn degrees of freedom and mean
+0 and covariance Σ.
+Theorem 4.1. Under the linear model in (7) with right-Haar prior π(β, σ2) ∝ 1/σ2, the
+process
+En :=
+R
+q(Yn|β, σ2)π(β, σ2)dβdσ2
+R
+p(Yn|β, σ2)π(β, σ2)dβdσ2
+=
+s
+det(Φ)
+det(Φ + Z ̃′
+nZ ̃n)
+1 + ξˆ′
+n (Z ̃ ′
+n Z ̃n −Z ̃ ′
+n Z ̃n (Φ+Z ̃ ′
+n Z ̃n )−1 Z ̃ ′
+nZ ̃n)ξˆn νn
+− νn+d
+2
+1 + ξˆ′nZ ̃′nZ ̃nξˆn
+νn
+− νn+d
+2
+,
+(9)
+is a test martingale and also the GROW/REGROW e-variable for H0 : δ = 0 against
+H1 : δ ∼ N (0, σ2Φ−1). The statistic ξˆn = δˆn/
+p
+s2
+n is invariantly sufficient and En can be
+written
+En = tνn(ξˆn|0, Φ−1 + (Z ̃′
+nZ ̃n)−1)
+tνn(ξˆn|0, (Z ̃′
+nZ ̃n)−1)
+. (10)
+The proof is broken down into a sequence of steps in Appendix B.1. We derive expres
+sion 9 by computing the integrals in the Wijsman representation (Lemma 3.3). Inspecting
+10
+
+
+the statistic through which the outcomes Yn enter the expression, we then prove by coun
+terexample that ξˆn is not a maximal invariant. Instead, we prove ξˆn is an invariantly
+sufficient statistic, which allows En to be written as the likelihood ratio in Equation (10)
+by Theorem 3.4. The GROW and REGROW optimality properties of En follow from
+Pe ́rez-Ortiz et al. (2022), which is discussed further in Section 4.2. We now show that test
+martingale En has power 1, under the definition in Section 2, when ξ ̸= 0.
+Theorem 4.2. Suppose 1
+nW ′
+nWn converges almost surely to a positive definite matrix ΩW ,
+then the sequential test is consistent with asymptotic growth rate
+log En
+n
+a.s.
+→1
+2 log(1 + ξ′ΩZ ̃ξ), (11)
+where ΩZ ̃ is the almost sure limit of 1
+n Z ̃′
+nZ ̃n.
+The strong convergence of 1
+nW ′
+nWn to ΩW is automatically satisfied if the covariates
+are i.i.d. Theorem 4.2 implies that En diverges almost surely under the alternative ξ ̸= 0,
+and thus En crosses the rejection boundary of α−1 with probability 1. Informally, this
+means the sequential test is guaranteed to eventually reject the null hypothesis in finite
+time, provided it is not stopped prematurely.
+Recall that to test a nonzero point null H0 : δ0 ̸= 0 we may simply replace Yn with
+Yn − Znδ0, in which case s2
+n(Yn − Znδ0) = s2
+n(Yn) and ξˆn(Yn − Znδ0) = (δˆn − δ0)/s2
+n.
+Corollary 4.3. Define Enδ0 := Enδ0(Yn) = En(Yn − Znδ0), then Enδ0 is a test martingale
+for testing H0 : δ = δ0. Define pδn0 = 1/Enδ0, then pn is a sequential p-value satisfying
+PP [∃n ∈ N : pδn0 ≤ α−1] ≤ α for all P ∈ H0. Define Cα
+n = {δ ∈ Rd : Eδ
+n ≤ α−1} = {δ ∈
+Rd : pδ
+n > α}. Then
+Cα
+n=
+(
+δ ∈ Rd : ∥δ − δˆn(Yn)∥2
+An ≤ νns2
+n(Yn) 1 − α2 det(Φ)
+det(Φ + Z ̃′
+nZ ̃n)
+1 νn +d
+!)
+,
+11
+
+
+where
+An = α2 det(Φ)
+det(Φ + Z ̃′
+nZ ̃n)
+1 νn +d
+−1
+!
+Z ̃ ′
+nZ ̃n + Z ̃′
+nZ ̃n(Φ + Z ̃′
+n Z ̃n )−1 Z ̃ ′
+nZ ̃n,
+is a confidence sequence satisfying PP [δ ∈ Cα
+n for all n ∈ N] ≥ 1 − α for all P .
+Lastly we define tests for linear hypotheses such as contrasts.
+Corollary 4.4. Under the linear model in (7) and a full row rank matrix E ∈ Rk×d, then
+the process
+En =
+s
+det(Φ)
+det(Φ + Z ̃†′
+n Z ̃†
+n)
+1 + ξˆ†′
+n (Z ̃†′
+n Z ̃†
+n −Z ̃ †′
+n Z ̃†
+n (Φ+Z ̃ †′
+n Z ̃†
+n )−1 Z ̃ †′
+n Z ̃†
+n)ξˆn νn
+− νn+k
+2
+1 + ξˆ†′
+n Z ̃†′
+n Z ̃†
+n ξˆ†
+n νn
+− νn+k
+2
+, (12)
+is a test martingale for testing H0 : Eδ = 0, where Z ̃†
+n = Z ̃nE′ = (I − PXn)ZnE′,
+ξˆ†
+n = δˆ†
+n/
+p
+s2
+n, δˆ†
+n = (Z ̃†′
+n Z ̃†
+n)−1Z ̃ †′
+n Yn .
+Classically we would use the F -statistic Fn = δˆ′
+n E ′ (E (Z ̃ ′
+nZ ̃n)−1E′)−1Eδˆn/(ks2
+n) ∼
+F (k, νn) to test H0 : Eδ = 0. In the appendix we show that the term in the denominator
+ξˆ†′
+n Z ̃ †′
+n Z ̃†
+nξˆ†
+n is simply equal to kFn. As before, a test of Eδ = e0 can be obtained by
+replacing Yn with Yn − ZnE′e0.
+4.1 Simple Alternatives
+In the development so far, we have considered composite alternatives and created a test mar
+tingale using the method of mixtures. Alternatively, given our invariantly sufficient statistic
+ξˆn, we can also consider simple alternatives. Observe δˆn/σ − δ/σ ∼ N (0, (Z ̃′
+nZ ̃n)−1), while
+s2
+n/σ2 ∼ χ2
+νn, and therefore
+ξˆn = δ/σ + δˆn/σ − δ/σ
+p
+s2
+n/σ2 ∼ tnc
+νn (ξ, (Z ̃ ′
+nZ ̃n)−1),
+12
+
+
+a d-dimensional noncentral multivariate t-distribution with νn. The e-variable
+En = tnc
+νn(ξˆn|ξ1, (Z ̃′
+nZ ̃n)−1)
+tnc
+νn(ξˆn|ξ0, (Z ̃′
+nZ ̃n)−1)
+, (13)
+is therefore a test martingale for H0 : ξ = ξ0 and is GROW with respect to H1 : ξ = ξ1.
+4.2 Comparison to Pe ́rez-Ortiz et al. (2022)
+Pe ́rez-Ortiz et al. (2022) consider the problem of testing a univariate simple null hypothesis
+ξ = ξ0 vs a simple alternative ξ = ξ1. Their construction of an e-process is based on a
+likelihood ratio of a maximal invariant statistic, following the Ansatz approach described
+in Section 3. Specifically, they propose a test statistic mn := mn(Yn) = AnYn/∥AnYn∥2 ∈
+Rn−p where An is an (n − p) × n matrix with rows forming an orthonormal basis C(Xn)⊥.
+This can be achieved with any matrix An satisfying A′
+nAn = In − PXn. The statistic mn
+is actually a unit vector in Rn−p belonging to the (n − p)-dimensional unit-sphere and is a
+maximal invariant statistic. Under the null hypothesis mn is uniformly distributed over the
+unit sphere. Under the alternative hypothesis mn is concentrated around a unit vector as
+shown in Figure 6. Importantly, this distribution is not the von Mises–Fisher distribution;
+instead, it follows a nonstandard form attributed to Bhowmik & King (2007) who, citing
+Mathematica (2024), give the density
+p(mn | ξ) = 1
+2Γ k
+2 π−k
+2 ec(ξ) {Ak(a(mn, ξ)) + Bk(a(mn, ξ))} (14)
+where
+Ak(a(mn, ξ)) = 1F1
+k
+2, 1
+2 , a2(mn, ξ)
+2,
+Bk(a(mn, ξ)) =
+√
+2a(mn, ξ) Γ 1+k
+2
+Γk
+2
+1F1
+1+k
+2 ,3
+2 , a2(mn, ξ)
+2,
+(15)
+13
+
+
+k = n − p, a(mn, ξ) = ξZ′
+nA′
+nmn, c(ξ) = − 1
+2 ξ2Z′
+nA′
+nAnZn and 1F1 is the confluent hyper
+geometric function. As noted by Lardy (2022, Chapter 2.3.3), this density is cumbersome
+to work with.
+In contrast, our construction uses the invariantly sufficient statistic ξˆn. By theorem 3.4,
+the likelihood ratio of the maximal invariant statistic mn must coincide with the likelihood
+ratio of our invariantly sufficient statistic ξˆn. Specifically,
+En = p(mn|ξ1)
+p(mn|ξ0) = p(ξˆn|ξ1)
+p(ξˆn|ξ0)
+= tnc
+νn(ξˆn|ξ1, ∥Z ̃n∥−2
+2)
+tnc
+νn(ξˆn|ξ0, ∥Z ̃n∥−2
+2)
+, (16)
+In summary, we view our contribution as complementary to Pe ́rez-Ortiz et al. (2022), with
+several key distinctions. First, whereas Pe ́rez-Ortiz et al. (2022) focus on a univariate test of
+a single coefficient, our approach accommodates multivariate tests of multiple coefficients.
+Second, their method targets a fixed alternative ξ = ξ1, while we consider composite
+alternatives ξ ̸= ξ0. Third, our approach yields confidence sequences that shrink as the
+sample size n increases, a property not shared by inverting tests against point alternatives.
+Fourthly, we avoid complications of working with nonstandard densities, as noncentral
+and location-scale t densities come standard in most statistical software. This makes our
+method more accessible and easier to implement in practice. Lastly, we avoid additional
+complications of working with a nonstandard maximal invariant statistic mn. Instead, our
+method only requires the OLS estimate δˆn and residual variance estimate
+p
+s2
+n (or standard
+error) to construct our invariantly sufficient statistic ξˆn, which are typically provided in
+published works, and provided as outputs in statistical software2.
+2Using standard notation for the univariate case, the density tnc
+νn (ξˆn|ξ1, ∥Z ̃n∥−2
+2 ) would be evaluated
+using pseudocode nct pdf(ξˆn, df = νn, noncentrality = ∥Z ̃n∥2ξ1, scale = 1/∥Z ̃n∥2)
+14
+
+
+4.3 Tuning the Mixture Hyperparameter Φ
+The e-process in equation (9) is a Bayes factor constructed using a δ ∼ N (0, σ2Φ−1) (⇒ ξ ∼
+N (0, Φ−1)) prior over alternatives, and is growth rate optimal against such alternatives.
+In large internet companies with large scale experimentation efforts, one can choose Φ so
+that the prior resemble the observed historical distribution of effects.
+Alternatively, we can ask what the optimal choice of Φ should be to maximize growth
+against frequentist alternatives for a specific ξ⋆. We present this result for the univariate
+d = 1 case.
+Theorem 4.5. Let Φ⋆
+n be the value of Φ that maximizes E[log En], where the expectation
+is with respect to the frequentist alternative ξˆn ∼ tnc
+νn(ξ⋆, 1/∥Z ̃n∥2
+2). Under the assumption
+∥Z ̃n∥2
+2 = Ω(n), then nli→m∞Φ⋆
+n = (ξ⋆)−2.
+Theorem 4.5 shows that the optimal choice of Φ, in the sense of maximizing the value
+of E[log En] for large n, under a frequentist alternative, is given by matching the stan
+dard deviation of the prior equal to the true standardized effect Φ−1/2 = ξ⋆. Naturally,
+ξ⋆ is not known, so one can consider a minimum detectable effect (MDE) ξMDE. Setting
+Φ = ξ−2
+MDE therefore maximizes the worst case growth over ξ ∈ [ξMDE, ∞). In contrast, the
+Bayesian approach maximizes a weighted average growth rate, where the weighted aver
+age is determined by N (0, Φ−1), chosen the practitioner to upweight performance toward
+more plausible alternatives at the expense of downweighting performance away from less
+plausible alternatives. The approach using an MDE, however, does not generalize easily to
+multivariate δ. In the next section we discuss choosing Φ in the context when little prior
+information is available.
+15
+
+
+4.3.1 Automatic Defaults with g-Priors
+Suppose 1
+n Z ̃′
+nZ ̃n converges almost surely to a known positive definite matrix ΩZ ̃. For
+example if Zn is a column vector with zi = Ti − ρ where Ti
+ii∼d Bernoulli(ρ) is a treatment
+indicator, then ΩZ ̃ = ρ(1 − ρ). A valid prior would be the choice Φ = gΩZ ̃ for some g.
+In this case the information about δ in the likelihood and prior is approximately nΩZ ̃ and
+gΩZ ̃ respectively, and so for n > g we argue that the behavior of En is driven predominantly
+by the data while the mixture has diminishing influence. In particular g = 1 resembles a
+unit information prior.
+When ΩZ ̃ is not known, a popular choice of objective/default prior in the Bayesian
+literature for a fixed-n analysis is Zellner’s g-prior (Zellner 1986). The version that best
+suits our purposes here is δ|σ2 ∼ N (0, σ2 g
+n Z ̃′
+nZ ̃n
+−1
+). Subjective Bayesians may object
+to this prior as it depends on the data through Z ̃n. Moreover, how can this prior be
+used in a sequential context, when it depends on Z ̃n? We argue that Zellner’s g-prior is
+an approximation to the fully anytime-valid procedure described earlier using Φ = gΩZ ̃,
+except 1
+n Z ̃′
+nZ ̃n is used as a plugin estimator for the unknown ΩZ ̃. This approximation
+yields an asymptotic e-process that converges rapidly to the a valid e-process.
+Theorem 4.6. Let En be defined as in Theorem 4.1 with Φ = gΩZ ̃. Define for any g ∈ N
+Gn = g
+g+n
+d
+2 1+ g
+g+n
+d
+νn Fn
+1+ d
+νn Fn
+!− νn+d
+2
+. (17)
+Under the assumption 1
+n Z ̃′
+nZ ̃n
+a.s.
+→ ΩZ ̃, then the approximation error is
+| log En − log Gn| = 1
+2 Tr(Ω−1
+Z ̃ Rn) − g
+2 ξ′
+nRnξn + Oa.s.
+Rn
+n,
+where Rn = ΩZ ̃ − 1
+n Z ̃′
+nZ ̃n.
+The appeal of Gn is threefold. First, the expression for Gn is elegantly simple compared
+to En in equation (9). It only depends on the f -statistic Fn and a real-valued tuning
+16
+
+
+parameter g > 0, and can therefore be considered a simple rule for converting a classical
+f -test to an anytime-valid test.
+Second, the tuning parameter g can be chosen to minimize the confidence region at
+a particular sample size n, independent of the covariates. The confidence set Cα
+n from
+corollary 4.3 with Φ = g
+n Z ̃′
+nZ ̃n reduces to
+Cα
+n = {δ ∈ Rd : F δ
+n ≤ R(g, n, α)},
+where R(g, n, α) = νn
+d
+1 − α2gd
+(n+g)d
+1 νn +d
+max 0, α2gd
+(n+g)d
+1
+νn+d − g
+n+g
+,
+(18)
+and F δ
+n = (δ − δˆn)′Z ̃′
+nZ ̃n(δ − δˆn)/(ds2
+n) is the f -statistic for testing the null δ. For a given
+n and α, the value of g that provides the smallest confidence set can be determined by
+numerically minimizing the bound on the f -statistic R(g, n, α).
+Thirdly, the choice Φ = g
+n (Z ̃′
+nZ ̃n)−1 possesses the following marginalization-consistency
+property. Consider two regressions, dropping the subscript n for clarity
+Y = Xβ + Zδ + ε,
+Y = X⋆β⋆ + Z1δ1 + ε′,
+(19)
+where Z = [Z1, Z2], δ′ = (δ′
+1, δ′
+2) and where the second regression has absorbed δ2 via
+X⋆ = [X, Z2] and β⋆ = [β′, δ′
+2]. A default prior procedure is marginalization consistent
+if the prior on the subvector δ1, obtained as the marginal of the default prior on the
+encompassing vector δ, is exactly the same as the prior one would obtain by applying
+the procedure to δ1 directly. In the following proposition we show that the g-prior is
+marginalization consistent.
+Proposition 4.7. Consider the regressions in equation (19) and let Z ̃ = (I − PX)Z and
+Z ̃ ⋆
+1 = (I − PX⋆)Z. Then ((Z ̃′Z ̃)−1)11 = (Z ̃⋆′
+1 Z ̃⋆
+1 )−1
+17
+
+
+Thus for Φ = g
+n (Z ̃′
+nZ ̃n)−1, the prior on any subset of coefficients is identical whether
+formed from direct construction or marginalizing an encompassing prior, which is crucial
+for testing nested models.
+While Gn only approximates En, we argue that the approximation error diminishes
+rapidly by theorem 4.6 and that in practical applications the linear model itself is likely
+the dominant source of error, as rarely do we expect the linear model to hold exactly in
+the first place. In the next section, we relax the assumption of Gaussian homoskedastic
+residuals, followed by an additional relaxation of the linearity assumption altogether in the
+context of randomized experiments.
+5 Heteroskedasticity Robust Asymptotic e-Processes
+In this section we relax the assumption of Gaussian homoskedastic residuals. Specifically,
+consider the linear model yi = w′
+iγ + εi under the weaker assumption that (wi, εi) are i.i.d.
+with E[εiwi] = 0 and E[εiwiw′
+i] = Σ. This accommodates covariate level heteroskedasticity
+via E[ε2
+i |wi] = σ2
+i = σ2(wi). The OLS estimator γˆn is a strongly consistent estimator of γ
+provided E[εiwi] = 0 and (1/n)W ′
+nWn
+a.s.
+→ ΩW ,
+An asymptotic fixed-n analysis proceeds by working with the asymptotic distribution
+of the OLS estimator, written √n(γˆn − γ) = 1
+n
+Pn
+i=1 wiw′
+i
+−1 √1n
+Pn
+i=1 wiεi . We sketch
+the argument here to parallel the anytime-valid construction. Let ΩW = E[wiw′
+i], positive
+definite, then by the weak law ˆΩWn := 1
+nW ′
+nWn
+p → ΩW and continuity of the inverse
+Ωˆ −1
+n
+p → Ω−1
+W . By the the central limit theorem √1n
+Pn
+i=1 wiεi
+→d N (0, Σ), and by Slutsky’s
+theorem, √n(γˆn −γ) →d N (0, Ω−1
+W ΣΩ−1
+W ). Let k = p+d and E ∈ Rr×k full row rank matrix
+of linear hypotheses, then √nE(γˆn − γ) d → N (0, ΣE) and n(γˆn − γ)′E′Σ−1
+E E(γˆn − γ) →d χ2
+r
+where ΣE = EΩ−1
+W ΣΩ−1
+W E′. Finally, ˆΣn := 1
+n
+Pn
+i=1(yi −w′
+iγˆn)2wiw′
+i is a consistent estima
+18
+
+
+tor for Σ, and by Slutsky n(γˆn − γ)′E′Σˆ −1
+E E(γˆn − γ) →d χ2
+r, where Σˆ E = E ˆΩ−1
+W ˆΣn ˆΩ−1
+W E′.
+To develop an asymptotic e-process, we follow the steps introduced by Waudby-Smith
+et al. (2021). First, we construct an anytime-valid analogue of the fixed-n χ2-test for
+Gaussian vectors.
+Lemma 5.1. Let (Gi)n
+i=1 be a sequence of i.i.d. N (μ, Σ) random vectors in Rk, then for
+any g > 0
+En := g
+g+n
+k 2
+e1
+2
+n
+g+n Qn , (20)
+where Qn = n(G ̄ n − μ)Σ−1(G ̄ n − μ) ∼ χ2
+k and G ̄ = 1
+n
+Pn
+i=1 Gi, is a nonnegative super
+martingale.
+Second, analogous to the asymptotic distribution of √1n
+Pn
+i=1 wiεi via the central limit
+theorem, we leverage a strong approximation by Einmahl (1989) to approximate the sample
+path of Pn
+i=1 wiεi by a sum of Gaussian vectors.
+Proposition 5.2. Under the assumptions E[εiwi] = 0, Cov(εiwi) = Σ ∈ Rk×k, and
+E ∥εiwi∥s ≤ ∞ for some s > 3. Then on a sufficiently rich probability space there is a
+sequence (Gi)∞
+i=1 of i.i.d. Gaussian random vectors Gi ∼ N (0, Σ), such that
+n
+X
+i=1
+εiwi −
+n
+X
+i=1
+Gi = Oa.s. nα (21)
+for some 0 < α < 1
+2.
+Last, we need to construct a consistent estimator of the nuisance parameter Σ.
+Proposition 5.3. Let Σ = E[ε2
+i wiw′
+i], εˆin = yi − w′
+iγˆn and Σˆ n = 1
+n−p−d
+Pn
+i=1 εˆ2
+inwiw′
+i.
+Under the assumptions Ωˆ Wn
+a.s.
+→ ΩW and E[wiεi] = 0, then γˆn
+a.s.
+→ γ. Under additional
+assumptions E[∥wi∥4] < ∞, E[|εi|∥wi∥3] < ∞, then ˆΣn
+a.s.
+→ Σ and Σˆ E = EΩˆ −1
+W ˆΣn ˆΩ−1
+W E′
+is a strongly consistent estimator of ΣE.
+19
+
+
+With full details in the appendix, in addition to some required supplementary results,
+these three key results yield the following heteroskedasticity robust e-process.
+Theorem 5.4. Let {(yi, wi)}∞
+i=1 be a sequence of i.i.d. outcomes where yi = w′
+iγ + εi such
+that E[wiεi] = 0, E[ε2
+i wiw′
+i] = Σ, E[wiw′
+i] = ΩW , E[∥wiεi∥s] < ∞ for some s > 3,
+E[∥wi∥4] < ∞, E[|εi|∥wi∥3] < ∞, and E[wiyi] < ∞. For any full row rank matrix E ∈
+Rr×k and g > 0 define
+En := g
+g+n
+r
+2 1+ g
+g+n
+r νn
+Qn r
+1+ r
+νn
+Qn r
+!− νn+r
+2
+. (22)
+where Qn = n(γˆn)′E′Σˆ −1
+E E(γˆn − γ), ˆΣE = (E ˆΩ−1
+Wn
+Σˆ nΩˆ −1
+WnE′), ˆΣn = 1
+n−p−d
+Pn
+i=1(yi −
+w′
+iγˆn)2wiw′
+i and ˆΩWn = 1
+nW ′
+nWn. The process (En)∞
+n=1 is an asymptotic e-process.
+Note this gracefully recovers the previous results in the homoskedastic case. If we use
+s2
+n to estimate σ2, and instead use ˆΣn = ns2
+nΩˆ Wn, then Qn/r reduces to the f -statistic
+Fn = (γˆn − γ)E′(E(W ′
+nWn)−1E′)−1E(γˆn − γ)/(rs2
+n). For example, if E = (0d×p, Id) (now
+r = d) is used to test δ, then Qn/r = (δˆn − δ)′Z ̃′
+nZ ̃n(δˆn − δ)/(ds2
+n) = Fn, and equation
+(22) recovers equation (17).
+5.1 Asymptotic “t” Confidence Sequences
+The heteroskedasticity robust e-process En from equation (22) provides an asymptotic “t”
+confidence sequence Cα
+n = {γ ∈ Rk : Qn/r ≤ R(g, n, α)}, which differs from the asymptotic
+Gaussian (“Robbins”) confidence sequence CG,α
+n = {γ ∈ Rk : Qn/r ≤ RG(g, n, α)}, used
+by Waudby-Smith et al. (2021), where
+R(g, n, α) = νn
+r
+1 − α2
+rg n+g
+r νn +r
+max 0, α 2
+rg n+g
+r
+νn+r − g
+n+g
+, RG(g, n, α) = g + n
+n log g + n
+α
+2
+rg
+. (23)
+20
+
+
+There are two key advantages to asymptotic t confidence sequence. First, it aligns with
+the confidence sequence introduced in the first half of the paper for the parametric linear
+model. Second, while always a superset, it converges in the limit, made formal by the
+following theorem.
+Theorem 5.5. For any α ∈ (0, 1) and g > 0, R(g, n, α) > RG(g, n, α) for all n ∈ N and
+nli→m∞R(g, n, α)/RG(g, n, α) → 1.
+The increased size at small n reflects of the t confidence sequence’s explicit accom
+modation of variance estimation uncertainty, in contrast to the Gaussian sequence, which
+assumes known variance and substitutes a plug-in estimator. This property is especially
+important in the anytime-valid setting, where valid coverage is required uniformly over all
+n. In such cases, the Gaussian sequence has been observed to over-reject at small sample
+sizes due to poor asymptotic approximations. This concern motivates the “delayed-start”
+modifications in Waudby-Smith et al. (2021, Section 2.6) and Bibaut et al. (2022). The
+t confidence sequence naturally incorporates a delayed start: its width is infinite until
+α2
+rg n+g
+r
+νn+r > g
+n+g . For example, using r = k = 1, α = 0.05 and g = 104, requires a mini
+mum sample size of 247. Alternatively, using g = 102 requires a minimum sample size of 27.
+Figure 8 in the appendix illustrates the difference between R(g, n, α) and RG(g, n, α). The
+additional width at small n provides robustness against early false positives, illustrated in
+Section 7, allowing more time for the variance estimate to stabilize and for the asymptotic
+behavior to become reliable.
+6 Treatment Effects in Randomized Experiments
+In this section we additionally remove the linearity assumption altogether within the con
+text of randomized experiments. In particular, we allow the outcome variable yi to depend
+21
+
+
+nonlinearly on wi. In a potential outcomes framework we observe yi = Tiyi(1)+(1−Ti)yi(0),
+where yi(1) and yi(0) are the potential outcomes under treatment and control respectively
+and Ti ∼ Bernoulli(ρ) is a binary treatment indicator with assignment probability ρ. The
+goal of many randomized experiments is to perform inference on the average treatment
+effect E[yi(1) − yi(0)] and conditional average treatment effects E[yi(1) − yi(0)|mi]. In
+this section we make the stable unit treatment value assumption (SUTVA) and assume
+simple random sampling with one outcome per unit. Despite the nonlinearity, consider the
+following lemma
+Lemma 6.1. Consider the population least squares defined as
+γ⋆ := (α⋆, ζ⋆, τ ⋆, η⋆)
+= arg min
+α,ζ,τ,η
+E (yi − α − (mi − μm)′ζ − (Ti − ρ)τ − Ti(mi − μm)′η)2 .
+(24)
+where α is an intercept, Ti ∼ Bernoulli(ρ) is a treatment indicator with assignment proba
+bility ρ, mi − μm are centered pre-treatment covariates, and Ti(mi − μm) is an interaction
+term. Write the regression as yi − w′
+iγ. Under the assumption ΩW = E[wiwi]′ is pos
+itive definite and E[wiyi] is finite, then γ⋆ = Ω−1
+W E[wiyi]. In particular α⋆ = E[yi] =
+ρE[yi(1)] + (1 − ρ)E[yi(0)] and ζ⋆ = Ω−1
+m E[(mi − μm)yi(0)], while
+τ ⋆ =E[yi(1) − yi(0)]
+η⋆ =Ω−1
+m E[(mi − μm)yi(1)] − Ω−1
+m E[(mi − μm)yi(0)],
+where Ωm = E[(mi − μm)(mi − μm)′].
+Observe τ ⋆ is the average treatment effect. Also observe that treatment effect homo
+geneity, E[yi(1) − yi(0)|mi = m] = τ ⋆ for all m, implies η⋆ = 0. The central idea is to
+estimate the population least squares using the sample ordinary least squares estimator,
+which we can use to test hypotheses about τ ⋆ and η⋆. First, observe the following lemma.
+22
+
+
+Lemma 6.2. Define εi = yi − w′
+iγ⋆, then E[wiεi] = 0
+In Section 5 we assumed a generative model yi = w′
+iγ + εi. Instead, here we define
+the residuals to be εi = yi − w′
+iγ⋆, so that yi = w′
+iγ⋆ + εi is true by definition. Hence
+the conditions described in Section 5 are satisfied and we can apply the preceding results
+for average treatment effects even if the outcome depends nonlinearly on the covariates.
+In particular, under the assumptions of proposition 5.3, γˆn and Σˆ n are strongly consistent
+estimators of γ⋆ and Σ = E[εiwiw′
+i], and theorem 5.4 can be used to test for average or
+conditional average treatment effects. For example, E = (0, 0′, 1, 0′) allows us to test the
+average treatment effect E(γˆn − γ⋆) = τˆn − τ ⋆. Alternatively, E can be defined such that
+E(γˆ − γ⋆) = vˆn − v⋆ where vˆ′
+n = (τˆn, ηˆ′
+n) and (v⋆)′ = (τ ⋆, (η⋆)′) allowing us to test for any
+treatment effects, or simply defined such that E(γˆ − γ⋆) = ηˆn − ηˆ⋆, allowing us to test for
+the presence of conditional average treatment effects.
+7 Examples
+The regression specified in equation (24) is the fully-interacted regression as it includes
+interaction terms, which are optional. In the following simulations we simply fit the
+regression E[yi|wi] = α + m′
+iζ + Tiτ = w′
+iγ. We examine the asymptotic t, asymp
+totic Gaussian, and linear model confidence sequences i.e. τˆn ± rse(τˆn)
+p
+R(g, n, α), τˆn ±
+rse(τˆn)
+p
+RG(g, n, α), and τˆn ± se(τˆn)
+p
+R(g, n, α) respectively, where R and RG are de
+fined in equation (23) with dimensionality r = 1. The standard and robust standard
+errors are se(τˆn) =
+p
+s2
+n(WnWn)−1
+ττ and rse(τˆn) =
+q
+((W ′
+nWn)−1W ′
+n ˆΣnWn(W ′
+n Wn )−1 )τ τ
+respectively, where s2
+n= 1
+νn
+Pn
+i=1 e2
+i , Σˆ n = 1
+νn
+Pn
+i=1 e2
+i wiw′
+i, and ei = yi − w′
+iγˆn. The
+corresponding (asymptotic) e-processes are
+23
+
+
+En = g
+g+n
+1
+2 1+ g
+g+n
+Qn νn
+1 + Qn
+νn
+!− νn+1
+2
+, EG
+n= g
+g+n
+1 2
+e1
+2
+n
+g+n Qn , (25)
+and
+Gn = g
+g+n
+1
+2 1+ g
+g+n
+Fn νn
+1 + Fn
+νn
+!− νn+1
+2
+(26)
+where Qn = (τˆn/rse(τˆn))2, Fn = (τˆn/se(τˆn))2. We examine the first time the e-process
+exceeds α−1 ⇐⇒ (1 − α) confidence sequence excludes zero. Note the OLS estimate τˆn
+is identically equal to the AIPW estimate using the same regression function, provided the
+assignment probabilities are constant, and so the asymptotic Gaussian confidence sequence
+is equal to the AIPW procedure of Waudby-Smith et al. (2021) except no sample-splitting
+is required.
+7.1 Simulated Nonlinear Regression with t-residuals
+We examine the robustness to model misspecification by simulating from a known model
+with clear violations of the linear model assumptions. Figure 1 visualizes the probability of
+rejection when outcomes are generated from a model which is nonlinear in the covariates,
+has heavy-tailed, heteroskedastic residuals, and has an ATE of δ. With only three degrees
+of freedom, the t residuals have finite variance but infinite higher order moments. Fig
+ure 1a demonstrates that the asymptotic t confidence sequence provides better protection
+against early false positives than the asymptotic Gaussian confidence sequence. It further
+demonstrates that the Type-I error is better calibrated at the nominal α for larger g. Note
+also that while the empirical Type-I error may appear less than the nominal α, we are only
+examining the rejections over [1, 104], whereas the guarantee is for all n ∈ N.
+24
+
+
+(a) Null Simulation: δ = 0
+(b) Alternative Simulation: δ = 1
+Figure 1: Proportion of e-processes which have crossed the rejection threshold α−1 (α =
+0.05) by sample size n, based on 103 simulations from the model yi = 1 − 2x2
+i1 − 2 sin xi2 +
+3|xi3| + ziδ + (1.5 + x2
+i1)εi, where εi ∼ t3 and xi ∼ N (03, Σ) with Σij = 0.8|i−j|, zi ∼
+Bernoulli(1/2). Colors correspond to e-processes in equations (25) and (26). Linestyles
+correspond to g ∈ {1, 10, 1000}.
+7.2 PlayDelay: Heavy-Tailed and Right-Skewed Outcomes
+This dataset comes from a real Netflix A/B test in which devices were randomly assigned to
+a new software version. The outcome, PlayDelay, measures the time between a playback re
+quest and its start. Figure 7 (appendix) shows empirical CDFs of the normalized PlayDelay
+(scaled by the dataset’s maximum value). The skew and kurtosis of the data are approxi
+25
+
+
+mately 100 and 13,000 respectively, indicating an extremely heavy-tailed distribution with
+significant right-skew and a high propensity for extreme outliers. The 99.9-percentile is
+0.02 while the largest value is 1. We fit the adjusted regression yi = α + miζ + Tiτ + εi
+where mi is a pre-treatment measurement of PlayDelay, strongly correlated with yi, and Ti
+is a treatment indicator. As the outcomes are bounded we additionally compare with the
+Empirical Bernstein confidence sequence of Howard et al. (2021) (Appendix E). The empir
+ical Type-I error is shown in Figure 2a. Note that testing only begins when νn > 0. Again,
+we observe better protection against early false positives for the asymptotic t confidence
+sequence, which improves with larger g. Considering the alternative simulation, we remark
+that these procedures rarely stop before 220 observations. Extreme-value outliers inflate
+the empirical variance on each arrival, which in turn broadens the confidence sequence and
+delays stopping. By contrast, a log-transform compresses the tail mass and stabilizes vari
+ance, yielding much earlier stopping times. For these reasons, we present the alternative
+simulation in Figure 2b for log-PlayDelay. In both cases, we observe that the price paid for
+the nonasymptotic guarantees provided by the Empirical Bernstein confidence sequence is
+a much larger stopping time.
+8 Conclusion
+Motivated by the foundational role of linear models in practice, we outlined how to perform
+safe anytime-valid inference in this setting. The proposed tests (confidence sequences)
+provide time-uniform Type-I error control (coverage) and are straightforward to implement:
+the test statistic is simply the likelihood ratio of the standardized OLS vector ξˆn = δˆn/
+p
+s2
+n.
+The resulting e-variable is optimal in the GROW and REGROW senses, for both point
+and composite alternatives. For composite alternatives, we introduced an approximate,
+26
+
+
+(a) Null Simulation: A Ti ∼ Bernoulli(1/2) treatment indicator is drawn and the outcome is
+sampled with replacement from the control dataset.
+(b) Alternative Simulation: A Ti ∼ Bernoulli(1/2) treatment indicator is drawn and the log
+outcome is sampled with replacement from the control (treatment) dataset if Ti = 0 (Ti = 1).
+Figure 2: Proportion of e-processes which have crossed the rejection threshold α−1 (α =
+0.05) by sample size n, based on 103 simulations. Colors correspond to e-processes defined
+in equations (25), (26) and Appendix E. Linestyles correspond to g ∈ {1, 10, 1000}.
+automatic construction with a closed-form expression, enabling practitioners to convert
+F -statistics into anytime-valid e-processes.
+In the second half of the paper, we relaxed linear model assumptions—first allowing
+heteroskedasticity, then dropping linearity altogether in the context of randomized exper
+iments. This led to asymptotic, nonparametric e-processes for average and conditional
+27
+
+
+average treatment effects under simple randomization. These tools allow practitioners to
+continuously monitor experiments and rigorously detect harmful or beneficial treatment
+effects sooner.
+Our analysis is limited to independent outcomes. An important extension is to depen
+dent outcomes, common in longitudinal and panel data settings with repeated measure
+ments and within-unit serial correlation. We conjecture that the form of the heteroskedastic
+e-process may still apply in this case, but we leave this to future work.
+References
+Andersson, S. (1982), ‘Distributions of maximal invariants using quotient measures’, The
+Annals of Statistics pp. 955–961.
+Benjamin, D. J. et al. (2018), ‘Redefine statistical significance’, Nature Human Behaviour
+2(1), 6–10.
+Bhowmik, J. L. & King, M. L. (2007), ‘Maximal invariant likelihood based testing of semi
+linear models’, Statistical Papers 48(3), 357–383.
+Bibaut, A., Kallus, N. & Lindon, M. (2022), ‘Near-optimal non-parametric sequential tests
+and confidence sequences with possibly dependent observations’.
+Collaboration, O. S. (2015), ‘Estimating the reproducibility of psychological science’, Sci
+ence 349(6251), aac4716.
+Einmahl, U. (1989), ‘Extensions of results of koml ́os, major, and tusn ́ady to the multivariate
+case’, Journal of multivariate analysis 28(1), 20–68.
+Gru ̈nwald, P., de Heide, R. & Koolen, W. (2021), ‘Safe testing’.
+28
+
+
+Hall, W. J., Wijsman, R. A. & Ghosh, J. K. (1965), ‘The Relationship Between Sufficiency
+and Invariance with Applications in Sequential Analysis’, The Annals of Mathematical
+Statistics 36(2), 575 – 614.
+Ham, D. W., Bojinov, I., Lindon, M. & Tingley, M. (2022), ‘Design-based confidence
+sequences for anytime-valid causal inference’.
+Harville, D. (2008), Matrix Algebra From a Statistician’s Perspective, Springer New York.
+Howard, S. R., Ramdas, A., McAuliffe, J. & Sekhon, J. (2021), ‘Time-uniform, nonpara
+metric, nonasymptotic confidence sequences’, The Annals of Statistics 49(2), 1055 –
+1080.
+Ioannidis, J. P. (2005), ‘Why most published research findings are false’, PLoS medicine
+2(8), e124.
+John, L. K., Loewenstein, G. & Prelec, D. (2012), ‘Measuring the prevalence of questionable
+research practices with incentives for truth telling’, Psychological science 23(5), 524–532.
+Lardy, T. (2022), ‘E-values for hypothesis testing wih covariates: Construction & applica
+tion to regression models’.
+Lin, W. (2013), ‘Agnostic notes on regression adjustments to experimental data: Reexam
+ining Freedman’s critique’, The Annals of Applied Statistics 7(1), 295 – 318.
+Mathematica (2024), ‘Mathematica, version 14.2’. Champaign, IL, 2024.
+Pe ́rez-Ortiz, M. F., Lardy, T., de Heide, R. & Gru ̈nwald, P. (2022), ‘E-statistics, group
+invariance and anytime valid testing’.
+Ramdas, A., Gru ̈nwald, P., Vovk, V. & Shafer, G. (2023), ‘Game-theoretic statistics and
+safe anytime-valid inference’.
+29
+
+
+Ramdas, A. & Wang, R. (2024), ‘Hypothesis testing with e-values’, arXiv preprint
+arXiv:2410.23614 .
+Robbins, H. & Siegmund, D. (1974), ‘The Expected Sample Size of Some Tests of Power
+One’, The Annals of Statistics 2(3), 415 – 436.
+Sagarin, B. J., Ambler, J. K. & Lee, E. M. (2014), ‘An ethical approach to peeking at
+data’, Perspectives on Psychological Science 9(3), 293–304.
+Shafer, G., Shen, A., Vereshchagin, N. & Vovk, V. (2011), ‘Test martingales, bayes factors
+and p -values’, Statist. Sci. 26(1), 84–101.
+Ville, J. (1939), E ́tude critique de la notion de collectif, PhD thesis, L’ ́Ecole Polytechnique.
+Wasserstein, R. L. & Lazar, N. A. (2016), ‘The asa statement on p-values: Context, process,
+and purpose’, The American Statistician 70(2), 129–133.
+Waudby-Smith, I., Arbour, D., Sinha, R., Kennedy, E. H. & Ramdas, A. (2021), ‘Time
+uniform central limit theory, asymptotic confidence sequences, and anytime-valid causal
+inference’.
+Ye, T., Shao, J., Yi, Y. & Zhao, Q. (2022), ‘Toward better practice of covariate adjustment
+in analyzing randomized clinical trials’, Journal of the American Statistical Association
+pp. 1–13.
+Zellner, A. (1986), ‘On assessing prior distributions and bayesian regression analysis with
+g-prior distributions’, Bayesian inference and decision techniques .
+30
+
+
+SUPPLEMENTARY MATERIAL
+A Review: The classical fixed-n F -Test
+As this section concerns the fixed-n case, we drop the n superscript from Yn to simplify
+the exposition. An α-level test of H0 : δ = 0, without loss of generality, can be obtained
+by examining the likelihood ratio test statistic
+Λ(Y ) :=
+sup
+θ∈Θ1
+p(Y |θ)
+sup
+θ∈Θ0
+p(Y |θ) (27)
+and rejecting the null hypothesis when Λ(Y ) > cα for some constant cα > 0 suitably chosen
+to provide a Type-I error probability of at most α. The following lemma recalls the classical
+likelihood ratio test construction of the F -test.
+Theorem A.1. The likelihood ratio can be expressed
+Λ(Y ) = 1 + d
+n − p − df (Y ) (28)
+where the f -statistic is defined as
+f (Y ) =
+Y ′(PW −PX )Y d
+Y ′(I−PW )Y n−p−d
+=
+δˆ(Y )Z ̃′Z ̃δˆ(Y )
+ds2(Y ) = t(Y )′t(Y )
+d . (29)
+Then Λ(Y ) > cα ⇐⇒ f (Y ) > fα for some fα > 0. The distributions of the f -statistic
+under H1 and H0 are
+f (Y )|β, δ, σ2, H1 ∼ F (d, n − p − d, δ′Z ̃′Z ̃δ/σ2)
+f (Y )|β, σ2, H0 ∼ F (d, n − p − d, 0)
+(30)
+Rejecting when f (Y ) > fα, with fα denoting the 1 − α quantile F (d, n − p − d, 0) yields a
+fixed-n test with Type-I error probability α.
+31
+
+
+Note that the f statistic can be written in terms of the maximal invariant statistic
+t(Y ). In the case of d = 1, when there is only a single main effect, then f can be identified
+as the square of the usual t-statistic (t ∼ tn−p−1 ⇒ t2 ∼ F (1, n − p − 1)). A p-value can be
+calculated by computing P[f ≥ f (Y )] under the null F (d, n − p − d, 0) distribution.
+Proof. Starting with the denominator in (27), consider first expressing the quadratic form
+in the Guassian likelihood as a component in C(X) and a component in C(X)⊥.
+∥Y − Xβ∥2
+2 = ∥PX (Y − Xβ)∥2
+2 + ∥(I − PX)(Y − Xβ)∥2
+2
+= ∥PXY − Xβ∥2
+2 + ∥(I − PX )Y ∥2
+2
+(31)
+This is minimized by setting βˆ = (X′X)X′Y , which sets the first term to zero. The
+likelihood is then maximized by setting σˆ2 = ∥(I − PX)Y ∥2
+2/n. It follows that
+sup
+θ∈Θ0
+p(Y |θ) = n
+2π
+n
+21
+∥(I − PX)Y ∥2
+2
+n 2
+e− n
+2 (32)
+Now consider the numerator in (27), expressing the quadratic form in the Gaussian likeli
+hood as a component in C(W ) a component in C(W )⊥.
+∥Y − Xβ − Zδ∥2
+2 = ∥Y − W γ∥2
+2 = ∥PW (Y − W γ)∥2
+2 + ∥(I − PW )(Y − W γ)∥2
+2
+= ∥PW (Y − W γ)∥2
+2 + ∥(I − PW )Y ∥2
+2
+(33)
+where W = [X, Z] and γ′ = (β′, δ′). Applying the same reasoning as before, this is
+minimized by setting γˆ = (W ′W )−1W ′Y , which sets the first term to zero. The likelihood
+is then maximized by setting σˆ2 = ∥(I − PW )Y ∥2
+2/n. It follows that
+sup
+θ∈Θ1
+p(Y |θ) = n
+2π
+n
+21
+∥(I − PW )Y ∥2
+2
+n 2
+e− n
+2 (34)
+and therefore
+Λ(Y ) = ∥(I − PX)Y ∥2
+2
+∥(I − PW )Y ∥2
+2
+n 2
+. (35)
+32
+
+
+However, the vector in the numerator be expressed as a component in C(W ) and a com
+ponent in C(W )⊥.
+∥(I − PX)Y ∥2
+2 = ∥PW (I − PX )Y ∥2
+2 + ∥(I − PW )(I − PX )Y ∥2
+2
+= ∥(PW − PX )Y ∥2
+2 + ∥(I − PW )Y ∥2
+2
+= ∥(PW − PX )Y ∥2
+2 + ∥(I − PW )Y ∥2
+2
+(36)
+and so the likelihood ratio can be written in terms of the f -statistic as
+Λ(Y ) = 1 + d
+n − p − df (Y ). (37)
+To show f (Y ) can be expressed in terms of δˆ(Y ) as in equation (29), note simply that
+(PW − PX)Y = (I − PX)PW Y = (I − PX)(Xβˆ(Y ) + Zδˆ(Y )) = (I − PX)Zδˆ(Y ) =
+Z ̃δˆ(Y ).
+A test of the null hypothesis H0 : δ = δ0 can easily be obtained from a hypothesis test
+of δ = 0 by replacing Y with Y − Zδ0. In this case, the f - statistic becomes
+f (Y ) =
+(Y −Zδ0)′(PW −PX )(Y −Zδ0) d
+(Y −Zδ0)′(I−PW )(Y −Zδ0) n−p−d
+= (δˆ(Y ) − δ0)′Z ̃′Z ̃(δˆ(Y ) − δ0)
+ds2(Y ) (38)
+By finding the set of null-values that would not be rejected by this test one obtains a
+confidence set for the vector δ.
+Corollary A.2. A 1 − α confidence set for δ is provided by
+Cα(Y ) := {δ : (δˆ(Y ) − δ)′Z ̃′Z ̃(δˆ(Y ) − δ) ≤ ds2(Y )fα}, (39)
+B Proofs for Section 4
+Lemma B.1.
+∥Y − W γ∥2
+2 = ∥X(β − β ̃)∥2
+2 + ∥Z ̃(δˆ − δ)∥2
+2 + ∥(I − PW )Y ∥2
+2
+33
+
+
+where β ̃ = βˆ + (X′X)−1X′Z(δˆ − δ).
+Proof.
+∥Y − W γ∥2
+2 = ∥PW (Y − W γ)∥2
+2 + ∥(I − PW )(Y − W γ)∥2
+2
+= ∥PW (Y − W γ)∥2
+2 + ∥(I − PW )Y ∥2
+2
+= ∥PX PW (Y − W γ)∥2
+2 + ∥(I − PX )PW (Y − W γ)∥2
+2 + ∥(I − PW )Y ∥2
+2
+= ∥Xβˆ + PXZδˆ − Xβ − PXZδ∥2
+2 + ∥(I − PX)Z(δˆ − δ)∥2
+2
++ ∥(I − PW )Y ∥2
+2
+= ∥X(β − β ̃)∥2
+2 + ∥Z ̃(δˆ − δ)∥2
+2 + ∥(I − PW )Y ∥2
+2
+B.1 Proof of Theorem 4.1
+We first prove the expression of En using Wijsman’s representation theorem, that is, man
+ually computing the integrals in Lemma 3.3. We then examine the statistic through which
+the data enters the resulting expression. Using a counterexample, we demonstrate that
+ξˆn is not a maximal invariant. We then prove that ξˆn is, instead, an invariantly sufficient
+statistic.
+Direct Calculation of En from Wijsman’s Representation Theorem
+Recall from Theorem 4.1 that the expression for En is
+En :=
+R
+q(Yn|β, σ2, δ)π(β, σ2)π(δ|σ2)dβdσ2dδ
+R
+q(Yn|β, σ2, δ)π(β, σ2)dβdσ2
+=
+s
+det(Φ)
+det(Φ + Z ̃′
+nZ ̃n)
+1 + ξˆ′
+n (Z ̃ ′
+n Z ̃n −Z ̃ ′
+n Z ̃n (Φ+Z ̃ ′
+n Z ̃n )−1 Z ̃ ′
+nZ ̃n)ξˆn νn
+− νn+d
+2
+1 + ξˆ′nZ ̃′nZ ̃nξˆn
+νn
+− νn+d
+2
+.
+(40)
+34
+
+
+Proof. We prove this manually by computing the integrals in the integral representation.
+To begin we compute the marginal likelihood of Y under the alternative Q in the
+numerator.
+q(Y ) =
+ZZZ
+q(Y |β, δ, σ2)π(δ|σ2)π(β, σ2)dβdδdσ2. (41)
+We use lemma B.1 to decompose the likelihood throughout.
+q(Y |δ, σ2) =
+Z
+q(Y |β, δ, σ2)π(β)dβ
+=1
+2πσ2
+n
+2
+e− 1
+2σ2 (∥Z ̃(δˆ−δ)∥2
+2+∥(I−PW )Y ∥2
+2)
+Z
+e− 1
+2σ2 ∥X(β−β ̃(Y ,δ))∥2 dβ
+=1
+2πσ2
+n−p
+21
+det(X ′ X )
+1
+2
+e− 1
+2σ2 ∥Z ̃(δˆ−δ)∥2
+2 e− 1
+2σ2 ∥(I−PW )Y ∥2
+2,
+(42)
+where the last line follows from recognizing the integrand as the kernel of a multivariate
+Gaussian in β with precision matrix X′X/σ2. To perform the marginalization over the
+prior on δ note that by completing the square
+∥Z ̃(δˆ − δ)∥2
+2 + δ′Φδ =(δ − δ ̃)′(Φ + Z ̃′Z ̃)(δ − δ ̃) + δˆ′(Z ̃′Z ̃ − Z ̃′Z ̃(Φ + Z ̃′Z ̃)−1Z ̃′Z ̃)δˆ.
+where δ ̃ = (Φ + Z ̃′Z ̃)−1Z ̃′Z ̃δˆ is the posterior mean and (Φ + Z ̃′Z ̃)/σ2 the posterior
+precision. Hence
+q(Y |σ2) =
+Z
+q(Y |δ, σ2)p(δ|σ2)dδ
+=1
+2πσ2
+n−p
+21
+det(X ′ X )
+1
+2
+e− 1
+2σ2 ∥(I−PW )Y ∥2
+2 e− 1
+2σ2 δˆ′(Z ̃′Z ̃−Z ̃′Z ̃(Φ+Z ̃′Z ̃)−1Z ̃′Z ̃)δˆ
+1
+2πσ2
+d 2
+det(Φ) 1
+2
+Z
+e− 1
+2σ2 (δ−δ ̃)′(Φ+Z ̃′Z ̃)(δ−δ ̃)dδ
+=1
+2πσ2
+n−p
+21
+det(X ′ X )
+1
+2 det(Φ)
+det(Φ + Z ̃′Z ̃)
+1 2
+e− 1
+2σ2 ∥(I−PW )Y ∥2
+2 e− 1
+2σ2 δˆ′(Z ̃′Z ̃−Z ̃′Z ̃(Φ+Z ̃′Z ̃)−1Z ̃′Z ̃)δˆ
+35
+
+
+where the last step is achieved by recognizing the kernel of a d-dimensional multivariate
+Gaussian density in δ with precision Φ + Z ̃′Z ̃. The marginalization over σ2 is then
+q(Y ) =
+Z
+q(Y |σ2)π(σ2)dσ2
+=1
+2π
+n−p
+21
+det(X ′ X )
+1
+2 det(Φ) 1
+2
+det(Φ + Z ̃′Z ̃) 1
+2
+Z1
+σ2
+n−p
+2 +1
+e− 1
+2σ2 (∥(I−PW )Y ∥2
+2 +δˆ′ (Z ̃ ′ Z ̃ −Z ̃ ′ Z ̃ (Φ+Z ̃ ′ Z ̃ )−1 Z ̃ ′ Z ̃ )δˆ) dσ 2
+=1
+2π
+n−p
+21
+det(X ′ X )
+1
+2 det(Φ) 1
+2
+det(Φ + Z ̃′Z ̃) 1
+2
+Γ n−p
+2
+∥(I − PW )Y ∥2
+2
+2+
+δˆ′(Z ̃′Z ̃ − Z ̃′Z ̃(Φ + Z ̃′Z ̃)−1Z ̃′Z ̃)δˆ
+2
+!− n−p
+2
+where the last line follows from recognizing the kernel of an Inverse Gamma. Rearranging
+terms yields
+q(Y ) = 1
+2π
+n−p
+21
+det(X ′ X )
+1
+2 det(Φ) 1
+2
+det(Φ + Z ̃′Z ̃) 1
+2
+Γ n−p
+2
+s2(Y )
+2
+− n−p
+2
+(n − p − d)− n−p
+2 1+
+δˆ(Y )′(Z ̃′Z ̃ − Z ̃′Z ̃(Φ + Z ̃′Z ̃)−1Z ̃′Z ̃)δˆ(Y )
+s2(Y )(n − p − d)
+!− n−p
+2
+The steps to derive the marginal likelihood of Y under P in the denominator proceed
+similarly.
+p(Y |σ2) = 1
+2πσ2
+n−p
+21
+det(X ′ X )
+1
+2
+e− 1
+2σ2 δˆ′Z ̃′Z ̃δˆe− 1
+2σ2 ∥(I−PW )Y ∥2
+2
+=1
+2πσ2
+n−p
+21
+det(X ′ X )
+1 2
+e− s2(Y )(n−p−d)
+2σ2 1+ δˆ(Y )′Z ̃′Z ̃δˆ(Y )
+s2(Y )(n−p−d)
+p(Y ) = 1
+2π
+n−p
+21
+det(X ′ X )
+1 2
+Γ n−p
+2
+s2(Y )
+2
+− n−p
+2
+(n − p − d)− n−p
+2 1+
+δˆ(Y )′Z ̃′Z ̃δˆ(Y )
+s2(Y )(n − p − d)
+!− n−p
+2
+Therefore the final likelihood ratio is
+En = q(Y )
+p(Y ) = det(Φ) 1
+2
+det(Φ + Z ̃′Z ̃) 1
+2
+1 + δˆ(Y )′(Z ̃′Z ̃−Z ̃′Z ̃(Φ+Z ̃′Z ̃)−1Z ̃′Z ̃)δˆ(Y )
+s2(Y )(n−p−d)
+− n−p
+2
+1 + δˆ(Y )′Z ̃′Z ̃δˆ(Y )
+s2(Y )(n−p−d)
+− n−p
+2
+36
+
+
+Counterexample to Maximal Invariance of ξˆn
+Proof. Consider the following counterexample. For any Yn, write Y 1
+n = PWnYn + (In −
+PWn)Yn and let Y 2
+n = cPWnYn + cR(In − PWn)Yn for an orthogonal matrix R. The
+statistic ξˆn(Y 1
+n ) = ξˆn(Y 2
+n ), but there is no g ∈ G such that Y 2
+n = gY 1
+n . We have shown
+that the statistic ξˆn takes the same value, even though Y 2
+n and Y 1
+n do not belong to the
+same orbit. Hence ξˆn cannot be a maximal invariant under the group action on Rn as it
+takes the same value on two distinct orbits.
+Invariant Sufficiency of ξˆn
+Proof. The summary statistics for the linear model are given by
+S(Yn) = (βˆn(Yn), δˆn(Yn), s2(Yn)) ∈ S = Rp × Rd × R≥0
+. The group action g : Yn → cYn + Xnα on Rn induces a group action on S as
+g : (βˆn, δˆn, s2
+n) → (cβˆn + α, cδˆn, c2s2
+n).
+Note our statistic ξˆn can be written as functions of summary statistics ξˆn(δˆn, s2
+n) = δˆn/
+p
+s2
+n,
+which is clearly invariant under the induced group. To see that this is maximal invariant,
+consider two elements of the summary statistic space (β1, δ1, s2
+1) and (β2, δ2, s2
+2) which have
+the same value of ξˆn
+ξˆn(δ1, s2
+1) = ξˆn(δ2, s2
+2)
+Then g(β1, δ1, s2
+1) = (β2, δ2, s2
+2) using α = β2 − cβ1 and c =
+p
+s2
+2/s2
+1, which implies both
+elements belong to the same orbit. Hence ξˆn is a maximal invariant for the action of the
+group on S.
+37
+
+
+En as a likelihood ratio of ξˆn
+Proof. From Theorem 3.4 it follows that En is equal to the likelihood ratio of the in
+variantly sufficient statistic ξˆn. To calculate the density of ξˆn under Q and P first ob
+serve that δˆn|δ, σ2 ∼ N (δ, σ2(Z ̃′
+nZ ̃n)−1). The Bayes marginal resulting from the prior
+δ|σ2 ∼ N (0, σ2Φ−1) is δˆn|σ2 ∼ N (0, σ2(Φ−1 + (Z ̃′
+nZ ̃n)−1)). Together this implies that
+ξˆn ∼ tνn(0, (Φ−1 + (Z ̃′
+nZ ̃n)−1)) where νn = n − p − d under the alternative Q. Similarly,
+ξˆn ∼ tνn(0, (Z ̃′
+nZ ̃n)−1) under P .
+Lemma B.2.
+(W ′W )−1 =
+
+ 
+X′X X′Z
+Z′X Z′Z
+
+ 
+−1
+=
+
+ 
+(X′X)−1 + (X′X)−1X′Z(Z ̃′Z ̃)−1Z′X(X′X)−1 −(X′X)−1X′ZZ ̃′Z ̃−1
+−Z ̃′Z ̃−1Z′X(X′X)−1 Z ̃′Z ̃−1
+
+
+.
+Proof. This follows immediately from block matrix inverse results and the observation
+that Z ̃′Z ̃ = (Z′Z − Z′X(X′X)−1X′Z) = Z′(I − X(X′X)−1X′)Z = Z′(I − PX )Z =
+Z′(PW − PX )Z.
+Lemma B.3. Suppose 1
+nW ′
+nWn converges almost surely to a positive definite matrix ΩW
+and E[εiwi] = 0, then γˆn
+a.s.
+→ γ and s2
+n
+a.s.
+→ σ2 and 1
+n Z ̃′
+nZ ̃n
+a.s.
+→ ΩZ ̃ = ΩZ − ΩZX Ω−1
+X ΩXZ ,
+where
+ΩW =
+
+ 
+ΩX ΩXZ
+ΩZX ΩZ
+
+ 
+Proof. 1
+nW ′
+nεn = 1
+n
+Pn
+i=1 w′
+iεi → 0 almost surely by the strong law because E[wiεi] = 0.
+By positive definiteness of Ωw and the continuous mapping theorem, (W ′
+nWn/n)−1 → Ω−1
+w
+38
+
+
+almost surely. By definition of the OLS estimator
+γˆ ols
+n = γ + (W ′
+nWn)−1nn−1W ′
+nε a.s.
+→ γ + Ω−1
+w 0 = γ.
+For strong consistency of σ2, σˆ2
+n = (ε′
+nεn − ε′
+nWn(W ′
+nWn)−1W ′
+nεn)/νn. Considering the
+last term,
+ε′
+nWn(W ′
+nWn)−1W ′
+nεn/νn = ε′
+nWnn−1n(W ′
+nWn)−1n−1W ′
+nεn(n/νn) a.s.
+→0
+while ε′
+nεn/νn
+a.s.
+→ σ2 by the strong law (E[ε2
+i ] = σ2). In addition
+1
+nW′
+nWn = 1
+n
+
+ 
+X′
+nXn X′
+nZn
+Z′
+nXn Z′
+nZn
+
+ 
+a.s.
+→
+
+ 
+ΩX ΩXZ
+ΩZX ΩZ
+
+
+ = Ωw.
+By the continuous mapping theorem ((1/n)W ′
+nWn)−1 a.s.
+→ Ω−1
+w , therefore 1
+n Z ̃′
+nZ ̃n
+a.s.
+→ ΩZ −
+ΩZX Ω−1
+X ΩXZ by lemma B.2
+Lemma B.4. For a matrix T with ∥T ∥ < 1
+(I − T )−1 =
+∞
+X
+k=0
+Tk
+Proof. This is simply the Neumann series, see Harville (2008, Theorem 18.2.16)
+Lemma B.5. For a matrix T with ∥T ∥ < 1
+log det(I − T ) = −
+∞
+X
+k=1
+1
+k Tr(T k)
+B.2 Proof of Theorem 4.2
+Proof. By assumption (1/n)Z ̃′
+nZ ̃n
+a.s.
+→ ΩZ ̃. Additionally E[εi|wi] = 0 is satisfied by the
+assumptions of the linear model, therefore ξn
+a.s.
+→ ξ by lemma B.3. First observe that
+1
+2n log det Φ → 0.
+39
+
+
+Similarly
+−1
+2n log det(Φ + Z ̃′
+nZ ̃n) = − 1
+2n log det n(Φ/n + Z ̃′
+nZ ̃n/n)
+=− 1
+2n log nd − 1
+2n log det(Φ/n + Z ̃′
+nZ ̃n/n)
+a.s.
+→ 0.
+To handle the second term of log En write
+log
+1 + ξˆ′
+n (Z ̃ ′
+n Z ̃n −Z ̃ ′
+n Z ̃n (Φ+Z ̃ ′
+n Z ̃n )−1 Z ̃ ′
+nZ ̃n)ξˆn νn
+1 + ξˆ′nZ ̃′nZ ̃nξˆn
+νn
+= log 1 + bn
+1 + an
+where bn = ξ′
+n(Φ−1 + (Z ̃′
+nZ ̃n)−1)−1ξn/νn and an = ξ′
+n Z ̃ ′
+nZ ̃nξn/νn. Writing
+(Φ−1 + (Z ̃′
+nZ ̃n)−1)−1 = Φ(I − Tn)−1,
+where Tn = −(Z ̃′
+nZ ̃n)−1Φ, we have for large n by lemmas B.3 and B.4
+bn = ξ′Φξ/νn + Oa.s.(n−2),
+an = ξ′ΩZ ̃ ξ + oa.s.(1),
+and therefore
+−1
+n
+νn + d
+2 log 1 + bn
+1 + an
+= −1
+2 log 1
+1 + ξ′ΩZ ̃ ξ + oa.s.(1)
+.
+B.3 Proof of Corollary 4.4
+Consider the regression Yn ∼ N (Xnβ + Znδ, σ2In) with the null hypothesis H0 : Eδ = 0
+for E ∈ Rk×d with k ≤ d. Let PE = E′(EE′)−1E be the projection onto the row space
+(orthogonal complement of the null space) of E. Let N be an orthonormal basis that spans
+the null space of E. Let PN = N N ′ denote the projection onto the nullspace of E, then
+PN = I − PE. Decompose δ = δ1 + δ2 where δ1 = PN δ and δ2 = PEδ. Therefore we can
+40
+
+
+write δ1 = N v1 and δ2 = E′v2 for some vectors v1 ∈ Rd−k and v2 = (EE′)−1Eδ ∈ Rk.
+Hence the outcome model can be written as
+Yn ∼ N (Xnβ + ZnN v1 + ZnE′v2, σ2In),
+which can be redefined as
+Yn ∼ N (X†
+nβ† + Z†
+nδ†, σ2In)
+where X†
+n = [Xn, ZnN ], Z†
+n = ZnE′, β† =
+
+ 
+β
+v1
+
+
+ ∈ Rp†, where p† = p + d − k, and
+δ† = v2 ∈ Rd† where d† = k. Additionally the implied prior on δ† ∼ N (0, σ2(Φ†)−1) where
+(Φ†)−1 = (EE′)−1EΦ−1E′(EE′)−1
+This is exactly the form of the linear model considered in theorem 4.1, and so Eδ = 0
+can be tested by using the e-variable for testing δ† = 0.
+En =
+s
+det(Φ)
+det(Φ + Z ̃†′
+n Z ̃†
+n)
+1 + δˆ†′
+n (Z ̃†′
+n Z ̃†
+n −Z ̃ †′
+n Z ̃†
+n (Φ+Z ̃ †′
+n Z ̃†
+n )−1 Z ̃ †′
+n Z ̃†
+n)δˆn s2n νn
+− νn+k
+2
+1 + δˆ†′
+n Z ̃†′
+n Z ̃†
+n δˆ†
+n s2n νn
+− νn+k
+2
+, (43)
+where we have substituted ξˆn = δˆn/
+p
+s2
+n. As before, testing a specific point null Eδ = e0
+can be achieved by replacing Yn by Yn − Zne0. However, we do not need to define X†
+n or
+Z†
+n explicitly, as we rewrite expressions in terms of the original parameterization. First,
+observe that s2
+n = Y′
+n(In−PW † )Yn
+n−p†−d† = Y ′
+n(I−PW )Yn
+n−p−d Secondly, Z ̃†
+n can be written in terms of Z ̃n
+and E as
+Z ̃†
+n = (In − PX†
+n )Z†
+n
+= (In − PX†
+n )ZnE′
+= (In − PXn)ZnE′
+= Z ̃nE′
+41
+
+
+where the second line follows because projecting ZnE′ onto C(X†
+n) is equivalent to pro
+jecting onto C(Xn) as the components ZnE′ (in the row space of E) and ZnN (in the
+null space of E) are orthogonal. Therefore by the Frisch-Waugh-Lovell theorem
+δˆ†
+n = (Z ̃†
+n
+′Z ̃†
+n)−1Z ̃†
+n
+′
+Yn = (EZ ̃n
+′Z ̃nE′)−1EZ ̃n
+′Yn = (EZ ̃n
+′ Z ̃n E ′ )−1 E Z ̃ ′
+nZ ̃nδˆn,
+and so
+δˆ†′
+n
+Z ̃†
+n
+′Z ̃†
+nδˆ†
+n =δˆnZ ̃′
+nZ ̃nE′(EZ ̃n
+′ Z ̃n E ′ )−1 E Z ̃ ′
+nZ ̃nδˆn
+=δˆnE′(E(Z ̃n
+′Z ̃n)−1E′)−1Eδˆn.
+B.4 Proof of Theorem 4.5
+The expected value of the log e-variable for testing a single coefficient can be written as
+E[log En] = 1
+2 log φ − 1
+2 log(φ + ∥Z ̃n∥2)
++ νn + 1
+2E
+"
+log 1 + ∥Z ̃n∥2
+2ξˆ2
+n
+νn
+!#
+− νn + 1
+2E
+"
+log 1 + φ
+φ + ∥Z ̃n∥2
+2
+∥Z ̃n∥2
+2ξˆ2
+n
+νn
+!#
+Defining Xn = φ
+φ+∥Z ̃n∥2
+2
+∥Z ̃n∥2
+2 ξˆ2
+n
+νn , the last expectation can be expressed as
+E [log(1 + Xn)] = E log(1 + Xn)1{Xn<1} + E log(1 + Xn)1{Xn≥1}
+=E
+"∞ X
+k=1
+(−1)k+1 Xk
+n
+k 1{Xn<1}
+#
++ E log(1 + Xn)1{Xn≥1}
+= E[Xn1{Xn<1}] + E
+"∞ X
+k=2
+(−1)k+1 Xk
+n
+k 1{Xn<1}
+#
++ E log(1 + Xn)1{Xn≥1}
+The second and third terms are sandwiched as
+−1
+2 E[X2
+n] ≤ E
+"∞ X
+k=2
+(−1)k+1 Xk
+n
+k 1{Xn<1}
+#
+≤0
+0 ≤ E log(1 + Xn)1{Xn≥1} ≤ E[X2
+n]
+42
+
+
+where the last line follows from log(1 + Xn)1{Xn≥1} ≤ Xn1{Xn≥1} ≤ X2
+n. Recall ∥Z ̃n∥2
+2ξˆ2
+n∼
+F (1, νn, ∥Z ̃n∥2
+2ξ⋆2). Let λF = ∥Z ̃n∥2
+2ξ⋆2. Then, the expectation of log(1 + Xn) can be
+written as
+E [log(1 + Xn)] = E[Xn1{Xn<1}] + O(n−2),
+as E[X2
+n] = φ
+φ+∥Z ̃n∥2
+2
+1 νn
+2
+E[(∥Z ̃n∥2
+2ξˆ2
+n)2] where E[(∥Z ̃n∥2
+2ξˆ2
+n)2] = ν2
+n(λ2
+F + 6λF + 4)/((νn −
+2)(νn − 4)). Moreover because E[Xn] = E[Xn1{Xn<1}] + E[Xn1{Xn≥1}] and E[Xn1{Xn≥1}] =
+O(n−2), we can write E[Xn1{Xn<1}] = E[Xn]+O(n−2). Substituting this into the expression
+for E[log En] and replacing Xn with its definition gives for the log e-variable becomes
+E[log En] = 1
+2 log φ − 1
+2 log(φ + ∥Z ̃n∥2)
++ νn + 1
+2E
+"
+log 1 + ∥Z ̃n∥2
+2ξˆ2
+n
+νn
+!#
+− νn + 1
+2
+φ
+φ + ∥Z ̃n∥2
+2
+1
+νn
+νn
+νn − 2 1 + ∥Z ̃n∥2
+2ξ⋆2 + O(n−2)
+The value φ⋆
+n that maximizes the leading order term is
+φ⋆
+n= 1
+νn+1 νn−2
+1 ∥Z ̃n∥2
+2
++ ξ⋆2 − 1
+∥Z ̃n∥2
+2
+As νn → ∞ and ∥Z ̃n∥2
+2 = Ω(n), limn→∞ φ⋆
+n = (ξ⋆)−2.
+B.5 Proof of Theorem 4.6
+Recall
+En =
+s
+det(gΩZ ̃ )
+det(gΩZ ̃ + Z ̃′
+nZ ̃n)
+1 + ξˆ′
+n (Z ̃ ′
+n Z ̃n −Z ̃ ′
+nZ ̃n(gΩZ ̃ +Z ̃′
+n Z ̃n )−1 Z ̃ ′
+nZ ̃n)ξˆn νn
+− νn+d
+2
+1 + ξˆ′nZ ̃′nZ ̃nξˆn
+νn
+− νn+d
+2
+,
+Gn = g
+g+n
+d
+2 1+ g
+g+n
+d
+νn Fn
+1+ d
+νn Fn
+!− νn+d
+2
+,
+where Fn = ξ′
+n Z ̃ ′
+nZ ̃nξn/d, νn = n − p − d. We would like to calculate the order of
+| log En − log Gn|. By assumption 1
+n Z ̃′
+nZ ̃n
+a.s.
+→ ΩZ ̃, which by lemma B.3 implies ξn → ξ and
+43
+
+
+d
+νn Fn → ξ′ΩZ ̃ ξ. Let Rn = ΩZ ̃ − 1
+n Z ̃′
+nZ ̃n, then by assumption Rn = oa.s.(1). Consider the
+determinant terms
+det gΩZ ̃
+det(gΩZ ̃ + Z ̃′
+n Z ̃ )
+= det gΩZ ̃
+det((g + n)ΩZ ̃ − nRn) = g
+g+n
+d1
+det I − n
+g+n Ω−1
+Z ̃ Rn
+.
+The difference determinant can then be written via lemma B.5 as
+1
+2 log det gΩZ ̃
+det(gΩZ ̃ + Z ̃′
+n Z ̃ )
+!
+=d
+2 log g
+g+n − 1
+2 log det I − n
+g + n Ω−1
+Z ̃ Rn
+=d
+2 log g
+g+n − 1
+2
+∞
+X
+k=1
+1
+k Tr n
+g + n Ω−1
+Z ̃ Rn
+k
+!
+Now consider the term
+bn = ξn(Z ̃′
+nZ ̃n − Z ̃′
+nZ ̃n(gΩZ ̃ + Z ̃′
+n Z ̃n )−1 Z ̃ ′
+nZ ̃n)ξn
+νn
+First observe that
+Z ̃ ′
+nZ ̃n(gΩZ ̃ + Z ̃′
+n Z ̃n )−1 Z ̃ ′
+nZ ̃n = Z ̃′
+nZ ̃n( g + n
+n
+Z ̃ ′
+nZ ̃n + gRn)−1Z ̃′
+nZ ̃n
+=n
+g + n (In − Tn)−1Z ̃′
+nZ ̃n
+=n
+g+n
+Z ̃ ′
+nZ ̃n + n
+g+n
+∞
+X
+k=1
+Tk
+n Z ̃′
+nZ ̃n
+where Tn = − gn
+g+n Rn(Z ̃′
+nZ ̃n)−1, and so bn can be written as
+bn = g
+g+n
+d
+νn
+Fn + n
+νn(g + n)
+∞
+X
+k=1
+ξ′
+nT k
+n Z ̃′
+nZ ̃nξn.
+It follows that
+log(1 + bn) = log(1 + g
+g+n
+d
+νn
+Fn)
++ log 1 + 1
+1+ g
+g+n
+d
+νn Fn
+n
+νn(g + n)
+∞
+X
+k=1
+ξ′
+nT k
+n Z ̃′
+nZ ̃nξn
+!
+The term (d/νn)Fn
+a.s.
+→ ξ′ΩZ ̃ξ, and so the term preceding the sum behaves like ∼ n−1
+− νn + d
+2 log(1 + bn) = − νn + d
+2 log(1 + g
+g+n
+d
+νn
+Fn)
+− νn + d
+2
+1
+1+ g
+g+n
+d
+νn Fn
+n
+νn(g + n)
+!
+gn
+g + nξ′
+nRnξn
++ Oa.s.
+Rn
+n
+44
+
+
+Therefore
+| log En − log Gn| = 1
+2
+n
+g + n Tr Ω−1
+Z ̃ Rn
+− νn + d
+2
+1
+1+ g
+g+n
+d
+νn Fn
+n
+νn(g + n)
+!
+gn
+g + nξ′
+nRnξn
++ Oa.s.
+Rn
+n
+=1
+2 Tr Ω−1
+Z ̃ Rn − g
+2 ξ′
+nRnξn + Oa.s.
+Rn
+n
+B.6 Proof of Proposition 4.7
+We will show that the (1, 1)-block of (Z ̃′Z ̃)−1 coincides with (Z⋆′
+1 Z⋆
+1 )−1.
+Proof. Z ̃ = (I − PX)Z = (I − PX)[Z1, Z2] = [Z ̃1, Z ̃2]. From the block matrix inverse and
+Schur complement formulas
+((Z ̃′Z ̃)−1)11 =(Z ̃′
+1Z ̃1 − Z ̃′
+1 Z ̃2 (Z ̃ ′
+2 Z ̃2 )−1 Z ̃ ′
+2Z ̃1)−1,
+=(Z ′
+1(I − PX − Z ̃2(Z ̃′
+2 Z ̃2 )−1 Z ̃ ′
+2)Z1)−1,
+=(Z ′
+1(I − PX − PZ ̃2)Z1)−1,
+=(Z ′
+1(I − P[X,Z2])Z1)−1,
+=(Z ′
+1(I − PX⋆)Z1)−1,
+=(Z ⋆′
+1 Z⋆
+1 )−1.
+B.7 Comparisons with Fixed-n Procedures
+In this section we contrast our anytime-valid procedure against the analogous fixed-n pro
+cedure under two different frequentist alternatives, and under the null hypothesis. We
+simulate independent outcomes from the following regression model.
+yi = 1 + x′
+iβ + Ziδ + εi
+45
+
+
+where Zi = (Ti − ρ) with Ti ∼ Bernoulli(ρ) and ρ = 0.5, β′ = (0, 1, 2), xi ∼ N (03, Σ) with
+Σij = 0.8|i−j|, and εi ∼ N (0, 1). Let Fn = ξˆ2
+n∥Z ̃n∥2
+2 = (δˆn/sn)2∥Z ̃n∥2
+2 ∼ f (1, νn, ∥Z ̃n∥2
+2ξ2)
+be the f -statistic for testing the univariate (d = 1) null hypothesis δ = 0. The α-level fixed
+n test rejects the null hypothesis when Fn > f 1−α
+1,νn , where f 1−α
+1,νn is the (1 − α)-quantile of
+the f (1, νn, 0) distribution. The sample size n⋆(ξMDE) required to achieve a power ≥ c for
+all ξ with |ξ| > ξMDE is determined by finding the smallest integer n satisfying P[F ξMDE
+n>
+f 1−α
+1,νn ] ≥ c, where F ξMDE
+n ∼ f (1, νn, ∥Z ̃n∥2
+2ξ2
+MDE). In this simulation the regressors are
+random, not fixed, so we use the approximation ∥Z ̃n∥2
+2 ≈ nρ(1 − ρ). Note that being
+able to specify an MDE implies some prior knowledge about the expected effect size or, at
+least, the size of a practically relevant effect. In order to provide a fair comparison, the
+same information should be input to the anytime-valid procedure, which is encoded by the
+mixture precision.
+To ensure that the anytime-valid procedure is well calibrated against the fixed-n pro
+cedure tuned to the MDE, we consider two strategies for choosing the hyperparameter g.
+The first approach chooses g to maximize the worst-case growth rate of the e-process as
+per theorem 4.5, which we denote gg(ξMDE) = 1/(ξ2
+MDEρ(1 − ρ)). The second approach
+minimizes the width of the confidence sequence, following the discussion in Section 4.3.1, at
+the fixed-n sample size n⋆(ξMDE), which we denote gw(n⋆(ξMDE)). For α = 0.01, c = 0.95
+and ξMDE = 0.2, we find n⋆(ξMDE) = 1785, gg(ξMDE) = 100, and gw(ξMDE) = 151.29.
+We perform 104 simulations and examine the stopping time distributions. We compare the
+proportion of nulls rejected by n⋆(ξMDE) and the average stopping times. We also remark
+that the anytime-valid procedure has power 1 (Robbins & Siegmund 1974) by theorem 4.2,
+in the sense that it eventually rejects the null, under the alternative, with probability 1.
+We recognize that practitioners may not want to run the procedure indefinitely. Instead,
+46
+
+
+we encourage practitioners to reason about the size of a practically meaningful effect and
+continue to monitor the confidence sequence. Once the confidence sequence becomes a suf
+ficiently small interval around zero such that all practically meaningful effects are excluded,
+then the experiment can be responsibly concluded.
+B.7.1 ξ = ξMDE
+This case is most favorable to the fixed-n test, corresponding to a scenario in which the
+effect size has been guessed exactly, using ξ = ξMDE. The stopping time distributions
+are visualized in Figure 3. At n⋆(ξMDE) = 1785 the fixed-n test, anytime-valid test with
+g = gg(ξMDE), and anytime-valid test with g = gw(n⋆(ξMDE)), reject 95.02%, 81.69%,
+and 81.68% of nulls respectively. The average stopping times with g = gg(ξMDE) and
+g = gw(n⋆(ξMDE)) are 1214.45 and 1236.03 respectively. In addition, the anytime-valid
+procedures rejected all nulls eventually. As expected, the tuning parameter gg(ξMDE) leads
+to a smaller average stopping time than gw(n⋆(ξMDE)) because of the optimality result in
+Theorem 4.5.
+B.7.2 ξ > ξMDE
+This case is more favorable to the anytime-valid test, corresponding to a scenario in which
+the effect size is larger than the MDE, ξ = 2ξMDE = 0.4, which occurs when the treatment
+is unexpectedly harmful or effective, and early stopping even more desirable. Note that
+the tuning parameter g is still configured against ξMDE, not the true ξ. Figure 4 shows
+the stopping time distributions for this case. By n⋆(ξMDE) = 1785, all procedures had
+rejected 100% of the nulls. The average stopping times for the anytime-valid test with
+g = gg(ξMDE) and g = gw(n⋆(ξMDE)) are 350.37 and 376.06 respectively. This simulation
+illustrates an important point that the average stopping time is dramatically less than
+47
+
+
+Figure 3: Stopping time distributions for the fixed-n analysis and the anytime-valid anal
+yses, with gg(ξMDE) and gw(n⋆(ξMDE)), when ξ = ξMDE = 0.2.
+n⋆(ξMDE) = 1785 when the effect size is under-estimated. This is critical for mitigating
+the risk of experimentation - the more harmful a treatment, the larger the effect size and
+the sooner the experiment can be stopped, preventing further harm to subsequent units.
+B.7.3 ξ = 0
+We now consider when the null hypothesis is true. Figure 5 shows the Type-I error increas
+ing with the sample size n toward the nominal α. At n⋆(ξMDE) = 1785 the fixed-n test,
+anytime-valid test with g = gg(ξMDE), and anytime-valid test with g = gw(n⋆(ξMDE)),
+reject 1.07%, 0.04%, and 0.03% of nulls respectively.
+48
+
+
+Figure 4: Stopping time distributions for the fixed-n analysis and the anytime-valid anal
+yses, with gg(ξMDE) and gw(n⋆(ξMDE)), when ξ = 2ξMDE = 0.4.
+Figure 5: Stopping time distributions for the fixed-n analysis and the anytime-valid anal
+yses, with gg(ξMDE) and gw(n⋆(ξMDE)), when ξ = 0.
+49
+
+
+C Proofs of Section 5
+C.1 Proof of Lemma 5.1
+Proof. Let
+En(μ) := e
+Pn
+i=1(GiΣ−1μ− 1
+2 μ′Σ−1μ) = e(GiΣ−1μ− 1
+2 μ′Σ−1μ)Mn−1(μ) (44)
+Taking the conditional expectation gives
+E[En(μ)|Fn−1] = E
+h
+eG′
+iΣ−1μ|Fn−1
+i
+e−μ′Σ−1μMn−1(μ) = Mn−1(μ) (45)
+where the last line follows from the moment generating function of a N (0, Σ) random
+vector. Hence, En(μ) is a nonnegative supermartingale. Define
+En :=
+Z
+En(μ)dF (μ) = g
+g+n
+d 2
+e1
+2
+n2
+g+n (G ̄nΣ−1G ̄n), (46)
+where G ̄ n = (1/n) P
+i Gi and F is a Gaussian measure with mean 0 and variance g−1Σ.
+Then by Fubini’s theorem
+E[En|Fn−1] = E[
+Z
+En(μ)dF (μ)|Fn−1] =
+Z
+E[En(μ)|Fn−1]dF (μ) =
+Z
+En−1(μ)dF (μ)
+= En−1
+hence En is a nonnegative supermartingale.
+C.2 Proof of Proposition 5.2
+We first restate the strong approximation result from Einmahl (1989) in the context of our
+problem.
+Lemma C.1 (Einmahl (1989)). Let (Xi)∞
+i=1 be an i.i.d. sequence of random vectors in Rk
+with E[X1] = 0, Cov(X1) = Σ ∈ Rk×k, and E ∥X1∥s ≤ ∞ for some s > 3. Then on
+50
+
+
+a sufficiently rich probability space there is a sequence (Gi)∞
+i=1 of i.i.d. Gaussian random
+vectors Gi ∼ N (0, Σ), such that
+n
+X
+i=1
+Xi −
+n
+X
+i=1
+Gi = Oa.s. nα (47)
+for some 0 < α < 1
+2.
+By assumption E[εiwi] = 0 and Σ = E[εiwiw′
+i]. The result therefore follows from the
+lemma C.1 by setting Xi = wi(yi − w′
+iγ) = wiεi.
+C.3 Proof of Proposition 5.3
+Proof. Write the OLS estimator as
+γˆn = 1
+n
+n
+X
+i=1
+wiw′
+i
+!−1
+1
+n
+n
+X
+i=1
+wiyi
+!
+.
+By the strong law 1
+n
+Pn
+i=1 wiyi
+a.s.
+→ E[wiyi] and with the addition of continuity of the
+inverse 1
+n
+Pn
+i=1 wiw′
+i
+−1 a.s.
+→ ΩW , hence γˆn
+a.s.
+→ γ = Ω−1
+W E[wiyi]. Define the true residual
+εi = yi − w′
+iγ and estimator εˆin = yi − w′
+iγˆn and write
+εˆin = εi + w′
+i(γ − γˆn).
+As E[∥wi∥] < ∞, ∥wi∥ is finite almost surely, therefore w′
+i(γ − γˆn) a.s.
+→ 0 and εˆin
+a.s.
+→ εi. The
+squared residual is
+εˆ2
+in = ε2
+i + 2εiw′
+i(γ − γˆn) + (w′
+i(γ − γˆn))2.
+Therefore
+ˆΣn = 1
+n
+n
+X
+i=1
+ε2
+i wiw′
+i +21
+n
+n
+X
+i=1
+εiwiw′
+iw′
+i(γ − γˆn) + 1
+n
+n
+X
+i=1
+(w′
+i(γ − γˆn))2wiw′
+i.
+Considering the second term
+∥1
+n
+n
+X
+i=1
+εiwiw′
+iw′
+i(γ − γˆn)∥ ≤ ∥γˆn − γ∥ 1
+n
+n
+X
+i=1
+|εi|∥wi∥3,
+51
+
+
+where 1
+n
+Pn
+i=1 |εi|∥wi∥3 a.s.
+→ E[|εi|∥wi∥3] < ∞ by the strong law, whereas ∥γˆn − γ∥ a.s.
+→ 0,
+hence 1
+n
+Pn
+i=1 εiwiw′
+iw′
+i(γ − γˆn) a.s.
+→ 0. Similarly
+∥1
+n
+n
+X
+i=1
+(w′
+i(γ − γˆn))2wiw′
+i∥ ≤ ∥γ − γˆn∥2 1
+n
+n
+X
+i=1
+∥wi∥4
+where 1
+n
+Pn
+i=1 ∥wi∥4 a.s.
+→ E[∥wi∥4] < ∞ by the strong law, hence
+1
+n
+n
+X
+i=1
+(w′
+i(γ − γˆn))2wiw′
+i
+a.s.
+→ 0.
+The second and third terms go to zero almost surely, whereas the first term
+1
+n
+n
+X
+i=1
+ε2
+i wiw′
+i
+a.s.
+→ Σ,
+hence ˆΣn
+a.s.
+→ Σ.
+C.4 Proof of Theorem 5.4
+We build up the proof in three steps
+Step 1: Strong Approximation of OLS Estimates
+From proposition 5.2 we have that Pn
+i=1 wiεi = Pn
+i=1 Gi + oa.s.(nα) for some 0 < α <
+1/2 where Gi
+ii∼d N (0, Σ). Under the assumption 1
+n (W ′
+nWn) a.s.
+→ ΩW we may write
+(W ′
+nWn)−1 = n−1Ω−1
+W + oa.s.(n−1). Consequently,
+γˆn − γ = (W ′
+nWn)−1
+n
+X
+i=1
+wiεi = 1
+n
+n
+X
+i=1
+Ω−1
+W Gi + Oa.s.(nα−1) + oa.s.(n−1)
+n
+X
+i=1
+Gi.
+The sum Pn
+i=1 Gi = Oa.s.(√n log log n) by the law of iterated logarithm which, when
+combined with the oa.s.(n−1) term, is larger than Oa.s.(nα−1). Hence,
+E(γˆn − γ) = 1
+n
+n
+X
+i=1
+G ̃ i + oa.s.
+r
+log log n
+n
+!
+,
+52
+
+
+where G ̃ i ∼ N (0, EΩ−1
+W ΣΩ−1
+W E′), This implies the quadratic form n(γˆn −γ)′E′Σ−1
+E E(γˆn −
+γ) = nG ̄ nΣ−1
+E G ̄ n + oa.s.(log log n), where ΣE = EΩ−1
+W ΣΩ−1
+W E′ and G ̄ n = (1/n) Pn
+i=1 G ̃ i.
+In other words, n(γˆn − γ)′E′Σ−1
+E E(γˆn − γ) can be approximated by a χ2
+r random variable
+with approximation error oa.s.(log log n).
+Step 2: An Asymptotic e-process
+Lemma C.2. Define,
+ES
+n := g
+g+n
+r 2
+e1
+2
+n
+g+n nG ̄ nΣ−1
+δ G ̄ n ,
+EG
+n := g
+g+n
+r 2
+e1
+2
+n
+g+n n(γˆn−γ)′E′Σ−1
+E E(γˆn−γ),
+(48)
+Then En is an asymptotic e-process with log ES
+n / log EG
+n → 1 almost surely.
+Proof. By lemma 5.1, ES
+n is a nonnegative supermartingale.
+log ES
+n
+log EG
+n
+=1+
+1 2
+n
+g+n oa.s.(log log n)
+EG
+n
+=1+
+1 2
+n
+g+n oa.s.(log log n)
+d
+2 log g
+g+n + 1
+2
+n
+g+n n(γˆn − γ)E′Σ−1
+E E(γˆn − γ)
+(49)
+The term 1
+2
+n
+g+n n(γˆn − γ)E′Σ−1
+E E(γˆn −γ) = Oa.s.(log log n) by the law of iterated logarithm
+whereas the term − d
+2 log(g+n) = O(log n). The denominator, therefore, grows more quickly
+in n and
+log ES
+n
+log EG
+n
+= 1 + oa.s.(1) (50)
+We may write ES
+n = EG
+n e1
+2
+n
+g+n rn where rn = oa.s.(log log n). Although e 1
+2
+n
+g+n rn grows
+with n, it does not grow fast enough to meaningfully affect the probability of EG
+n crossing
+α−1. To see this observe that
+P[∃n ∈ N : ES
+n ≥ α−1] = P[∃n ∈ N : EG
+n e1
+2
+n
+g+n rn ≥ α−1]
+= P ∃n ∈ N : (γˆn − γ)′E′Σ−1
+E E(γˆn − γ) ≥ 1
+n
+g+n
+n log 1
+α2
+g+n
+g
+r
+− rn
+n ≤ α.
+53
+
+
+The main boundary term
+bn := 1
+n
+g+n
+n log 1
+α2
+g+n
+g
+r
+= O log n
+n,
+whereas rn
+n = oa.s.
+log log n
+n which tends to zero faster than the main boundary term. This
+is aided by even smaller values of α which make the main boundary term relatively larger
+than rn/n.
+Step 3: Using a Plugin Estimator for ΣE
+By Step 1, the quadratic form n(γˆn − γ)′E′Σ−1
+E E(γˆn − γ) can be approximated as
+n(γˆn − γ)′E′Σ−1
+E E(γˆn − γ) = nG ̄ nΣ−1
+δ G ̄ n + oa.s.(log log n).
+By proposition 5.3, ˆΣE is a strongly consistent estimator of ΣE, and so we may write
+Σ−1
+E = ˆΣ−1
+E + oa.s.(1)Σ−1
+E.
+Substituting into the strong approximation gives
+n(δˆn − δ)′ ˆΣ−1
+δn (δˆn − δ) =n(γˆn − γ)′E′Σ−1
+E E(γˆn − γ) + oa.s.(1)n(γˆn − γ)′E′Σ−1
+E E(γˆn − γ)
+=nG ̄ nΣ−1
+δ G ̄ n + oa.s.(log log n) + oa.s.(1)n(γˆn − γ)′E′Σ−1
+E E(γˆn − γ)
+The quadratic form n(γˆn − γ)′E′Σ−1
+E E(γˆn − γ) = Oa.s.(log log n) by the law of the iterated
+logarithm, and so the last term is also oa.s.(log log n). Therefore
+n(γˆn − γ)′E′ ˆΣ−1
+E E(γˆn − γ) = n(γˆn − γ)′E′Σ−1
+E E(γˆn − γ) + rn
+where rn = oa.s.(log log n). The e-process using the plugin estimator can be written as
+Ep
+n := g
+g+n
+r 2
+e1
+2
+n
+g+n n(γˆn−γ)′E′ ˆΣ−1
+E E(γˆn−γ) = ES
+ne1
+2
+n
+g+n rn ,
+The quotient log Ep
+n/ log ES
+n → 1 almost surely by the same argument as lemma C.2,
+therefore En is an asymptotic e-process.
+54
+
+
+Step 4: Swap With Asymptotic “t” e-process
+Let Qn = n(γˆn − γ)′E′ ˆΣ−1
+E E(γˆn − γ) define
+En = g
+g+n
+r
+2 1+ g
+g+n
+r νn
+Qn r
+1+ r
+νn
+Qn r
+!− νn+r
+2
+,
+Ep
+n := g
+g+n
+r 2
+e1
+2
+n
+g+n Qn .
+The logarithmic difference is simply
+log En − log Ep
+n = − νn + r
+2 log
+1+ g
+g+n · Qn
+νn
+1 + Qn
+νn
+!
+−1
+2· n
+g + n Qn.
+Observe r
+νn
+Qn
+r = Qn
+νn
+a.s.
+→ 0. Let x = Qn
+νn and a = g
+g+n . Using the expansion log(1 + x) =
+x− 1
+2 x2 + o(x2), we have:
+log 1 + ax
+1 + x = log(1 + ax) − log(1 + x)
+= (a − 1)x − 1
+2 (a2 − 1)x2 + oa.s.(x2),
+as x a.s.
+→ 0. Hence,
+log
+1+ g
+g+n · Qn
+νn
+1 + Qn
+νn
+!
+=− n
+n+g
+Qn
+νn
++ Oa.s.
+Q2
+n ν2
+n
+,
+and
+− νn + r
+2 log
+1+ g
+g+n · Qn
+νn
+1 + Qn
+νn
+!
+= νn + r
+2
+n
+n+g
+Qn
+νn
++ Oa.s.
+Q2
+n
+νn
+,
+Plugging back in:
+log En − log Ep
+n=1
+2
+νn + r
+νn
+−1 n
+n + g Qn + Oa.s.
+Q2
+n
+νn
+,
+=r
+2
+n
+n+g
+Qn
+νn
++ Oa.s.
+Q2
+n
+νn
+,
+55
+
+
+and since Qn
+νn
+a.s.
+→ 0, we conclude
+log En = log Ep
+n + oa.s.(1).
+As neither log En nor log Ep
+n converge to zero, we have that En is an asymptotic e-process,
+log En
+log Ep
+n
+a.s.
+→ 1.
+C.5 Proof of Theorem 5.5
+Lemma C.3. (vλ − v1−λ) ≤ (1 − λ)(1 − v) for v ∈ (0, 1) and λ ∈ (0, 1)
+Proof. consider the function:
+f (v) = vλ − v1−λ − (1 − λ)(1 − v).
+We will show that f (v) ≤ 0 for all v ∈ (0, 1) and λ ∈ (0, 1). The boundaries of the
+functions are f (1) = 0 and f (0) = −(1 − λ) < 0. Clearly when λ = 0.5, we have
+f (v) = −0.5(1 − v) ≤ 0. The first and second derivatives are
+f ′(v) = λvλ−1 − (1 − λ)v−λ + (1 − λ),
+f ′′(v) = λ(1 − λ)(v−λ−1 − vλ−2)
+= λ(1 − λ)v−(λ+1)(1 − v2λ−1)
+When λ > 0.5, 2λ − 1 > 0 and f ′′(v) ≥ 0 for all v ∈ (0, 1) and therefore f (v) is strictly
+concave, decreasing from −(1 − λ) to a minimum on (0, 1) and then increasing toward 0,
+therefore f (v) ≤ 0 for all v. When λ < 0.5, 2λ − 1 > 0 and f ′′(v) ≤ 0 for all v ∈ (0, 1)
+and therefore f (v) is strictly convex - increasing from −(1 − λ) to 0 as v goes from 0 to 1,
+therefore f (v) ≤ 0 for all v.
+56
+
+
+C.5.1 Part 1:
+Proof. Let νn = n − k, m = νn + r and set
+u = α2
+rg
+n+g
+!r
+νn +r
+v= g
+n + g.
+Note v ∈ (0, 1) and u ∈ (0, v r
+νn+r ). When u ≤ v, we have that R(g, n, α) is infinite and
+R(g, n, α) ≥ RG(g, n, α) is satisfied. We now consider the case u ∈ (v, v r
+νn+r ), where
+R(g, n, α) = νn
+r
+1−u
+u − v,
+Note
+RG(g, n, α) = − νn + r
+r
+n+g
+n log u.
+Therefore the statement
+R(g, n, α) − RG(g, n, α) = νn
+r
+1−u
+u − v + νn + r
+r
+n+g
+n log u > 0,
+is equivalent to
+νn(1 − u)(1 − v) + (νn + r)(u − v) log u > 0.
+We prove this by considering the function
+F (b) := νn(1 − bw)(1 − v) + (νn + r)(bw − v) log bw,
+where w = v r
+νn+r and b ∈ (v νn
+νn+r , 1). In particular u > v implies α 2
+νn+r ∈ (v νn
+νn+r , 1). If we
+can show that F (b) > 0 for all b ∈ (v νn+r
+r , 1), then F (α 2
+νn+r ) > 0 which implies the result
+because u = α 2
+νn+r v r
+νn+r . First we observe that F (b) is strictly convex on (v νn+r
+r , 1)
+F ′′(b) = (νn + r) wb + v
+b2 > 0.
+57
+
+
+Second note that F (b) is strictly decreasing on (v νn+r
+r , 1), since
+F ′(b) = w −νn(1 − v) + (νn + r)(log(bw) + 1 − v
+bw )
+≤ w −νn(1 − v) + (νn + r)(bw − v
+bw )
+≤ w −νn(1 − v) + (νn + r)(w − v
+w)
+= w −νn(1 − v) + (νn + r)(vλ − v1−λ)
+≤ w (−νn(1 − v) + (νn + r)(1 − λ)(1 − v))
+= w (−νn(1 − v) + νn(1 − v))
+= 0,
+where λ = r
+νn+r and by using lemma C.3 to achieve the 5th line. Therefore F (b) achieves
+a minimum at the largest value of b, which is b = 1. Therefore F (b) ≥ F (1) which implies
+F (α 2
+νn+r ) ≥ 0. We now show that F (1) ≥ 0.
+F (1) = νn(1 − w)(1 − v) + (νn + r)(w − v) log w
+= (vλ − v) νn(1 − v) (1 − vλ)
+vλ − v + (νn + r)λ log v
+= (vλ − v)
+(νn + r) (1 − λ)(1 − v) (1 − vλ)
+vλ − v + λ log v
+≥ 0.
+58
+
+
+Proof of nli→m∞
+R(g,n,α)
+RG(g,n,α) = 1
+Proof. First we observe that RG(g, n, α) ∼ log n,
+RG(g, n, α) = g + n
+n log n + g + n
+n log 1 + g
+n α2
+rg
+,
+= g+n
+n log n − g + n
+n log(α 2
+r g) + g + n
+n log 1 + g
+n,
+= g+n
+n log n − g + n
+n log(α 2
+r g) + g + n
+n
+g
+n + O(n−2) ,
+= log n − log(α 2
+r g) + O log n
+n.
+To see R(g, n, α) ∼ log n, first write
+α2
+rg
+g+n
+!r
+νn +r
+=e
+r
+r+νn log α
+2
+rg g+n
+!
+,
+and consider the exponent. The first term
+r
+νn + r = r
+νn
+1
+1+ r
+νn
+=r
+νn
+1 + O(n−1) .
+The logarithmic term
+log α 2
+rg
+g+n
+!
+= log α 2
+r g − log n − log 1 + g
+n
+= log α 2
+r g − log n − O(n−1).
+Multiplying the two terms together we have
+r
+νn + r log α 2
+rg
+g+n
+!
+=r
+νn
+log α 2
+rg − r
+νn
+log n − O log(n)
+n2 ,
+which converges to zero as n → ∞. Therefore when we exponentiate this expression
+α
+2
+rg
+g+n
+!r
+νn +r
+=e
+r
+r+νn log α
+2
+rg g+n
+!
+=1+ r
+νn
+log α 2
+rg − r
+νn
+log n + O log(n)
+n2 .
+59
+
+
+Substituting back into the expansion for R(g, n, α) we have, after collecting terms,
+R(g, n, α) = log n − log(α 2
+r g) + O log(n)
+n.
+Therefore,
+nli→m∞
+R(g, n, α)
+RG(g, n, α) =
+log n − log(α 2
+r g) + O log(n)
+n
+log n − log(α 2
+r g) + O log(n)
+n
+= 1.
+D Proofs for Section 6
+D.1 Proof of Lemma 6.1
+The first order conditions satisfy
+
+         
+E[yi − α⋆ − (mi − μm)′ζ⋆ − (Ti − ρ)τ ⋆ − Ti(mi − μm)′η⋆]
+E[(mi − μm)(yi − α⋆ − (mi − μm)′ζ⋆ − (Ti − ρ)τ ⋆ − Ti(mi − μm)′η⋆)]
+E[(Ti − ρ)(yi − α⋆ − (mi − μm)′ζ⋆ − (Ti − ρ)τ ⋆ − Ti(mi − μm)′η⋆)]
+E[Ti(mi − μm)(yi − α⋆ − (mi − μm)′ζ⋆ − (Ti − ρ)τ ⋆ − Ti(mi − μm)′η⋆)]
+
+         
+=0
+These expressions simplify to
+
+         
+E[yi] − α⋆
+E[(mi − μm)yi] − Ωmζ⋆ − ρΩmη⋆
+E[(Ti − ρ)yi] − ρ(1 − ρ)τ ⋆
+E[Ti(mi − μm)yi] − ρΩmζ⋆ − ρΩmη⋆
+
+         
+=0
+Clearly α⋆ = E[yi] = ρE[yi(1)] + (1 − ρ)E[yi(0)] and τ ⋆ = E[yi(1)] − E[yi(0)]. Hence
+if the average treatment effect is zero, then τ ⋆ = 0. From the last element we have
+Ω−1
+m E[(mi − μm)yi(1)] = ζ⋆ + η⋆, and from the second line we have Ω−1
+m E[(mi − μm)yi] =
+60
+
+
+ζ⋆ + ρη⋆. Therefore
+η⋆ = (1 − ρ)−1Ω−1
+m (E[(mi − μm)yi(1)] − E[(mi − μm)yi])
+= Ω−1
+m (E[(mi − μm)yi(1)] − E[(mi − μm)yi(0)])
+ζ⋆ = Ω−1
+m E[(mi − μm)yi(0)]
+Observe that E[yi(1) − yi(0)|mi = m] = 0 for all m (no conditional average treatment
+effect) implies η⋆ = 0 because
+η⋆ = Ω−1
+m (E[(mi − μm)yi(1)] − E[(mi − μm)yi(0)])
+= Ω−1
+m (E[(mi − μm)E[yi(1) − yi(0)|mi]])
+=0
+D.2 Proof of Lemma 6.2
+E[wiεi] =
+E
+
+         
+
+         
+1
+mi − μm
+Ti − ρ
+Ti(mi − μm)
+
+         
+(yi − α⋆ − (mi − μm)′ζ⋆ − (Ti − ρ)τ ⋆ − Ti(mi − μm)′η⋆)
+
+         
+We show each element is zero, starting with the first.
+E[yi − α⋆ − (mi − μm)′ζ⋆ − (Ti − ρ)τ ⋆ − Ti(mi − μm)′η⋆)]
+= E[yi] − α⋆ − 0 − 0
+= ρE[yi(1)] + (1 − ρ)E[yi(0)] − α⋆ = 0
+Line 2 follows from E[Ti − ρ] = 0, E[mi − μm] = 0, and the final line from the definition
+of α⋆ in lemma 6.1.
+E[(mi − μm)(yi − α⋆ − (mi − μm)′ζ⋆ − (Ti − ρ)τ ⋆ − Ti(mi − μm)′η⋆)]
+= E[(mi − μm)yi] − 0 − Ωmζ⋆ − 0 − ρΩmη⋆
+=0
+61
+
+
+The first equality follows from E[(mi − μm)α⋆] = 0 and E[(mi − μm)(Ti − ρ)] = 0 by
+independence of Ti and mi. The last line follows from the definition of ζ⋆ and η⋆.
+E[(Ti − ρ)(yi − α⋆ − (mi − μm)′ζ⋆ − (Ti − ρ)τ ⋆ − Ti(mi − μm)′η⋆)]
+= E[(Ti − ρ)yi] − 0 − 0 − E[(Ti − ρ)2]τ ⋆ − 0
+= ρ(1 − ρ)E[yi(1)] − ρ(1 − ρ)E[yi(0)] − ρ(1 − ρ)τ ⋆
+=0
+The first line follows because E[(Ti − ρ)α⋆] = 0 and E[(mi − μm)(Ti − ρ)] = 0 by indepen
+dence of Ti and mi. The last line follows from the definition of τ ⋆.
+E[Ti(mi − μm)(yi − α⋆ − (mi − μm)′ζ⋆ − (Ti − ρ)τ ⋆ − Ti(mi − μm)′η⋆)]
+= ρE[(mi − μm)yi(1)] − 0 − ρΩmζ⋆ − 0 − ρΩmη⋆
+=0
+where the last line follows from the definitions of η⋆ and ζ⋆. Having established that this
+vector is zero mean, V[wi(yi − w′
+iγ⋆)] = E[(yi − w′
+i γ ⋆ )2 wi w′
+i] = E[E[(yi − w′
+i γ ⋆ )2 |wi ]wi w′
+i].
+The outer product of the vector wi is given by
+wiw′
+i=
+
+         
+1 (mi − μm)′ Ti − ρ Ti(mi − μm) ′
+mi − μm (mi − μm)(mi − μm)′ (Ti − ρ)(mi − μm) Ti(mi − μm)(mi − μm)′
+Ti − ρ (Ti − ρ)(mi − μm)′ (Ti − ρ)2 (Ti − ρ)Ti(mi − μm)′
+Ti(mi − μm) Ti(mi − μm)(mi − μm)′ Ti(mi − μm)(Ti − ρ) T 2
+i (mi − μm)(mi − μm)′
+
+         
+.
+Hence
+ΩW = E[wiw′
+i] =
+
+         
+1 0′ 0 0′
+0 Ωm 0 ρ Ωm
+0 0′ ρ(1 − ρ) 0′
+0 ρ Ωm 0 ρ Ωm
+
+         
+.
+62
+
+
+E Comparison with AIPW and Empirical Bernstein
+Confidence Sequences
+The AIPW write estimator, using a linear regression function, is identical the OLS estimator
+from the linear model. Specifically, consider the influence functions
+φi(m0, m1) = Zi − ρ
+ρ(1 − ρ) (Yi − mTi(Xi)) + m1(Xi) − m0(Xi),
+and write AIPW estimate of the average treatment effect using regression functions m0 and
+m1 as
+δˆAIP W
+n (m0, m1) = 1
+n
+n
+X
+i=1
+φi(m0, m1), (51)
+Suppose we fit a linear model such that ˆmnZi(xi) = β0 + x′
+iβˆn + Ziδˆn. Then the following
+equality holds between the OLS and AIPW estimators:
+δˆn = δˆAIP W
+n ( ˆm0
+n, ˆm1
+n).
+An important distinction, however, is that recent literature on anytime-valid inference
+uses a different sequential version of the AIPW estimator (Ham et al. 2022, Howard et al.
+2021). Given a sequence of observations (yi, Xi, Zi)∞
+i=1 we can define a new sequence of
+(φi)∞
+i=1 using the AIPW approach as:
+φi = Zi − ρ
+ρ(1 − ρ) (Yi − ˆmTi
+i (Xi)) + mˆ 1
+i (Xi) − ˆm0
+i (Xi)
+where ˆm0
+i and ˆm1
+i are regression functions trained on data up to—but not including—time
+i, ensuring measurability with respect to the filtration Fi−1. Under this construction we
+have E[φi|Fi−1] = E[yi|Zi = 1] − E[yi|Zi = 0]. This yields the sequential AIPW estimator:
+δˆSAIP W
+n =1
+n
+n
+X
+i=1
+φi( ˆm0
+i , ˆm1
+i ), (52)
+63
+
+
+where, in contrast to δˆAIP W
+n ( ˆm0
+n, ˆm1
+n), φi( ˆm0
+n, ˆm1
+n) have been replaced by φi( ˆm0
+i , ˆm1
+i ). In
+general, δˆSAIP W
+n ̸= δˆAIP W
+n ( ˆm0
+n, ˆm1
+n), even when both estimators are constructed from linear
+models. The strength of this approach is that is can accommodate nonlinear regression
+functions and varying propensities. A weakness is that is necessitates an online learning
+procedure for estimating m0 and m1, iterating through each outcome in sequence, which
+can be computationally intensive.
+In contrast, our approach allows the practitioner to compute a single OLS fit at time
+n and evaluate the corresponding e-process directly, without requiring sequential updates
+for each observation. This is especially advantageous in scenarios where only summary
+statistics (e.g., the point estimate and standard error) are available, such as in published
+regression tables. It also simplifies integration into existing software pipelines: users can
+apply our procedure using standard OLS output without additional model refitting or data
+iteration.
+The PlayDelay outcome in section 7 is bounded between 0 and 1, which enables the
+usage of the Empirical Bernstein confidence sequence for bounded outcomes by Howard
+et al. (2021). The AIPW-transformed outcomes φi are bounded between [−2, 2] due to the
+propensity score reweighting with ρ = 1/2. To configure the Empirical Bernstein confidence
+sequence, we use a scale of 4 and use the Gamma-Exponential conjugate mixture (Howard
+et al. 2021, Proposition 9) with tuning parameter 100 to provide an equitable comparison to
+the Gaussian mixture with precision 100, as suggested by Howard et al. (2021, Section 3.5).
+Figure 2b illustrates the average stopping time of the Empirical Bernstein procedure is
+much longer, which communicates that conservativeness is the price paid for nonasymptotic
+guarantees. Indeed, the bound on the outcomes, required by the Empirical Bernstein
+procedure, is very large due to the presence of extreme values in the PlayDelay data, which
+64
+
+
+translates to a very large stopping time.
+F Supplemental Figures
+Figure 6: Two hundred samples of mn from the linear model Yn = Xnβ + Znξσ + σεn
+where Xn and Zn are 5×3 and 5×1 matrices of standard normals respectively, β = (1, 2, 3)
+and σ = 1.5. (Left) The null hypothesis is true and mn is uniformly distributed over the
+unit circle. (Right) The alternative hypothesis is true and mn(Yn) has mean direction
+AnZn/∥AnZn∥2 indicated by the red arrow.
+65
+
+
+Figure 7: Empirical CDF’s of normalized Play Delay measurements for treatment and
+control groups
+Figure 8: Comparison of the functions R(g, n, α) and RG(g, n, α) from equations (23) for
+α = 0.05, r = k = 1, and g ∈ {1, 100, 1000}. There are three distinct features. Firstly,
+R(g, n, α) ≥ RG(g, n, α) for all n. Secondly, nli→m∞
+R(g,n,α)
+RG(g,n,α) = 1. Thirdly, R(g, n, α) is infinite
+for small n, whereas RG(g, n, α) is always finite.
+66
