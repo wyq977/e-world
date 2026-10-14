@@ -1,8 +1,8 @@
 ---
 slug: group-invariance-e-statistics
 title: Group invariance and the anytime-valid Hunt–Stein theorem
-sources: 8
-updated: 2026-10-12
+sources: 9
+updated: 2026-10-14
 ---
 
 # Group invariance and the anytime-valid Hunt–Stein theorem
@@ -21,6 +21,7 @@ For a testing problem invariant under a group G acting freely on data and parame
 - Test induction covers the log-optimal t-test as the induced test of a terminal test non-decreasing in the sufficient statistic [koningAnytimeValidityFree2026, Thm 3, Prop. 5].
 - Scale-invariant filtration σ(X_i/|X_1|): the right-Haar mixture over σ is exactly the density of the maximal-invariant reduction, so the scale-invariant likelihood ratio is a martingale there; Lai's flat mixture over θ is a nonintegrable extended supermartingale, the Gaussian mixture an integrable one with a closed-form sequence; 'mixture of ratios' over θ is an e-process for the whole point null, against Pérez-Ortiz et al.'s 'ratio of mixtures' with Dirac minimisers [wangAnytimevalidTtestsConfidence2023, Def. 4.2, Lemmas 4.4–4.5, Thms 4.1, 4.9, Remark III]. Compact-group invariance as a constraint-generated null: e-variables are 1 + f − f_π with Haar orbit averages, exchangeability via one transposition and one cyclic shift; contrast between a null closed under the action and each law invariant [larssonTestingHypothesesGenerated2025, Thms 5.5–5.6, Example 5.7].
 - The complementary problem, disjoint from the free-action setting: the null is that the law of Y is itself invariant under a compact group (exchangeability, sign symmetry, sphericity). Validity decomposes over orbits, so ε is an exact e-value iff E_G[ε(Gy)] = 1 for every y; every exact e-value is an orbit-normalised statistic T(y)/E_G[T(Gy)], with an exact Monte Carlo version for any number of Haar draws; the permutation test is the threshold special case; optimal on each orbit implies optimal under any monotone aggregation; utility-optimal e-values are (U′)^{−1}(λ_O dQ̄/dQ_a) with Q̄ = E_G[GQ] the group-averaged alternative, Neyman–Pearson utility recovering Lehmann–Stein and log utility giving dQ/dQ̄, so Q̄ is the RIPr onto invariant laws; for sign flips this is the symmetry numeraire 2q(Z)/(q(Z) + q(−Z)), for permutations against a Gaussian shift the softmax; e-processes are anytime valid iff dominated on every orbit by a uniform-orbit martingale, built by inducing Doob martingales orbit by orbit, with the orbit generally not measurable along the filtration; conditional e-values reduce to invariance under the stabiliser of the past, trivial for exchangeability with distinct values but full for within-batch exchangeability; inversion kernels (ranks, signs, y/‖y‖) impoverish the filtration to a single orbit; hot-hand data [koningMeasuringEvidenceExchangeability2023, Thms 1–8, Cors 1–5, Props 3–4, Secs 1.7, 6, 8.6–8.7, 9, Example 8].
+- Linear models: the composite null δ = 0 in y = Xβ + Zδ + ε is reduced by invariance under Y ↦ cY + Xα; likelihood ratios of invariant statistics are test martingales in the invariant filtration, Wijsman gives the right-Haar Bayes factor, and Stein's theorem allows the computation on the invariantly sufficient statistic ξ̂_n = δ̂_n/s_n (a ratio of two multivariate t densities) instead of the unit-sphere maximal invariant with its confluent-hypergeometric density [lindonAnytimeValidInferenceLinear2026, Lemmas 3.1, 3.3, Thm 3.4, Thm 4.1, Sec. 4.2].
 
 ## Variants and related concepts
 - [bayes-factor-e-variable](bayes-factor-e-variable.md), [reverse-information-projection](reverse-information-projection.md), [k-sample-and-contingency-table-e-values](k-sample-and-contingency-table-e-values.md).
@@ -33,6 +34,7 @@ For a testing problem invariant under a group G acting freely on data and parame
 - [koningAnytimeValidityFree2026](../sources/koningAnytimeValidityFree2026.md) — induced t-test.
 - [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md), [larssonTestingHypothesesGenerated2025](../sources/larssonTestingHypothesesGenerated2025.md) — scale invariance and constraint view.
 - [koningMeasuringEvidenceExchangeability2023](../sources/koningMeasuringEvidenceExchangeability2023.md) — invariance of the law itself, orbit e-values.
+- [lindonAnytimeValidInferenceLinear2026](../sources/lindonAnytimeValidInferenceLinear2026.md) — invariance reduction for linear models.
 
 ## Disagreements / open issues
 - Safe Testing cites this paper by arXiv numbering (Thm 4.2, Cor. 8.3, Prop. 4.4) which maps to Thm 2, Cor. 9, Thm 4 of the published version; the published text once says "Proposition 9" meaning Corollary 9 [perezortizEstatisticsGroupInvariance2024, Versions].

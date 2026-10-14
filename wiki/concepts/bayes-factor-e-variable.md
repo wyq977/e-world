@@ -1,8 +1,8 @@
 ---
 slug: bayes-factor-e-variable
 title: Bayes factors as e-variables, and the safe t-test
-sources: 16
-updated: 2026-10-12
+sources: 17
+updated: 2026-10-14
 ---
 
 # Bayes factors as e-variables, and the safe t-test
@@ -28,6 +28,7 @@ A Bayes factor with the null in the denominator is an [e-variable](e-variable.md
 - Savage–Dickey density ratios are e-posteriors; the two-point e-variable is Johnson's two-sided UMP Bayes factor at C = −log α; Berger–Brown–Wolpert conditional error probabilities are uniform-prior Bayes posteriors [grunwaldEposterior2023, eq. 7, Example 3, eq. 14]; generalized Bayes factor exp(ηδx − η²δ²/2) with η = 2 improves weak-signal multiple testing [vovkConfidenceDiscoveriesEvalues2023, App. D].
 - The JZS Bayes factor (Jeffreys prior on σ, Cauchy on effect) is the reciprocal of a Cauchy-mixed scale-invariant martingale, hence an anytime-valid p-value [wangAnytimevalidTtestsConfidence2023, Remark IV]. Harmonic-mean and product rules on the post-hoc p-scale [koningPosthocAlphaHypothesis2023, Props 2–3].
 - Savage–Dickey e-process with a default N(0, 10) mixing density as the running example of regularisation [martinRegularizedEprocessesAnytime2024, Secs 3.6, 4.6].
+- Anytime-valid F-test: the right-Haar Bayes factor with a Gaussian prior δ | σ² ~ N(0, σ²Φ⁻¹) is a test martingale, GROW and REGROW, with power one and growth ½ log(1 + ξ′Ω ξ); the Zellner g-prior, data-dependent through Z̃′Z̃/n, is a plug-in approximation that converts a classical F-statistic into an asymptotic e-process in closed form, marginalisation-consistent, with g tuned to the minimal detectable effect or to the confidence-sequence width at a target n; with d = 1 and no covariates it is the Gaussian-mixed scale-invariant t-martingale of Wang and Ramdas [lindonAnytimeValidInferenceLinear2026, Thms 4.1–4.2, 4.5–4.6, Prop. 4.7, eq. 18].
 
 ## Variants and related concepts
 - [gro-criterion](gro-criterion.md), [mixture-and-plug-in-methods](mixture-and-plug-in-methods.md).
@@ -44,6 +45,7 @@ A Bayes factor with the null in the denominator is an [e-variable](e-variable.md
 - [perezortizEstatisticsGroupInvariance2024](../sources/perezortizEstatisticsGroupInvariance2024.md), [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md), [vovkConfidenceDiscoveriesEvalues2023](../sources/vovkConfidenceDiscoveriesEvalues2023.md) — batch-3 contributions.
 - [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md), [koningPosthocAlphaHypothesis2023](../sources/koningPosthocAlphaHypothesis2023.md) — minor.
 - [martinRegularizedEprocessesAnytime2024](../sources/martinRegularizedEprocessesAnytime2024.md) — Savage–Dickey example.
+- [lindonAnytimeValidInferenceLinear2026](../sources/lindonAnytimeValidInferenceLinear2026.md) — anytime-valid F-test via Bayes factors.
 
 ## Disagreements / open issues
 - Cauchy (Jeffreys) prior case for the t-test is open [grunwaldSafeTesting2024, Sec. 4.3].

@@ -1,8 +1,8 @@
 ---
 slug: test-martingale
 title: Test martingale
-sources: 28
-updated: 2026-10-13
+sources: 29
+updated: 2026-10-14
 ---
 
 # Test martingale
@@ -28,6 +28,7 @@ A test martingale (or test supermartingale) is a nonnegative (super)martingale u
 - Universal representation: for any class S, test (super)martingales are exactly ∏(1 + λ_i Z_i) with Z_i ≥ −1 conditionally mean-zero (≤ 0) under all of S; 'E(X_t | F_{t−1}) = μ' is equivalent to the betting capital K_t(μ) being a test martingale for every predictable λ; supermartingale-based sequences are conservative because Ville is tight only for martingales [waudbysmithEstimatingMeansBounded2020, Props 2–3, Secs 3.3, 4.1]; see [betting-confidence-sequences](betting-confidence-sequences.md). Extended nonintegrable supermartingales such as Lai's flat-mixture t-statistic process, needing the extended Ville inequality and a starting time; scale-invariant likelihood ratios are martingales on the scale-invariant filtration [wangAnytimevalidTtestsConfidence2023, Sec. 2.3, Lemma 4.5, Thm 4.7]. Power-one test martingales from the span condition [zhangExistencePowerfulPvalues2023, Cor. 7.1]. Predictable conic-combination supermartingales for constraint nulls [larssonTestingHypothesesGenerated2025, Sec. 10].
 - Every test supermartingale is a product of sequential e-values E_t = M_t/M_{t−1} and conversely; from any anytime-valid test the martingale P(∃j : ψ_j = 1 | F_i)/P(∃j : ψ_j = 1) recovers or improves it [fischerAdmissibleOnlineClosed2024, eq. 10, Fact 1]. Running products of conditional e-values for invariance nulls reduce to invariance under the compact stabiliser of the past [koningMeasuringEvidenceExchangeability2023, Prop. 3, Lemma 4]. Sub-exponential supermartingale with predictable bounds for lower-bounded variables [choeComparingSequentialForecasters2021, Prop. 1]. Lag-1 products with adapted λ_t are nonnegative supermartingales under conditional forecast dominance; lag-h processes average h supermartingales in sub-filtrations [henziValidSequentialInference2021, Prop. 3.4].
 - Likelihood-ratio martingales R_t, Q_t, S_t by Fubini, a tempered-and-renormalised exact martingale whose normaliser is a Rényi divergence, sub-Gaussian and RIPr supermartingales under misspecification, and the warning that max_ν R_t(ν; θ*) is not a supermartingale [kirschnerConfidenceEstimationSequential2025, Thms 2–4, 11–13, Sec. 2.1.1].
+- Likelihood ratios of any sequence of invariant statistics are test martingales in the invariant filtration; asymptotic e-processes defined as processes dominated asymptotically by such martingales [lindonAnytimeValidInferenceLinear2026, Lemma 3.1, Sec. 2].
 
 ## Variants and related concepts
 - [villes-inequality](villes-inequality.md), the inequality that makes them tests.
@@ -48,6 +49,7 @@ A test martingale (or test supermartingale) is a nonnegative (super)martingale u
 - [ramdasTestingExchangeabilityForkconvexity2021](../sources/ramdasTestingExchangeabilityForkconvexity2021.md), [rufCompositeGeneralizationVille2022](../sources/rufCompositeGeneralizationVille2022.md), [waudbysmithEstimatingMeansBounded2020](../sources/waudbysmithEstimatingMeansBounded2020.md), [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md), [zhangExistencePowerfulPvalues2023](../sources/zhangExistencePowerfulPvalues2023.md), [larssonTestingHypothesesGenerated2025](../sources/larssonTestingHypothesesGenerated2025.md) — batch-4 contributions.
 - [fischerAdmissibleOnlineClosed2024](../sources/fischerAdmissibleOnlineClosed2024.md), [koningMeasuringEvidenceExchangeability2023](../sources/koningMeasuringEvidenceExchangeability2023.md), [choeComparingSequentialForecasters2021](../sources/choeComparingSequentialForecasters2021.md), [henziValidSequentialInference2021](../sources/henziValidSequentialInference2021.md) — batch-4 wave-2 contributions.
 - [kirschnerConfidenceEstimationSequential2025](../sources/kirschnerConfidenceEstimationSequential2025.md) — likelihood-ratio martingales for regression.
+- [lindonAnytimeValidInferenceLinear2026](../sources/lindonAnytimeValidInferenceLinear2026.md) — invariant-filtration martingales for regression.
 
 ## Disagreements / open issues
 - None recorded.

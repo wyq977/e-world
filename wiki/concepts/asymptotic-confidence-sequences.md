@@ -1,8 +1,8 @@
 ---
 slug: asymptotic-confidence-sequences
 title: Asymptotic confidence sequences and time-uniform central limit theory
-sources: 4
-updated: 2026-10-12
+sources: 5
+updated: 2026-10-14
 ---
 
 # Asymptotic confidence sequences and time-uniform central limit theory
@@ -18,6 +18,7 @@ A (1 − α)-asymptotic confidence sequence for (θ_t) is a sequence of interval
 - Causal inference: cross-fit AIPW with sequential sample splitting gives asymptotic sequences for the average treatment effect in randomised experiments with misspecified regressions and in observational studies under a product nuisance rate, plus a delta method; widths are sharp by admissibility of Robbins' mixture, unimprovable couplings and the semiparametric efficiency bound [waudbysmithTimeuniformCentralLimit2021, Thms 3.1–3.3, Cor. 3.4, App. B.9].
 - The scale-invariant t-test sequence has an asymptotic version over L² [wangAnytimevalidTtestsConfidence2023, Thm 4.12]; the asymptotic sequence is the input to e-BY in the Twitter A/B application [xuPostselectionInferenceEvalue2022, Sec. 7].
 - Elsewhere in the wiki this paper is named as the route to "approximate optional stopping" for e-variables that are not e-processes; it supplies confidence sequences and limiting type-I control, not e-processes, so that conjecture stays open [haoEValuesExponentialFamilies2025, Sec. 7; terschureAnytimevalidLogrankTest2024, Sec. 4].
+- Heteroskedasticity-robust asymptotic e-process for linear models: Robbins' χ² mixture supermartingale plus Einmahl's multivariate strong approximation plus a strongly consistent sandwich estimator give an asymptotic e-process of the same t-form; in a Bernoulli-randomised experiment the population OLS coefficient on the centred treatment is the ATE regardless of linearity, so this yields regression-adjusted anytime-valid tests and sequences for ATE and CATE; OLS equals AIPW with a linear regression function, so the Gaussian version is the Waudby-Smith et al. AIPW sequence without sample splitting; Netflix A/B test with skew about 100 and kurtosis about 13,000, where the t-sequence controls early false positives better than the Gaussian one [lindonAnytimeValidInferenceLinear2026, Lemma 5.1, Props 5.2–5.3, Thms 5.4–5.5, Lemma 6.1, App. E, Sec. 7].
 
 ## Variants and related concepts
 - [confidence-sets-and-sequences](confidence-sets-and-sequences.md), [optional-stopping](optional-stopping.md).
@@ -26,6 +27,7 @@ A (1 − α)-asymptotic confidence sequence for (θ_t) is a sequence of interval
 - [waudbysmithTimeuniformCentralLimit2021](../sources/waudbysmithTimeuniformCentralLimit2021.md) — primary source.
 - [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md), [xuPostselectionInferenceEvalue2022](../sources/xuPostselectionInferenceEvalue2022.md) — uses.
 - [ramdasGametheoreticStatisticsSafe2023](../sources/ramdasGametheoreticStatisticsSafe2023.md) — survey mention of asymptotic sequences.
+- [lindonAnytimeValidInferenceLinear2026](../sources/lindonAnytimeValidInferenceLinear2026.md) — linear-model asymptotic e-processes and regression adjustment.
 
 ## Disagreements / open issues
 - The survey reports the symmetric-difference definition (Def. B.6) rather than the main ratio definition [ramdasGametheoreticStatisticsSafe2023, Sec. 5.8].

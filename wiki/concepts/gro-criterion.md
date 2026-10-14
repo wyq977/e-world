@@ -1,8 +1,8 @@
 ---
 slug: gro-criterion
 title: GRO, GROW, REGROW and log-optimality
-sources: 29
-updated: 2026-10-12
+sources: 30
+updated: 2026-10-14
 ---
 
 # GRO, GROW, REGROW and log-optimality
@@ -33,6 +33,7 @@ Growth-rate optimality (GRO) chooses, for a given alternative Q, the [e-variable
 - 'Strongest e-statistic' E ≻ E′ iff ∫ln(E/E′) dP ≥ 0, the first strict extension of GRO to infinite e-power; the RIPr ratio is strongest [lardyReverseInformationProjections2023, Def. 2, Thm 5, Prop. 6]. Log-optimality survives exactness and pivotality constraints and is still a likelihood ratio, now against a probability measure; the Gibbs reduction is specific to the logarithm; pivotality costs e-power [zhangExistencePowerfulPvalues2023, Thm 4.2, Example 4.16].
 - GRO, GROW and REGROW as three instances of one utility–penalty objective inf_Q ∫U(h)dQ − χ(Q), with existence by compactness and uniqueness criteria; REGROW no longer needs bounded χ [larssonTestingHypothesesGenerated2025, Example 7.1, Thms 7.3–7.6]. GRAPA, the empirical maximiser of E[log(1 + λ(X − m)) | F_{t−1}], is 'a sequentially adaptive version of the worst-case GROW criterion' [waudbysmithEstimatingMeansBounded2020, App. B.2]. Log-optimal simple separable compound e-values are ratios of mixtures, with e-power at most the average per-hypothesis KL [ignatiadisAsymptoticCompoundEvalues2024, Thm 5.2]; see [approximate-and-asymptotic-e-values](approximate-and-asymptotic-e-values.md). Theorem 7 of the betting paper's admissible merging counterpart: weighted averaging is the only admissible merger of tests [wangOnlyAdmissibleWay2024, Remark 3].
 - Log-optimality placed in the expected-utility family with Neyman–Pearson (x ∧ 1/α) and power utilities; the log-optimal e-value against N(μι, I) is not uniformly log-optimal in μ, so there is no unique 'log-optimal t-test', unlike the NP test [koningMeasuringEvidenceExchangeability2023, Lemma 2, Thm 6, Cors 2–4, Example 5, Remark 14]. Hedged GRO e-values 1 − λ_i + λ_i E_i with an estimated null fraction are growth-optimal under a two-groups mixture, and raw GRO products collapse when many nulls are true [fischerAdmissibleOnlineClosed2024, Prop. 3.4]. Restricted GRO within 1 − λ + λe over λ ∈ [0, γ] equals the unrestricted GRO for mean, variance, VaR and ES–VaR backtests [wangEbacktesting2022, eq. 12, Remark 6, Sec. 6]. GROW e-values for forecast dominance are likelihood ratios against the score boundary κ_ν, and the growth-optimal alternative does not maximise finite-sample rejection probability [henziValidSequentialInference2021, Thms 3.2–3.3, Sec. 4.1]. First-order optimality of predictive-recursion e-processes relative to their mixture model [dixitAnytimeValidAsymptotically2023, Thm 2].
+- GROW and REGROW over the nuisance (β, σ) for the Bayesian and point alternatives in linear models via Pérez-Ortiz et al.; the mixture precision chosen to maximise worst-case growth over |ξ| ≥ ξ_MDE [lindonAnytimeValidInferenceLinear2026, Def. 3.2, Thm 4.1, eq. 13, Thm 4.5].
 
 ## Variants and related concepts
 - [numeraire](numeraire.md), the assumption-free form.
@@ -54,6 +55,7 @@ Growth-rate optimality (GRO) chooses, for a given alternative Q, the [e-variable
 - [koningAnytimeValidityFree2026](../sources/koningAnytimeValidityFree2026.md), [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md), [shinEdetectorsNonparametricFramework2023](../sources/shinEdetectorsNonparametricFramework2023.md), [sahaNonpartitionedEdetectorsNonparametric2026](../sources/sahaNonpartitionedEdetectorsNonparametric2026.md) — further uses.
 - [lardyReverseInformationProjections2023](../sources/lardyReverseInformationProjections2023.md), [zhangExistencePowerfulPvalues2023](../sources/zhangExistencePowerfulPvalues2023.md), [larssonTestingHypothesesGenerated2025](../sources/larssonTestingHypothesesGenerated2025.md), [waudbysmithEstimatingMeansBounded2020](../sources/waudbysmithEstimatingMeansBounded2020.md), [ignatiadisAsymptoticCompoundEvalues2024](../sources/ignatiadisAsymptoticCompoundEvalues2024.md), [wangOnlyAdmissibleWay2024](../sources/wangOnlyAdmissibleWay2024.md) — batch-4 contributions.
 - [koningMeasuringEvidenceExchangeability2023](../sources/koningMeasuringEvidenceExchangeability2023.md), [fischerAdmissibleOnlineClosed2024](../sources/fischerAdmissibleOnlineClosed2024.md), [wangEbacktesting2022](../sources/wangEbacktesting2022.md), [henziValidSequentialInference2021](../sources/henziValidSequentialInference2021.md), [dixitAnytimeValidAsymptotically2023](../sources/dixitAnytimeValidAsymptotically2023.md) — batch-4 wave-2 contributions.
+- [lindonAnytimeValidInferenceLinear2026](../sources/lindonAnytimeValidInferenceLinear2026.md) — GROW for linear models.
 
 ## Disagreements / open issues
 - Ly's discussion: GROW point priors leave δ+ inside anytime-valid confidence intervals forever; the authors answer with REGROW or nonlocal priors [grunwaldSafeTesting2024, discussion and reply].

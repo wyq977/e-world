@@ -70,3 +70,6 @@ Seven new concept pages: betting-confidence-sequences, asymptotic-confidence-seq
 
 ## [2026-10-13] ingest | kirschnerConfidenceEstimationSequential2025
 Confidence estimation via sequential likelihood mixing (Kirschner, Krause, Meziu, Mutny, arXiv 2502.14689v1). Requested by the human by citekey; in Zotero but not in the bib, so the entry was appended via scripts/bib_add.py with the Better BibTeX key Zotero reports. Nine concept pages updated; the proposed slug regret-to-confidence folded into confidence-sets-and-sequences.
+
+## [2026-10-14] ingest | lindonAnytimeValidInferenceLinear2026
+Anytime-valid inference in linear models (Lindon, Ham, Tingley, Bojinov, JASA 2026; author manuscript of 2025-09-10 from Zotero). Requested by the human; bib entry appended from Zotero metadata. Eight concept pages updated. The human also asked for goemanUniformImprovementBenjaminiHochberg2026 and xuBringingClosureFalse2025a: both already ingested, the latter under the key xuBringingClosureFalse2025 (same Zotero item; Zotero's key carries an "a" suffix).

@@ -11,6 +11,9 @@ suppress-bibliography: true
 * [@koningAnytimeValidityFree2026]
     Any level-α test at a fixed sample size N can be turned into an anytime-valid sequential test that coincides with it at time N, by tracking the null-conditional expectation of the test; a [0, 1]-valued test outcome then serves as a conditional significance level for whatever comes next, so optional stopping and continuation need no explicit e-values. [PDF](https://doi.org/10.1093/jrsssb/qkag050) [DOI](10.1093/jrsssb/qkag050)
 
+* [@lindonAnytimeValidInferenceLinear2026]
+    Sequential F- and t-tests and confidence sequences for linear-model coefficients, built as the likelihood ratio of the standardised OLS vector under a right-Haar prior on the nuisance parameters and a Gaussian (g-type) prior on the alternative, so that a classical F-statistic converts in closed form into a GROW/REGROW test martingale; then heteroskedasticity-robust asymptotic 't' e-processes and confidence sequences for regression-adjusted average treatment effects in randomised experiments, tested on Netflix A/B data. [arXiv](https://arxiv.org/abs/2210.08589) [DOI](10.1080/01621459.2026.2692052)
+
 ## 2025
 
 * [@larssonNumeraireEvariableReverse2025]
