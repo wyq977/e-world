@@ -1,0 +1,661 @@
+Probabilistic Foundation of Confirmatory Adaptive Designs
+Author(s): W. Brannath, G. Gutjahr and P. Bauer
+Source: Journal of the American Statistical Association, June 2012, Vol. 107, No. 498 (June 2012), pp. 824-832
+Published by: Taylor & Francis, Ltd. on behalf of the American Statistical Association
+Stable URL: https://www.jstor.org/stable/23239614
+JSTOR is a not-for-profit service that helps scholars, researchers, and students discover, use, and build upon a wide range of content in a trusted digital archive. We use information technology and tools to increase productivity and .facilitate new forms of scholarship. For more information about JSTOR, please contact support@jstor.org
+Your use of the JSTOR archive indicates your acceptance of the Terms & Conditions of Use, available at https://about.jstor.org/terms
+Taylor & Francis, Ltd. and American Statistical Association are collaborating with JSTOR to digitize, preserve
+and extend access to Journal of the American Statistical Association
+This content downloaded from 192.16.197.194 on Thu, 05 Nov 2026 09:43:32 UTC All use subject to https://about.jstor.org/terms
+
+
+Probabilistic Foundation of Confirmatory
+Adaptive Designs
+W. Brannath, G. Gutjahr, and P. Bauer
+Adaptive designs allow the investigator of a confirmatory trial to react to unforeseen developments by changing the design. This broad flexibility comes at the price of a complex statistical model where important components, such as the adaptation rule, remain unspecified. It has thus been doubted whether Type I error control can be guaranteed in general adaptive designs. This criticism is fully justified as long as the probabilistic framework on which an adaptive design is based remains vague and implicit. Therefore, an indispensable step lies in the clarification of the probabilistic fundamentals of adaptive testing. We demonstrate that the two main principles of adaptive designs, namely the conditional Type I error rate and the conditional invariance principle, will provide Type I error rate control, if the conditional distribution of the second-stage data, given the first-stage data, can be described in terms of a regression model. A similar assumption is required for regression analysis where the distribution of the covariates is a nuisance parameter and the model needs to be identifiable independently from the covariate distribution. We further show that under the assumption of a regression model, the events of an arbitrary adaptive design can be embedded into a formal probability space without the need of posing any restrictions on the adaptation rule. As a consequence of our results, artificial constraints that had to be imposed on the investigator only for mathematical tractability of the model are no longer
+necessary.
+KEY WORDS: Confirmatory clinical trial; Conditional error function; Conditional power; Conditional rejection probability; Combination test; Sample size reassessment.
+1. INTRODUCTION
+Completely prespecifymg all aspects of a confirmatory trial is desirable but not always possible. Frequently, ethical or eco
+nomical considerations demand modification of design char
+acteristics, such as sample sizes, study doses, endpoints, and follow-up times, after reviewing interim results from a running trial. Bauer (1989) introduced the name adaptive design to de scribe such data-dependent selection of the final design of a trial
+during an interim analysis.
+Conceptually, a confirmatory trial with adaptive design con sists of two stages: the design of the first stage is fixed, while the
+design of the second stage can be changed (or chosen) based on results from an interim analysis performed at the end of the first
+stage. Two approaches have been suggested to control the Type I error rate in a confirmatory adaptive trial: on the one hand, the
+conditional Type I error principle of Proschan and Hunsberger (1995) and Müller and Schäfer (2001, 2004), and on the other
+hand, the conditional invariance principle (Brannath, König, and Bauer 2007), a special case of which are combination tests
+(Bauer 1989; Bauer and Köhne 1994; Brannath, Posch, and Bauer 2002).
+Although both approaches are intuitively convincing, their
+general validity has been doubted for two reasons. The first con cern points to the technical issue that with both principles, the re
+jection regions are defined via conditional probabilities. To give
+conditional probabilities a clear meaning, we need to choose a
+version and, in general, there exist uncountably many different versions. In Section 3, we will present an example which shows
+that without fixing the version in advance, the application of the
+conditional Type I error rate or the conditional invariance princi
+ple permits arbitrary Type I error inflations. Although the choice of a version is relevant for any type of adaptations, it appears
+most relevant for adaptations that influence the correlation (or
+common distribution) between the first- and the second-stage
+data. An illustrative theoretical example of this type will be
+given in Section 3. Other examples are trials with survival data,
+where sample sizes or event numbers are changed (Schäfer and Müller 2001; Bauer and Posch 2004; Wassmer 2006), oncol
+ogy trials with data-dependent subgroup enrichment (Brannath et al. 2009), and designs with repeated measurements (Yin and Shen 2005; Götte, Hommel, and Faldum 2009). In these cases, additional assumptions are required to permit the determination
+of a unique and valid version for the conditional distribution of
+the second-stage data, which applies for any (unknown) adapta tion rule. The second concern points to a more fundamental and
+completely unresolved issue: it is not clear whether any adaptive
+trial can be modeled on a probability space.
+Regarding the first-mentioned concern, Liu, Proschan, and
+Pledger (2002) and Liu and Pledger (2006) showed Type I er ror control under the assumption that the adaptive trial can be modeled on a probability space and the design is selected by a
+measurable rule from a set that is at most countable. Further
+more, Liu, Proschan, and Pledger (2002) and Liu and Pledger (2006) considered a somewhat stronger formulation of the con
+ditional Type I error rate principle than usually imposed. We will see that the stronger formulation does not cover impor
+tant applications. We will furthermore illustrate by a counterex
+ample that the more common (weaker) principle requires that
+with each adaptation, a uniquely prespecified version for con ditional probabilities is associated. Otherwise, arbitrary Type
+W. Brannath, Competence Center for Clinical Trials, Faculty of Mathemat ics and Computer Sciences, University of Bremen, 28359 Bremen, Germany (E-mail: brannath@math.uni-bremen.de). G. Gutjahr, Competence Center for Clinical Trials, Faculty of Mathematics and Computer Sciences, Univer sity of Bremen, 28359 Bremen, Germany (E-mail: georg.gutjahr@math.uni bremen.de). P. Bauer, Section of Medical Statistics, Center for Medical Statis tics, Informatics, and Intelligent Systems, Medical University of Vienna, A 1090 Vienna, Austria (E-mail: peter.bauer@meduniwien.ac.at). This work was supported by the Austrian Science Fund projects P18698-N15 and P21763.
+© 2012 American Statistical Association Journal of the American Statistical Association June 2012, Vol. 107, No. 498, Theory and Methods DOI: 10.1080/01621459.2012.682540
+824
+This content downloaded from 192.16.197.194 on Thu, 05 Nov 2026 09:43:32 UTC All use subject to https://about.jstor.org/terms
+
+
+Brannath, Gutjahr, and Bauer: Probabilistic Foundation of Confirmatory Adaptive Designs 825
+I error rate inflations are possible even with finitely many
+adaptations. Regarding the second-mentioned concern, the current situa
+tion is even more alarming. So far, no solution has been proposed
+for the fundamental problem of guaranteeing the existence of a
+probability space underlying an adaptive trial. A well-defined
+probabilistic model of an adaptive experiment is a necessary
+prerequisite to defining concepts, such as Type I error rate, in a
+meaningful way. In this article, we provide solutions to both problems. First, we show that the ambiguity of versions is also a problem in
+conventional regression analysis, where the regression model must be identifiable from the observed covariate information
+and be independent from the unknown covariate's range and
+distribution. The common solution to the problem in regression
+analysis, which consists of a regression model that imposes more
+structure on the data than imposed by any probability model, does then also provide a solution to the conditional Type I er
+ror rate and the conditional invariance principle. A regression
+model is a structural (or physical) random model that allows us
+to determine a unique (conditional) distribution of the response
+variable for any given covariate information. In a regression
+model, the covariate information is considered as parameter and
+not primarily as a random variable. This avoids any ambiguity
+of versions. For adaptive designs, we need to have a regression
+model that specifies the distribution of the second-stage data,
+given the interim data and the second-stage design. A regres sion model specifies a unique and generally valid version for
+all required conditional probabilities and thereby avoids any data-driven choice of versions. Of course, our regression model must specify the correct conditional distributions under the null
+hypothesis independently from unknown features, such as the investigator's choice for interim outcomes different from the
+observed one.
+With regard to the second problem, namely the existence of
+a probability model, we show that under the knowledge of the
+correct regression model, the outcome space of any (suitably
+conducted) confirmatory adaptive trial can be embedded into a
+probability space in which Type I error control can be rigorously verified. Embedding into a probability space means to find a
+suitable family of subsets of the outcome space (or an extension
+thereof) to which we can assign overall probabilities in a way that correctly represents the underlying regression model (and
+can be extended to a a-algebra and a probability measure). Type I error rate control at level a is then verified if we can show that
+the rejection region of the adaptive test is contained in a set to
+which we have assigned a probability less than or equal to a.
+Note that we need not assign a probability to the rejection region itself (which may be impossible); however, we need to find a
+larger set that contains the rejection region and has probability < a. We shall see that countability of the set of possible designs or measurability of the rule that selects the final design is not
+required for this step. In essence, we show that adaptive designs require no more assumptions than other standard statistical test
+designs.
+The article is organized as follows. Section 2 describes in
+detail the two main inferential principles of adaptive designs,
+assuming—as in Liu, Proschan, and Pledger (2002)—that the trial can be modeled on a probability space and the adaptation
+rule is measurable. Section 3 gives a counterexample (with only two adaptation options) that illustrates the need for a unique and universal version for the conditional probabilities used in the two inferential principles of adaptive designs. In Section 4, we discuss the assumptions made and the solution provided by
+Liu, Proschan, and Pledger (2002). In Section 5, we illustrate
+that similar assumptions are required for regression analysis where inference is conditional on the covariates and the con
+clusions should be independent from the covariate distribution.
+This will lead us to distinguish between regression and proba
+bility models and the conclusion that regression models impose
+more structure than probability models. In Section 6, we finally
+show that regression models also allow us to construct an over
+all probability space for arbitrary adaptation rules, and thereby provide a means to rigorously justifying Type I error rate control in adaptive designs without imposing any countability or mea surability assumption on the adaptation rule. A final discussion of our findings is given in Section 7.
+2. INFERENTIAL PRINCIPLES FOR ADAPTIVE DESIGNS
+In this section, we describe the two main principles of sta
+tistical inference for confirmatory adaptive experiments. To this end, we assume that the outcomes can be described by an over
+all probability space (Í2, T. P) under the null hypothesis Hq. With a probability space at hand, the interim data, that is, data from the first stage, are represented by an n-dimensional random
+vector X = (Xi,..., Xn). Formally, X is a measurable function from (£2, T) to (R", £>„), where R" is the «-dimensional real
+space and B„ is its Borel a-algebra. We denote by G(x) the multivariate distribution function of X.
+The set of all possible designs for the second stage, called
+the design space, is written as D. We start by assuming, as
+in Liu, Proschan, and Pledger (2002), that D is a measurable
+space with a a-algebra V. The choice of the design d e D, in dependence of the interim data and information from out
+side the trial, is completely left to the investigator. The design d
+specifies all essential features of the second-stage sampling pro
+cess (sample sizes, inclusion/exclusion criteria, etc.) as well as
+the statistical test applied to the second-stage data. To describe
+this choice in a well-posed formal model, an unknown function
+y : R" —> D is used, which assigns, to each interim outcome x,
+a design d — y(x). The function y is called the adaptation rule.
+In this section, we restrict our attention (as in Liu, Proschan, and
+Pledger 2002) to rules y : R" —> D that are measurable. This
+and the assumption that D is a measurable space will be relaxed
+in Section 6. In practice, the adaptation rule can also depend on external information that is independent from the trial data. The addition of external information to the probability model is described briefly in remark (4) of Section 6.1 and in detail in
+the Appendix. We will now give a description of the two inferential prin
+ciples for adaptive designs. To apply the conditional Type 1 error principle, we first prespecify a level a e [0,1] and a measurable conditional error function A : R" —> [0, 1], with /R„ A(x)dG(x) = a. Given the observed x e R'\ we choose for
+d = y(x) a rejection region Rj e T with the property
+P(RytoIX = X) < A(x). (2.1)
+This content downloaded from 192.16.197.194 on Thu, 05 Nov 2026 09:43:32 UTC All use subject to https://about.jstor.org/terms
+
+
+826
+Note that condition (2.1) requires the choice of a version for
+the conditional expectation. We consider only trials where we
+follow this rule at every interim sample point x and refer to the
+resulting property as condition (2.1).
+We assume m this section that R = {{d, œ) : d e D, a) e
+Rd} D X £2 is measurable with respect to the product a
+algebra V x T. In this case, the rejection region Ry = {&) e
+Í2 : (û e Ry\x(o>)}\ Q ^ resulting from the adaptation rule y is ^"-measurable for every measurable adaptation rule y (arbitrary
+y will be allowed in Section 6.1). Note that RY and i?y(x) are
+usually not identical because the second-stage design d = y(x) is considered fixed in Ry(X), whereas it is data dependent in
+RY (namely depends on X(&>)). Nevertheless, we typically ex pect that P(Ry) = /R„ P(RY\X = x)dG(x) = fRn P(Ry(x) |X =
+x)dG(x) < jR„ A(x)dG(x) = a and thereby the overall Type I
+error rate < a. We will see in the next section that the latter
+conclusion may be wrong without specific assumptions on the versions used for P(Ry(X)\X = x) when compared with A(x).
+Next, we descnbe the approach when, instead of the condi tional Type I error principle, the conditional invariance prin
+ciple is applied. First, prespecify a combination test decision
+function i/r: R" X [0, 1] -> {0, 1}, which is measurable in both
+arguments and nonincreasing in the second argument, and for which fRn fg tHx, u)du dG(x) = a. (If X represents the values
+of a univariate p-value, then \ji should also be nonincreasing in the first argument.) With the conditional invariance princi
+ple, we choose with d = y(x) a second-stage p-value function Pd : £2—> [0, 1] so that the conditional distribution of p¿, given
+X = X, is stochastically larger than or equal to the uniform dis
+tribution, that is,
+P(Py(x) < u\X = X) < u, for all u e [0, 1] . (2.2)
+We assume that this principle is applied at all interim sample
+points when referring to condition (2.2). It is important to note that condition (2.2) requires the choice of a version for the
+conditional distribution of py(S).
+Assuming that (d, co) h> p¿{cú) is measurable with respect to
+V X T, we obtain that thep-value pY : co i-> pY\x(oi)\(oJ) result ing from the rule y is measurable for any measurable adapta
+tion rule y. Note again the difference between pY(X), where the
+second-stage design y(x) is fixed, and pY, where the second
+stage design depends on the first-stage data X(oj). As before, we typically expect from (2.2) that P(py < m]X = x) < u for all u e [0, 1], almost surely. This seems to imply Ep{x¡f(X, py)\ <
+jR„ f(x,u)dudG(x) = a and thereby overall Type I error
+rate control.
+In the next section, we illustrate by a counterexample that (2.1) and (2.2) can fail to imply Type I error rate control at level a. The reason for this failure is the indefiniteness of the
+conditional probabilities.
+3. A COUNTEREXAMPLE
+The following counterexample illustrates limitations of the conditional Type I error rate and the conditional invariance principle even if D is finite. Consider a trial where the first-stage
+data are summarized by a standard normally distributed random
+variable X. Suppose X as a first-stage z-score. The second-stage data Y are also summarized by a standard normally distributed
+Journal of the American Statistical Association, June 2012
+random variable. We assume that (X, Y) is bivariate normal. At
+the interim analysis, we choose among two different second
+stage designs D = {do, d\} whereby X and Y are uncorrelated
+under design do (p¡¡0 = 0) and positively correlated under design d\ with a known correlation > 0. Such a situation could
+occur (at least asymptotically) if, for instance, the time point for assessment of the main outcome variable is changed at the
+interim analysis from a short time point (do) to a long time point
+(d\ ). In this case, the long-term outcome may not yet be assessed for all interim patients at the interim analysis and would then be
+part of the second-stage data. This produces a correlation be
+tween the first- and the second-stage data when switching to the
+long-term outcome. We should mention that such a switch re
+quires closed testing, because it is accompanied with a change in the null hypothesis (Hommel 2001). Closed testing would then
+demand (among other requirements) a valid level a test for the
+null hypothesis with the long-term outcome. We focus here on this test.
+For the discussion of the conditional error rate principle,
+we consider the constant conditional error function A(x) = a
+and the rejection region Rd = {Y > za] for both, d — d0 and d = d\, where za is the (1 — a)-quantile of the standard normal
+distribution. To make (2.1) meaningful, we need to choose a version of the conditional probability P(Rd\X = x). Such
+a version is any Borel measurable function nd : R —»■ [0, 1]
+such that fE TT¿(x)dG{x) = P(E fl Rd) for all E e B, where
+B is the Borel a-algebra of R. For d = do, the constant
+function Jtd(x) = 1 — <£>(za) — a would be a version. Here, $ is the standard normal distribution function. Obviously, (2.1) is satisfied with this version when y(x) = do- Note that we
+can also modify 7T¿0(x) on any set N e B with probability fNdG(x) = 0, and still have a version for P(Rd„\X = x).
+Similarly, ndl(x) = 1 - d>{(z„ 
+xpdl)/J1
+- p\} and any modification of this function on a null set iV e B is a version
+of P(Rd, \X ~ x) under design d\. Therefore, a version is
+also 7Tjx{x)=a IfjceATj + fl - <?{(za 
+xpdl)/j
+1
+p^}]t{x<¿N} for any null set N e B, where l(xejVi denotes the indicator
+function of the set {x G A'}. Assume that y(x) = d\. Choosing a null set N that contains x (e.g., N = {X — x}) and using
+the version :r¿ , we conclude that P(Rdl\X = x) = a. This
+seems to lead to (2.1) and thereby overall Type I error rate
+control. However, when y(x) = t¡x<Zajdo + t[x>z¡l}di, then
+P(Rr) = Pdo(X < Zc, Y > Za) + Pdl(X> Za, Y > Za) = (1 a)a + Pd,(X>Za:Y>Za)>(l — oc)oc+a2 = a by Slepian's inequality. What is the reason for the failure of condition (2.1) in this
+example? The reason is the data-driven choice of the version
+for P(Rd, I^ = x). Of course, choosing N to contain x
+after observing x and defining (x') = A(x') for all x' e N
+allow us to conclude (2.1) for arbitrary R(¡1 (even for R,¡t = £2). But how can we avoid a data-driven choice of the version? If
+Y~l{d\) is known and has positive probability, then we can re
+quire that the same version is used for all x e y ~1 (¿/1 ). However,
+knowledge of y ~1 (d\ ) requires knowledge of the adaptation rule
+y. If y ~x(d\ ) itself is a null set (which typically occurs if D is
+a continuum), then the problem is even more severe. In this
+case, the version for the conditional probability is completely
+undefined for all x e y
+'
+Ud] ), and hence can be any function.
+This content downloaded from 192.16.197.194 on Thu, 05 Nov 2026 09:43:32 UTC All use subject to https://about.jstor.org/terms
+
+
+Brannath, üutjahr, and Bauer: Probabilistic Foundation ot Confirmatory Adaptive Designs 827
+See Proschan and Presnell (1998) tor a related discussion and
+for examples in more conventional statistical settings, where the
+ambiguity of versions can also lead to unexpected and erroneous
+conclusions.
+Une reieree argued that the example is not a real counterex
+ample, since the conclusion P(Rdl\X = x) = a is not a valid
+mathematical statement. Of course, it is the result of a faulty use
+of the conditional expectation caused by a data-driven choice
+of the version. The crucial point to be noted is that without a
+prespecified or canonical version, it is impossible to identify this faulty application since there is no version with which we (and
+statisticians of regulatory agencies) can compare the actually chosen version.
+iñe dithculty in identifying a unique version in adaptive de signs seems to be largely unnoticed. While Müller and Schäfer
+(2004, p. 2502) mentioned the need of a prespecified ver
+sion for the conditional expectation, they failed to meet this need in section 3.1 of their article when discussing the case
+of stochastically independent data from the two parts of the study. This is illustrated by counterexample 12 in Liu, Proschan, and Pledger (2002). The definition (and identification) of a ver
+sion requires the knowledge of the overall probability space; however, this space is, in general, unknown with an unknown
+adaptation rule. In our example, the most natural version is
+Kd(x) = 1 — ^{(Za — xpd)/J\ — Pj}. But what assumptions lead to this n¿{x) and imply that jtY(x)(x) is a version of
+P(RY\X = x) for any adaptation rule y ? It is clear that ad
+ditional assumptions are required to guarantee existence and
+identifi ability of a unique and universal version.
+lhe same counterexample applies to the conditional in variance principle if we choose for both d e{do,di] the second-stage p-value pd — I — 4>(T). Verification of (2.2) now requires a version for the conditional distribution function of Y,
+given X for each design d. Such a version is a function (x. y) Fx,d(y) € [0, 1] such that y i-> Fx¿(y) is a distribution function
+for all x e R, x Fxrj(y) is Borel measurable for any given
+y e R, and fE fB dFx¡d(y)dG(x) = P(X e E, Y e B) for all
+B, E e B. If we choose for d\ a version of the form
+F^dSy) = + <î>{(y 
+xpdl)/y/T
+- p\}t{x<tN}
+with N e B such that jA, dG(x ') = 0, and we let N contain
+the observed interim outcome x, then we could conclude that
+P(pdl < u\X =x) = P(Y >zu\X = x)=l - Fx\(zu) = 1
+4>(za) = mfor all m g [0, 1]. This seems to imply condition (2.2)
+ilso for y(x) = d\. However, the combination test decision
+function pa) = t[Pd<a], together with the adaptation
+rule y(x) = l{x<Za}do + t{X>Za)d\, leads to the same rejection region as in the above example, which, as we have observed,
+has Type I error rate larger than a. Hence, also the conditional
+invariance principle requires additional assumptions. We will see m Section 5 that a similar problem occurs in
+regression analysis. The problem is generally relevant also for :onventional conditional tests for which related investigations were made earlier by Bahadur and Bickel (1968) and Perlman
+md Wichura (1975). Conventional conditional tests are formally similar to adaptive designs with a known adaptation rule and a
+well-defined overall probability space for the outcomes. Hence, Bahadur and Bickel (1968) and Perlman and Wichura (1975)
+provided solutions that cannot be directly applied to adaptive designs with an unknown adaptation rule.
+4. THE SOLUTION IN LIU, PROSCHAN, AND PLEDGER (2002)
+Before we present our solution, we comment on the solution
+of Liu, Proschan, and Pledger (2002), which assumed that the adaptation space D is countable and that for all d e D with
+P{y~\d)} > 0
+P(Rd |X = x') < A fx'), for almost all x' e y (d). (4.1)
+With these assumptions, there is no need to prespecify and use a unique version of P(-|X — x) since (4.1) is valid for either all
+or none of the versions. Note that in the counterexample of the
+previous section, condition (4.1) is violated for d = d\ and any version of F( |X = x); however, the weaker condition (2.1) can
+be met by a data-driven choice of the version.
+Besides the drawback that condition (4.1) requires count
+ability of D (see, e.g., counterexample 12 in Liu, Proschan, and Pledger 2002), there are additional problems with this assumption. One problem is that its verification requires the
+knowledge of the set y~l(d), which is unknown, with an un known adaptation rule. This issue can be resolved by assuming
+P(Rd |X = x') < A(x') for all x' e R" up to a single null set N. However, this—and in general, also condition (4.1)—excludes
+important examples. Assume, for instance, that in a trial with
+the (usual) z-test, the experimenter [or Data and Safety Monitor ing Board (DSMB)] observes a promising result at an interim
+analysis, but nevertheless wishes to increase the sample size,
+say, because of emerging safety issues or simply to increase the
+overall power. In this case, it may easily be that the usual z-test
+with an increased sample size has a smaller conditional Type I
+error rate than the z-test with a preplanned sample size. This is
+true for the observed interim sample point x but not for almost
+all x' ^ x. However, the action satisfies the weaker condition
+nd(x) < A(x) for the observed interim sample point x. Can we
+use the classical z-test after increasing the sample size?
+Situations such as the above have been considered in Chen,
+DeMets, and Lan (2004), Brannath, König, and Bauer (2007),
+Gao, Ware, and Mehta (2008), and Mehta and Pocock (2011).
+[n these articles, condition (2.1) or similar properties were used to verify Type I error rate control. We will show in this article
+that under a very natural additional assumption (introduced in the next section), condition (2.1) is indeed sufficient for a jus
+tification of the intended sample size increase and the use of 7-test.
+5. REGRESSIONMODELS
+As mentioned betöre, we can identify for regression analysis, where the covariate distribution is usually unknown and treated
+is a nuisance parameter, a problem that is similar to the one illustrated for adaptive designs in the last section.
+D.1 Conditional Inference in Regression Analysis
+To illustrate the problem, let x and z be the observations
+two covariates and e be a standard normally distributed
+random variable representing the error term. Further, let Y =
+[x + z)t[x=z} + f • Note that this regression model specifies the
+This content downloaded from 192.16.197.194 on Thu, 05 Nov 2026 09:43:32 UTC All use subject to https://about.jstor.org/terms
+
+
+828 Journal of the American Statistical Association, June 2012
+distribution function Fxz(y) oí Y tor any values x, z or the co
+variates, and should be understood in this sense. Assume now
+that X and z are realizations of random variables X and Z. If
+X = Z with probability 0, then Y = e, almost surely, and Y is
+stochastically independent from X and Z. However, if X = Z with positive probability (e.g., with probability 1), then the con ditional mean of Y, given X = x and Z = z, depends on x and z.
+This is unfortunate, because in regression analysis, we are used to making no assumption on the distribution of the covariates X and Z for inference on the conditional distribution of Y, given
+X = x and Z = z. However, in this example, the conditional distribution depends on the distribution of (X, Z). Note that the
+problem occurs independently from the range of X and Z, which
+could be uncountable or countable.
+The solution to this problem is given by the regression model
+Y = (x + z)t[x=z} + € itself. As mentioned before, the regres sion model specifies the distribution function FXtZ(y) of Y for
+every possible value of x and z. Hence, in the regression model,
+the quantities x,z are considered parameters rather than real izations of random variables. The distribution functions Fx z(y )
+must follow from a physical or structural random model that
+allows us to correctly and unambiguously specify each distri bution of Y. Knowing FXtZ for all (x, z), we obtain the correct conditional distribution of Y, given X — x and Z — z for any distribution of (X, Z).
+The above example also illustrates that a single probability
+model (Q, T, P) for Y, X, and Z is generally insufficient to
+correctly deduce the regression model. Indeed, if the probabil ity model is such that P(X = Z) = 0, then the two regression
+models Y = e and Y = (x + z)t{x=z] + ? result in the same
+common distribution of (Y, X, Z). Hence, the given probabil
+ity model would fail to distinguish between the two regression
+models. However, if P(X — Z) > 0, the two models have to be
+distinguished. With a regression model, we specify more than a single probability model (£2, T, P), namely we implicitly spec ify a probability model for any given bivariate distribution of
+(X, Z). In other words, a regression model specifies the con ditional distribution of a response variable independently from
+any specific common probability model. Therefore, it imposes more structure on the data than any given probability model for
+(F, X, Z).
+5.2 Regression Independence and Dependence
+Following the above line oí arguments, the regression model assumption that the conditional distribution of F, given (X, Z) =
+(jc, z),is independent from (x, z), that is, is the same for all (x, z),
+and is stronger than the assumption of stochastic independence. The latter refers to a single probability model, whereas the for mer refers to an infinite number of probability models. To make
+this difference transparent, we will call the former stronger type
+of independence as "regression independence" and the latter weaker one as "stochastic independence." In the case where, as
+in F = (x + z)l{x=z) + e, the conditional distribution of F de
+pends on x and z, we speak of "regression dependence." Note that
+regression dependence can be "invisible" in terms of stochastic
+dependence, as in our example for P(X — Z) = 0.
+Regression dependence also provides a way to clarity the de
+ficiency in the counterexample from Section 3. The assumption
+that (X, y) is multivariate normal with a known correlation p¿
+is too weak to justify Type I error rate control. Instead, we need
+to impose a regression model such as Y = pdx + J \ — pje, where e is standard normally distributed for all x e R.
+This implies that Y is regression independent from x for
+d — do (since pda = 0), and regression dependent on x for
+d = d\ (since pdl > 0). Overall, Y is regression dependent on x and d with the unique conditional distribution function
+FXid(y) = ${()>- xpd)/^ 1 - p]} for any x and d. Assuming
+and using this conditional distribution function in (2.1) and (2.2), we immediately observe that R¿ = {F > za] and pd = 1 — <î)(Tj violate (2.1) and (2.2), respectively.
+5.3 Post Hoc Covariate Transformations
+Besides the above identification problem, we are often faced,
+in applications of regression analysis, with the difficulty that covariates are modified post hoc (e.g., transformed by nonlinear
+functions or categorized into groups, or several covariates are
+combined to fewer covariates) based on the observed covariate
+information in a way that has not been foreseen in advance. In
+these cases, the existence of an overall probability space appears
+similarly in question as for adaptive designs. We show in the next section that if we follow the conditional
+Type I error rate or the conditional invariance principle, and we
+know the correct regression model (under the null hypothesis),
+then we can construct a probability space on which Type I er
+ror rate control is rigorously justified even when the adaptation space is uncountable or the adaptation rule is nonmeasurable.
+Similar arguments could be applied to the F- or f-tests in re
+gression analysis with post hoc covariate transformations. The
+details on regression analysis are not presented here but are obvious from the following section.
+5. TYPE I ERHÖH KAI h UON I HUL IN ADAH I IVfc DESIGNS WITH VALID REGRESSION MODELS
+Regression models allow us to justiry lype l error rate control
+in adaptive designs without the assumption of a countable or
+measurable adaptation space D. In more detail, we assume that
+we have a model that correctly specifies the distribution of the
+second-stage data Fx ¿ in dependence of the interim data x and
+the second-stage design d for all x and d. Knowing the correct
+regression model for the data, we have a uniquely determined conditional distribution of the second-stage data, given the in
+terim data x and the second-stage design d whatever adaptation rule we use. As illustrated in the previous section, this imposes more structure on the data than a probability model.
+An example where the assumption or a correct regression
+model appears fully justified is the case where the data observed before the interim analysis and the data observed afterward are
+from independent cohorts of patients. In this case, the distri
+bution of the second-stage data (or a parametric or nonpara
+metric family of distributions) is unambiguously determined by the sampling scheme of the second-stage design d. Given the second-stage design d, this distribution is independent from x and hence known for all x and not only up to a set of probability
+0. If parts of the first- and second-stage data can be from the
+same patients (as in the counterexample or in survival trials),
+This content downloaded from 192.16.197.194 on Thu, 05 Nov 2026 09:43:32 UTC All use subject to https://about.jstor.org/terms
+
+
+Brannath, Gutjahr, and Bauer: Probabilistic Foundation of Confirmatory Adaptive Designs
+regression modeling may rely on less natural assumptions, namely that, within a patient, the distribution of the second-stage
+data, given the first-stage data, can be unambiguously deduced for all interim outcomes in terms of a regression model. Specifi
+cation of the common distribution of first- and second-stage data
+of a patient (which corresponds to a single probability model)
+is in general a too weak assumption. We show in Section 6.1 how Type I error rate control of the
+conditional Type I error rate principle can be rigorously justified under a valid regression model. Justification of the conditional invariance principle is discussed afterward. In this section, we
+will make no assumptions on D and the adaptation rule, neither that y is measurable nor that D is countable or a measurable
+space. We show that even without these assumptions, the adap
+tive trial outcomes can be embedded into a probability space on
+which Type I error rate control is rigorously justified.
+6.1 Justification of the Conditional Error Rate Principle
+We assume, as in Section 2, that the interim data are repre
+sented by an «-dimensional random vector X = (X\,..., Xn), with the known distribution function G(x) under Hq. This is an
+unproblematic assumption, since the design of the first stage is fixed and not changed during the trial. Furthermore, we assume that under Hq the conditional distribution Fx¡c¡ of the
+second-stage data, given the interim data x and the second
+stage design d, is well known from a regression model, although
+the adaptation rule y, and thereby the overall outcome space,
+is unknown. We refer to the previous section for a justification
+of this assumption.
+Given the unknown adaptation rule y, the outcome space of the adaptive trial can formally be written as £2= {(x, y) : x € R", ye where x is the real vector of the interim
+data and y is the vector of the second-stage data whose dimen
+sion md depends on the chosen second-stage design d = y(x). According to the conditional error rate principle, we fix a mea surable conditional error function A : R" -»• [0, 1] such that fR„ A(x)dG(x) = a. We further choose for all x e X and d e D
+a rejection region RX)d e Bmj such that jrx,d = fRxj dFxJ(y) <
+A(x). Here, Bm¡¡ is the Borel-u-algebra of Rmd.
+Recall that in Section 2, we assumed (as in Liu, Proschan,
+and Pledger 2002) for each d e D an overall rejection region
+Rd Q whereas now, we assume for each x e R" and d & D a
+second-stage region Rxd e Bmd. The latter assumption is more general and much more natural, because at the interim analysis,
+we specify only for the observed x and d the set of y for which
+we will reject Hq, and for x' ^ x the rejection region remains
+unspecified. Note that with the (unknown) adaptation rule y, the overall rejection region of the adaptive experiment can formally be written as Ry = {(x, y) : y e Rx,y(x)}. We show next that under the above assumptions, the sample space of the adaptive trial can be embedded into an overall prob
+ability space that is consistent with the regression model, and for which we can verify Type I error rate control. Let us assume at first that =
+fRx f dFX)y(X)(y) = A(x) for all x e R", that
+is, the conditional levels A(x) are exhausted by Rx,y(x) at each
+interim sample point x. Then, we can assign the overall prob
+ability /R„ 7rXty(X)dG(x) = fRn A(x)dG(x) = a to the rejection region RY. Hence, we can endow the sample space Q with the or
+algebra J7 — {^2, Ry,íl \ Rr,0], where 0 denotes the empty
+set. Since the events from T have probabilities 1, a, 1 — a, and 0,
+respectively, we obtain a well-defined overall probability space (Q, T, P) on which the rejection region Ry has probability a.
+In the general case where Ttx,Y(x) 5 A(x) for all x e R" and
+y is not measurable, we cannot always assign a probability to
+RY, because JTXjy(X) may not be Borel measurable in x and so the
+integral fR„ nXy(X)dG(x) may not exist. However, we can extend
+the outcome space and enlarge each rejection region Rx,j by tossing a biased coin such that the new rejection regions exhaust
+the conditional levels A(x). Details are given in the Appendix.
+As before, we can then assign probability a to the enlarged
+rejection region and endow the extended sample space by the
+a-algebra generated by this region. This shows that, following the conditional Type I error rate principle, we reject not more
+often than in an extended experiment, where rejection occurs
+with probability a. We consider this as a sufficiently rigorous justification of Type I error rate control with the conditional Type I error rate principle.
+Remarks:
+(1) The same construction principle can be applied to justify Type I error rate control of the F- or r-tests in regression
+analysis with unscheduled post hoc covariate transforma tions. To this end, the transformations must be done inde pendently from the response variable Y (e.g., in a blinded
+data review) because response-dependent covariate trans formations may alter the conditional distributions in an
+uncontrolled manner.
+(2) Interim outcomes can be represented in the overall
+outcome space Q by the projection map X : (x, y) e
+Í2 h> x e R°, and we can enlarge the cr-algebra T such
+that X is measurable. To illustrate this, let us assume again that — A(x) for all x e R". We enrich T by
+the sets generated by X. This means that we take as en
+riched ct-algebra the system a{T, Q), where Q contains
+the sets {X € E] for E e Bn. We can further extend
+the probability measure P to these events by defin
+ing P({X g E] n Ry) = fE A(x)dG(x) and P({X e
+E} \ Ry) = fE{ 1 - A{x)}dG(x) for all E e Bn. This
+makes X a random variable on (Í2, T, P) with P(X e
+E) = fE A(x)dG(x) + fE{ 1 - A(x)}JG(x) = fE dG(x)
+for all E e Bn, whereas RY remains to have probability
+P(RY) = P({X e R"} n Ry) = /R„ A(x)dG(x) = a. In
+the case where nx í¡ < A(x) is possible, the a-algebra and probability measure of the biased coin tosses'
+enlarged outcome space can similarly be extended. (3) Our construction of the overall probability space (¡3, T, P) is based on the unknown adaptation rule y,
+which implies that (Q, T, P) will, in general, not be known. This does not cause any problem, since the
+implementation of the design and adaptive test does not require the knowledge of the full space (£2, T, P), and
+for a theoretical justification of the Type I error rate,
+we only need to know that such a probability space
+exists (and do not need to know how it actually looks).
+Nevertheless, one may remain feeling uncomfortable, as our construction seems to imply that the probability
+This content downloaded from 192.16.197.194 on Thu, 05 Nov 2026 09:43:32 UTC All use subject to https://about.jstor.org/terms
+
+
+Journal of the American Statistical Association, June 2012
+space and conditional probabilities are defined only after
+observing the interim data.
+This is, of course, not the case since the probability space itself is independent from what interim data x and adap tation y(x) are sampled in the trial. Readers that are not
+convinced by this argument are referred to the Appendix
+where we outline an alternative construction of (£2, J7, P)
+that is completely independent from y. (4) The adaptations can also depend on external information
+that is regression independent from the first-stage data,
+if the second-stage data are regression dependent from the interim data and the external information. The
+important point is that the conditional error function
+is predefined and does not depend on the external information that arise during the trial. An inclusion of external information in the overall probability model is
+possible because after exhaustion of the conditional error
+rates, the overall rejection probability can be determined exclusively by the first-stage data and the conditional error function (see the Appendix).
+6.2 Justification of Conditional Invariance Principle
+We now turn to the rigorous justification of the conditional
+invariance principle under the same assumptions as in Sec tion 6.1. According to the conditional invariance principle, we
+choose for all x e R" and d e D, a measurable p-value function
+Px,d ■Rm¿ —> [0, 1] such that
+The function Hx¡d(u) is the conditional distribution function of
+pxj under the regression model Fx j. Note that (6.1) is stronger than the assumption that the conditional distribution of px¡c¡ is stochastically larger than or equal to the uniform distribution
+on [0, 1], The latter assumption determines an upper bound for the conditional distribution function Hx e¡ only up to a set of
+probability 0, whereas (6.1) applies to all x G R".
+Let us assume at first that HXtí¡{u) — u for all x g R" and d G D. This means that pxj is uniformly distributed for all
+x g R". Let pY (x, y) = px,y(*)(y) be the ¿»-value function on Í2, which results from pxj and the adaptation rule y. We can define in line with the conditional distributions of pxj for each E G Bn
+and m G [0,1], the probability
+These probabilities can be extended to a probability measure
+on the a-algebra T generated by X and py. We thereby obtain a probability model (£2, T, P) in which py is stochastically independent from X and uniformly distributed. Hence, we get
+Ep[\j/(X, pY)} — fg / i¡rix, u)dG(x)du = a for the combina tion test decision function \[rin Section 2.
+Let us now turn to the case where //x,y(x)(«) can be strictly
+smaller than u. In this case, x HXtY(X)(u) may be not mea
+surable, and hence, we cannot easily assign an overall proba bility to the events {pY < u). We assume here that Hxj(u) is
+continuous in u for all x g R", d e D, and u e [0, 1], which
+for all u G [0, 1] and xgR". (6.1)
+P(xeE, pY <u)= / HXty(X){u) dG(x) = u / dG(x).
+Je 1 —' Je
+implies that pY has a continuous conditional distribution under
+the regression model. The general case requires an extension
+of the outcome space (as in the previous section) and is con sidered in the Appendix. Since Hx<Y(X){u) is continuous in u, the statistic q = HXiY(X)(pY) satisfies FXtY(X)(q < u) = u for all u e [0,1] and x 6 R". Furthermore, according to (6.1), we have
+q = HXty(X)(py) < pY at all sample points, and hence, rejection with ifr(X, pv) always implies rejection with i//(X, q), because of the monotonicity of i/r in u. Similar to the above case where
+HX y(X)(u) — u for all x and u, we can endow Q with the a
+algebra T generated by X and q, and with a probability measure
+on T under which q is independent from X and uniformly dis tributed. This verifies Type I error rate control with V/(X, q) and
+thereby also with pY).
+Similar arguments justify overallp- values that are constructed from a prespecified nested family of conditional error functions A„(x) for testing H0 at all levels u e [0, 11. For the definition of overall p-values, see Liu and Chi (2001), Liu and Pledger (2006), Brannath, Posch, and Bauer (2002), Brannath, Mehta, and Posch (2009), and Mehta et al. (2007).
+6.3 Revision of an Example With Nonmeasurabie
+Adaptation Rule
+Liu, Proschan, and Pledger (2002) presented an example with
+a nonmeasurable sample size adaptation rale without, providing
+a solution. We revise this example and show how the above
+arguments allow us to justify Type I error rate control also in
+this example. The interim outcome is summarized in terms of a
+uniformly distributed p- value X. The design adaptation consists
+in choosing the sample size of the second stage. The sample
+size rule is y(x) = n if x e En, where En, n — 1, 2,..., is an infinite sequence of disjoint and nonmeasurable sets En ç (0,1]
+such that En = (0, 1], See Billingsley (1995, p. 41) for
+the existence of such a sequence. The function y '• (0, 1] —*■
+{1, 2,...} is nonmeasurable with regard to the Borel-cr-algebra
+on (0,1] because y~l(n) = En is nonmeasurable. Given y(x) —
+n, the second-stage data are represented in terms of a uniformly distributed />-value p„ that is independent from X. The null
+hypothesis is rejected if pn < 0.05. We may argue, as in Liu, Proschan, and Pledger (2002), that
+the rejection region RY = {py < 0.05} = UJjlj(En x [p„ <
+0.05}) in £2 = {(x, y) : x e (0, 1}, y e RkW} cannot be mea
+surable (and hence cannot have a probability) because the
+En s are not measurable. However, this is a weak argument,
+because the union of nonmeasurable sets may well be mea
+surable. An example is just (0, 1] itself, which is measurable
+and the union of the nonmeasurable sets En. Since the con
+ditional distribution of the p-value pY, given X — x, equals the uniform distribution for all x e (0,1], we can follow the
+lines from Section 6.2 and consider the a-algebra generated
+by X and pY, together with the probability measure defined by P{X e E, pY <u) = ufE dx for all measurable E ç (0, 1]
+and u e (0, 1]. On this probability space, the rejection probabil ity equals P(RY) = P(X e (0, 1], pY < 0.05) = 0.05.
+7. DISCUSSION
+The present work has clarified basic issues underlying con
+firmatory adaptive designs. In particular, two conclusions have
+This content downloaded from 192.16.197.194 on Thu, 05 Nov 2026 09:43:32 UTC All use subject to https://about.jstor.org/terms
+
+
+Brannath, Gutjahr, and Bauer: Probabilistic Foundation of Confirmatory Adaptive Designs
+been obtained. First, we need to assume a regression model to
+generally justify Type I error rate control. A regression model is justified under minimal assumptions if the first- and second
+stage data are from independent cohorts. Second, we have shown
+that a regression model allows us to construct a probabilistic
+model for an adaptive experiment even without any countability
+or measurability assumption on the design space and the adapta
+tion rule. This answers questions in Liu, Proschan, and Pledger
+(2002) whether adaptive designs can be justified in a mathemat ically rigorous way without making restrictive assumptions on
+the design space and the adaptation rule.
+Our counterexample in Section 3 and other counterexamples
+in Liu, Proschan, and Pledger (2002) show that following, for the
+given second-stage design, the rejection rule only up to a null set
+that has not been prespecified can produce arbitrary Type I error rate inflations. Of course, similar counterexamples apply to the
+classical two-sample i-test and other conventional test designs.
+However, in adaptive designs, a violation of the rejection rule on a data-dependent null set can only be avoided by using a unique canonical version for the conditional distributions that
+either have been prespecified or are necessarily implied by the
+chosen second-stage design (and hence used by everyone).
+Since the overall probability space is generally unknown in adaptive designs, this version must be identifiable without ref
+erence to the overall probability space. We have seen that such
+identification is possible (and presumably only possible) under
+the assumption of a regression model for the second-stage data
+in dependence of the interim data and the second-stage design. We have also seen that under this assumption, we neither need
+a countability nor a measurability assumption for the adapta tion rule. The difficulties in finding prespecified versions of the
+conditional distributions have gone largely unnoticed, presum
+ably, because regression models have always been an implicit
+assumption in adaptive designs, even though authors do not
+always explicitly refer to regression models. We acknowledge that the regression model may determine the conditional null distribution of the second-stage data only
+up to unknown parameters such as the residual variance and
+the baseline hazard, which are nuisance parameters. The conditional distribution of the adapted test statistics usually also
+depends on the main parameter because the null and alternative
+hypotheses are one sided. In the first case, we often have a
+pivotal second-stage test statistic whose conditional null distri
+bution is independent from the unknown nuisance parameters
+(under the regression model). In the second case, we must con sider the maximum over all possible conditional distributions.
+For the conditional Type I error rate principle, this means that
+the maximum of all possible conditional expectations of the test decision function must be below the prespecified conditional error function. For the conditional invariance principle, this means that all conditional null distributions must be dominated by the same prespecified conditional null distribution (e.g., the
+uniform distribution). In other examples, the conditional Type
+I error rate itself can depend on nuisance parameters (because
+it has been specified implicitly via a prespecified conventional conditional test). In this case, the conditional error rate or the
+conditional invariance principle must be applied simultaneously
+for all parameter values corresponding to the null hypothesis For more details on this, we refer to Müller and Schäfer (2004)
+Timmesfeld, Schäfer, and Müller (2007), Gutjahr, Brannath, and Bauer (2011), and Gutjahr, Posch, and Brannath (2011).
+We finally note that Type I error control and correctness of
+/?-values are only two of the many requirements in practical applications. In particular, even if it has now been shown that
+the principles of confirmatory statistical inference for adaptive designs can be applied with highly complex design spaces, the
+number of potential second-stage designs in a well-designed trial will usually be more restricted. Reasons for this restriction
+can be difficulties with the interpretation of the results if dif
+ferent hypotheses are tested during the first and second stages.
+Moreover, analyzing the power of a planned trial requires as
+sumptions about the possible second-stage designs.
+APPENDIX
+A.1 Extension of £2for the Conditional Error Rate Principle
+If nx,d < A(x) is possible, then we draw at the interim anal ysis a biased coin with outcomes 1 (for "success") and 0 (for "loss"). Given the design d, the coin is chosen to have success prob
+ability bxA = (A(x) 
+fR^d dFXÀ(y)}/{l - dFXÀ{y)}. Note that
+IRxJdFx,d(y) < A(x) < 1 implies 0 < bxA < 1. In the extended exper
+iment, we reject H0 if the coin toss shows either 1 or (x, y) G Ry. The re
+sulting sample space is Q = fi x {0, 1} and the rejection region is R = Ry x {0, 1} U (fi \ Ry) x {1). Given x, the probability to reject H0 now
+equals fRi,ywdF*Mx)(y) + KyW Í1 
+/«„(„, y)} = A(x).
+We finally note that R = {(x, y, c) : (y, c) 6 Rd], where Rd = (Rd x {0, 1}) U (R"!<i \Rd x {1}) € B'"d+1. Moreover, the biased coin toss defines a regression model Fxd on R" x D x namely
+¡BxC dFx,d(y. c) = Ib dFx,d(y) • + (1 - ¿x,d)l{0ec)} for all x G R", d G D, Be B'"d, and C e B, with dFxd( y, c) = A(x). This shows that we can assume, without loss of generality, that
+iRj dFx,d(y) = A(x) for all x.
+A.2 Alternative Construction of (Q, T, P)
+We construct an alternative probability model that is independent from y. The sample space ñ of this model consists of all triples (x, d, yd), where x e R", d e D, and yd e R'"''. From the previous section of the Appendix, we can assume, without loss of general ity, that with each d e D, a unique rejection region Rd € Bmj, with nx d — jR¡ dFxd(y) = A(x), is associated. We then endow ñ with the
+a -algebra generated by the sets RB = {(x, d, yd) : x e B, d e D, yd e Rd\ for B e B", to which we assign the probabilities fB A(x)dG(x). Until now, no adaptation rule has been assumed. Given an adapta
+tion rule y : R" D, the resulting rejection region Ry = {(x, d, yd) : y(x) = d, yd g Rd\ is a subset of Rq. Since Rq has probability / A(x)dG(x) = a, we consider the Type I error rate under control
+also for the rule y.
+A.3 A Probability Model That Contains External Information
+Let the interim data consist of a pair (w, x), where we W denotes external information and x is a realization of the actual first-stage data X. The set W of possible external information can be essentially arbi
+trary; however, the first-stage data need to be regression independent from the external information. We also need a regression model for the second-stage data, given the interim data and the external information.
+These assumptions are generally satisfied with independent external information. Since the decision about the second-stage design can now additionally depend on the external information, the adaptation rule will be of the form y' : W x R" -> D.
+This content downloaded from 192.16.197.194 on Thu, 05 Nov 2026 09:43:32 UTC All use subject to https://about.jstor.org/terms
+
+
+Journal of the American Statistical Association, June 2012
+Let (fi, T, P) be the probability space constructed in the last sec tion that does not depend on the adaptation rule. We take as the over all probability model with external information the probability space (fi', T', P'), with fi' = W X fi and T = W x T, where W is the
+power set of W, and with P'(B) — P(ic(B)), where k((w, x, d, y)) = (x, d, y) denotes the projection on the last three components. Similar to
+the last section, the rejection region {(w, x, d, y¿) : y'(w, x) = d, yd e Rd} is a subset offf x and P'(W x Ra) = P(Rq) = a.
+A.4 Extension of fi for the Conditional Invariance Principle
+In general, the function >/(*)(«) jumps at a set J of at most
+countably many discontinuity points, and Hx y(^(u) is continuous ev erywhere else. Assume that HXiV^(u) jumps from vj¡ to vat the
+j'th discontinuity point. The support of q(x, y) = Hx yW{py(x, y)} is S(x> = [0, 1] \ vjl), and one can verify that
+r Í u, if u e S(x>,
+*••[*.«) »>*'■
+To obtain a random variable that is uniformly distributed on [0, 1] and dominates py from below, we enlarge the sample space fi by a uniformly distributed random variable U that is regression indepen dent from the adaptive experiment. This leads to the extended sample space fi = fi x [0, 1] on which we define the regions Ru = ({q <
+u} x [0, 1]) U ({q > u} x [0, ¿/x))), where
+fc£°=
+0, ifweSw,
+"n
+„r
+if M€ [vf, vff) forje J.
+For any given x, the region Ru has conditional probability
+/{«<„} dF*.Yw(y) + W ■tt 
+/{?<B) dF*,yw(y)i = u for a11 " e [°. !]•
+We now define for all & e fi, the "p-value" q(&) = sup{« e [0, 1] : œ Ru], that is, the largest level u e [0, 1] for which the sample point œ is outside the rejection region Ru. Since [q < u] = rV>uÄ„/, we obtain that also {q < u} has conditional probability u for any given x and all u e [0, 1]. Furthermore, q < py at every sample point, because of the identity py(S>) = sup{u e [0,1] : œ {pY < u) x [0, 1]} for all we fi and the inclusion {py < u] x [0, 1] ç [q < u] x [0, 1] ç fi,.
+IReceived September 2009. Revised December 2011.]
+REFERENCES
+Bahadur, R., and Bickel, P. (1968), "Substitution in Conditional Expectation," The Annals of Mathematical Statistics, 39, 377-378. [827] Bauer, P. ( 1989), "Multistage Testing With Adaptive Designs" (with discussion), Biometrie und Informatik in Medizin und Biologie, 20, 130-148. [824] Bauer, P., and Köhne, K. (1994), "Evaluation of Experiments With Adaptive Interim Analyses," Biometrics, 50, 1029-1041. [824] Bauer, P., and Posch, M. (2004), Letter to the Editor: "Modification of the Sample Size and the Schedule of Interim Analyses in Survival Trials Based on Data Inspections," by H. Schäfer and H.-H. Müller, Statistics in Medicine, 23,1333-1334. [824]
+Billingsley, P. (1995), Probability and Measure (3rd ed.), New York: Wiley. [830] Brannath, W., König, F., and Bauer, P. (2007), "Multiplicity and Flexibility in Clinical Trials," Pharmaceutical Statistics, 6, 205-216. [824,827] Brannath, W., Mehta, C., and Posch, M. (2009), "Exact Confidence Bounds Fol lowing Adaptive Group Sequential Tests," Biometrics, 65, 539-546. [830] Brannath, W., Posch, M., and Bauer, P. (2002), "Recursive Combination Tests," Journal of the American Statistical Association, 97, 236-244. [824,830] Brannath, W., Zuber, E., Branson, M., Bretz, F., Gallo, P., Posch, M., and Racine, A. (2009), "Confirmatory Adaptive Designs With Bayesian Decision Tools for a Targeted Therapy in Oncology," Statistics in Medicine, 28,1445-1463. [824] Chen, Y. H., DeMets, D. L., and Lan, K. K. (2004), "Increasing the Sample Size When the Unblinded Interim Result Is Promising," Statistics in Medicine, 23, 1023-1038. [827] Gao, P., Ware, J. H., and Mehta, C. R. (2008), "Sample Size Re-Estimation for Adaptive Sequential Design in Clinical Trials," Journal ofBiopharmaceuti cal Statistics, 18, 1184—1196. [827] Götte, H., Hommel, G., and Faldum, A. (2009), "Adaptive Designs With Cor related Test Statistics," Statistics in Medicine, 28, 1492-1444. [824] Gutjahr, G., Brannath, W., and Bauer, P. (2011), "An Approach to the Con ditional Error Rate Principle With Nuisance Parameters," Biometrics, 67, 1039-1046. [831] Gutjahr, G., Posch, M., and Brannath, W. (2011), "Familywise Error Control in Multi-Armed Response-Adaptive Two-Stage Designs," Journal ofBiophar maceutical Statistics, 21, 818-830. [831] Hommel, G. (2001), "Adaptive Modifications of Hypotheses After an Interim Analysis," Biometrical Journal, 43, 581—589. [826] Liu, Q., and Chi, G. (2001), "On Sample Size and Inference for Two-Stage Adaptive Designs," Biometrics, 57, 172-177. [830] Liu, Q., and Pledger, G. (2006), "On Design and Inference for Two-Stage Adap tive Clinical Trials With Dependent Data," Journal of Statistical Planning and Inference, 136, 1962-1984. [824,830] Liu, Q., Proschan, M., and Pledger, G. (2002), "A Unified Theory of Two Stage Adaptive Designs," Journal of the American Statistical Association, 97, 1034-1041. [824,825,827,829,830,831] Mehta, C., Bauer, P., Posch, M., and Brannath, W. (2007), "Repeated Confidence Intervals for Adaptive Group Sequential Trials," Statistics in Medicine, 26, 5422-5433. [830] Mehta, C. R., and Pocock, S. J. (2011), "Adaptive Increase in Sample Size When Interim Results Are Promising: A Practical Guide With Examples," Statistics in Medicine, 30, 3267—3284. [827] Müller, H.-H., and Schäfer, H. (2001), "Adaptive Group Sequential Designs for Clinical Trials: Combining the Advantages of Adaptive and of Classical Group Sequential Approaches," Biometrics, 57, 886-891. [824] (2004), "A General Statistical Principle for Changing a Design any Time During the Course of a Trial," Statistics in Medicine, 23,2497-2508. [824,827,831] Perlman, M., and Wichura, M. (1975), "A Note on Substitution in Conditional Distribution," The Annals of Statistics, 3, 1175-1179. [827]
+Proschan, M., and Hunsberger, S. (1995), "Designed Extension of Studies Based on Conditional Power," Biometrics, 51, 1315—1324. [824] Proschan, M., and Presnell, B. (1998), "Expect the Unexpected From Condi tional Expectation," The American Statistician, 52, 248-252. [826]
+Schäfer, H., and Müller, H.-H. (2001), "Modification of the Sample Size and the Schedule of Interim Analyses in Survival Trials Based on Data Inspections," Statistics in Medicine, 20, 3741—3751. [824] Timmesfeld, N., Schäfer, H., and Müller, H. (2007), "Increasing the Sample Size During Clinical Trials With f-Distributed Test Statistics Without Inflating the Type I Error Rate," Statistics in Medicine, 26, 2449-2464. [831]
+Wassmer, G. (2006), "Planning and Analyzing Adaptive Group Sequential Sur vival Trials," Biometrical Journal, 28, 714-729. [824] Yin, G., and Shen, Y. (2005), "Adaptive Design and Estimation in Random ized Clinical Trials With Correlated Observations," Biometrics, 61, 362 369. [824]
+This content downloaded from 192.16.197.194 on Thu, 05 Nov 2026 09:43:32 UTC All use subject to https://about.jstor.org/terms

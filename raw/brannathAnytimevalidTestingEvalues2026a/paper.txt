@@ -1,0 +1,335 @@
+Anytime-valid testing with e-values and
+confirmatory adaptive designs
+Werner Brannath and Lasse Fischer University of Bremen
+brannath@uni-bremen.de, fischer1@uni-bremen.de
+June 2, 2026
+Abstract
+Confirmatory adaptive designs were introduced more than 30 years ago and enable for example sample size re-assessments and the selection of treatments, endpoints as well as subpopulations during the course of a clinical trial. Recently, sequential tests based on e-values for an anytime-valid inference have been developed, promising seemingly similar or even more flexibility and utility. In this note, we compare these two independently developed concepts, shedding light on their formal and methodological connections and differences. Specifically, we show that adaptive design tools like conditional error functions and combination tests are formally equivalent to e-value based, anytime-valid sequential tests. However, in spite of their common fundamental intention to bring flexibility into statistical inference, they have quite different emphases: While hypothesis testing with combination tests and conditional error function usually intent to exhaust type I error rates under the offered flexibility, e-value based testing aims on the additional flexibility with regard to optional continuation, the chosen level and, in recent extensions, in the loss functions to be controlled. We also indicate how recent e-value achievements could enrich clinical trial methodology and adaptive design methodology could inspire and improve e-value based testing.
+1 Introduction
+The powerful e-value theory for anytime-valid inference, which emerged in the recent years [12, 34, 36, 40], permits to stop and test (or continue) with accumulating data at any time during the data accumulation process. An important characteristics is the fact that, in order to control the probability for false rejections, the data driven stopping time does not need to be prespecified. The flexibility with regard to the sample size reminds one to the flexibility of confirmatory adaptive designs (in the following, we just write adaptive designs for brevity) [1, 30, 46], in which (among others) data-driven adaptations of sample size and number of stages without a prespecification of the adaption rule are permitted as well. Adaptive designs are primarily developed for clinical trials, in particular for phase II and phase III clinical trials and combinations thereof. With the conditional rejection probability principle [25, 26] and recursive combination tests [6] such adaptions can be done at any time during the data accumulation process. This leads to the natural question of how these seemingly different approaches are related. This question is addressed in this note. We will show that concepts of adaptive designs, like combination tests and conditional error functions, are formally equivalent to anytime-valid test based on sequential e-values. We also illustrate a fundamental difference of the two approaches in their emphasis: While combination tests and conditional error functions intent to exhaust type I error rate levels, meaning to have a type I error probability of exactly α, e-values intend to introduce flexibility with regard to optional continuation, choice of type I error rate levels and, more general, the expected losses to be controlled. These two emphases are complementary in the sense that the first cannot be achieved without violating the
+1
+arXiv:2606.00878v1 [stat.ME] 30 May 2026
+
+
+second and vice versa. Moreover, the e-value based perspective has the potential to provide solutions where the adaptive design approach may fail because the latter requires more information on the null distribution of the test statistics than required for e-value based tests. It should be noted that we do not claim to derive substantially new methodology in this paper but show the yet unexplored connections and differences between the closely related approaches of e-values and adaptive designs. By pointing out connections, we aim to build a bridge between the yet rather weakly connected scientific communities and literature. In addition, recent achievements of e-values are highlighted in the discussion that may also be valuable to the adaptive design community. On the other hand, achievements in the field of adaptive designs may inspire new achievements and improvements for e-value based sequential tests, like the uniform improvement via recursive combinations tests presented in the Appendix.
+Anytime-valid inference via e-values.We start with a brief and basic introduction to anytimevalid inference via the e-value methodology. Let us assume that we are interested in testing a null hypothesis H0 with a possibly infinite stream of data. From this stream of data we calculate over time a sequence of non-negative statistics E1, E2, . . ., where each Et can either be calculated based on one data point or a batch of data, with the property that at any time pointt
+EP rEt|E1, . . . , Et ́1s ď1for all distributionsPPH 0.(1)
+This particularly allows to choose each Et based on the data (and external information) of the stages 1, . . . , t ́ 1, as long as (1) is satisfied. A sequence of statistics satisfying (1) is often denoted as “sequential e-values” [39], whereby an “e-value” is understood to just be a nonnegative random variable with expected value at most1under H0. Sequential e-values can be used for anytime-valid inference in the following way: Defining the test statisticsM 0 “1,
+Mt “
+t
+ź
+i“1
+Ei, t“1,2, . . . ,(2)
+we control the type I error at level α when rejecting H0 if Mt ě 1{α at any time t. This follows from Ville’s inequality [38] (a sequential generalization of Markov’s inequality), since pMtqtPN0 is a nonnegative supermartingale under H0 with M0 “ 1. Such a process pMtqtPN0 is also calledtest supermartingale[ 41, 37]. Furthermore, by the optional stopping theorem EPrMτ s ď 1for any stopping timeτandPPH 0, showing that every stopped test supermartingale is an e-value.
+Example 1(Likelihood ratios).Suppose we have an i.i.d. sequence of data X1, X2, . . . and are testing a simple null hypothesis against a simple alternative. Let p0 be the density of the null distribution and p1 the alternative density. Then the likelihood ratios λt “ p1pXtq
+p0pXtq , tPN, define sequential e-values, since
+EP0 rλt|λ1, . . . , λt ́1s “
+ż
+supppp0 q
+p1pxq
+p0pxq p0pxqμpdxq “
+ż
+supppp0 q
+p1pxqμpdxq ď1.
+The resulting anytime-valid test is equivalent to the sequential probability ratio test (SPRT) by Wald [42], if no lower bound to accept H0 is specified. Likelihood ratios play an important role in the e-value theory, since log-optimal e-values always take the form of a likelihood ratio, even if the null hypothesis is composite [12, 22]. In Section 5 we will give a brief description of log-optimality. It is valuable to note that p0 in λt can be the maximum over the densities of a composite null hypothesis H0 without violating the e-value property of λt. Moreover, the numerator p1 could be the maximum of the densities from some composite alternative determined with an independent training sample. These ideas have been introduced in [44] and are known as “universal inference”.
+Remark 1.There are sequential tests that cannot be constructed by multiplying sequential e-values in the way described above [33]. In general, one would need to define a sequential e-value EP
+t for each null
+2
+
+
+distribution PPH 0, multiply those sequential e-values M P
+t “ śt
+i“1 EP
+i and then define pMtqtPN0 such
+that Mt ďM P
+t P-almost surely for all PPH 0 and tPN 0 [32, 34]. Although pMtqtPN0 is not necessarily a test supermartingale in this case, it is easy to show that Ville’s inequality and the optional stopping theorem still apply, such that pMtqtPN0 can be used in the same way for testing as before. However, in most testing problems that are relevant for clinical trials, powerful sequential tests can be constructed by calculating a single sequential e-value for each stage [12, 23, 31]. To reduce notation and keep it simple, we focus on such constructions in the following.
+Adaptive designs.Next, we give a brief introduction to adaptive design methodology whereby we focus in this section on two-stage designs, t“ 1, 2, following the so called “conditional error function principle” [30] that formally covers all other adaptive design approaches [46, 27]. This means that we start with adaptive two-stage designs, where after a first stage (with a preplanned design), also called “interim analysis”, the design of the second stage can be flexibly specified based on the first stage data. An example for such a design choice is second stage sample size. Other choices (like test statistics) are also possible. In order to preserve the type I error rate, we prespecify a conditional error function A, which is a statistic calculated from the first stage data, with the property that
+0ďAď1for all interim data, andE PrAs ďαfor all distributionsPPH 0 .(3)
+Further, let ψ (with values in t0, 1u) be an arbitrary test decision function that is based on all data and satisfies
+EPrψ|As ďAfor all interim data and for allPPH 0 .(4)
+When rejecting H0 if ψ“ 1and accepting it otherwise, properties (3) and (4) guarantee that the type I error probability is controlled at level α, because they imply that Prψ“ 1s “E Prψs “E P
+“
+EPrψ|As
+‰
+ď EPrAs ďα for all PPH 0. The flexibility of the presented adaptive testing approach stems from the fact that the test decision function ψ can be freely chosen based on the interim data, as long as it satisfies (4) at all interim points. Note that property (4) can be satisfied with the sole knowledge of the conditional expectation of ψ given the interim data (or even given only the observed value of A). This permits to use some ψ that remains completely unspecified for all interim data except the actually observed ones and hence provides the possibility for unforeseen, data driven design changes. We finally note that if A“ 1for some interim data point, then we can stop and reject H0 already at stage one, since we can choose ψ“ 1. Similarly, if A“ 0, we can stop and accept H0 at stage one, sinceψ“0is the only test decision function satisfying (4).
+Remark 2.Similar to Remark 1, in general one could define a different conditional error function AP and test ψP for each PPH 0, ensuring that EPrψP|APs ďA P and reject H0 if ψP “ 1for all PPH 0 [26].
+Interestingly, even though, as we will show in this paper, conditional error functions and e-values are formally equivalent, likelihood ratios play only a minor role in adaptive designs. The two main approaches to construct a conditional error function are: (1) the concept of combination tests [1, 3] and (2) the conditional rejection probability principle [35, 26]. We briefly recap these with the following two examples.
+Example 2(Combination tests).Combination tests are based on p-values. The general concept will be reviewed in Section 3. A simple example, which we describe next, is Fisher’s product test. Assume that the first and second stage data are from independent cohorts, and are summarized by stage-wise p-values, P1 and P2, whereby P1 is calculated from the first and P2 from the second stage data only. H0 is rejected at the first stage if P1 ďα 1 for some prespecified α1 ăα , and at the second stage if P1  ̈P 2 ďc for some prespecified critical value c. The critical values α1 ăα and c are determined in a way that the rejection probability is equal to α for stochastically independent and uniformly distributed
+3
+
+
+p-values. This will guarantee type I error control also for strictly conservative p-values [7]. The product test approach can be phrased in terms of a conditional error function by defining A“ 1for P1 ďα 1 and A“minp 1, c{P1q otherwise. The test decision function ψ“ 1tP1  ̈P 2 ďcu will then satisfy (4) for any valid second stage p-valueP 2.
+Example 3(Conditional rejection probability principle).In the conditional rejection probability
+principle [25, 26, 30] we start with a level α test decision function φ of a fixed sample size or group sequential test. Now let D denote the data at the time we want to do an interim analysis (this time can be chosen based on the data observed so far). Using the general notation of Remark 2, we can calculate a conditional error function by AP “E Prφ|Ds for each PPH 0. Since EPrφs ďα for all PPH 0, it immediately follows that EPrAPs ďα for all PPH 0. A similar approach was recently investigated by Koning and Van Meer [21] in the anytime-validity framework.
+Paper outline.We first show how all adaptive designs based on conditional error functions can be written by sequential e-values and vice versa (Section 2), showing the equivalence of the two approaches. Afterwards, we provide similar connections between sequential e-value based tests and recursive combination tests. In Section 4, we consider multiple testing with adaptive designs and e-values, focusing on the weighted Bonferroni based closed tests considered in [16]. Finally, we discuss recent accomplishments of e-values and how they could enrich the clinical trial methodology in Section 5, but also point out potential advantages of the older adaptive design methodology.
+2 Equivalence of adaptive designs and e-values based testing
+2.1 Two-stage adaptive designs and e-values
+We next show that a two-stage adaptive designs with conditional error function A can be understood in terms of two sequential e-values, namely
+E1 “ A
+α andE 2 “ ψ
+A .(5)
+Obviously, (3) implies that EPrE1s ď 1and (4) implies that EPrE2|E1s “Erψ|As{Aď 1for all PPH 0, showing that E1 and E2 are sequential e-values. Furthermore, if the adaptive design rejects H0 (ψ“ 1), we have E1E2 “ 1{α, and if the adaptive design accepts H0 (ψ“ 0), we have E1E2 “ 0, proving that the e-value based test rejectsH 0 if and only if the adaptive design rejectsH 0. On the other hand, for sequential e-values E1 and E2, we obtain that A“αE 1 and ψ“αE 1E2 satisfy (3) and (4). Depending on E1 and E2 it may happen that Aą 1and ψ takes other values than 0 and 1. However,Aą1can be avoided by choosing anE 1 that is bounded by1{α. Moreover, if we choose E2 to be bounded by1 {pαE1q then ψP r 0, 1s can be interpreted as a decision function of a randomized test [20]. Recall, that we can choose E2 based on the interim data. This test becomes non-randomized if the values ofE 2 are restricted to0and1{pαE 1q. This shows an important difference between the emphases of adaptive designs and e-values. Adaptive designs are constructed to exhaust the type I error as much as possible. While e-values allow to exhaust the type I error by solving (1) with an equality and choosing the e-values such that E1E2 P t0, 1{αu, the e-value based tests are often not constructed this way (see also Example 1). There are several reasons why allowingE 1E2 to take other values than0and1{αcan be beneficial:
+1. E-values permit optional continuation [12, 36]. That means if we report E1E2 even though the product is smaller than1 {α, one could always decide to continue the trial by multiplying further e-values at a later time.
+2. E-values allow to choose the significance level α or some loss function data-dependently while maintaining a reasonable error control [13, 19]. Hence, if E1E2 ă 1{α, we might still be able
+4
+
+
+to reject at a larger significance level, and if E1E2 ą 1{α, one could decrease the level α to strengthen the results. The adaptive choice of α can formally be justified by understanding type I error rate control as average control of the loss Lα :“ p1{αq1tE1E2 ě 1{αu, i.e. EPrLαs ď 1for allPPH 0, and observing thatE P
+“
+supαPp0,1q Lα
+‰
+“E PrE1E2s ď1for allPPH 0.
+3. One branch of the e-value literature particularly focuses on complex settings with composite null hypotheses in which no least favorable configuration exists [44, 12, 22]. In those cases it might not be possible to exhaust the type I error probability (with e-values nor adaptive designs) and thus to define e-values with the aforementioned restrictions.
+We elaborate on that in the discussion. In summary, we have shown that every two stage adaptive design can be formulated in terms of sequential e-values, and two stage designs based on suitably defined sequential e-values can be understood as an adaptive design following the conditional error function principle. In the next section we show a similar relationship for multi-stage adaptive designs.
+Remark 3.Note that the equivalence of the more general approaches described in Remark 1 and Remark 2 can be shown by doing the same as above for eachPPH 0.
+2.2 Multi-stage adaptive designs and e-values
+Several different approaches have been suggested for multi-stage adaptive designs, like multi-stage combination tests, e.g. with inverse normal combination functions (see e.g. Wassmer and Brannath [46]), or the recursive combination test [6]. Another, approach is to start with a group sequential test and turn it to an adaptive designs via the conditional rejection probability principle of Müller and Schäfer [26] (see also Example 3). We present here a unified approach, based on a sequence of conditional error functions, which has been introduced implicitly in Brannath et al. [6] as alternative representation of recursive combination tests. This extends the above adaptive two-stage designs to multi-stage designs with a possibly infinite and data-driven number of stages. We will briefly review recursive combination tests and their equivalence to the here presented adaptive multi-stage designs in Section 3. The multi-stage adaptive design consists of a sequence of conditional error functions A1, A2, . . . where each0 ďA t ď 1is a function of the data Dt accumulated until stage t with the property that for allPPH 0,
+EPrA1s ďαandE PrAt|A1, . . . , At ́1s ďA t ́1 for allt“2,3, . . . .(6)
+With this approach, we can stop and reject H0 at stage t if At “ 1. Moreover, we would need to stop at t with an acceptance of H0 if At “ 0. Control of the type I error rate at level α with this approach follows immediately from Ville’s inequality or the optional stopping theorem, since pAtqtPN is a nonnegative supermartingale with ErA1s ďα under H0. If we decide (at stage t ́ 1) to stop the trial with stage t, we ideally would choose a binary conditional error function At P t0, 1u, which corresponds to a test decision function that must have a conditional type I error rate of at mostA t ́1. In order to safely meet condition (6), the design for the data recruited between stage t and t` 1, as well as the conditional error function At`1 as function of the data Dt`1 available at stage t` 1, need to be specified at stage t. Accordingly, the design of the first stage data and the conditional error functionA 1 need to be specified before the trial.
+Remark 4.In the same manner as in Remark 2, one could generalize this by choosing a different AP
+t
+for each PPH 0, rejecting H0 at stage t if AP
+t “ 1for all PPH 0 and accepting H0 if AP
+t “ 0for at least onePPH 0.
+5
+
+
+Equivalence to any-time valid inference with sequential e-values.It is not difficult to see that our multi-stage adaptive designs can be reformulated in terms of the sequential e-values E1 “A 1{α
+and Et “A t{At ́1 that imply Mt “A t{α for all t, where Mt “ śt
+i“1 Ei. Obviously, (6) implies (1) andM t ě1{αis equivalent toA t “1. Conversely, every anytime-valid test based on e-values can be understood as multi-stage adaptive design. To see this, assume given sequential e-values E1, E2, . . . satisfying (1) and Mt “ śt
+s“1 Es.
+Apparently, the anytime-valid test rejects H0 at stage t whenever αMt ě 1. Note that, for a given level α, we get an equivalent sequential, anytime-valid test if we use the truncated process At :“minpαM t, 1q and reject H0 stage t if At “ 1, simply because At “ 1is equivalent to αMt ě 1. Obviously,E PrA1s ďαE PrM1s ďα, and for allPPH 0:
+EPrAt|E1, . . . , Et ́1s ďminpαE PrMt|E1, . . . , Et ́1s,1q ďminpαM t ́1,1q “A t ́1.
+This implies that pAtqtPN satisfies (6), which means that the anytime-valid level-α test based on pMtqtPN is equivalent to the adaptive multi-stage test with conditional error functionsA t :“minpαM t,1q.
+3 Combination and recursive combinations tests
+Combination tests are an approach to construct adaptive designs, or equivalently anytime-valid tests, directly using p-values. It has been shown by Posch and Bauer [27] and Wassmer [45] that every adaptive two stage design that is based on stage-wise p-values can be written as combination test; see also Wassmer and Brannath (2006). This statement has been extended in Brannath et al. [6] to multi-stage adaptive designs based on so called recursive combination tests which generalize two-stage combination tests to rather flexible multi-stage designs. Recursive combination tests also come with an overall p-value and valid confidence intervals [6]. In this section we briefly review combination and recursive combination tests.
+3.1 Two-stage combination tests
+As indicated in Example 2, combination tests are defined in terms of stage-wise p-values. This means that for a two-stage combination test, the first stage data is summarized by a conservative p-value, i.e. a statisticP 1 that satisfies
+PrP1 ďus ďufor alluP r0,1sandPPH 0 .(7)
+The design and test procedure underlying P1 must be prespecified before the trial. In addition, there can be preplanned early rejection and acceptance boundaries α1 ăαăα 0 and, at the first stage, the null hypothesis is rejected if P1 ďα 1 and accepted if P1 ąα 0. For the second stage, a combination function C : pα1, α0sˆr0, 1s ÑR need to be predefined that is non-decreasing in the first and increasing in the second argument, and continuous in both arguments. Finally, a critical value c is determined such that
+α1 `
+ż1
+0
+ż α0
+α1
+1
+␣
+Cpu,vqďc
+( du dv“α .(8)
+If the study is continued to the second stage, then the design (e.g. sample size) and test procedure for the second stage must be specified at the end of the first stage. For this we can utilize all the information gathered so far. Based on the chosen second stage design and test, a second stage p-value P2 is calculated which must satisfy for allPPH 0,
+PrP2 ďu|P 1s ďufor alluP r0,1sandP 1. (9)
+This property is denoted as ‘p-clud’ property in Brannath et al. [6], abbreviating that thep-value P2 is,conditionally on P1, stochasticallylarger than or equal to theuniformdistribution. Rejecting H0 if
+6
+
+
+CpP1, P2q ďc then provides a level-α test. Moreover, if there exist a least favorable P0 PH 0 for which P0rP1 ďus “u and P0rP2 ďu|P 1s “u for all uP r 0, 1s and P1, then the combination test exhausts the levelα. A combination test comes with the conditional error function ApP1q which equals1for P1 ďα 1 and0for P1 ąα 0, and otherwise is the decreasing function ApP1q :“suptvP r 0, 1s : CpP1, vq ďcu for P1 P pα1, α0s. From this, together with the conservatism ofP 1, we obtain for allPPH 0 that
+EPrApP1qs ďα 1 `
+ż α0
+α1
+Apuqdu“α .
+Furthermore, a combination test directly provides an overall p-value Q“QpP 1, P2q, i.e. a r0, 1svalued random variable with the following properties:
+(1)When the stage-wise p-values satisfy (7) and (9), then
+PrQďus ďufor alluP r0,1sandPPH 0.
+Moreover, Q is uniformly distributed on r0, 1s for some PPH 0, if (7) and (9) hold with equality for alluP r0,1sfor the samePPH 0.
+(2)Q“P 1 if the combination test stops at stage 1.
+(3)Qďαif and only if the combination test rejectsH 0.
+Note that (2) implies QP r 0, α1s Y pα0, 1s if the combination test stops at stage 1 and QP pα 1, α0s if it passes to the second stage. This implies that we can read of from Q, whether the trial has stopped at stage 1 or continued to stage 2. This also implies, that when stopping at stage 1, Qďα and Qąα are equivalent to P1 ďα 1 and P1 ąα 0, respectively. The construction of the p-value Q depends only onα 1,α 0 andC; see Brannath et al. [6].
+3.2 Recursive combination tests
+We sketch now the idea of recursive combination tests. A detailed description and exploration can be found in Brannath et al. [6]. A recursive combination test starts with a prespecified two-stage combination test, i.e. a prespecified first stage design, corresponding first stage p-value P1, first stage rejection and acceptance levels α1,1 ăαăα 1,0, and continuous and monotone combination function C1 : pα1,1, α1,0s ˆ r0, 1s ÑR . Like for two-stage combination tests, the first argument of the combination function C1 is for the first stage p-value P1. However, the second argument of C1 is a now a placeholder for the evidence that will come from all, yet unspecified forthcoming stages. If this evidence is summarized by a p-value Q2 with the p-clud property, i.e. PrQ 2 ďu|P 1 s ďu for all uP r 0, 1s and PPH 0, then we obtain a level-α test and valid p-valueQ 1, when usingQ 2 as second argument ofC 1. With a recursive combination test, we use the p-value Q2 from another combination test, now at level A1pP1q, the conditional error function of the first combination test. The procedure can be repeated by using for the second stage p-value of the second combination test the p-value function of another combination test, now at the level that equals the conditional error function of the second combination test, etc. This procedure can be repeated as long as we wish. If we decide at some stage t to finish the study with the next stage t` 1(and have not stopped the study yet with an early rejection or acceptance of H0), then we use as second argument of the final combination test a final (conditional) p-value Pt`1. At each stage of this procedure we can decide based on all internal and external information obtained so far, whether to stop the study with the next stage or continue with at least two further stages. Thereby we can choose at each stage, based an all information gathered so far, the design and test procedure for the next stage and, in case we decide to continue beyond the next stage, the combination test for merging the next and forthcoming stages.
+7
+
+
+It has been shown in Brannath et al. [6] that this recursive procedure controls the type I error rate whenever we use at each stage t a p-value Pt for the first argument of the combination test that satisfies the sequential p-clud condition
+PrPt ďu|P 1 . . . , Pt ́1s ďufor alluP r0,1sandPPH 0 almost surely. (10)
+Moreover, the conditional error functions At of the recursively defined combination tests satisfy (6) under the sequential p-clud condition (10). In addition, we obtain EPrA1s “α and EPrAt|A1, . . . , At ́1s “A t ́1 almost surely for all t, whenever the p-values Pt are independent and uniformly distributed onr0,1sunderP, i.e. satisfy (10) with equality for alluP r0,1s. Conversely, a sequence of conditional error functions At, t“ 1, 2, . . ., with the properties given in Section 2.2, can be represented as recursive combination test, if each At “A tpPtq is a function of a p-value Pt satisfying (10). The combination functions of this recursive combination test are e.g. CtpPt, vq :“v{A t with critical value ct “ 1. Obviously, At “suptvP r 0, 1s : CtpPt, vq “v{A t ď 1u. Note that At can be written as function of a p-clud p-value Pt, if At has a known least favorable conditional survival functionS tpuqunder the null hypothesis, i.e.S tpuq ěPrA t ěu|A 1, . . . , At ́1sfor
+all PPH 0 and uP r 0, 1s almost surely, namely At “S  ́1
+t pPtq with Pt “S tpAtq, where S ́1
+t is the (generalized) inverse ofS. We show in Appendix A that (and how) sequential e-values can be uniformly improved by recursive combination tests, if they do not exhaust the level and have known and continuous least favorable conditional null distributions.
+4 Multiple testing in adaptive designs and e-values
+Adaptive designs are particularly useful when multiple hypotheses are tested, since this, for example, allows to drop less efficient treatment arms at an interim analysis and/or add new more promising ones. In clinical trials, it is often required to control the familywise error rate (FWER), and in adaptive designs, this can be achieved by an application of the closed testing principle with the above reviewed adaptive testing approaches, e.g. with conditional error functions or combination tests, see e.g. [2, 15, 29, 46]. A popular multiple testing procedure for clinical trials with multiple hypothesis is the graphical approach by Bretz et al. [10], which is based on the (more general) consonant weighted Bonferroni closed tests considered in [16] and has been extended to adaptive designs in [18]. In the following, we connect the extension to adaptive designs to formally similar suggestions from the e-value literature. We start reviewing the mentioned closed test procedure. Given p-values P1, . . . , Pm for m null hypotheses H1
+0 , . . . , Hm
+0 of interest, we reject the intersection hypothesis HI
+0 “Ş
+iPI H i
+0, for IĎ
+t1, . . . , mu, if miniPI Pi ďw I
+i α, where the pwI
+i qiPI are prespecified weights such that ř
+i“1 wI
+i “ 1and
+wI
+i ěw J
+i if iPJĎI . The closed procedure then rejects an individual hypothesis Hi
+0, iP t 1, . . . , mu, if
+allH I
+0 withiPIare rejected. One can naturally extend this procedure to adaptive designs by applying the conditional rejection probability principle (see Example 3) to each of the marginal test decision functions φI
+i “ 1tPiďwI
+i αu
+for iPIĎ t 1, . . . , mu. This leads to the in [28] introduced partial conditional error functions AI
+i “E PrφI
+i |Ds. Here, D represents the interim data; see Example 2 of this paper’s introduction.
+A nice property of the partial conditional error functions is, that for each PPH I
+0 , the their sum satisfies EPrř
+iPI AI
+is “ ř
+iPI EPrφI
+is ď ř
+iPI wI
+i α“α . Therefore, AI “min
+`ř
+iPI AI
+i ,1
+ ̆
+provides a conditional error function for HI
+0 that permits (in addition to data driven sample size adaptations) to drop hypotheses as well as changing the weights for the remaining ones; see [18] for details. Moreover, if AI “ 1, which is possible even when every AI
+i ă 1, then one can reject HI
+0 already at the interim analysis. The latter leads to a costless uniform improvement of the single stage weighted Bonferroni closed test forH I
+0 ; see also [28].
+8
+
+
+We note that this approach is possible with any (marginal) conditional error function AI
+i at level
+αwI
+i , meaning that
+EPrAI
+i s ďαw I
+i for all distributionsPPH i
+0.(11)
+We should also note, that when the joint null distribution of the p-values can be utilized, alternative and eventually more efficient adaptive closed test procedures are available; see e.g. [46]. Equivalently to the adaptive closed test based on partial or marginal conditional error funcions, we could define an e-value EI
+i for Hi
+0 and each IĎ t 1, . . . , mu by EI
+i “A I
+i {αwI
+i , where the e-value
+property follows by (11). An e-value EI for HI
+0 can then be constructed by taking the weighted average
+EI “ ř
+iPI wI
+i EI
+i , a common strategy to merge arbitrary e-values into a single e-value [40].
+Since EI ě 1{α is equivalent to AI “ 1, the closed procedure based on the e-values pEI qIĎt1,...,mu rejects the same hypotheses as the closed procedure based on the conditional error functions pAI qIĎt1,...,mu . Hartog and Lei [14] considered the case where the same e-value Ei “E I
+i is used for each intersection
+hypothesis HI
+0 with iPI and provided computationally efficient short-cuts for particular weight
+combinationspw I
+i qiPI .
+Remarkably, the strategy to merge e-values by a weighted average is the only admissible one in the sense that, any other strategy to combine several e-values to a single e-value, that works without any further distributional assumptions, can be improved by a weighted average of the e-values; see [43]. By the equivalence between e-values and conditional error functions, this result also applies to the combination of conditional error functions.
+5 Discussion
+In this note, we have linked the currently disjoint literature on adaptive designs and e-values. In particular, we showed that both approaches allow to construct the same sequential tests and are closely related from a methodological perspective. We hope this will make the literature more accessible to people from each other’s communities and eliminate confusion for those new to sequential and adaptive hypothesis testing. Please be aware that this note is not intended to downplay the new achievements of the e-value literature. On the contrary, we are convinced that the e-value perspective can have many advantages and has already led to several groundbreaking results. In the following, we summarize some of these results and briefly discuss the extent to which they may also be relevant for the design of clinical trials. Afterwards, we note some advantages of the classical approaches to construct adaptive designs. This highlights the practical value of this paper, as it allows researchers to switch between the different adaptive approaches and thus take advantage of all of the methods.
+5.1 Advantages of e-values
+Post-hoc choice of loss and significance level.Grünwald [13] introduced a testing framework in which type I error control is replaced by expected loss control. While this gives a reformulation of the classical Neyman-Pearson setup for a fixed loss function, Grünwald [13] goes much beyond this by allowing the loss function to depend on the data in an arbitrary way. He shows that the use of e-values retain their guarantee for such data-dependent losses, while p-values do not, and that all admissible tests with such post-hoc guarantee must be based on e-values. This is comparable to type I error control at a data-dependent level α (in a specific sense; see Koning [19] for more insights). Note that such a guarantee is not possible with conditional error functions, since the α must be prespecified there. We believe that in clinical trials the risk of committing a type I error often varies due to external factors as well as the observed data such that the aforementioned framework captures situations that are difficult or even impossible to handle with the currently available statistical methodology for clinical trials. For example, consider two treatments that are tested for the same disease. Suppose the
+9
+
+
+first treatment showed no safety issues (compared to the control), while adverse events were observed more frequently for the second treatment. It would be natural to set the bar for approving the second treatment, meaning the loss of a type I error regarding the efficacy, higher than for the first treatment. There are many further clinical trial scenarios in which the loss of a type I error cannot be chosen upfront [13].
+Log-optimality.In contrast to fixed sample size tests, where a uniformly most powerful test often exists, there are usually many possible ways to construct a sequential test, and thus many possible e-values and conditional error functions, due to different weightings of the stages. However, the e-value literature has developed a well-founded choice [36, 12, 31]: thelog-optimale-value maximizes EQrlogpEqsunder some alternative distributionQof interest. The log-optimality criterion dates back to Kelly [17] and Breiman [9] who studied optimal gambling strategies. The idea is that if many i.i.d. e-values are multiplied, then the law of large number applies to the logarithm of the product, and thus log-optimal factors guarantee the fastest possible growth rate. There is already very sophisticated theory on the log-optimal e-value, showing its existence under no assumptions about the null hypothesis and a characterization closely related to likelihood ratios [12, 22]. This may provide general guidance on how to construct powerful adaptive designs. However, it should be noted that the optimality of the criterion is built on the premise of a potentially infinite number of stages. If practical constraints limit the number of stages to just a few, other criteria may be more appropriate.
+Multiple testing.Recently, Xu et al. [47] introduced a closure principle that is based on local e-values for the intersection hypotheses (instead of local tests) and which can be used to construct powerful procedures for any expectation based error metric, including, e.g., FWER, false discovery rate (FDR) [4] and per-family error rate (PFER) [5]. This general approach also applies to weighted variations of these error rates, which have been recently discussed for settings where treatments are tested in multiple subpopulations [24, 8]. Similar to the post-hoc choice of the loss function in the testing framework of Grünwald [13], this e-value based closure principle allows to choose the error metric and the significance level based on the data, providing enormous flexibility that has potential for exploratory analyses.
+Universal inference.Wasserman et al. [44] introduced a general approach to hypothesis testing that works in irregular statistical models, where the null distribution of the classical likelihood ratio statistic is often intractable. While p-values cannot be directly computed in such complex testing problems, theuniversal inferenceapproach by Wasserman et al. [44] uses e-values by construction. Universal inference also offers a simple sequential version that can be useful in complex testing problems for which adaptive designs have not been constructed yet.
+Interpretation.Shafer [36] introduced a testing by betting approach, where e-values can be interpreted as the betting score in a fair game against the null hypothesis. This, as well as its error control at data-dependent significance levels [13, 19], allow e-values to be interpreted ascontinuous measure of evidence. Regardless of the chosen significance level α, a large e-value provides evidence against the null hypothesis. Note that this is not true for conditional error functions, as their interpretation is strongly tied to the prespecified significance level. In particular, this makes it sensible to report an e-value as result of a study. Further, due to the optional stopping theorem, one could then multiply e-values of future experiments with that e-value to combine the evidence, providing a strong and valid method for meta-analyses. Moreover, testing by betting [36] provides an intuitive approach to hypothesis testing that prevents misuse and can help with teaching and communication of adaptive designs to students and applicants.
+10
+
+
+5.2 Advantages of adaptive designs
+Conditional error function principle.Conditional error functions give the level that can be used for future tests and therefore provide an intuitive interpretation of the adaptive design. In particular, this is useful when conditional sample size adjustments or power calculations are performed during interim analyses, as those typically require a specified significance level. Furthermore, conditional error functions can directly be obtained by the conditional rejection principle (see Example 3) and exhaust the type I error if (3) and (4) are satisfied with an equality.
+(Recursive) combination tests.An advantage of combination tests are that they directly work with p-values. As there are standard p-values for many different testing problems, combination tests are often easy to apply. In addition, combination tests provide an overall p-value that can be used to summarize the result of an adaptive design. Furthermore, they exhaust the type I error level by design as long as the p-values are exact (uniformly distributed under the null hypothesis). This is not the case for e-value based anytime-valid tests, which can often be uniformly improved exploiting their representation as (recursive) combination test; see Appendix A for more details.
+Acknowledgments
+LF acknowledges funding by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) – Project number 281474342/GRK2224/2.
+References
+[1] Peter Bauer. Multistage testing with adaptive designs.Biometrie und Informatik in Medizin und Biologie, 20(4):130–148, 1989.
+[2] Peter Bauer and Meinhard Kieser. Combining different phases in the development of medical treatments within a single trial.Statistics in Medicine, pages 1833–1848, 1999.
+[3] Peter Bauer and Karl Köhne. Evaluation of experiments with adaptive interim analyses.Biometrics, 50:1029–1041, 1994. (Correction in 1996 Biometrics, 52, 380).
+[4] Yoav Benjamini and Yosef Hochberg. Controlling the false discovery rate: a practical and powerful approach to multiple testing.Journal of the Royal Statistical Society Series B: Statistical Methodology, 57(1):289–300, 1995.
+[5] Yoav Benjamini and Yosef Hochberg. Multiple hypotheses testing with weights.Scandinavian Journal of Statistics, 24(3):407–418, 1997.
+[6] Werner Brannath, Martin Posch, and Peter Bauer. Recursive combination tests. pages 236–244, 2002.
+[7] Werner Brannath, Georg Gutjahr, and Peter Bauer. Probabilistic foundation of confirmatory adaptive designs.Journal of the American Statistical Association, 107(498):824–832, 2012.
+[8] Werner Brannath, Charlie Hillner, and Kornelius Rohmeyer. The population-wise error rate for clinical trials with overlapping populations.Statistical Methods in Medical Research, 32(2): 334–352, 2023.
+[9] Leo Breiman. Optimal gambling systems for favourable games. InFourth Berkeley Symposium on Mathematical Statistics and Probability, pages 65–78, 1961.
+[10] Frank Bretz, Willi Maurer, Werner Brannath, and Martin Posch. A graphical approach to sequentially rejective multiple test procedures.Statistics in Medicine, 28(4):586–604, 2009.
+11
+
+
+[11] Lasse Fischer and Aaditya Ramdas. Improving wald’s (approximate) sequential probability ratio test by avoiding overshoot.IEEE Transactions on Information Theory, (4):2457–2471, 2026.
+[12] Peter Grünwald, Rianne de Heide, and Wouter M Koolen. Safe testing.Journal of the Royal Statistical Society Series B: Statistical Methodology (with discussion), 2024.
+[13] Peter D Grünwald. Beyond neyman–pearson: E-values enable hypothesis testing with a data-driven alpha.Proceedings of the National Academy of Sciences, 121(39):e2302098121, 2024.
+[14] Will Hartog and Lihua Lei. Family-wise error rate control with e-values.arXiv preprint arXiv:2501.09015, 2025.
+[15] Gerhard Hommel. Adaptive modifications of hypotheses after an interim analysis.Biometrical Journal, pages 581–589, 2001.
+[16] Gerhard Hommel, Bretz Frank, and Maurer Willi. Powerful short-cuts for multiple testing procedures with special reference to gatekeeping strategies.Statistics in Medicine, pages 4063–73, 2007. doi: 10.1002/sim.2873.
+[17] John L Kelly. A new interpretation of information rate.The Bell System Technical Journal, 35 (4):917–926, 1956.
+[18] Florian Klinglmüller, Martin Posch, and Franz Koenig. Adaptive graph-based multiple testing procedures.Pharmaceutical Statistics, 13(6):345–356, 2014.
+[19] Nick W Koning. Post-hoc alpha hypothesis testing and the post-hoc p-value.arXiv preprint arXiv:2312.08040, 2023.
+[20] Nick W Koning. Continuous testing: Unifying tests and e-values.arXiv preprint arXiv:2409.05654, 2024.
+[21] Nick W Koning and Sam Van Meer. Anytime validity is free: inducing sequential tests.Journal of the Royal Statistical Society Series B: Statistical Methodology, page qkag050, 2026.
+[22] Martin Larsson, Aaditya Ramdas, and Johannes Ruf. The numeraire e-variable and reverse information projection.The Annals of Statistics, 53(3):1015–1043, 2025.
+[23] Alexander Ly, Udo Boehm, Peter Grünwald, Aaditya Ramdas, and Don van Ravenzwaaij. A tutorial on safe anytime-valid inference: Practical maximally flexible sampling designs for experiments based on e-values.PsyArXiv preprint h5vae_v3, 2024.
+[24] Willi Maurer, Frank Bretz, and Xiaolei Xun. Optimal test procedures for multiple hypotheses controlling the familywise expected loss.Biometrics, 79(4):2781–2793, 2023.
+[25] Hans-Helge Müller and Helmut Schäfer. Adaptive group sequential designs for clinical trials: Combining the advantages of adaptive and of classical group sequential approaches.Biometrics, pages 886–891, 2001.
+[26] Hans-Helge Müller and Helmut Schäfer. A general statistical principle for changing a design any time during the course of a trial.Statistics in Medicine, 23(16):2497–2508, 2004.
+[27] Martin Posch and Peter Bauer. Adaptive two stage designs and the conditional error function. Biometrical Journal, pages 689––696, 1999.
+[28] Martin Posch and Andreas Futschik. A uniform improvement of bonferroni-type tests by sequential tests.Journal of the American Statistical Association, (481):299–308, 2008.
+12
+
+
+[29] Martin Posch, Willi Maurer, and Frank Bretz. Type I error rate control in adaptive designs for confirmatory clinical trials with treatment selection at interim.Pharmaceutical Statistics, 10(2): 96–104, 2011.
+[30] Michael A Proschan and Sally A Hunsberger. Designed extension of studies based on conditional power.Biometrics, 51(4):1315–1324, 1995.
+[31] Aaditya Ramdas and Ruodu Wang. Hypothesis testing with e-values.Foundations and Trends® in Statistics, 1(1-2):1–390, 2025.
+[32] Aaditya Ramdas, Johannes Ruf, Martin Larsson, and Wouter Koolen. Admissible anytime-valid sequential inference must rely on nonnegative martingales.arXiv preprint arXiv:2009.03167, 2020.
+[33] Aaditya Ramdas, Johannes Ruf, Martin Larsson, and Wouter M Koolen. Testing exchangeability: Fork-convexity, supermartingales and e-processes.International Journal of Approximate Reasoning, 141:83–109, 2022.
+[34] Aaditya Ramdas, Peter Grünwald, Vladimir Vovk, and Glenn Shafer. Game-theoretic statistics and safe anytime-valid inference.Statistical Science, 38(4):576–601, 2023.
+[35] Helmut Schäfer and Hans-Helge Müller. Modification of the sample size and the schedule of interim analyses in survival trials based on data inspections.Statistics in Medicine, 20:3741–3751, 2001.
+[36] Glenn Shafer. Testing by betting: A strategy for statistical and scientific communication.Journal of the Royal Statistical Society Series A: Statistics in Society (with discussion), 184(2):407–431, 2021.
+[37] Glenn Shafer, Alexander Shen, Nikolai Vereshchagin, and Vladimir Vovk. Test martingales, Bayes factors and p-values.Statistical Science, 2011.
+[38]Jean Ville.Etude critique de la notion de collectif. Gauthier-Villars Paris, 1939.
+[39]Vladimir Vovk. Testing randomness online.Statistical Science, 36(4):595–611, 2021.
+[40] Vladimir Vovk and Ruodu Wang. E-values: Calibration, combination and applications.The Annals of Statistics, 49(3):1736–1754, 2021.
+[41] Vladimir Vovk, Alexander Gammerman, and Glenn Shafer.Algorithmic learning in a random world, volume 29. Springer, 2005.
+[42] Abraham Wald. Sequential tests of statistical hypotheses.The Annals of Mathematical Statistics, 16(2):117–186, 1945.
+[43] Ruodu Wang. The only admissible way of merging arbitrary e-values.Biometrika, 112:asaf020, 2025.
+[44] Larry Wasserman, Aaditya Ramdas, and Sivaraman Balakrishnan. Universal inference.Proceedings of the National Academy of Sciences, 117(29):16880–16890, 2020.
+[45] Gernot Wassmer.Statistische Testverfahren für gruppensequentielle und adaptive Pläne in klinischen Studien. Theoretische Konzepte und deren praktische Umsetzung mit SAS. Verlag Alexander Mönch, 1999.
+[46] Gernot Wassmer and Werner Brannath.Group sequential and confirmatory adaptive designs in clinical trials. Springer, 2nd edition, 2025.
+[47] Ziyu Xu, Aldo Solari, Lasse Fischer, Rianne de Heide, Aaditya Ramdas, and Jelle Goeman. Bringing closure to false discovery rate control: A general principle for multiple testing.arXiv preprint arXiv:2509.02517, 2025.
+13
+
+
+A Exhausting e-value based tests with recursive combination
+tests
+It is well known that1 {U is not an e-value for a uniformly distributed U . This is because1 {U has infinite expectation. By this, the reciprocal1 {E1 of an e-value E1 must be a strictly conservative p-value (when truncated at1), i.e. Pp1{E1 ďuq ďu for all uP r 0, 1s and PPH 0 (by the Markov inequality), with a strict inequality for at least one u. If E1 is continuously distributed under P, then the strict inequality holds on a whole interval of r0, 1s. If P0 is a known least favorable configuration, i.e. S1puq :“P 0p1{E1 ďuq ďPp 1{E1 ďuq for all uP r 0, 1s and PPH 0, then we can define the p-value P1 “S 1p1{E1q, which is almost surely smaller than or equal to1 {E1, with a positive probability for P1 ă1{E 1, ifE 1 is continuously distributed underP 0. For the sequential e-valuesE t,tě2, the same is true conditionally. In detail, let
+Stpuq:“P 0p1{Et ďu|E 1, . . . , Et ́1q,
+where P0 PH 0 is a known least favorable configuration for all Et, i.e. Stpuq ďPp 1{Et ďu|E 1, . . . , Et ́1q for all uP r 0, 1s and PPH 0. This permits us to define the sequence of p-values Pt “S tp1{Etq that satisfies the sequential p-clud property (10), and P0rPt ă 1{Et|E1, . . . , Et ́1s ą 0almost surely when uÞÑS tpuq is continuous (which often applies to likelihood ratios). This indicates that we may be able to uniformly improve the given e-value test by a recursive combination test. We indicate below how this can done, providing the details in the appendix. We start with the combination test that has first stage rejection boundary α1,1 :“S 1pαq and the combination function C1pP1, P2q “P 2{E1 with critical value c1 “α , whereby E1 “ 1{S ́1
+1 pP1q can be understood as a function of the first stage p-value P1 “S 1p1{E1q. When stopping the study at the second stage and using1 {E2 for the second stage p-value P2, this combination test is equivalent to the test based on the e-values E1 and E2 which rejects H0 if E1E2 ě 1{α. This two stage combination test has conditional error function A1pP1q “suptuP r 0, 1s : C1pP1, uq “u{E 1 ďαu “minpαE 1, 1q which is identical to the first stage conditional error function of the sequential e-value test; see Subsection 2.2. Moreover, when S1pαq “P 0rαE1 ě 1s ą 0, i.e. we have the chance to reject H0 with E1 at stage 1, then we get
+E0rminpαE1,1qs “S 1pαq `E 0rminpαE1,1q1 tP1ąS1pαqus ăα(12)
+whereE 0 is the expectation underP 0. This follows from
+αěE 0rαE1s “E 0rminpαE1,1qs `E 0rpαE1  ́1q1 tαE1ą1us
+and E0rpαE1  ́ 1q1tαE1ą1us ą 0. The latter can be seen by the fact that for a continuously distributed E1: P0rαE1 ą 1s “P 0rαE1 ě 1s ą 0implies P0rαE1  ́ 1 ěεs ą 0for some εą 0. Note that P0rαE1  ́ 1 ěεs ą 0for some εą 0is also satisfied for a non-continuously distributed E1, whenever there exists someα 1 ăαsuch thatP 0rE1 ě1{α 1s ą0, i.e.E 1 is not bounded by1{α. The left side of inequality in (12) equals the level (8) of the combination test. Hence, the equivalent combination test is conservative even with independent and uniformly distributed stage-wise p-values and can be uniformly improved by increasing the first stage level α1,1 and/or c1 such that its level α is exhausted. When the trial is stopped at the second stage, the use of P2 “S 2p1{E2q will often uniformly improve the e-value based test further. Let us turn now to the case when the sequential e-value test continuous beyond stage 2. One can easily see that the e-value based test at stage tě 2is equivalent to the combination test with early rejection level αt,1 “S tpαMt ́1q and the combination function CtpPt, uq “S  ́1
+t pPtq  ̈u with critical value ct “αM t ́1. By similar arguments as for the first two stages, the rejection region of this combination test does not exhaust the conditional level of the e-value based test, and even less the larger conditional level At ́1 of the combination test from the previous stage that was improved to exhaust the conditional level of stage t ́ 2. As before, the conditional level At ́1 can be exhausted with the given
+14
+
+
+combination function Ct by increasing αt,1 and/or ct, in a way that uniformly improves the equivalent combination test and thereby the sequential e-value based test. Proceeding in this way at every stage, we obtain a sequence of conditional error functions that satisfies At ́1 “E 0rAt|E1, . . . , Et ́1s almost surely at each stage t, and E0rA1s “α . If t is the last stage, then we finally can exhaust the level α by using Pt “S tp1{Etq for the final p-value in the final combination test (instead of the larger p-value 1{Et).
+Remark 5.We show in the Appendix that a sequential test based on two e-values and with a positive chance to reject H0 at the first stage, is inevitably conservative, i.e. satisfies (12), whenever P0rE1 ě 1{α1s ą 0for some α1 ąα . This holds in general, i.e. also for an e-value E1 that is not continuously distributed (as assumed in this section). This finding implies that flexibility with respect to significance levels necessarily comes for the price of a strict conservatism.
+A.1 Combination tests that exhaust the level of sequential e-value tests
+We assume in this subsection that all e-values have (conditional) Lebesque-densities that are strictly positive on R` or an interval of R`, an assumption that often applies to likelihood ratios. We further assume the existence of a known least favorable null distribution P0 PH 0, such that S1puq :“ P0r1{E1 ďus “max PPH0 Pr1{E1 ďus and Stpuq :“P 0r 1{Et ďu|E 1, . . . , Et ́1 s “max PPH0 Pr 1{Et ď u|E 1, . . . , Et ́1 s almost surely for all uP r 0, 1s and tě 2. This permits us to define the sequence of p-values Pt “S tp1{Etq, which satisfy the sequential p-clud property (10), with equality for all uP r 0, 1s under P0. We will also use the inverse functions S ́1
+t pxq “suptxě 0 : Stpuq ěxu that
+satisfy S ́1
+t pPtq “ 1{Et. Finally, we can assume without loss of generality that E0rE1s “ 1and E0rEt|E1, . . . , Et ́1s “ 1almost surely for all t, using from now on E0 for EP0 . (If this conditional expectation is for some Et strictly smaller 1, then we can divide Et by its conditional expectation and obtain a uniformly larger and thereby more powerful sequential e-value.) We show how the two-stage combination test, that replicates the first two stages of the sequential e-value test, can be uniformly improved to exhaust the level α. The same arguments apply to the combination tests for the later stages with α replaced by the current conditional level. We can exhaust the level of the first combination test by increasingc 1 to the larger critical value
+cmax
+1 :“max
+␣
+vP r0,1s:S 1pαq `E 0rminpvE1,1q1 tP1ąS1pαqus ďα
+(
+and still control the type I error rate at levelαwith independent and uniformly distributed p-values. This exhausts the level of the combination test if S1pαq `E 0rminpE1, 1q1tP1ąS1pαqus ěα . Note that, in this case, the improvement is also achieved by simply using the p-value function Q1 of the combination test, because this automatically results in using the level exhausting critical valuec max
+1.
+If S1pαq `E 0rminpE1, 1q1tP1ąS1pαqus ăα , we can choose cmax
+1 “ 1as critical value for the
+combination function and exhaust the level by increasing the first stage level α1,1 to the level αmin
+1,1 S1pαq which satisfies
+αmin
+1,1 `E 0rminpE1,1q1 tP1ąαmin
+1,1 us “α.(13)
+It is worth to mention, that this is not the only way to exhaust the level of the combination test while improving the e-value based test. To this end we can choose any c1 between cmin
+1 “suptuP r 0, 1s :
+E0rminpαE, 1qsu and cmax
+1 , and then determine α1,1 such that α1,1 `E 0rminpc1E1, 1q1tP1ąα1,1us “α is satisfied. We finally note that the uniform improvement of Wald’s sequential probability ratio test suggested in [11] corresponds to the specific choiceα 1,1 “S 1p ̃αqandc 1 “ ̃αfor the level ̃αąαthat satisfies
+Erminp ̃αE1,1qs “S 1p ̃αq `Erminp ̃α1E,1q1 tP1ąS1p ̃αqus “α.
+15

@@ -1,0 +1,635 @@
+OPTIMAL MONOTONE CONDITIONAL ERROR FUNCTIONS
+Werner Brannath∗
+Competence Center for Clinical Trials Bremen & Institute of Statistics Faculty 3 - Mathematics and Computer Science University of Bremen
+brannath@uni-bremen.de
+Johanna zur Verth∗
+Competence Center for Clinical Trials Bremen Faculty 3 - Mathematics and Computer Science University of Bremen
+jzurverth@uni-bremen.de
+Morten Dreher
+Competence Center for Clinical Trials Bremen Faculty 3 - Mathematics and Computer Science University of Bremen
+mdreher@uni-bremen.de
+Martin Scharpenberg
+Competence Center for Clinical Trials Bremen Faculty 3 - Mathematics and Computer Science University of Bremen
+mscharpenberg@uni-bremen.de
+September 9, 2026
+ABSTRACT
+This paper presents a general method that provides optimal monotone conditional error functions for confirmatory adaptive two-stage designs with conditional power based sample size recalculations. The presented method builds on a previously developed general theory for optimal adaptive two-stage designs where sample sizes are reassessed for a specific conditional power and the goal is to minimize the expected sample size. The previous theory can easily lead to a non-monotonous conditional error function, which is highly undesirable for logical reasons and, as we show, can harm type I error rate control for composite null hypotheses. We also show that type I error control is generally guaranteed with a conditional error function (CEF) that is non-increasing in the first stage p-value. We present a method that extends the existing theory by introducing an intermediate monotonising steps that can easily be implemented and provides a non-increasing conditional error function. We show mathematically that the monotonising step provides the optimal non-increasing conditional error function. We illustrate the method with several examples usingoptconerrf, anR package implemented for this paper.
+Keywords:adaptive design; average sample size; conditional power; flexible design; likelihood ratio; maximum likelihood; unblinded sample size re-calculation
+∗Equal contribution.
+arXiv:2402.00814v5 [stat.ME] 8 Sep 2026
+
+
+A PREPRINT- SEPTEMBER9, 2026
+1 Introduction
+In the planning phase of a clinical trial, only limited information regarding the treatment effect may be available. Therefore, one might want to choose a trial design with a data-driven sample size reassessment at an interim analysis. One approach to implement sample size reassessment is to use the conditional error function principle introduced in [1]. The idea is to calculate the conditional type I error rate for the second stage based on the evidence from the first stage, such that the overall type I error rate is under control. Most commonly used two-stage designs can be represented by conditional error functions. This includes two-stage combination tests, like Fisher’s product test and the inverse normal method, as well as classical group sequential designs, see e.g. [2], [3] and [4].
+Brannath and Bauer [5] presented a theory for optimal adaptive two-stage designs with and without early stopping. The theory provides the conditional error function which minimizes the expected sample size when reassessing sample sizes for a specific conditional power. While the theory developed in [5] is quite general, it does often lead to conditional error functions that are not monotone in the first stage p-value. Conditional error functions that are nonincreasing in the first stage p-value (or non-decreasing in the first stage Z-score), are highly desirable for logical reasons, and are required for type I error rate control with composite null hypotheses. The latter will be illustrated by examples and mathematically verified in Section3. In this paper we extend the optimality theory of Brannath and Bauer [5] to conditional error functions that are constrained to be non-increasing in the first stage p-value also in cases where the unconstrained optimal conditional error function is not. We show that the optimal monotone conditional error function can be obtained by an ‘internal’ monotonising step, preserving the general form of the optimal conditional error function and the numerical calibration procedure for type I error rate control. We will extend the theory to account for additional constraints like a minimum and maximum second stage sample size.
+The paper is organized as follows. We start in the next section with a brief recap of the optimal conditional error functions introduced in Brannath and Bauer [5]. In Section3we discuss the requirement of a non-increasing conditional error function for type I error rate with conservative p-values. In Section4we present the optimal non-increasing conditional error function and describe its construction. Section5presents several examples for non-monotone optimal and optimal non-increasing conditional error functions with a comparison to the widely used inverse normal method. In Section6we consider the optimization under bounding constraints on the second stage sample size and conditional error function. The main part of the paper ends with a discussion and points to some related open research topics. The Proofs of theorems are presented in the appendix.
+2 Optimal conditional error functions
+We consider a confirmatory two-stage adaptive trial design with a single null hypothesisH 0; see e.g. [4]. In the planning phase of the trial, we need to specify the overall significance levelα, the futility boundaryα 0, the early rejection boundaryα 1 < α0, and the conditional error function (CEF) with0≤A(p 1)≤1, which is a function of the first stage p-valuep 1. We also must pre-specify for the first stage the sample sizen 1, or more general, the first stage informationI 1, as well the test procedure for the first stage p-valuep 1.
+At the first stage, the trial is stopped early for efficacy ifp 1 ≤α 1 and for futility ifp 1 > α0. If the trial is not stopped early, we computeA(p 1)and fix the trial design for the second stage based on the data from the first stage. The null hypothesis is rejected after the second stage if the second stage p-valuep 2 fulfillsp 2 ≤A(p 1). We defineA(p 1) := 1 forp 1 ≤α 1 andA(p 1) := 0forp 1 > α0.
+In order to maintain the overall type I error rateαthe p-valuesp 1 andp 2 need to satisfy the p-clud property underH 0
+P(p2 ≤u|p 1)≤ufor all0≤u≤1and all0≤p 1 ≤1
+2
+
+
+A PREPRINT- SEPTEMBER9, 2026
+and the conditional error function needs to satisfy the level condition
+Z1
+0
+A(p1)dp1 =α 1 +
+Z α0
+α1
+A(p1)dp1 =α.(1)
+Note that the level condition assumes a uniformly distributed first stage p-value.
+We choose the sample size of the second stage so that we can reach a specific conditional powercp. For the interim sample size recalculation we need to make an assumption about the relative effect sizeδ. A common choice is to use δ ̃= max( δˆ, δ0)where δˆis the first stage estimator of the relative effect size andδ 0 is a minimally relevant effect. To be more general, we only assume for our theoretical results that the function δ ̃(p1)is a positive and non-increasing function inp 1, which is a rather natural assumption. The second stage sample size can then be calculated as
+n2 =d· (Φ−1(cp)−Φ −1{A(p1)} 2/δ ̃(p1)2,
+whereΦ −1 is the standard normal quantile function anddis a design specific constant, which equalsd= 2for the two-sample Z-test with balanced sample size. Brannath and Bauer [5] proposed to minimize the expected sample size of the second stage, which can be written as
+E[n2] =d
+Z α0
+α1
+ν{A(p1)}
+δ ̃(p1)2 l(p1)dp 1,(2)
+where
+ν(u) ={Φ −1(cp)−Φ −1(u)}2 for0≤u < cp
+andl(p 1)is the density of the first stage p-valuep 1 under which the average sample size shall be minimized. If we want to minimize under the fixed effect size∆, the densityl(p 1)is, according to [6], given by
+l∆(p1) =e Φ−1(1−p1)√I1∆−I1∆2/2,(3)
+whereI 1 is the first stage information.
+It has been illustrated in [5] that minimizing the expected second stage sample size under a fixed parameter∆can lead to rather inefficient designs when∆is not correctly specified. An alternative is to choose a Bayesian prior distribution for the parameter∆and obtain the corresponding density of the first stage p-value. For a normal, exponential, or uniform prior distribution the corresponding functionsl(p 1)can be found in [4]. Another possibility is to use the maximum likelihood estimate formax(∆,0), which leads to
+lML(p1) =e max{0,Φ−1(1−p1)}2/2,(4)
+and has the advantage that we do not need to choose a prior distribution.
+Brannath and Bauer [5] minimize the expected sample size (2) under the following constraints
+(C1)0≤A(p 1)< cpfor allp∈[α 1, α0]
+(C2) The level condition (1) is fulfilled.
+The first constraint (C1) ensures that the conditional type I error rate never exceeds the conditional power. The second constraint (C2) needs to be fulfilled to keep the overall type I error rate. They show that under the assumption 1−Φ(2)≤cp≤Φ(2)the possibly non-monotone optimal conditional error function that fulfills the constraints (C1) and (C2) has the form
+Aopt,c(p1) =ψ{−e c/Q(p1)},(5)
+whereQ(p 1) =l(p 1)/δ ̃(p1)2 andψis the inverse of the derivativeν ′ of the functionν. For1−Φ(2)≤cp≤Φ(2) the derivativeν ′ is increasing and therefore invertible. The constantcneeds to be chosen so thatA opt,c fulfills the
+3
+
+
+A PREPRINT- SEPTEMBER9, 2026
+level condition (1). Fortunately, the assumption1−Φ(2)≤cp≤Φ(2)is not required for the derivation of the optimal conditional error function. In the next theorem we show that forcp >Φ(2)and forcp <1−Φ(2)the optimal conditional error function is given by (5) with a specific generalization ψ ̃ofψ. The proof can be found in the appendix.
+Theorem 2.1.Let us assumecp >Φ(2)orcp <1−Φ(2)and define
+u1/2 := 1−Φ{−Φ −1(cp)/2±
+p
+Φ−1(cp)2/4−1}
+withu 1 < u2. The optimal conditional error function is given by (5) withψreplaced by
+ψ ̃(x) =
+(
+ψl forx < ν ′(u2)orx < ν(ψu)−ν(ψl)
+ψu −ψl
+ψu forx > ν ′(u1)orx≥ ν(ψu)−ν(ψl)
+ψu−ψl ,
+(6)
+whereψ l =ψ l(x)is the solution of the equationν ′(u) =xin the interval]0, u 1]andψ u =ψ u(x)is the solution of the equationν ′(u) =xin the interval[u 2, cp[. The function ψ ̃(·)is non-decreasing.
+3 Requirement of non-increasing conditional error functions
+A non-increasing conditional error function is highly desirable for logical reasons: Rejection ofH 0 at the second stage should become more difficult with less evidence againstH 0 from the first stage. In other words, the second stage levelA(p 1)should never increase with decreasing first stage evidence, i.e. should nowhere be increasing inp 1. A partially increasing conditional error function not only leads to logical inconsistencies, but also does not necessarily keep the overall type I error rate. Consider the composite null hypothesisH 0 :δ≤0. The first stage p-value is uniformly distributed forδ= 0and usually strictly conservative for all other parameter values in the null hypothesis in the following sense:
+Definition 3.1.A p-value is said to be ‘strictly conservative’ if the distribution functionF c(x)of the p-value satisfies the following: Fc(x)≤xfor all0≤x≤1andF c(x)< xfor at least one0< x <1.
+For a trial design without an interim analysis, a conservative p-value does not fully exploit the significance level and, in particular, keeps the overall type I error rate. Theorem3.2below (proved in the appendix) shows that this is not necessarily the case for a two-stage design with a conditional error function that is increasing on some interval, even though it satisfies level condition (1).
+Theorem 3.2.IfA(p 1)is a conditional error function that satisfies level condition (1) and is increasing on a nonempty interval]d 1, d2[⊆]α1, α0], then there exists a densityf c(p1)of a conservative first-stage p-valuep 1 that leads to a type I error inflation withA(p 1).
+We illustrate the type I error rate inflation with a concrete example. For simplicity, we consider a design without early rejection and futility boundaries. We test the null hypothesisH 0 :δ≤0and assume a first stage test statistic Z1 ∼N(
+√
+10δ,1)with corresponding first stage p-valuep 1 = 1−Φ(Z 1). This corresponds to a first stage design with two balanced treatment groups, each with sample sizen 1 = 20. Obviously, the first-stage p-value is conservative in sense of Definition3.1for allδ <0(withF c(x)< xfor all0< x <1). The actual type I error rate can be calculated numerically by
+α∗ =
+Z1
+0
+f(p 1)A(p1)dp1,
+withf(p 1) =l δ(p1)the density of the first-stage p-value, wherel δ(p1)as in (3) with∆replaced byδ. We target the overall significance level ofα= 0.05(forδ= 0) and determine the corresponding optimal conditional error function (5) using the maximum likelihood ratio (4) with a sample size reassessment for conditional power 0.8 at the interim estimate with lower cut-offδ 0 = 0.125. The resulting conditional error function is not monotone, more precisely, increases on some interval of[0,1]. We calculate the type I error rate for the mean shiftsδ=−0.25andδ=−0.5
+4
+
+
+A PREPRINT- SEPTEMBER9, 2026
+Mean shift (δ) Inv. normal
+(w1 =w 2 =
+p
+1/2)
+Inv. normal (w1 =
+p
+1/3,w 2 =
+p
+2/3)
+Optimal (Max. likel.)
+0.0 0.050 0.050 0.050
+-0.25 0.014 0.018 0.059
+-0.5 0.003 0.005 0.062
+Table 1: Approximations of the type I error rate forδ= 0,δ=−0.25andδ=−0.5for the inverse normal conditional error function with equal weights (w1 =w 2 =
+p
+1/2), the inverse normal conditional error function with the weights w1 =
+p
+1/3,w 2 =
+p
+2/3and the optimal conditional error function (maximum LR,δ 0 = 0.125,cp= 0.8)
+for this optimal CEF and, for a comparison, also for the inverse normal conditional error functions with equal weights (w1 =w 2 =
+p
+1/2) and unequal weightsw 1 =
+p
+1/3,w 2 =
+p
+2/3which is, in both cases, non-increasing for all p1 ∈[0,1]. The results are presented in Table1.
+One can see from Table1that both inverse normal methods keep the type I error rate in all scenarios with a type I error rate falling far below the overall significance level for theδ <0. The optimal conditional error function only keeps the type I error rate forδ= 0and clearly exceeds the type I error rate forδ=−0.25andδ=−0.5. The following theorem recalls the well-known fact that the type I error is under control also for conservative first-stage p-values whenever the conditional error function is non-increasing inp 1 on the whole continuation region. For completeness, the proof is given in the appendix.
+Theorem 3.3.With a non-increasing conditional error functionA(p 1)satisfying level condition(1)and a conservative first stage p-valuep 1 with densityf c(p1), we obtain
+R1
+0 A(p1)fc(p1)dp 1 ≤α.
+Given the presented issue with non-monotone conditional error functions, we focus in the next section on the construction of non-increasing optimal conditional error functions, i.e. non-increasing conditional error functions that minimize the expected sample size under a given density or (the maximum likelihood ratio) for the first stage p-value p1, when reassessing samples for a specific target conditional power.
+4 Optimal monotone conditional error functions
+In addition to constraints (C1) and (C2), we aim now to satisfy the constraint:
+(C3)A(p 1)is non-increasing inp 1 for allp 1 ∈]α1, α0].
+IfQ(p 1)is non-increasing inp 1, thenA opt,c =ψ{−e c/Q(p1)}is non-increasing as well (sinceψ{·}is increasing), and is optimal according to Theorem 4.1 in [5]. IfQ(p 1)is increasing on some intervals,A opt,c(p1)is increasing at the same intervals, and hence does not fulfill (C3) anymore. We will derive the optimalnon-increasingconditional error function for the case whereQ(p 1)is increasing on a finite number of disjoint subintervalsD k = ]dlk, duk] (k= 1, . . . , K) of the continuation region]α 1, α0]and is non-increasing outside these intervals. To this aim we modifyQ(p 1)to a suitablenon-increasingfunction Q ̃(p1)which is constant on eachD k, and then show that the optimalnon-increasingconditional error function is given by A ̃opt,cα (p1) =ψ{−e cα /Q ̃(p1)}.
+4.1 Monotonising the functionQ(p 1)
+We construct Q ̃(·)by the following stepwise inductive procedure. We first define
+Q ̃ (1)
+q (p1) :=
+
+  
+  
+max{q, Q(p1)}forp 1 ≤d l1 qford l1 < p1 ≤d u1 min{q, Q(p1)}ford u1 < p1 ≤d l2 Q(p1)forp 1 > dl2
+,(7)
+5
+
+
+A PREPRINT- SEPTEMBER9, 2026
+whereqis a positive number, andd l2 :=α 0 ifK= 1. Then we choose the unique positive numberq 1 such that
+R dl2 α1
+Q ̃ (1)
+q1 (p1)dp 1 =
+R dl2
+α1 Q(p1)dp 1. Such a choice is always possible, since the integral on the left side increases
+continuously from
+R dl1
+α1 Q(p1)dp1 <
+R dl2
+α1 Q(p1)dp1 to∞ifq 1 increases from 0 to∞. By definition, Q ̃(1)
+q1 (p1)is nonincreasing on]α 1, dl2]. In the caseK= 1we are finished, sinced l2 =α 0. If, in particular,Q(p 1)is increasing on the whole continuation region (D1 = ]α1, α0]), then Q ̃(1)
+q1 (p1)is identical to the constantq 1 =
+R α0
+α1 Q(p1)dp 1/(α0 −α 1).
+IfK≥2then Q ̃(1)(p1)is still decreasing onD k fork≥2, and we continue inductively defining fork= 2, . . . , K
+Q ̃ (k)
+qk (p1) :=
+
+   
+   
+max{qk, Q ̃(k−1)
+qk−1 (p1)}forp 1 ≤d lk qk ford lk < p1 ≤d uk min{qk, Q(p1)}ford uk < p1 ≤d lk+1 Q(p1)forp 1 > dlk+1
+(whered lK+1 :=α 1)(8)
+and chooseq k such that
+R dlk+1 α1
+Q ̃ (k)
+qk (p1)dp 1 =
+R dlk+1
+α1 Q(p1)dp 1. For a visualization of monotonising the function Q(p1), we refer to figure1A.
+4.2 Optimal non-increasing conditional error function
+The following theorem states that the optimal non-increasing conditional error function is given by A ̃opt,cα (p1) = ψ{−ecα /Q ̃(p1)}. The proof of the theorem can be found in the appendix.
+Theorem 4.1.Letψ(·)be as in (5) (respectively forcp >Φ(2)orcp <1−Φ(2)as in Theorem2.1),Q(p 1) = l(p1)/δ ̃(p1)2, and Q ̃(p1)the non-increasing modification ofQ(p 1)as defined in(7)and, if required, in(8). Let A ̃opt,cα (p1) =ψ{−e cα /Q ̃(p1)}withc α such that A ̃opt,cα (·)satisfies the level condition (1). Then A ̃opt,cα (p1)is non-increasing on]α 1, α0], and for every othernon-increasingconditional error functionA(p 1)which satisfies level
+condition (1)
+Z α0
+α1
+ν{A ̃opt,cα (p1)}Q(p 1)dp 1 <
+Z α0
+α1
+ν{A(p1)}Q(p 1)dp 1.
+This implies that(2)is minimized by the non-increasing conditional error function A ̃opt,cα .
+The function A ̃opt,cα (p1)can be determined numerically. To determine Q ̃(p1)we first determine all intervals]d lk, duk] (e.g. by numerical root finding), and at each inductive step the constantq k (by numerical integration and root finding). In the case where δ ̃(p1)is the observed treatment effect at the interim analysis (truncated from below by some constant δ0 >0), we have always observed at most two intervals of decrease, so that Q ̃(p1)could easily be determined numerically. As indicated previously, the method and the optimal conditional error A ̃opt,cα (p1)are implemented in theR-packageoptconerrf[7], [8].
+5 Examples and comparisons
+In the following, we show different examples for optimal monotone conditional error functions using ourR-package optconerrf. An introduction to the usage of the packageoptconerrfcan be found in the vignettes [9] and [10]. Furthermore, we compare the optimal monotone conditional error functions to potentially non-monotone ones and to other more standard approaches.
+5.1 Numerical example
+Consider planning an adaptive two-stage design with stage-wise p-values from one-sided, two-sampleZ-tests. We aim on equal group sizes and assume a common variance ofσ 2 = 1in both treatment groups. The overall significance level isα= 0.05and we want to achieve an overall power of0.8at the alternativeδ= 0.2. In case of a fixed-size-sample test, a sample size ofN= 2{Φ −1(0.8)−Φ −1(0.05)}2/0.22 ≈310per group is required. We plan an adaptive twostage design with roughly a third of this sample size in the first stage (n1 = 104). Furthermore, we want to incorporate the early rejection boundaryα 1 = 0.001and a futility boundaryα 0 = 0.5. We aim for a conditional power ofcp= 0.8
+6
+
+
+A PREPRINT- SEPTEMBER9, 2026
+Figure 1:A:Unconstrained Q (dashed line) and monotone Q (solid line)B:Unconstrained optimal CEF (dashed line) and optimal monotone CEF (solid line) for the example described in the text,C:Corresponding second stage sample sizes
+and use for the interim calculation of the second stage sample size the interim estimate δ ̃= max( δˆ1, δ0)of the effect size with lower cut-off valueδ 0 = 0.125. We determine the conditional error function which minimizes the expected sample size for the effect size∆ = 0.2, i.e. assume density (3) with∆ = 0.2in (2).
+For the calculation with theR-packageoptconerrf, it is required to specify the first stage informationI 1 instead of the group-wise first stage sample sizen 1, which equalsI 1 =n 1/(2σ2)in this example. Figure1AshowsQ(p 1)and the non-increasing modification ofQ(p 1)(see chapter4.1). Figure1Bshows the resulting unconstrained optimal CEF (dashed line) and the optimal monotone CEF (solid line). The unconstrained optimal CEF is non-monotone on a single interval, and so the optimal one is constant on an interval, namely on[0.04,0.20]with the constant valueq= 74.56in (7). The level constant for the optimal monotone conditional error function isc α = 7.24.
+In figure1Cthe corresponding group-wise second stage sample size is plotted as a function of the first stage p-value for the optimal conditional error function (dashed line) and the optimal monotone conditional error function (solid line). The package provides only a plot of the second stage information. The plot of the second stage sample size was obtained with a minor modification of the implementation.
+The unconstrained optimal CEF becomes monotone when choosing a larger lower cut-off valueδ 0. In the above example, settingδ 0 = 0.2results in an unconstrained optimal CEF that is already monotone (see figure2A). We also note that minimizing the expected second stage sample size for a value of∆in the null hypothesis, we obtain a constant optimal monotone CEF on the whole continuation region[α 0, α1], because the unconstrained optimal CEF is increasing. Figure2Bshows the optimal conditional error function for the above example when optimizing under the null∆ = 0.
+5.2 Comparisons of methods
+Instead of using the fixed effect size∆ = 0.2for the density of the first stage p-value, it may be preferable to use the maximum likelihood approach which does not require any additional assumptions. In the following, we will compare these two approaches. In addition, we consider the inverse normal method with equally weighted stages (w1 =w 2 =
+p
+1/2) and also with the weightsw 1 =
+p
+1/3andw 2 =
+p
+2/3. The choice of the latter (unequal) weights is motivated by our decision to use a third of the single-stage sample size for the first stage. Figure3shows the four different conditional error functions.
+The maximum second stage sample size is largest for the inverse normal method with equally weighted stages (1272), smaller for the inverse normal method with the weightsw 1 =
+p
+1/3,w 2 =
+p
+2/3(1010), and even smaller with the optimal CEF for∆ = 0.2(868) and smallest for the maximum likelihood approach (647).
+7
+
+
+A PREPRINT- SEPTEMBER9, 2026
+Figure 2:A:Unconstrained optimal CEF for∆ = 0.2andδ 0 = 0.2,B:Unconstrained optimal CEF (dashed line) and optimal monotone CEF (solid line) for∆ = 0andδ 0 = 0.125.
+Figure 3: CEF of the inverse normal method with equally weighted stages (w1 =w 2 =
+p
+1/2) and unequal weights w1 =
+p
+1/3,w 2 =
+p
+2/3, optimal monotone CEF for effect size∆ = 0.2, optimal monotone CEF with maximum likelihood approach. The inverse normal method is currently not implemented inoptconerrfand has been added here.
+In table2the expected second stage sample size for a trueδof0,0.125and0.2is displayed and in parentheses the corresponding overall power is given. The optimal monotone conditional error function that uses the fixed effect size ∆ = 0.2for the density of the first stage p-value has the smallest expected second stage sample size whenδ= 0.2is true. The expected second stage sample size of the optimal monotone CEF with the maximum likelihood approach is the second smallest and not much larger than the minimal one, and it provides the smallest sample size for the other trueδvalues. This is in line with the numerical findings in [5].
+We might not be satisfied with the achieved overall power at the pre-specified alternativeδ= 0.2. In the following, we will show how to control the overall power by choice of the first stage sample size.
+5.3 Study design with overall power control
+The overall power of at least0.8at the alternativeδ= 0.2can be obtained by choice of the first stage sample size where the necessary first stage sample size can be determined using a root finding algorithm. In case of the inverse
+8
+
+
+A PREPRINT- SEPTEMBER9, 2026
+δ
+Inv. normal (w1 =w 2 =
+p
+1/2)
+Inv. normal (w1 =
+p
+1/3, w2 =
+p
+2/3)
+Optimal monotone (∆ = 0)
+Optimal monotone (∆ = 0.125)
+Optimal monotone (∆ = 0.2)
+Optimal monotone (Max. likel.)
+0 348.08 (0.05) 308.77 (0.05) 236.86 (0.05) 242.22 (0.05) 259.39 (0.05) 245.24 (0.05)
+0.125 375.18 (0.57) 344.48 (0.56) 297.07 (0.51) 295.00 (0.51) 301.04 (0.53) 299.54 (0.53)
+0.2 283.52 (0.78) 268.55 (0.74) 256.80 (0.72) 250.87 (0.72) 246.49 (0.73) 252.02 (0.74)
+Table 2: Group-wise expected second stage sample size and overall power for different conditional error functions (δ0 = 0.125)
+δ Inv. normal
+(w1 =w 2 =
+p
+1/2)
+Inv. normal (w1 =
+p
+1/3,w 2 =
+p
+2/3)
+Optimal monotone (∆ = 0.2)
+Optimal monotone (Max. likel.)
+0 475.26 523.74 443.87 411.71
+0.125 500.09 552.62 478.20 471.16
+0.2 393.07 414.97 383.36 393.18
+Table 3: Expected overall sample size for different conditional error functions
+normal method with equally weighted stages (w1 =w 2 =
+p
+1/2) we need a first stage sample size of121, for the inverse normal method with the weightsw 1 =
+p
+1/3,w 2 =
+p
+2/3we need193and with the optimal conditional error function for∆ = 0.2and the maximum likelihood approach the first stage sample size becomes144.
+Given the mentioned first stage sample sizes, the maximum overall sample size is again largest for the inverse normal
+method with equally weighted stages (1393) and smaller for the inverse normal method with unequal weightsw 1 =
+p
+1/3,w 2 =
+p
+2/3(1203). For the optimal conditional error function at∆ = 0.2it is1148, and it is again smallest with the maximum likelihood approach (831). In table3we see the expected overall sample size for a trueδof0, 0.125and0.2.
+Although the expected overall sample size is nearly the same for the equally weighted inverse normal method as for the optimal monotone conditional error function that uses the maximum likelihood approach, we save overall maximum sample size when using the optimal conditional error functions.
+6 Optimization under bounds for the sample size and CEF
+For financial and ethical reasons there is often a maximum sample size that cannot be exceeded, and there may be also a minimum for the second stage sample size, e.g. for statistical reasons (to be close enough to asymptotic limits) or scientific reasons, e.g. to collecting sufficient safety data. We show next how we can obtain the optimal monotone CEF under such additional constraints. The solution is simple and similar to the solution for the generally non-monotone optimal CEF considered in [5]. Letn 2,min < n2,max be the desired minimum and maximum second stage sample sizes. A simple calculation shows that
+n2,min ≤d· Φ−1{1−A(p 1)}+ Φ −1(cp) 2/δ ̃(p1)2 ≤n 2,max.
+is equivalent to the following constraint on the conditional error function
+αn
+2,min(p1)≤A(p 1)≤α n
+2,max(p1),(9)
+9
+
+
+A PREPRINT- SEPTEMBER9, 2026
+for
+αn
+2,min(p1) := Φ Φ−1(cp)− δ ̃(p1)
+q
+n2,max/d and
+αn
+2,max(p1) := Φ Φ−1(cp)− δ ̃(p1)
+q
+n2,min/d .(10)
+More generally, one can consider arbitrary constraint functionsα 2,min(p1)andα 2,max(p1)that need to satisfy the properties
+α2,min(p1)≤α 2,max(p1)≤cpfor allα 1 < p1 < α0 (11)
+and
+α1 +
+Z α0
+α1
+α2,min(p1)dp1 ≤αas well asα 1 +
+Z α0
+α1
+α2,max(p1)dp1 ≥α.(12)
+To ensure that the resulting optimal CEF is non-increasing, we additionally need to require thatα 2,min(p1)and α2,max(p1)are non-increasing. For1−Φ(2)≤cp≤Φ(2)the optimal monotone conditional error function under the constraints (C1’), (C2), (C3) and the additional constraint
+(C4)α 2,min(p1)≤A(p 1)≤α 2,max(p1).
+is then given by
+A ̃C
+opt,c′ (p1) = max α2,min(p1),min α2,max(p1), ψ{−ec′ /Q ̃(p1)} .(13)
+For the general result, we refer to TheoremA.2in the appendix.
+We illustrate now, how (13), or more generally TheoremA.2, can be applied to account for restrictions on the minimum and maximum second stage sample size. With (10), the conditions (11) are always fulfilled. However, when using a decreasing data dependent relative effect the functionsα n
+2,min(p1)andα n
+2,max(p1)are not necessarily non-increasing and then the constrained optimal conditional error function may non-longer be non-increasing as well. However, the constraintsα n
+2,min(p1)andα n
+2,max(p1)can instead be expressed with constant constraints on the conditional error function. In detail, the maximum resp. minimum second stage sample size is reached atα 0 resp.α 1 and these values can be plugged into (10) to obtain the corresponding constant minimum resp. maximum conditional error.
+6.1 Example: Design with constraints on the sample size
+We consider now the example in Section5.1with the additional constraintsα 2,max(p1) = 0.25(not to testH 0 at a too large conditional level at stage 2) andn 2,max = 620. We determine the accordingly constrained optimal monotone CEF based on the maximum likelihood approach, again using ourR-packageoptconerrf. Figure4Ashows that the first constraint was met and in figure4Bwe can see that the constraint automatically leads to a minimal second stage sample size. Furthermore, figure4Bshows that all p-values above a certain threshold lead to the maximum second stage sample size of620.
+6.2 Design example with an almost free lunch internal pilot study
+In this section we compare two potential designs with a data dependent sample size calculation. The first design (S) represents the standard approach, that consists of a separate pilot and confirmatory study, where the pilot study is only used for the calculation of the sample size of the confirmatory part and not for testing the primary hypothesisH 0. The second design (A) is an adaptive two-stage design, where the pilot and confirmatory studies are integral parts of a single trial, corresponding to the first and second stage of the design, and the data from both stages are used to testH 0. We assume that in both designs, the pilot study comprises104subjects per group, and the sample size calculation is based on the pilot effect estimate, truncated from below by the minimal clinically relevant effectδ 0 = 0.125. In both
+10
+
+
+A PREPRINT- SEPTEMBER9, 2026
+Figure 4:A:Optimal CEF (dashed line) and optimal monotone CEF (solid line) with the constraintsn 2,max = 620 andα 2,max(p1) = 0.25for the values described in the text,B:Corresponding second stage sample sizes
+Figure 5:A:CEF for the optimal adaptive design AB:Second stage sample size of the optimal adaptive design A (solid line) and the separate study design S (dotted line)
+designs, we aim for a conditional power of0.8, whereby in design S this is just the unconditional power of the extra confirmatory trial. In design S there is no binding futility stopping foreseen, whereas in design A we stop at the pilot study for futility whenp 1 > α0 = 0.9. This binding futility stopping rule is rather liberal and typically leads to an only small probability of stopping for futility under the alternative, e.g. only0.003when the true effect isδ= 0.2. No early rejection is foreseen, neither in design S nor in the adaptive design A (α1 = 0). In both designs,H 0 is tested at the nominal overall levelα= 0.05.
+For the adaptive design we will use the optimal monotone conditional error function that uses the maximum likelihood approach. In addition, we apply the constant constraintsα 2,min = 0.05andα 2,max = 0.5to the conditional error function. This means that with design A the significance level for the second stage is never smaller than the level α= 0.05applied in design S to the confirmatory trial, and never exceeds0.5. Figure5shows the optimal monotone conditional error function and the corresponding second stage sample size. As expected, both designs have the same second stage maximum sample size (792). However, for small first stage p-values, the adaptive design A leads to sample sizes that are smaller than those of design S.
+11
+
+
+A PREPRINT- SEPTEMBER9, 2026
+δ Separate study design S Optimal adaptive designs A
+0 717.46 (0.05) 625.52 (0.05)
+0.125 549.65 (0.62) 513.95 (0.63)
+0.2 410.53 (0.74) 378.46 (0.78)
+Table 4: Expected second stage sample size and overall power for the separate study design S and optimal adaptive design A
+Moreover, one can see from Table4, that design A also leads to smaller expected sample sizes and to higher overall power than design S. Since there is neither a loss in power nor in sample size, with the minor price of a (rather liberal) binding futility rule, we can think of receiving an almost free lunch with the adaptive design.
+7 Summary and discussion
+In this work we extend the theory for optimal adaptive designs initiated in [5] by a mathematical method that always provides the optimal non-increasing conditional error function and overcomes artificial constraints on the conditional power. Some of these extensions have already been indicated in [5], but have been worked-out, further extended and implemented only for this manuscript. We show that non-increasing conditional error functions are not only reasonable but also necessary for general type I error rate control with strictly conservative p-values, which are quite possible with one-sided null hypotheses. Utilizing theRpackageoptconerrf, written to facilitate the application of the theoretical results presented in this manuscript, we illustrate by examples, that the desired monotonicity property is not always guaranteed with the original methodology suggested in [5]. To obtain the optimal non-increasing CEF, the monotonicity can be enforced by a numerical procedure that monotonises the core functionQof the (original) nonmonotone optimal CEF. This approach preserves the flexibility of the original method, which permits to determine the minimal expected sample size (and corresponding optimal conditional error function) for any parameter value, as well as stochastic mixtures of parameter values represented by prior densities for the efficacy parameter. It also preserves the simple maximum likelihood approach of [5], that does not require the specification of a prior distribution and provides expected sample sizes that are close to the theoretical optima over a wide range of parameter values. We have also seen that optimal conditional error functions do not only lead to smaller expected sample sizes but also reduce the maximum sample size, often more substantially than the expected one, in particular when using a prior or the maximum likelihood approach.
+We have extended the method to also account for constraints on the sample size and/or lower and upper bounds for the conditional error function. We have applied such a constrained and monotone optimal conditional error function to derive designs with an interim sample size calculation that uniformly improve the canonical approach of separate pilot and confirmatory study with respect to the sample size, and were seen to also lead to higher power for a range of typical parameter values. The advantage of adaptive designs over the separate study approach is particularly important for two-step registration processes, like the DiGA fast-track program of the German Federal Institute for Drugs and Medical Devices (BfArM), and has been investigated and illustrated in [11] with more classical approaches like the inverse normal method and Fisher’s product test.
+The optimal non-increasing conditional error functions are constant on the non-monotonicity intervals of the original optimal CEF. We have also seen in examples that the original optimal CEF is already non-increasing (and hence no monotonising step is required) when truncating the interim estimate (used for the sample size determination) at a sufficiently high value. Since a constant conditional error function implies an only limited use of the first stage data, this indicates that a too extensive use of the interim data (by e.g. truncating the interim estimate at an only smallδ 0) comes with too high costs in terms of sample size in order to be optimal. In practice one may therefore prefer a design where the monotonisation for the optimal conditional error function is not required. However, the theory presented in this paper provides a solution also for cases where this cannot be avoided due to clinical constraints.
+12
+
+
+A PREPRINT- SEPTEMBER9, 2026
+It might be of interest to let the target conditional power to depend on the first stage evidence. The available resources for the second stage may increase with increasing first stage evidence, permitting a higher target conditional power for smaller p-values. Therefore, we could assume a given conditional power functioncp(p 1)that is non-increasing in the first stage p-valuep 1. In this case it is still possible to use the described approach to derive a monotone conditional error function but this function is not necessarily optimal anymore. However, we assume that the derived function is still sufficiently efficient.
+Several extensions of our work are of interest. The most interesting question is how to define and derive optimal adaptive designs with also treatment, subgroup and/or endpoint selection. Another interesting question is how to obtain optimal adaptive designs that formally minimize a loss function that is e.g. based on the average and maximum sample size and whether this leads to substantial difference in the optimal conditional error functions.
+We finally acknowledge the numerical optimization procedure implemented in theRpackageadoptr, which determines optimal adaptive designs by a purely numerically optimization procedure (after a discretisation of the sample and design space); see e.g. [12] and [13]. The theoretical approach presented here has the advantage of disclosing the mathematical structure of the optimal conditional error function and to providing a transparent, (almost) analytical solution, that is also easy to determine numerically. This does not only support the application of optimal adaptive designs in real clinical trials, but also provides a benchmark for more pragmatic approaches.
+References
+[1]M. A. Proschan and S. A. Hunsberger. Designed extension of studies based on conditional power.Biometrics, 51:1315–1324, 1995.
+[2]H.-H. M u ̈ller and H. Scha ̈fer. Adaptive group sequential designs for clinical trials: Combining the advantages of adaptive and of classical group sequential approaches.Biometrics, 57:886–891, 2001.
+[3]M. Posch and P. Bauer. Adaptive two stage designs and the conditional error function.Biometrical Journal, 41:689–696, 1999.
+[4]G. Wassmer and W. Brannath.Group Sequential and Confirmatory Adaptive Designs in Clinical Trials. Springer Series in Pharmaceutical Statistics. Springer International Publishin, Switzerland, second edition, 2025.
+[5]W. Brannath and P. Bauer. Optimal conditional error functions for the control of conditional power.Biometrics, 60:715–723, 2004.
+[6]H. M. J. Hung, R. T. O’Neill, P. Bauer, and K. K o ̈hne. The behaviour of the p–value when the alternative hypothesis is true.Biometrics, 53:11–22, 1997.
+[7]R Core Team.R: A Language and Environment for Statistical Computing. R Foundation for Statistical Comput
+ing, Vienna, Austria, 2026. URL:https://www.R-project.org/,doi:10.32614/R.manuals.
+[8]M. Dreher, W. Brannath, and J. zur Verth.optconerrf: Optimal Monotone Conditional Error Functions, 2026.
+R package version 1.0.3. URL:https://CRAN.R-project.org/package=optconerrf,doi:10.32614/ CRAN.package.optconerrf.
+[9]M. Dreher, W. Brannath, and J. zur Verth.Introduction to the ‘optconerrf’ package, 2026. R package version 1.0.3. URL:https://cran.r-project.org/web/packages/optconerrf/vignettes/introduction. html.
+[10]M. Dreher, W. Brannath, and J. zur Verth.Constraints, Interim Estimates and Conditional Power Functions for the Optimal Conditional Error Function, 2026. R package version 1.0.3. URL:https://cran.r-project. org/web/packages/optconerrf/vignettes/constraints_interim_estimates.html.
+[11]L. Kluge and W. Brannath. Adaptive designs in fast-track registration processes for digital health applications. arXiv:2507.04092 [stat.ME], 2025.
+[12]K. Kunzmann, M. Pilz, C. Herrmann, G. Rauch, and M. Kieser. The adoptr package: adaptive optimal designs for clinical trials in r.Journal of Statistical Software, 98, 2021.
+13
+
+
+A PREPRINT- SEPTEMBER9, 2026
+[13]M. Pilz and M. Kieser. New results on optimal conditional error functions for adaptive two-stage designs.Journal of Applied Statistics, 51:3178–3194, 2024.
+14
+
+
+A PREPRINT- SEPTEMBER9, 2026
+Appendix
+Proof of Theorem2.1.According to [4] (chapter 8, p. 265) minimizing the expected second stage sample size is achieved by maximizing for an arbitraryc(to be chosen thereafter, to meet the level condition)
+Gc(A) =
+Z α0
+α1
+Z cp
+A(p1 )
+{ν′(u)Q(p1) +e c}du dp1
+=
+Z α0
+α1
+Q(p1)
+Z cp
+A(p1 )
+{ν′(u) + ec
+Q(p1) }du dp1.
+For notational simplicity we definex:=−e c/Q(p1). Obviously,G c(A)is maximal if we chooseA(p 1) =asuch that
+Z cp
+a
+ν′(u)−x du(14)
+is maximal. In order to maximize (14), we need to know the monotonicity properties of the function
+ν′(u) =−2{Φ −1(1−u) +k}
+√
+2πe{Φ−1(1−u)}2/2,wherek:= Φ −1(cp).
+Because the functionz(u) = Φ −1(1−u)is decreasing inu, the functionν ′(u)is increasing inu, if the function
+h(z) = (z+k)e z2/2
+is increasing inz. Therefore, we consider the derivative of the functionh(z)
+h′(z) =e z2/2 + (z+k)ze z2/2 =e z2/2(z2 +zk+ 1) =e z2/2{(z+ k
+2 )2 + 1− k2
+4 }.(15)
+From (15) we see thath ′(z)>0for allzif1≥k 2/4 = Φ−1(cp)2/4. Hence, the functionν ′(u)is increasing inufor 1−Φ(2)≤cp≤Φ(2)and the integral (14) can be maximized by settingA(p 1) =ψ(x), whereψis the inverse of ν′(u).
+We consider now the casek 2/4>1, i.e., where eithercp >Φ(2)orcp <1−Φ(2). In this case, the derivativeh ′(z) has the two roots
+z1/2 =− k
+2±
+r
+k2
+4 −1,
+wherebyh ′(z)<0forz 1 < z < z2 andh ′(z)>0forz < z 1 orz > z 2. Defining
+u1/2 := 1−Φ − k
+2±
+r
+k2
+4 −1 ,
+we obtain thatν ′(u)is increasing inuuntilu 1 then decreasing untilu 2 and then increasing again. Consequently ν′(u1)andν ′(u2)are local maximum and minimum ofν ′(u). The following arguments are best understood with a graphical sketch of the functionν ′(u)(which we leave to the reader).
+Let us return to the problem of maximizing the integral (14). In case thatx < ν ′(u2)respectivelyx > ν ′(u1), there exists at most one solution of the equationν ′(u)−x= 0, which we denote byψ l(p1)respectivelyψ u(p1). Because x=−e c/Q(p1)<0andlimu→0 ν′(u) =−∞, we always have a solutionψ l(p1)∈]0, u 1[ifx < ν ′(u2); and because
+ν′(cp) = 0, we always have a solutionψ u(p1)∈]u 2, cp[ifx > ν ′(u1). The solutionsψ l(x)andψ u(x)can be found with a bisection search in the respective interval. Because the functionν ′(u)−xis increasing foru∈]0, u 1[and u∈]u 2, cp[, we know thatA(p 1) =ψ l(x)respectivelyA(p 1) =ψ u(x)maximizes (14).
+The equalityν ′(u)−x= 0has forν ′(u2)< x < ν ′(u1)three solutions and forν ′(u2) =xorν ′(u1) =xonly two. Similar to the previous notation we denote the solution that lies in the interval]0, u 1]withψ l(p1)and the solution that
+15
+
+
+A PREPRINT- SEPTEMBER9, 2026
+lies in the interval[u 2, cp[withψ u(p1). The third solution, that only exists ifν ′(u2)< x < ν ′(u1)and which we denote byψ mid, lies betweenu 1 andu 2. SettingA(p 1)to this third solution never maximizes the integral (14) because ν′(u)−xis negative on]ψ mid, u2[. To maximize the integral (14) we should start integrating atψ l :=ψ l(x), if
+Z ψu
+ψl
+n
+ν′(u)−x
+o
+du >0⇔ ν(ψu)−ν(ψ l)
+ψu(p1)−ψ l(p1) > x(16)
+and in all other cases atψ u :=ψ u(x). Overall we get forcp <1−Φ(2)orcp >Φ(2)the optimal conditional error functionA(p 1) = ψ ̃{−ec/Q(p1)}with
+ψ ̃(x) =
+(
+ψl forx < ν ′(u2)orx < ν(ψu)−ν(ψl)
+ψu −ψl
+ψu forx > ν ′(u1)orx≥ ν(ψu)−ν(ψl)
+ψu−ψl .
+(17)
+Becauseψ l(x)andψ u(x)are both increasing inx, and the integral in (16) is decreasing inx, the function ψ ̃(x)is non-decreasing inx.
+Proof of Theorem3.2.LetA(p 1)be a conditional error function that fulfills level condition (1) and is increasing inp 1 (almost surely) on an interval]d 1, d2[⊆[α 1, α0]. We will construct a conservative first stage p-value that leads to a type I error inflation. To this end, we define a density for the first-stage p-valuep 1 of the form
+fc(p1) =
+
+  
+  
+1forp 1 ∈]0, d1]
+fcc(p1)forp 1 ∈]d1, d2]
+1forp 1 ∈]d2,1],
+wheref cc(p1)is a positive step-function with
+R d2
+d1 fcc(p1)dp1 =d 2 −d 1. To constructf cc, note first that there exists ad m ∈]d1, d2[such that
+A(p1)<
+Z d2
+d1
+A(u)du/(d2 −d 1)for almost allp 1 ∈]d1, dm[(18)
+A(p1)>
+Z d2
+d1
+A(u)du/(d2 −d 1)for almost allp 1 ∈]dm, d2[.(19)
+This is because the (almost surely) increasing functionH(p 1) :=A(p 1)−
+R d2
+d1 A(u)du/(d2 −d 1)satisfies
+R d2
+d1 H(u)du= 0and it’s overall non-negativity or overall non-positivity on]d 1, d2[would implyH(p 1) = 0almost surely on]d 1, d2[, which violates its monotonicity property.
+We define nowf cc(p1)forp 1 ∈]d1, d2[as
+fcc(p1) :=
+(
+1−(d 2 −d m)forp 1 ∈]d1, dm[
+1 + (dm −d 1)forp 1 ∈[d m, d2[.
+Now, from the inequalities (18) and (19) we obtain that
+Z d2
+d1
+A(p1)fcc(p1)dp1 =
+Z d2
+d1
+A(p1)dp1 −(d 2 −d m)
+Z dm
+d1
+A(p1)dp1 + (dm −d 1)
+Z d2
+dm
+A(p1)dp1
+>
+Z d2
+d1
+A(p1)dp1 −(d 2 −d m)(dm −d 1)
+R d2
+d1 A(u)du
+d2 −d 1
++ (dm −d 1)(d2 −d m)
+R d2
+d1 A(u)du
+d2 −d 1
+=
+Z d2
+d1
+A(p1)dp1.
+16
+
+
+A PREPRINT- SEPTEMBER9, 2026
+Finally, this implies
+Z1
+0
+A(p1)fc(p1)dp1 =
+Z d1
+0
+A(p1)dp1 +
+Z d2
+d1
+A(p1)fcc(p1)dp1 +
+Z1
+d2
+A(p1)dp1
+>
+Z d1
+0
+A(p1)dp1 +
+Z d2
+d1
+A(p1)dp1 +
+Z1
+d2
+A(p1)dp1 =
+Z1
+0
+A(p1)dp1 =α.
+Proof of Theorem3.3.Letp 1 be a conservative p-value with density functionf c(x)and distribution functionF c(x), i.e.F c(u)≤ufor allu∈[0,1]. Then there exists a random variableU∼U[0,1]such thatU≤p 1 almost surely. Because the conditional error functionA(p 1)is non-increasing, it holdsA(U)≥A(p 1)almost surely, and it follows from level condition (1) that
+α=
+Z1
+0
+A(u)du=E[A(U)]≥E[A(p 1)] =
+Z1
+0
+A(p1)fc(p1)dp1.
+To prove Theorem4.1, we need the following lemma.
+Lemma A.1.The function Q ̃(p1) := Q ̃(K)
+qK (·)is non-increasing on]α 1, α0]. Further, for every non-decreasing and
+non-negative functionη(p 1)
+Z α0
+α1
+η(p1)Q(p 1)dp 1 ≥
+Z α0
+α1
+η(p1) Q ̃(p1)dp 1,(20)
+and for every measurable real functionξ{·}
+Z α0
+α1
+ξ{Q ̃(p1)}Q(p 1)dp 1 =
+Z α0
+α1
+ξ{Q ̃(p1)} Q ̃(p1)dp 1.(21)
+Proof of LemmaA.1.All results are verified by induction ink, and for convenience, we define Q ̃(0)
+q0 (·) =Q(·).
+We start showing the monotonicity of Q ̃(p1). Obviously,Q(p 1)is non-increasing on]α 1, dl1], and by our assumptions, Q(p1)is non-increasing also on]d uk, dlk+1]for allk= 1, . . . , K−1. Hence, ifQ (k−1)
+qk−1 (p1)is non-increasing on
+]α1, dlk]thenQ (k)
+qk (p1)is non-increasing on]α 1, dlk+1]by its construction.
+We next prove (20) by showing
+R α0
+α1 η(p1)δ k(p1)dp 1 ≥0withδ k(p1) = Q ̃(k−1)
+qk−1 (p1)− Q ̃(k)
+qk (p1)for allkand every non-decreasing non-negativeη(p 1). By definition (8) we haveδ k(p1)≤0forp 1 ≤d lk andδ k(p1)≥0for p1 ≥d uk. Further,δ k(p1) =Q(p 1)−q k forp 1 ∈D k, which is increasing. Hence there is a numberd 0k ∈]dlk, duk] such thatδ k(p1)≤0for allp 1 ≤d 0k andδ k(p1)≥0for allp 1 ≥d 0k. Ifη(p 1)is non-decreasing, then also η(p1)−η(d 0k)≤0forp 1 ≤d 0k andη(p 1)−η(d 0k)≥0forp 1 ≥d 0k, which implies{η(p 1)−η(d 0k)} ·δ k(p1)≥0 for allp 1 ∈]α1, α0]. Sinceδ k(p1) = 0forp 1 ≥d lk+1, and by the choice ofq k, we have
+R α0
+α1 δk(p1)dp 1 = 0, we
+obtain
+R α0
+α1 η(p1)δ k(p1)dp 1 =
+R α0
+α1 {η(p1)−η(d 0k)}δ k(p1)dp 1 ≥0.
+To see (21) notice that Q ̃(k)(p1) =q k ifδ k(p1)̸= 0. Hence, for allkand every measurableξ{·}we get
+R α0
+α1 ξ{Q ̃(k)(p1)}δ k(p1)dp 1 =ξ{q k}
+R α0
+α1 δk(p1)dp 1 = 0.
+Proof of Theorem4.1.From Theorem 4.1 in [5] we know that
+R α0
+α1 ν{A(p1)} Q ̃(p1)dp 1 is uniquely minimized by the
+conditional error function A ̃opt, cα (p1) =ψ{−e cα /Q ̃(p1)}, which is non-increasing by the monotonicity ofψ(·)and the monotonicity of Q ̃(p1)(see LemmaA.1). Hence, ifA(p 1)is another non-increasing conditional error function which satisfies level condition (1), then by (20) and (21):
+R α0
+α1 ν{A(p1)}Q(p 1)dp 1 ≥
+R α0
+α1 ν{A(p1)} Q ̃(p1)dp 1 >
+R α0
+α1 ν{A ̃opt,cα (p1)} Q ̃(p1)dp 1 =
+R α0
+α1 ν{A ̃opt,cα (p1)}Q(p 1)dp 1.
+17
+
+
+A PREPRINT- SEPTEMBER9, 2026
+Theorem A.2.Letα 2,min(p1)andα 2,max(p1)be non-increasing functions that satisfy the properties(11)and(12). Let Q ̃(p1)be the monotonized version ofQ(p 1).
+For1−Φ(2)≤cp≤Φ(2)let further
+ψc(x, p1) := max α2,min(p1),min α2,max(p1), ψ(x)
+and forcp <1−Φ(2)orcp >Φ(2)let
+ψc,l(x, p1) := max α2,min(p1),min α2,max(p1), ψl(x) and(22)
+ψc,u(x, p1) := max α2,min(p1),min α2,max(p1), ψu(x) (23)
+whereψ l(x)is the solution of the equationν ′(u) =xin the interval]0, u 1]andψ u(x)is the solution of the equation ν′(u) =xin the interval[u 2, cp[.
+The optimal monotone conditional error function under the constraints (C1’), (C2), (C3) and the additional constraint
+(C4)α 2,min(p1)≤A(p 1)≤α 2,max(p1).
+equals for1−Φ(2)≤cp≤Φ(2)the expression
+A ̃C
+opt,c′ (p1) :=ψ c −e c′ /Q ̃(p1), p1 (24)
+and forcp <1−Φ(2)orcp >Φ(2)the expression
+A ̃C
+opt,c′ (p1) = ψ ̃c −e c′ /Q ̃(p1), p1 ,(25)
+where
+ψ ̃c(x, p1) =
+
+ 
+ 
+ψc,l(x, p1)forx < ν ′(u2)orx < ν ψc,u(x,p1) −ν ψc,l(x,p1)
+ψc,u (x,p1 )−ψc,l (x,p1 )
+ψc,u(x, p1)forx > ν ′(u1)orx≥ ν ψc,u(x,p1) −ν ψc,l(x,p1)
+ψc,u(x,p1)−ψc,l(x,p1) .
+(26)
+Proof of TheoremA.2.According to the proof of Theorem2.1, for any givenp 1, we need now to search fora∈ [α2,min(p1), α2,max(p1)]such that (14) is maximized. Ifα 2,max(p1)is below the rootψ(x, p 1)or the two roots ψl(x, p1)andψ u(x, p1), thenν ′(u)−xis negative for allu∈]α 2,min(p1), α2,max(p1)[and (14) is maximized for A ̃C
+opt,c′ (p1) =α 2,max(p1). Ifα 2,min(p1)is above the single or the two roots, thenν ′(u)−xis positive for all
+u∈]α 2,min(p1), α2,max(p1)[and (14) is maximized for A ̃C
+opt,c′ (p1) =α 2,min(p1). If1−Φ(2)≤cp≤Φ(2)and
+ψu,c(x, p1)∈[α 2,min(p1), α2,max(p1)], then (14) is maximized for A ̃C
+opt,c′ (p1) =ψ u,c(x, p1). Ifcp >Φ(2)or
+cp <1−Φ(2)then theamaximizing (14) depends on which of the two roots belong to[α 2,min(p1), α2,max(p1)]. Replacingψ l(x, p1)andψ u(x, p1)byψ l,c(x, p1)andψ u,c(x, p1)defined in (22), one can see as in the proof of Theorem2.1, that the optimal conditional error function is given by (25).
+That A ̃C
+opt,c′ (p1)is non-increasing inp 1 follows from the monotonicity ofψ c(x, p1),ψ l,c(x, p1),ψ u,c(x, p1)inp 1.
+18

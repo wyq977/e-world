@@ -1,0 +1,235 @@
+Adaptive Two Stage Designs and the Conditional Error Function
+Martin Posch and Peter Bauer
+Department of Medical Statistics University of Vienna Austria
+Summary
+Proschan and Hunsberger (1995) suggest the use of a conditional error function to construct a two stage test that meets the a level and allows a very flexible reassessment of the sample size after the interim analysis. In this note we show that several adaptive designs can be formulated in terms of such an error function. The conditional power function defined similarly provides a simple method for sample size reassessment in adaptive two stage designs.
+Key words: Adaptive two stage designs; Conditional error function; Stopping rule.
+1. Introduction
+Several adaptive two stage designs with stopping rules which allow a very flexible reassessment of sample size at the second stage have been proposed recently (Bauer and Ko» hne, 1994; Proschan and Hunsberger, 1995; Shen and Fisher, 1999; Lehmacher and Wassmer, 1999). For simplicity let us consider a one sided null hypothesis H0 : m à 0 versus the alternative H1 : m > 0, for the mean of a normal distribution with known variance.
+Definition: A monotonically non-decreasing function AÖzÜ : R ! â0; 1ä is called conditional error function for the level a if
+Ñ1
+ˇ1
+AÖzÜ fÖzÜ dz à a ;
+where fÖzÜ is the density of a standard normal random variable. Let z1; z2 denote the standardized means from the n1 and n2 sample units at the first and second stage respectively, where n2 can be chosen based on information from the first stage. The conditional error function gives the conditional probability to reject H0 under the null hypothesis given z1. In the following different adaptive two stage designs are characterized by their conditional error function.
+Biometrical Journal 41 (1999) 6, 689±696
+
+
+2. The Approach by Proschan and Hunsberger (PH)
+Let Z à w1z1 á w2z2, where w1 à
+ÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅ
+n1 n1 á n2
+r
+; w2 à
+ÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅ
+n2 n1 á n2
+r
+denote the standard
+ized test statistics in the total sample. We reject H0 in the second stage if Z exceeds
+the critical value c. Denote by CPmÖn2; c j z1Ü the conditional probability, that the hypothesis H0 is rejected if the mean is in fact m. Given a conditional error function AÖz1Ü the procedure meets the a-level if we choose n2 and c (dependent on information from the first stage) such that CP0Ön2; c j z1Ü à AÖz1Ü holds for all z1.
+Since CPmÖn2; c j z1Ü à 1 ˇ F c
+ÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅ
+Ön1 á n2Ü
+p
+ˇ z1
+ÅÅnÅÅ1ÅÅ
+p ˇ n2 m
+ÅnÅÅ2ÅÅ
+p
+!
+this is satisfied if
+we set cÖn2; z1Ü à
+ÅnÅÅ1ÅÅ
+p z1 á ÅnÅÅ2ÅÅ
+p z1ˇAÖz1Ü
+ÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅ
+n1 á n2
+p . Here FÖzÜ denotes the distribution func
+tion of the standard normal distribution and z1ˇq its Ö1 ˇ qÜ-quantile. With this condition for the critical value we can choose n2 in an arbitrary way. As an example they give the circular error function. Let 0 a1 < a and
+choose a0 < 0:5 such that Ñ1
+ˇ1
+AcirÖzÜ fÖzÜ dz à a, where fÖzÜ is the standard normal density and
+AcirÖz1Ü à
+0 if z1 < z1ˇa0
+1ˇF
+ÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅ
+z2
+1ˇa1 ˇ z2
+1
+q
+if z1ˇa0 z1 z1ˇa1
+1 if z1 > z1ˇa1
+8
+><
+>:
+:
+This circular error function refers to the following stopping rule: if z1 < z1ˇa0 then we stop early with the acceptance of H0; if z1 > z1ˇa1 we stop early with the rejection of H0. Otherwise we proceed to the second stage and reject if Z > cÖn2; z1Ü. However, cÖn2; z1Ü may fall short of z1ˇa, such that the final test is performed at a local level greater than a. E.g. for n2 ! 1 we have cÖn2; z1Ü ! z1ˇAÖz1Ü. Then for the circular conditional error function Acir the value of cÖn2; z1Ü is less than z1ˇa
+whenever max z1ˇa0;
+ÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅ
+z2
+1ˇa1 ˇ z2
+1ˇa
+q
+z1 z1ˇa1. With a à 0:025, a1 à 0:0147
+(resulting in a0 à 0:174Ü and large n2 in case of a second stage the final test will nearly always be applied at a local level exceeding a, namely if z1 > 0:950, where z1ˇa0 à 0:940. To achieve a common feature of the different approaches here and in the following we choose the critical limit a1 from Pocock's group sequential two stage plans without early acceptance. The corresponding a0 is determined such that the overall type 1 error is a.
+3. The Approach Lehmacher and Wassmer (LW)
+For the case where the number of stages m is fixed in advance Lehmacher and Wassmer (1999) proposed a flexible design applicable for various stopping rules.
+690 M. Posch and P. Bauer: Adaptive Two-Stage Designs
+15214036, 1999, 6, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/(SICI)1521-4036(199910)41:6<689::AID-BIMJ689>3.0.CO;2-P by Centrum Voor Wiskunde En Info (Cwi), Wiley Online Library on [05/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+Let us only focus on the case of two stages with Z à 1ÅÅÅ
+2
+p 2P
+ià1
+zi: The critical value for z1 is z1ˇa1 and for Z is c à z1ˇa2 . The conditional error function for z1 z1ˇa1 is
+AÖz1Ü à PÖZ > z1ˇa2 j z1Ü
+à PÖz2 >
+ÅÅÅ
+2
+p
+z1ˇa2 ˇ z1Ü
+à 1 ˇ FÖ
+ÅÅÅ
+2
+p
+z1ˇa2 ˇ z1Ü;
+and hence
+AÖz1Ü à 1 ˇ FÖ
+ÅÅÅ
+2
+p
+z1ˇa2 ˇ z1Ü if z1 z1ˇa1
+1 if z1 > z1ˇa1
+:
+In case of continuation to the second stage this is a special case of the conditional error function of the approach by Shen and Fisher (1999), considered in Section 5 below, applying equal weights. Various choices of a1 and a2 have been proposed (Pocock, 1977; O'Brien and Fleming, 1979). For the case n1 à n2 this conditional error function refers to the classical group sequential design without early acceptance of the null hypothesis applying a local one sided significance level of a1 and a2 after the first stage and in the final analysis, respectively. If n1 6à n2 the difference to the classical group sequential trials is the lack of weighting by the sample sizes at the two stages. In general this refers to a combination test of the p-values p1 and p2 calculated separately from the samples at the first
+and second stage, respectively. Using the test statistic Z à 1ÅÅÅ
+2
+p 2 P
+ià1
+Fˇ1Ö1 ˇ piÜ
+this corresponds to the uniformly most powerful test if the sample sizes are balanced over stages (Bauer and Ko» hne, 1994). Clearly also the early acceptance decision can be incorporated in the method, e.g. by relying on boundaries as proposed in DeMets and Ware (1980). However, in order to demonstrate the variety of different decision strategies we discuss here the approach without early acceptance. Note that also in this type of design for n2 ! 1 the Z-value observed from the pooled sample falls below z1ˇa in case of rejection in the final analysis whenever
+ÅÅÅ
+2
+p
+z1ˇa2 ˇ z1 < z1ˇa. For a à 0:025, and a1 à a2 à 0:0147, this occurs if z1 > 1:120.
+4. The Approach by Bauer and Ko»hne (BK)
+This procedure combines the p-values for the separate tests of the two stages by using Fisher's product criterion. It allows early acceptance if p1 > a0 (where a0 > a), i.e. z1 < z1ˇa0 and early rejection if p1 < a1 (where a1 < a), i.e. z1 > z1ˇa1. At the second stage H0 is rejected if p1 p2 < ca2 where
+a2 a; ca2 à eˇ0:5 c2
+4;1ˇa2 and c2
+4;1ˇa2 is the 1 ˇ a2 quantile of the central c2-distri
+bution with 4 degrees of freedom. The level a condition is given by
+Biometrical Journal 41 (1999) 6 691
+15214036, 1999, 6, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/(SICI)1521-4036(199910)41:6<689::AID-BIMJ689>3.0.CO;2-P by Centrum Voor Wiskunde En Info (Cwi), Wiley Online Library on [05/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+a1 á ca2 âlog Öa0Ü ˇ log Öa1Üä à a: The case a0 à 1 (no early acceptance) has been considered in Bauer and Ro» hmel (1995), the case a2 à a in Bauer and Ko» hne (1994). If p1 à 1 ˇ FÖz1Ü 2 âa1; a0ä then
+AÖz1Ü à PÖp1 p2 < ca2 j z1Ü
+à PÖp2 < ca2 =p1 j z1Ü
+à ca2
+1 ˇ FÖz1Ü :
+Hence, the conditional error function is given by
+AÖz1Ü à
+0 if z1 < z1ˇa0
+ca2
+1 ˇ FÖz1Ü if z1ˇa0 z1 z1ˇa1
+1 if z1 > z1ˇa1
+8
+><
+>:
+:
+Note that in case of a second stage the final analysis rejects if p2 ca=p1. For n2 ! 1 the test statistics Z formed as in the uniformly most powerful test for the pooled samples depends only on the second sample. In case of a rejection critical values below z1ˇa may occur. In fact for a à 0:025; a1 à 0:0147 and a0 à 0:174 this is the case if a < p2 ca=p1, i.e. p1 < 0:152. Hence, for large n2 this will occur very frequently.
+5. The approach by Shen and Fisher (SF)
+Finally we consider the self-designing approach of Shen and Fisher (1999) and Fisher (1998) artificially restricted to two stages. Their method is essentially designed for more than two stages and the number of stages m need not be fixed a priori but may be chosen in a data driven way. In general they use weighted sums of the standardized differences zi, where the weights wi at each stage may be
+determined from the data at previous stages. The condition Pm
+ià1
+w2
+i à 1 determines
+the weight of the respective last stage. Fisher (1998) does not consider early stopping. The final analysis is performed at level a after the mth stage. Shen and Fisher (1999) allow to add an early acceptance boundary, however not accounting for its impact on the type I error.
+Let 0 w1 1, w2 à
+ÅÅÅÅÅÅÅÅÅÅÅÅÅÅ
+1 ˇ w2
+1
+p
+, and set Z à 2 P
+ià1
+wizi: H0 is accepted early if
+z1 < z1ˇa0. As critical value for Z they set c à z1ˇa which makes the procedure conservative. A similar calculation as in Section 3 gives the conditional error function
+AÖz1Ü à
+0 if z1 < z1ˇa0
+1 ˇ F z1ˇa ˇ w1 z1Ü
+w2
+if z1 z1ˇa0 :
+8
+<
+:
+692 M. Posch and P. Bauer: Adaptive Two-Stage Designs
+15214036, 1999, 6, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/(SICI)1521-4036(199910)41:6<689::AID-BIMJ689>3.0.CO;2-P by Centrum Voor Wiskunde En Info (Cwi), Wiley Online Library on [05/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+This is a special case of the so called linear conditional error function (Proschan and Hundsberger, 1995) and has been considered already in Lan and Wittes (1988).
+6. Comparison of the Conditional Error Functions
+Figure 1 shows three types of conditional error functions with a à 0:025 and a1 à 0:0147 which correspond to the PH design, the LW design with Pocock-type critical limits, and the BK design with a2 à a. All three designs have been chosen in such a way that for z1 > z1ˇa1 the conditional error function is 1: then the null hypothesis is rejected already at the first stage. The SF conditional error function is omitted since it does not allow early rejection.
+The LW design does not allow early acceptance. Hence, even for negative z1 there is a small probability to reject H0 after the second stage. The PH and BK designs for small z1 do not lead to a second stage because of early acceptance. Note that the conditional error functions of these designs lead to different values of a0: the circular error function for the PH design leads to an a0 of 0:174, the BK design to a0 à 0:221. Note that Figure 1 also demonstrates for n2 ! 1 how large the critical level for the test statistics in the pooled sample could become in the worst case. When proceeding to the second stage this `limiting level' is given by the value of AÖz1Ü in the point z1ˇa1. It is largest for the PH and lowest for the LW design.
+7. The Conditional Power Function
+The conditional power function shortly mentioned in Section 2 is defined as the probability to reject in the final analysis given the test statistics of the first
+Biometrical Journal 41 (1999) 6 693
+Fig. 1. The conditional error function for the Proschan and
+Hunsberger (............), the Lehmacher and Wassmer (±± ±± ±±), and the Bauer and Ko»hne ( ) design for a à 0:025 and a1 à 0:0147 (see text)
+15214036, 1999, 6, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/(SICI)1521-4036(199910)41:6<689::AID-BIMJ689>3.0.CO;2-P by Centrum Voor Wiskunde En Info (Cwi), Wiley Online Library on [05/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+stage for varying parameter values. This function can be found in a straight forward way using the distribution of z2 under the alternative. In case of performing a second stage (z1 z1ˇa1) for the LW approach it is given by 1ˇF
+ÅÅÅ
+2
+p
+z1ˇa2 ˇ z1 ˇ m ÅnÅÅ2ÅÅ
+p
+ˇ
+. For the corresponding BK approach with
+a0 à 1 we get 1 ˇ F z1ˇa ˇ m ÅnÅÅ2ÅÅ
+p
+ˇ
+where a* à ca=Ö1 ˇ FÖz1ÜÜ is the ``adjusted∫ significance level to be applied for the observed p2-value at the second stage. Applying the same stopping rule at the first stage the conditional power function allows a direct comparison of two stage designs. Figure 2 shows the functions for a à 0:025; a1 à 0:0147 and a0 à 1 for the LW and the BK approach.
+For small z1 the product test performs better than the LW approach. For large z1 we get an opposite result. It is easy to verify that the switching point is indepen
+dent of m ÅnÅÅ2ÅÅ
+p . The overall power is similar between the product test and the LW
+approach. Setting n1 à n2 we get for m ÅnÅÅ1ÅÅ
+p à 1 the overall power 0.248 (BK)
+resp. 0.258 (LW), for m ÅnÅÅ1ÅÅ
+p à 2 the power 0.748 resp. 0.764, for m ÅnÅÅ1ÅÅ
+p à 3 the
+power 0.980 resp. 0.983, and for m ÅnÅÅ1ÅÅ
+p à 4 the power 0.9997 resp. 0.9998. Thus, the LW approach tailored for the specific distributional assumptions with n1 à n2 is slightly more powerful. The situation is similar setting n2 à 2n1. Then we get
+for m ÅnÅÅ1ÅÅ
+p à 1 the overall power 0.338 (BK) resp. 0.340 (LW), for m ÅnÅÅ1ÅÅ
+p à 2 the
+power 0.8951 resp. 0.8953, and for m ÅnÅÅ1ÅÅ
+p à 3 the power 0.9985 resp. 0.9984. Note that in the last case the product test is slightly more powerful than the LW approach. The conditional power function can also be used for sample size reassessment. Proceeding to the second stage one may choose n2 to achieve a given power in the final analysis. Posch and Bauer (1999) apply this concept in the scenario of a normal distribution with unknown s2. In this case we insert the estimate of s2 from the first stage into the conditional power function.
+694 M. Posch and P. Bauer: Adaptive Two-Stage Designs
+Fig. 2. Conditional power function for the Lehmacher and Wassmer (±± ±± ±±) and Bauer and Ko»hne ( ) design for a à 0:025; a1 à 0:0147, and a0 à 1 with
+m ÅnÅÅ2ÅÅ
+p à 1 (lowest pair), 2; 3; 4 (highest pair of curves)
+15214036, 1999, 6, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/(SICI)1521-4036(199910)41:6<689::AID-BIMJ689>3.0.CO;2-P by Centrum Voor Wiskunde En Info (Cwi), Wiley Online Library on [05/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+8. Applications
+The application of the procedures is straight forward and has been demonstrated in the original papers. At the first stage the acceptance region is z1 < z1ˇa0. Not all the approaches have been studied for a0 < 1. In case of unknown variance the PH approach is valid only asymptotically. The BK approach is exact whenever p1 and p2 are p-values of the corresponding one sided t-test calculated from the disjoint samples at the first and second stage respectively. The other two approaches are exact in the case of unknown variance if
+Z à w1Fˇ1Ö1 ˇ p1Ü á w2Fˇ1Ö1 ˇ p2Ü (with their respective weights) is used as the final test statistic. This modification exploits the fact that the p-values are uniformly distributed under H0. The statistic Z is tested at full level a in the SF approach. In the LW design an adjusted local level a2Ö<aÜ is applied because of the possibility of early rejection.
+9. Concluding Remarks
+It has been shown that different approaches for adaptive two stage designs can be characterized by specific conditional error functions. Proschan and Hunsberger (1995) use the same test statistics as the uniformly most powerful test in the joint sample would use. However, the critical regions have to be adjusted for the flexibility. The other approaches use a function of the separate test statistics in the samples at the two stages. Shen and Fisher pay the price for the flexibility by using pre-chosen weights for both stages. Lehmacher and Wassmer use an unweighted analysis over the two stages. As they point out, their approach can be reduced to the more flexible concept of combining p-values from two separate tests performed at the two stages. This allows an application under more general distributional assumptions, e.g., unknown variability in the normal case or for other distributions as it is possible in the BK design. For all designs we showed that they may result in a final test with a local level exceeding a. Wassmer (1998) compared the BK approach with the PH design and found very similar behavior with respect to power. Little is known on the ``optimal∫ choice of the conditional error function. It has to be expected that optimal proposals will depend on the underlying assumptions in the design phase. If, e.g., in the planning phase the unknown variability is underestimated then particular designs with early acceptance (a0 < 1) may perform poorly (Posch and Bauer, 1999).
+Acknowledgement
+We wish to thank Meinhard Kieser and the referees for helpful comments.
+Biometrical Journal 41 (1999) 6 695
+15214036, 1999, 6, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/(SICI)1521-4036(199910)41:6<689::AID-BIMJ689>3.0.CO;2-P by Centrum Voor Wiskunde En Info (Cwi), Wiley Online Library on [05/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+References
+Bauer, P. and Ko» hne, K., 1994: Evaluations of experiments with adaptive interim analyses. Biometrics 50, 1029±1041. Bauer, P. and Ro» hmel, J., 1995: An adaptive method for establishing a dose response relationship. Statistics in Medicine 14, 1595±1607.
+DeMets, D. L. and Ware, J. H., 1980: Groups sequential methods for clinical trials with a one-sided hypothesis. Biometrika 67, 651±660. Fisher, L. D., 1998: Self-designing clinical trials. Statistics in Medicine 17, 1551±1562. Lan, K. K. G. and Wittes, J., 1988: The B-value: A tool for monitoring data. Biometrics 44, 579± 585. Lehmacher, W. and Wassmer, G., 1999: Adaptive sample size calculations in group sequential trials. Biometrics (to appear).
+O'Brien, P. C. and Fleming, T. R., 1979: A multiple testing procedure for clinical trials. Biometrics 5, 549 ± 556. Pocock, S., 1977: Group sequential methods in the design and analysis of clinical trials. Biometrika 64, 191±199.
+Posch, M. and Bauer, P., 1999: Interim analysis and sample size reassessment. Mimeo, University of Vienna. Proschan, M. A. and Hunsberger, S. A., 1995: Designed extension of studies based on conditional power. Biometrics 51, 1315±1324. Shen, Y. and Fisher, L. D., 1999: Statistical inference for self-designing clinical trials with a one sided hypothesis. Biometrics 55, 190±197. Wassmer, G., 1998: A comparison of two methods for adaptive interim analysis in clinical trials. Biometrics 54, 696±705.
+Martin Posch Received, February 1999 Department of Medical Statistics Revised, June 1999 University of Vienna Accepted, June 1999 Schwarzspanierstra e 17 A-1090 Wien Austria Email: Martin.Posch@univie.ac.at
+Peter Bauer
+Department of Medical Statistics University of Vienna Schwarzspanierstra ̊e 17 A-1090 Wien Email: Peter.Bauer@univie.ac.at
+696 M. Posch and P. Bauer: Adaptive Two-Stage Designs
+15214036, 1999, 6, Downloaded from https://onlinelibrary.wiley.com/doi/10.1002/(SICI)1521-4036(199910)41:6<689::AID-BIMJ689>3.0.CO;2-P by Centrum Voor Wiskunde En Info (Cwi), Wiley Online Library on [05/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
