@@ -28,6 +28,9 @@ Only the human adds to the bib or raw/. Rows 49 and 83 were removed on the human
 | 78 | Strong duality for the GROW criterion | Ram, Larsson, Ruf, Ramdas 2026 | C | missing | web; arXiv 2606.24768; log-optimality against composite alternatives |
 | 79 | Power one sequential tests exist for weakly compact P against its complement | Ram, Ramdas 2026 | C | missing | web; arXiv 2604.03218 |
 | 80 | Sequential testing of conditionally constrained hypotheses | Clerico 2026 | C | missing | web; arXiv 2606.06769; complete-class theorem for e-processes |
+| 89 | Growth-optimal e-variables and an extension to the multivariate Csiszár–Sanov–Chernoff theorem | Grünwald, Hao, Balsubramani 2024 | B | ingested | human request 2026-10-19; arXiv 2412.17554; simple null vs mean-defined alternatives, GROW behind the Chernoff bound |
+| 90 | Optimal e-value testing for properly constrained hypotheses | Clerico 2025 | C | missing | discussion 2026-10-28; arXiv 2412.21125; GROW/REGROW for constraint-defined hypotheses outside exponential families; in Zotero |
+| 91 | Optimal e-values for testing the mean of a bounded random variable against a composite alternative | Arnold, Clerico 2026 | C | missing | discussion 2026-10-28; arXiv 2601.11347; examples where GROW is trivial and REGROW informative, cf. row 89 Example 3; in Zotero |
 
 ## Sequential and anytime-valid inference
 
@@ -46,6 +49,9 @@ Only the human adds to the bib or raw/. Rows 49 and 83 were removed on the human
 | 45 | Time-uniform central limit theory and asymptotic confidence sequences | Waudby-Smith, Arbour, Sinha, Kennedy, Ramdas 2024 | B | ingested | SAVI |
 | 48 | Anytime-valid inference for multinomial count data | Lindon, Malek 2022 | C | missing | SAVI |
 | 73 | Online permutation tests and e-values for testing group invariance | Koning, Ramdas (and others) 2024 | C | missing | unverified |
+| 92 | Mixture martingales revisited with applications to sequential tests and confidence intervals | Kaufmann, Koolen 2021 | B | missing | discussion 2026-10-28; JMLR 22; the anytime-valid KL-ball comparison left open in row 89, Sec. 6 |
+| 93 | Bregman deviations of generic exponential families | Chowdhury, Saux, Maillard, Gopalan 2023 | C | missing | discussion 2026-10-28; COLT 2023, arXiv 2201.07306; method of mixtures for d-dimensional exponential families in Bregman divergence |
+| 94 | Anytime-valid testing with e-values and confirmatory adaptive designs | Brannath, Fischer 2026 | B | ingested | human request 2026-11-09; arXiv 2606.00878; conditional error functions and recursive combination tests are sequential e-values; exhaustion versus optional continuation |
 
 ## Composite nulls: exponential families, invariance, k-sample
 
@@ -125,6 +131,10 @@ Only the human adds to the bib or raw/. Rows 49 and 83 were removed on the human
 | 36 | A new interpretation of information rate | Kelly 1956 | C | missing | book:3 |
 | 39 | A logic of probability, with application to the foundations of statistics | Vovk 1993 | C | missing | book:3 |
 | 40 | Peeking at A/B tests: why it matters, and what to do about it | Johari, Pekelis, Walsh 2017 | C | missing | SAVI |
+| 95 | Probabilistic foundation of confirmatory adaptive designs | Brannath, Gutjahr, Bauer 2012 | C | ingested | human request 2026-11-09; JASA 107(498); versions of conditional probabilities, regression models, embedding non-measurable adaptation rules; in Zotero (JSTOR PDF) |
+| 96 | Adaptive two stage designs and the conditional error function | Posch, Bauer 1999 | C | ingested | human request 2026-11-11; Biom. J. 41(6); four designs as conditional error functions, equivalence with combination tests, conditional power; in Zotero (Wiley PDF) |
+| 97 | A unified theory of two-stage adaptive designs | Liu, Proschan, Pledger 2002 | C | ingested | human request 2026-11-11; JASA 97(460); Adaptation Lemma, adaptive conditional test, measurability and countability counterexamples; in Zotero (JSTOR PDF) |
+| 98 | Multiplicity and flexibility in clinical trials | Brannath, Koenig, Bauer 2007 | C | ingested | human request 2026-11-11; Pharm. Stat. 6(3); conditional invariance principle, flexible closed tests, switching to a conventional test after treatment selection; in Zotero (Wiley PDF) |
 
 ## Sources for this list
 

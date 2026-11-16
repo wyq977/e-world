@@ -1,8 +1,8 @@
 ---
 slug: exponential-family-e-values
 title: E-values for exponential family nulls
-sources: 12
-updated: 2026-10-12
+sources: 13
+updated: 2026-10-19
 ---
 
 # E-values for exponential family nulls
@@ -26,6 +26,7 @@ The setting is a composite null that is a regular d-dimensional exponential fami
 - Canonical maximum entropy models are exponential families with uniform carrier; testing between families with different sufficient statistics complements the same-statistic setting, and the microcanonical GRO e-variable is the conditional e-variable with Z = c_0 [giuffridaTestingMaximumEntropy2025, Secs II–III]; see [mdl-and-maximum-entropy-e-values](mdl-and-maximum-entropy-e-values.md).
 - One-dimensional exponential family with sufficient statistic and null with smallest element θ* > θ_1: RIPr p_{θ*}, numeraire p_{θ_1}/p_{θ*} via convexity of the log-partition function [larssonNumeraireEvariableReverse2025, Sec. 5.5]; Gaussian scale-location examples under invariance [perezortizEstatisticsGroupInvariance2024, Secs 2.2, 4.1, 4.2]; two-point e-process rates, MLE minimaxity and dampened Savage–Dickey bounds for regular one-dimensional families [grunwaldEposterior2023, SM Thm 1, Props 3–4].
 - One-sided sub-ψ nulls: e-variables are exactly functions dominated by ∫e^{λx − ψ(λ)} π(dλ), a minimal complete class when ψ is a CGF, with e^{λ*x − ψ(λ*)} the numeraire against μ_{λ*} [larssonTestingHypothesesGenerated2025, Thm 4.3, Thm 6.5, Example 7.5]. Csiszár–Matúš exponential-family RIPr and the geometric-family moment-bound failure [lardyReverseInformationProjections2023, Sec. II-B, Example 3].
+- The dual setting, simple null P_0 and composite alternative with means in M_1: P_0 and Y generate a natural exponential family E; for convex M_1 the GROW e-variable is p̄_{μ*}/p_0 with μ* the KL-closest mean on the boundary (same for any alternative containing the family slice E_1), which is the e-variable behind the Csiszár–Sanov–Chernoff / generic Chernoff bound P_0(Y ∈ M_1) ≤ e^{−D}, including the d = 1 form P_0(sup_μ p̄_μ(Y)/p_0(Y) ≥ e^D, sgn Y = s) ≤ e^{−D} that a naive Markov bound on the non-e-variable sup_μ p̄_μ/p_0 cannot give [grunwaldGrowthOptimalEVariablesExtension2024a, Prop. 2, Thm 2]. For a surrounding M_1 (two-sided, multivariate) the boundary of a KL ball is a (d − 1)-dimensional curved exponential family; the Shtarkov/NML e-variable over it gives the bound P_0(Y ∈ M_1) ≤ e^{mmreg − D} with mmreg_n = ((d − 1)/2) log n + O(1) for a sample mean of n observations (Takeuchi–Barron, Clarke–Barron), a continuous partition beating any finite polytope [grunwaldGrowthOptimalEVariablesExtension2024a, Thms 4–6, Sec. 4]. Conditions ALT-M1/ALT-H1 bite only for non-steep (irregular) families [grunwaldGrowthOptimalEVariablesExtension2024a, Example 1]. One-dimensional exponential families are strictly variation-reducing kernels (Brown, Johnstone, MacGibbon 1981), used to show the two-sided GROW prior lives on the boundary [grunwaldGrowthOptimalEVariablesExtension2024a, Lemma 2, Sec. 5].
 
 ## Variants and related concepts
 - [reverse-information-projection](reverse-information-projection.md), [gro-criterion](gro-criterion.md).
@@ -41,6 +42,7 @@ The setting is a composite null that is a regular d-dimensional exponential fami
 - [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — different-statistic tests.
 - [larssonNumeraireEvariableReverse2025](../sources/larssonNumeraireEvariableReverse2025.md), [perezortizEstatisticsGroupInvariance2024](../sources/perezortizEstatisticsGroupInvariance2024.md), [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md) — batch-3 contributions.
 - [larssonTestingHypothesesGenerated2025](../sources/larssonTestingHypothesesGenerated2025.md), [lardyReverseInformationProjections2023](../sources/lardyReverseInformationProjections2023.md) — constraint and projection views.
+- [grunwaldGrowthOptimalEVariablesExtension2024a](../sources/grunwaldGrowthOptimalEVariablesExtension2024a.md) — simple null vs mean-defined alternative, CSC bounds, variation diminishing.
 
 ## Disagreements / open issues
 - No general n-free sufficient condition for the UI regularity condition in multivariate families [haoEValuesExponentialFamilies2025, App. C.1].

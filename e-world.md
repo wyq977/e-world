@@ -77,12 +77,35 @@ suppress-bibliography: true
 * [@wassermanUniversalInference2020]
     The split likelihood-ratio test: an e-value built from any estimator on half the data and the null MLE on the other half, valid in finite samples for any model, with a running-MLE e-process version. [PDF](https://www.pnas.org/doi/10.1073/pnas.1922664117) [arXiv](https://arxiv.org/abs/1912.11436) [DOI](10.1073/pnas.1922664117)
 
+## 2012
+
+* [@brannathProbabilisticFoundationConfirmatory2012]
+    Type I error control of adaptive designs by the conditional error or conditional invariance principle is not implied by a single probability model, because conditional probabilities are defined only up to null sets and a data-driven choice of version inflates the error arbitrarily; it is restored by assuming a regression model for the second-stage data given interim data and design, under which an arbitrary, even non-measurable, adaptation rule can be embedded in a probability space. [PDF](https://www.jstor.org/stable/23239614) [DOI](10.1080/01621459.2012.682540)
+
+## 2007
+
+* [@brannathMultiplicityFlexibilityClinical2007]
+    A review of flexible designs with strong familywise error control, organised around the conditional invariance principle, conditional error functions and flexible closed tests, followed by a criterion for when one may drop a treatment arm, change the sample size and still use the conventional z-test: whenever its conditional type I error rate is no larger than those of the prespecified design for every intersection hypothesis involved. [DOI](10.1002/pst.302)
+
+## 2002
+
+* [@liuUnifiedTheoryTwoStage2002]
+    A measure-theoretic formulation of two-stage adaptation as a measurable rule with countably many options, whose Adaptation Lemma shows that a conditional property shared by every option (unbiasedness, a pivotal distribution, or a conditional type I error bound) is inherited by the adapted statistic; this justifies both the conditional error function and the combination-test approaches, and counterexamples show what fails for non-measurable or uncountable adaptation rules. [PDF](https://www.jstor.org/stable/3085828) [DOI](10.1198/016214502388618852)
+
+## 1999
+
+* [@poschAdaptiveTwoStage1999]
+    Four adaptive two-stage designs (Proschan–Hunsberger, Lehmacher–Wassmer, Bauer–Köhne, Shen–Fisher) are each written as a conditional error function A(z₁) integrating to α under the null, which shows that combination tests and conditional error functions describe the same rejection regions and gives a conditional power function for comparing designs and reassessing the sample size. [DOI](10.1002/(SICI)1521-4036(199910)41:6<689::AID-BIMJ689>3.0.CO;2-P)
+
 ## 1939
 
 * [@villeEtudeCritiqueNotion1939]
     Ville's doctoral thesis: the critique of von Mises–Wald collectives that introduced the martingale as a gambling system and proved P(sup_n s_n ≥ λ) ≤ 1/λ, the inequality behind every test martingale and e-process. [PDF](http://www.numdam.org/item?id=THESE_1939__218__1_0)
 
 ## Preprints
+
+* [@brannathAnytimevalidTestingEvalues2026a]
+    Conditional error functions and (recursive) combination tests of confirmatory adaptive designs are the same objects as sequential e-values and test supermartingales, via A_t = min(αM_t, 1); the two cultures differ in emphasis, adaptive designs exhausting the level α while e-values trade exhaustion for optional continuation, data-dependent α and post-hoc losses, and an appendix shows how to buy back the exhausted level with recursive combination tests at the price of that flexibility. [PDF](https://arxiv.org/pdf/2606.00878v1) [arXiv](2606.00878) [DOI](10.48550/arXiv.2606.00878)
 
 * [@choeComparingSequentialForecasters2021]
     Anytime-valid, distribution-free comparison of two forecasters: empirical-Bernstein confidence sequences for the time-varying average score difference, dual sub-exponential e-processes for the weak null 'no better on average', and worked comparisons of baseball and weather forecasts. [PDF](https://arxiv.org/pdf/2110.00115) [arXiv](https://arxiv.org/abs/2110.00115) [DOI](10.48550/arXiv.2110.00115)
@@ -104,6 +127,9 @@ suppress-bibliography: true
 
 * [@goemanUniformImprovementBenjaminiHochberg2026]
     Closed BH never rejects fewer hypotheses than Benjamini–Hochberg, often rejects many more, stays valid under PRDS, and is built entirely from the e-Closure principle: a family of e-values indexed by subsets of hypotheses. [PDF](https://arxiv.org/pdf/2606.01854) [arXiv](https://arxiv.org/abs/2606.01854) [DOI](10.48550/arXiv.2606.01854)
+
+* [@grunwaldGrowthOptimalEVariablesExtension2024a]
+    For a simple null and an alternative given by a set of means, the GROW e-variable is an exponential-family likelihood ratio when the mean set is convex and a two-point boundary mixture when it surrounds the null in one dimension; the e-variable is the object behind the Csiszár–Sanov–Chernoff bound, and a minimax-regret (Shtarkov) relative of it gives a new such bound for surrounding alternatives with a (d−1)/2 log n price. [arXiv](https://arxiv.org/abs/2412.17554) [DOI](10.48550/arXiv.2412.17554)
 
 * [@grunwaldOptimalEValuesExponential2024]
     Gives one checkable condition, a covariance (Loewner) ordering between the null family and the family generated by the alternative, under which the growth-optimal e-variable for a composite exponential family null is just a likelihood ratio against a single null element. [arXiv](https://arxiv.org/abs/2404.19465) [DOI](10.48550/arXiv.2404.19465)

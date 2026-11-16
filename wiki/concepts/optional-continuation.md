@@ -1,8 +1,8 @@
 ---
 slug: optional-continuation
 title: Optional continuation
-sources: 15
-updated: 2026-10-12
+sources: 16
+updated: 2026-11-09
 ---
 
 # Optional continuation
@@ -23,6 +23,7 @@ Optional continuation is deciding after each study whether to run another one, w
 - Test-scale formulation: a [0,1]-valued outcome serves as a conditional significance level for the next test, equivalent on the e-scale to multiplying sequential e-values; data-dependent level switching via E[φ_2/α′] ≤ 1; reporting the whole family (φ^P) dominates continuing from the infimum [koningAnytimeValidityFree2026, Thms 4–6, Remark 13, Sec. 5.1]; see [test-induction](test-induction.md).
 - Product property with a data-dependently chosen next e-statistic, including 'do not continue' [perezortizEstatisticsGroupInvariance2024, Sec. 2.3]; a single factor 2 on the capped e-posterior risk is continuation-friendly without modifying each study's e-value [grunwaldEposterior2023, Prop. 2]; e-BH accepts stopped e-processes from continued studies [wangFalseDiscoveryRate2021, Sec. 7].
 - Products of independent one-step e-values give power-one test martingales under the span condition [zhangExistencePowerfulPvalues2023, Cor. 7.1]; e-BY handles continued studies through stopped e-processes [xuPostselectionInferenceEvalue2022, Sec. 4].
+- Adaptive-design reading: an anytime-valid e-value test is a multi-stage design with conditional error functions A_t = min(αM_t, 1), and the conditional level A_t is what may be spent on whatever comes next; adaptive designs exhaust it, with E_1E_2 ∈ {0, 1/α}, whereas continuing to multiply e-values requires leaving the product free, and a two-e-value test with a positive chance of early rejection is then strictly conservative whenever P_0[E_1 ≥ 1/α_1] > 0 for some α_1 > α; the level can be bought back with recursive combination tests at the price of continuation [brannathAnytimevalidTestingEvalues2026a, Secs 2.1–2.2, App. A, Remark 5]; see [conditional-error-functions](conditional-error-functions.md).
 
 ## Variants and related concepts
 - [e-merging](e-merging.md), for combining without a sequential structure.
@@ -36,6 +37,7 @@ Optional continuation is deciding after each study whether to run another one, w
 - [grunwaldAuthorsReplyDiscussion2024](../sources/grunwaldAuthorsReplyDiscussion2024.md), [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — continuation as the target.
 - [koningAnytimeValidityFree2026](../sources/koningAnytimeValidityFree2026.md), [perezortizEstatisticsGroupInvariance2024](../sources/perezortizEstatisticsGroupInvariance2024.md), [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md), [wangFalseDiscoveryRate2021](../sources/wangFalseDiscoveryRate2021.md) — batch-3 contributions.
 - [zhangExistencePowerfulPvalues2023](../sources/zhangExistencePowerfulPvalues2023.md), [xuPostselectionInferenceEvalue2022](../sources/xuPostselectionInferenceEvalue2022.md) — minor.
+- [brannathAnytimevalidTestingEvalues2026a](../sources/brannathAnytimevalidTestingEvalues2026a.md) — exhaustion versus continuation.
 
 ## Disagreements / open issues
 - Whether conditional e-variables are the right building blocks when e-variable types switch across studies is raised but not settled [grunwaldSafeTesting2024, Sec. 1.3].

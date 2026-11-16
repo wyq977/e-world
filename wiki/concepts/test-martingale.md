@@ -1,8 +1,8 @@
 ---
 slug: test-martingale
 title: Test martingale
-sources: 29
-updated: 2026-10-14
+sources: 30
+updated: 2026-11-09
 ---
 
 # Test martingale
@@ -29,6 +29,7 @@ A test martingale (or test supermartingale) is a nonnegative (super)martingale u
 - Every test supermartingale is a product of sequential e-values E_t = M_t/M_{t−1} and conversely; from any anytime-valid test the martingale P(∃j : ψ_j = 1 | F_i)/P(∃j : ψ_j = 1) recovers or improves it [fischerAdmissibleOnlineClosed2024, eq. 10, Fact 1]. Running products of conditional e-values for invariance nulls reduce to invariance under the compact stabiliser of the past [koningMeasuringEvidenceExchangeability2023, Prop. 3, Lemma 4]. Sub-exponential supermartingale with predictable bounds for lower-bounded variables [choeComparingSequentialForecasters2021, Prop. 1]. Lag-1 products with adapted λ_t are nonnegative supermartingales under conditional forecast dominance; lag-h processes average h supermartingales in sub-filtrations [henziValidSequentialInference2021, Prop. 3.4].
 - Likelihood-ratio martingales R_t, Q_t, S_t by Fubini, a tempered-and-renormalised exact martingale whose normaliser is a Rényi divergence, sub-Gaussian and RIPr supermartingales under misspecification, and the warning that max_ν R_t(ν; θ*) is not a supermartingale [kirschnerConfidenceEstimationSequential2025, Thms 2–4, 11–13, Sec. 2.1.1].
 - Likelihood ratios of any sequence of invariant statistics are test martingales in the invariant filtration; asymptotic e-processes defined as processes dominated asymptotically by such martingales [lindonAnytimeValidInferenceLinear2026, Lemma 3.1, Sec. 2].
+- A sequence of conditional error functions with E_P[A_1] ≤ α and E_P[A_t | A_1, …, A_{t−1}] ≤ A_{t−1} is a nonnegative supermartingale, M_t = A_t/α a test supermartingale, and A_t = min(αM_t, 1) truncates any test supermartingale to one bounded by 1; rejection when A_t = 1 is Ville's inequality in adaptive-design clothing [brannathAnytimevalidTestingEvalues2026a, eq. 6, Sec. 2.2]; see [conditional-error-functions](conditional-error-functions.md).
 
 ## Variants and related concepts
 - [villes-inequality](villes-inequality.md), the inequality that makes them tests.
@@ -50,6 +51,7 @@ A test martingale (or test supermartingale) is a nonnegative (super)martingale u
 - [fischerAdmissibleOnlineClosed2024](../sources/fischerAdmissibleOnlineClosed2024.md), [koningMeasuringEvidenceExchangeability2023](../sources/koningMeasuringEvidenceExchangeability2023.md), [choeComparingSequentialForecasters2021](../sources/choeComparingSequentialForecasters2021.md), [henziValidSequentialInference2021](../sources/henziValidSequentialInference2021.md) — batch-4 wave-2 contributions.
 - [kirschnerConfidenceEstimationSequential2025](../sources/kirschnerConfidenceEstimationSequential2025.md) — likelihood-ratio martingales for regression.
 - [lindonAnytimeValidInferenceLinear2026](../sources/lindonAnytimeValidInferenceLinear2026.md) — invariant-filtration martingales for regression.
+- [brannathAnytimevalidTestingEvalues2026a](../sources/brannathAnytimevalidTestingEvalues2026a.md) — conditional error functions as truncated test supermartingales.
 
 ## Disagreements / open issues
 - None recorded.

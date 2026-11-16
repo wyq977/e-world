@@ -1,8 +1,8 @@
 ---
 slug: e-merging
 title: Merging e-values and p-values
-sources: 21
-updated: 2026-10-12
+sources: 22
+updated: 2026-11-09
 ---
 
 # Merging e-values and p-values
@@ -24,6 +24,7 @@ An e-merging function F produces an [e-variable](e-variable.md) F(E_1, …, E_K)
 - Primary source now ingested: every e-merging function valid under arbitrary dependence is dominated by a weighted average M_λ(e) = Σλ_k e_k + λ_{K+1}, and F is admissible iff F = M_λ; removes the symmetry assumption of Vovk and Wang; proof by multi-marginal optimal transport duality, Sion's minimax theorem and a one-dimensional line bound for binary inputs; the same proof shows weighted averaging is the only admissible way to merge level-α tests; subclass mergers (fixed marginals, second moments, identical, exchangeable) are admissible but not unique [wangOnlyAdmissibleWay2024, Thm 1, Lemmas 2, 4–6, Remark 3, Sec. 5]. Source of the book's Theorem 8.4 and Lemma 11.1.
 - Four admissible one-p-one-e combiners: h(p)e and (p/e) ∧ 1 under independence, λh(p) + (1 − λ)e and {2(p ∧ 1/e)} ∧ 1 under dependence; the randomised calibrator Q(U, E) dominates 1/e ∧ 1 [ignatiadisEvaluesUnnormalizedWeights2022, Thm 3.1, Remark 3.2]. Products of independent and harmonic means of arbitrary post-hoc p-values are post-hoc p-values; geometric e-values multiply under dependence [koningPosthocAlphaHypothesis2023, Props 2–3, 9]. e-weighted p-merging functions from compound e-values [ignatiadisAsymptoticCompoundEvalues2024, Prop. C.2].
 - Weighted arithmetic means as the local test of every intersection hypothesis in e-closed FWER testing, dominating weighted Bonferroni on inverse-e p-values; the mean merger is not consonant, which is the computational price [hartogFamilyWiseError2025, eq. 3.2, Sec. 6.1]. Products of sequential e-values as the core online merge, with weighted means of test martingales replacing union bounds [fischerAdmissibleOnlineClosed2024, S.3.2]. Averaging over knockoff draws preserves the compound condition; runs may use different generators and statistics [renDerandomizedKnockoffsLeveraging2022, Thm 3, Remark 3]. e-d-GNT is the arithmetic mean applied to e-detectors [dandapanthulaMultipleTestingMultistream2025, Alg. 4]. Averaging h lagged products for lag-h forecasts [henziValidSequentialInference2021, Prop. 3.4]; harmonic p-merging and min/max merging for the lag-h weak null [choeComparingSequentialForecasters2021, Prop. 6]. GREM as an average of two betting e-processes, valid by martingale merging [wangEbacktesting2022, Sec. 5.1]. Re-merging functions and the no-domination result for the regularizer product [martinRegularizedEprocessesAnytime2024, Prop. 3].
+- Partial conditional error functions of adaptive graphical closed tests, A^I = min(Σ_i A^I_i, 1), are the weighted average E^I = Σ_i w^I_i E^I_i of the e-values E^I_i = A^I_i/(αw^I_i), so Wang's admissibility theorem also says weighted averaging is the only admissible way to combine conditional error functions [brannathAnytimevalidTestingEvalues2026a, Sec. 4, eq. 11]; see [conditional-error-functions](conditional-error-functions.md).
 
 ## Variants and related concepts
 - [e-bh](e-bh.md), merging for multiple testing rather than a single decision.
@@ -38,6 +39,7 @@ An e-merging function F produces an [e-variable](e-variable.md) F(E_1, …, E_K)
 - [wangOnlyAdmissibleWay2024](../sources/wangOnlyAdmissibleWay2024.md) — primary source for admissible e-merging.
 - [ignatiadisEvaluesUnnormalizedWeights2022](../sources/ignatiadisEvaluesUnnormalizedWeights2022.md), [koningPosthocAlphaHypothesis2023](../sources/koningPosthocAlphaHypothesis2023.md), [ignatiadisAsymptoticCompoundEvalues2024](../sources/ignatiadisAsymptoticCompoundEvalues2024.md) — combiners and merging on other scales.
 - [hartogFamilyWiseError2025](../sources/hartogFamilyWiseError2025.md), [fischerAdmissibleOnlineClosed2024](../sources/fischerAdmissibleOnlineClosed2024.md), [renDerandomizedKnockoffsLeveraging2022](../sources/renDerandomizedKnockoffsLeveraging2022.md), [dandapanthulaMultipleTestingMultistream2025](../sources/dandapanthulaMultipleTestingMultistream2025.md), [henziValidSequentialInference2021](../sources/henziValidSequentialInference2021.md), [choeComparingSequentialForecasters2021](../sources/choeComparingSequentialForecasters2021.md), [wangEbacktesting2022](../sources/wangEbacktesting2022.md), [martinRegularizedEprocessesAnytime2024](../sources/martinRegularizedEprocessesAnytime2024.md) — batch-4 wave-2 contributions.
+- [brannathAnytimevalidTestingEvalues2026a](../sources/brannathAnytimevalidTestingEvalues2026a.md) — conditional error functions merge by weighted average.
 
 ## Disagreements / open issues
 - Vovk, Wang and Wang 2022 on p-merging and Vovk and Wang 2024 on martingale merging are not in the bib.

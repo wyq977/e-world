@@ -1,8 +1,8 @@
 ---
 slug: villes-inequality
 title: Ville's inequality
-sources: 26
-updated: 2026-10-13
+sources: 27
+updated: 2026-11-09
 ---
 
 # Ville's inequality
@@ -26,6 +26,7 @@ For a nonnegative supermartingale (M_t) with M_0 ≤ 1 under P, P(∃t : M_t ≥
 - Markov's equality sup_c 1{X ≥ 1/c}/c = X and Ville's equalities for martingales, supermartingales and exact e-processes once α may depend on the data [koningPosthocAlphaHypothesis2023, Lemma 2, Props 10–11]. Extended Ville inequality for nonintegrable supermartingales applied to Lai's process [wangAnytimevalidTtestsConfidence2023, Lemma 2.2, Thm 4.7]. 'Nearly an equality' for nonnegative martingales, the only tool in the betting construction [waudbysmithEstimatingMeansBounded2020, Thm 1, App. E.2]; the only tool in asymptotic sequences, almost an equality for continuous paths [waudbysmithTimeuniformCentralLimit2021, App. A.1, B.9].
 - Regularized Ville inequality over a credal set of priors [martinRegularizedEprocessesAnytime2024, Thm 1]. An adapted nonnegative process bounded by c with E[W_τ] ≤ 1 at all stopping times has E[sup_t W_t] ≤ 1 + log c, converting StopFDR to SupFDR at cost 1 + log(1/α) [fischerOnlineGeneralizationEBH2024, Thm G.3]. Always-valid FWER by Ville applied to e_{H_0,t} and running maxima as pseudo e-values with Pareto(1) tail coupling [hartogFamilyWiseError2025, Thm 2.5, Thm 3.1]. PFA bounds for multi-stream detectors [dandapanthulaMultipleTestingMultistream2025, Thms 4.4, 5.5].
 - The thesis that Robbins 1970 already combined Ville and likelihood ratios for anytime-valid confidence sequences, everything since being a choice of martingale [kirschnerConfidenceEstimationSequential2025, Lemma 1, App. A].
+- Type I error control of multi-stage adaptive designs with conditional error functions (A_t) follows from Ville's inequality applied to the supermartingale (A_t) with E[A_1] ≤ α, or from optional stopping [brannathAnytimevalidTestingEvalues2026a, Sec. 2.2].
 
 ## Variants and related concepts
 - [e-process](e-process.md), [test-martingale](test-martingale.md).
@@ -44,6 +45,7 @@ For a nonnegative supermartingale (M_t) with M_0 ≤ 1 under P, P(∃t : M_t ≥
 - [ramdasTestingExchangeabilityForkconvexity2021](../sources/ramdasTestingExchangeabilityForkconvexity2021.md), [koningPosthocAlphaHypothesis2023](../sources/koningPosthocAlphaHypothesis2023.md), [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md), [waudbysmithEstimatingMeansBounded2020](../sources/waudbysmithEstimatingMeansBounded2020.md), [waudbysmithTimeuniformCentralLimit2021](../sources/waudbysmithTimeuniformCentralLimit2021.md) — uses and equalities.
 - [martinRegularizedEprocessesAnytime2024](../sources/martinRegularizedEprocessesAnytime2024.md), [fischerOnlineGeneralizationEBH2024](../sources/fischerOnlineGeneralizationEBH2024.md), [hartogFamilyWiseError2025](../sources/hartogFamilyWiseError2025.md), [dandapanthulaMultipleTestingMultistream2025](../sources/dandapanthulaMultipleTestingMultistream2025.md) — batch-4 wave-2 contributions.
 - [kirschnerConfidenceEstimationSequential2025](../sources/kirschnerConfidenceEstimationSequential2025.md) — Robbins thesis.
+- [brannathAnytimevalidTestingEvalues2026a](../sources/brannathAnytimevalidTestingEvalues2026a.md) — adaptive designs.
 
 ## Disagreements / open issues
 - None recorded.

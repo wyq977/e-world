@@ -1,8 +1,8 @@
 ---
 slug: mdl-and-maximum-entropy-e-values
 title: MDL, regret, and e-values for maximum entropy models
-sources: 3
-updated: 2026-10-12
+sources: 4
+updated: 2026-10-19
 ---
 
 # MDL, regret, and e-values for maximum entropy models
@@ -20,6 +20,7 @@ Maximum entropy models maximise Shannon entropy under constraints on observables
 - The ingest agent's own observation, not in the paper: the microcanonical GRO e-variable is the conditional e-variable of Hao and Grünwald with Z = c_0 and a Bayes or NML numerator, hence generally not an e-process [haoEValuesExponentialFamilies2025, Prop. 7].
 - Safe Testing's REGROW for a simple null is the redundancy–capacity problem, with Jeffreys' prior asymptotically optimal and regret (d/2) log n [grunwaldSafeTesting2024, Example 5]; the maximum-entropy results refine this for two-model tests; see [gro-criterion](gro-criterion.md).
 - Finite minimax regret with the NML (Shtarkov) distribution in the null certifies RIPr existence [lardyReverseInformationProjections2023, Prop. 4].
+- Simple null, alternative a set of means M_1 partitioned into pieces touching its boundary: the relative GROW e-variable in the minimax individual-sequence-regret sense is the Shtarkov (NML) distribution q(y) = p̄_{r̆(y)}(y)/∫ p̄_{r̆(y)} dρ relative to the boundary set R, divided by p_0, with constant regret mmreg(r̆); minimax redundancy mmred(H_1) is the expected-loss counterpart; for a sample mean of n observations and a boundary with four bounded derivatives both equal ((d − 1)/2) log n + O(1), by Takeuchi–Barron 2013 (upper) and Clarke–Barron 1994 (lower), the BIC complexity of the (d − 1)-dimensional boundary family; the result feeds a new Csiszár–Sanov–Chernoff bound and an asymptotic GROW rate for KL-ball alternatives [grunwaldGrowthOptimalEVariablesExtension2024a, eqs 3.8–3.10, Thms 4–6, eq. 4.5, Prop. 3].
 
 ## Variants and related concepts
 - [k-sample-and-contingency-table-e-values](k-sample-and-contingency-table-e-values.md), the 2 × k instances.
@@ -29,7 +30,8 @@ Maximum entropy models maximise Shannon entropy under constraints on observables
 - [giuffridaTestingMaximumEntropy2025](../sources/giuffridaTestingMaximumEntropy2025.md) — all results above.
 - [grunwaldSafeTesting2024](../sources/grunwaldSafeTesting2024.md) — REGROW as redundancy–capacity.
 - [lardyReverseInformationProjections2023](../sources/lardyReverseInformationProjections2023.md) — NML certificate.
+- [grunwaldGrowthOptimalEVariablesExtension2024a](../sources/grunwaldGrowthOptimalEVariablesExtension2024a.md) — Shtarkov e-variables over a boundary, (d − 1)/2 log n regret.
 
 ## Disagreements / open issues
 - Optional stopping and e-process-ness are not discussed in the paper; products across independent studies are valid, within-study stopping is not addressed.
-- grunwaldMinimumDescriptionLength2019 and yamanishiLearningMinimumDescription2023 are in the bib as MDL background and not ingested; Grünwald, Hao and Balsubramani 2024 on growth-optimal e-variables and the Csiszár–Sanov–Chernoff extension is not in the bib.
+- grunwaldMinimumDescriptionLength2019 and yamanishiLearningMinimumDescription2023 are in the bib as MDL background and not ingested; Grünwald, Hao and Balsubramani 2024 on growth-optimal e-variables and the Csiszár–Sanov–Chernoff extension was ingested on 2026-10-19 as grunwaldGrowthOptimalEVariablesExtension2024a.

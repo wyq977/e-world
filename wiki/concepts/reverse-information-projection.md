@@ -1,8 +1,8 @@
 ---
 slug: reverse-information-projection
 title: Reverse information projection (RIPr)
-sources: 24
-updated: 2026-10-13
+sources: 25
+updated: 2026-10-19
 ---
 
 # Reverse information projection (RIPr)
@@ -32,6 +32,7 @@ The reverse information projection of an alternative Q onto a convex set of null
 - Finite nulls: exact e-variables exist iff Span P ∩ Conv Q = ∅, with the finite-sample e-variable 1 + (orthogonal component of Q) [zhangExistencePowerfulPvalues2023, Thm 3.1, Remark 3.7]. The RIPr of μ_{λ*} onto a one-sided sub-ψ null is μ_0; a reference-measure version of the finite-constraint theory adds indicators of null sets as constraints [larssonTestingHypothesesGenerated2025, Example 7.5, Thm 3.10]. RIPr of N(μ, σ²) onto the scale family is N(0, σ² + μ²) [wangAnytimevalidTtestsConfidence2023, Prop. 6.5, C.3].
 - The Haar average Q̄ = E_G[GQ] of the alternative is the RIPr onto the G-invariant laws; an invariant σ-finite reference measure may replace Q̄ in densities [koningMeasuringEvidenceExchangeability2023, Cor. 3, Lemma 3, Prop. 2]. Whether replacing the null MLE by the RIPr keeps the predictive-recursion statistic an e-process is open [dixitAnytimeValidAsymptotically2023, Sec. 3.1].
 - For convex model classes sequential mixing covers the RIPr of the truth time-uniformly via E[p_θ/q*] ≤ 1, a sequential mixed analogue of Wasserman et al.'s Proposition 7 [kirschnerConfidenceEstimationSequential2025, Thm 12].
+- The forward information projection of a simple null onto the alternative: for H_0 = {P_0} the GROW e-variable is p*_1/p_0 with P*_1 the Csiszár information projection of P_0 onto H_1, characterised by the Pythagorean property D(P ‖ P_0) ≥ D(P ‖ P*_1) + D(P*_1 ‖ P_0) for all P ∈ H_1, which needs neither convexity of H_1 nor attainment of the KL infimum; for mean-defined alternatives with convex M_1 the projection is the exponential-family element P̄_{μ*} at the KL-closest boundary mean, and for a one-dimensional two-sided alternative it is a two-point boundary mixture [grunwaldGrowthOptimalEVariablesExtension2024a, eqs 1.6–1.8, Prop. 1, Prop. 2, Thm 3]. The Pythagorean property is equivalent to the minimax statement (Grünwald–Dawid 2004, Sec. 8) and links to Topsøe 1979 [grunwaldGrowthOptimalEVariablesExtension2024a, Sec. 1.2].
 
 ## Variants and related concepts
 - [gro-criterion](gro-criterion.md), [numeraire](numeraire.md).
@@ -55,6 +56,7 @@ The reverse information projection of an alternative Q onto a convex set of null
 - [zhangExistencePowerfulPvalues2023](../sources/zhangExistencePowerfulPvalues2023.md), [larssonTestingHypothesesGenerated2025](../sources/larssonTestingHypothesesGenerated2025.md), [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md) — finite-null and worked RIPrs.
 - [koningMeasuringEvidenceExchangeability2023](../sources/koningMeasuringEvidenceExchangeability2023.md), [dixitAnytimeValidAsymptotically2023](../sources/dixitAnytimeValidAsymptotically2023.md) — invariance RIPr, open question.
 - [kirschnerConfidenceEstimationSequential2025](../sources/kirschnerConfidenceEstimationSequential2025.md) — RIPr coverage under misspecification.
+- [grunwaldGrowthOptimalEVariablesExtension2024a](../sources/grunwaldGrowthOptimalEVariablesExtension2024a.md) — forward projection for simple nulls, Pythagorean property.
 
 ## Disagreements / open issues
 - No general fast algorithm for computing the RIPr prior is given; numerical accuracy for infinite sample spaces is unclear [grunwaldSafeTesting2024, Sec. 2]; direct computation is infeasible for large effect sizes in the simulations [haoEValuesExponentialFamilies2025, Sec. 4].

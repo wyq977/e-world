@@ -1,8 +1,8 @@
 ---
 slug: e-power
 title: E-power and sample size
-sources: 19
-updated: 2026-10-14
+sources: 20
+updated: 2026-10-19
 ---
 
 # E-power and sample size
@@ -30,6 +30,7 @@ The e-power of an [e-variable](e-variable.md) E against an alternative Q is E_Q[
 - Description-gain rates between closeness and E_Q′[p/q] − 1; a uniform-vertex-mixture RIPr ratio can have infinite e-power at every vertex of a polytope alternative [lardyReverseInformationProjections2023, Thm 6, Sec. IV-C]. E-power ½ log(1 + μ²/σ²) for all three anytime-valid t-tests, defined as the a.s. limit of (1/n) log M_n, with Wald's identity linking it to rejection time [wangAnytimevalidTtestsConfidence2023, Def. 2.3, Props 3.3, 4.8, 4.10]. Compounding loses e-power when nulls are known and gains only through learnability [ignatiadisAsymptoticCompoundEvalues2024, Thm 5.2].
 - Backtesting defines e-power as E_Q[log E], ties it to Kelly and GRO, and attributes the term to Vovk and Wang's nonparametric e-tests, which conflicts with this page's earlier attribution to e-backtesting; v1 of the backtesting paper is not in raw/, so the priority is unresolved [wangEbacktesting2022, Secs 3.2, 5.1, Open questions]. Asymptotic equivalence of betting processes by (1/T)(log M_T(λ) − log M_T(λ′)) → 0 in L¹ [wangEbacktesting2022, Def. 3].
 - Growth rate ½ log(1 + ξ′Ω ξ) for the anytime-valid F-test; against a fixed-n F-test at α = 0.01 and the minimal detectable effect (n* = 1785) the anytime-valid test rejects 82% by n* against 95%, with mean stopping time 1214, and 350 at twice the effect; null rejections 0.04% vs 1.07% [lindonAnytimeValidInferenceLinear2026, Thm 4.2, App. B.7].
+- Absolute and relative e-power for a simple null against mean-defined alternatives: maximal absolute e-power equals the KL distance from P_0 to the boundary of the mean set when that set is convex, and for a surrounding KL-ball alternative it is nD_1 − ((d − 1)/2) log n + O(1); relative e-power loss against the oracle piece of a partition is the minimax regret of the Shtarkov distribution over the boundary, ((d − 1)/2) log n + O(1) for smooth boundaries [grunwaldGrowthOptimalEVariablesExtension2024a, Prop. 2, Thm 2, eqs 3.9–3.10, 4.5, Prop. 3]. The e-variable with that e-power is exactly what makes the Csiszár–Sanov–Chernoff bound P_0(Y ∈ M_1) ≤ e^{−D} an e-value bound [grunwaldGrowthOptimalEVariablesExtension2024a, Thm 2, Thm 4].
 
 ## Variants and related concepts
 - [gro-criterion](gro-criterion.md), optimising e-power.
@@ -49,6 +50,7 @@ The e-power of an [e-variable](e-variable.md) E against an alternative Q is E_Q[
 - [zhangExistencePowerfulPvalues2023](../sources/zhangExistencePowerfulPvalues2023.md), [larssonCompleteCharacterizationTestable2026](../sources/larssonCompleteCharacterizationTestable2026.md), [lardyReverseInformationProjections2023](../sources/lardyReverseInformationProjections2023.md), [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md), [ignatiadisAsymptoticCompoundEvalues2024](../sources/ignatiadisAsymptoticCompoundEvalues2024.md) — batch-4 contributions.
 - [wangEbacktesting2022](../sources/wangEbacktesting2022.md) — term attribution, asymptotic equivalence.
 - [lindonAnytimeValidInferenceLinear2026](../sources/lindonAnytimeValidInferenceLinear2026.md) — growth and stopping-time comparison.
+- [grunwaldGrowthOptimalEVariablesExtension2024a](../sources/grunwaldGrowthOptimalEVariablesExtension2024a.md) — absolute vs relative e-power for a simple null.
 
 ## Disagreements / open issues
 - Whether log growth is the right objective is contested: the Safe Testing authors concede GRO rests on independence and bounded variance of log E and that it fails to explain stitching rates [grunwaldSafeTesting2024, Sec. 8]; Wang's Pareto counterexamples show rejection probability and e-power can point in opposite directions.

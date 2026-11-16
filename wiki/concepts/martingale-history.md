@@ -1,8 +1,8 @@
 ---
 slug: martingale-history
 title: History: from collectives to safe anytime-valid inference
-sources: 13
-updated: 2026-10-13
+sources: 18
+updated: 2026-11-11
 ---
 
 # History: from collectives to safe anytime-valid inference
@@ -20,6 +20,7 @@ The lineage of test martingales and e-values as recorded by the sources: von Mis
 - Wald's likelihood-ratio martingale and his awareness of Ville; Darling and Robbins's 1967 union-bound definition of a confidence sequence; Robbins's tests of power one versus Wald's SPRT; Johari et al. as modern proponents of always-valid p-values [ramdasAdmissibleAnytimevalidSequential2022, Secs 2.1, 3.2]. Stochastic curtailment and conditional power (Lan, Simon, Halperin 1982; Müller, Schäfer 2004) as an unnoticed precursor of test induction, and Breiman 1961 as the precursor of the SPRT-as-limit theorem [koningAnytimeValidityFree2026, Sec. 1.4, Remark 14]. Lai 1976 made the first anytime-valid use of the right-Haar t-test ratio [perezortizEstatisticsGroupInvariance2024, Sec. 2].
 - Four-thread timeline (probability, statistics, information theory, online learning), Doob 'stripped martingales of their betting roots', Wald's eq. 10:10 as the first predictable plug-in [waudbysmithEstimatingMeansBounded2020, Sec. 6, App. F, Fig. 9]. Ville's theorem on coin flips and the LIL, Doob 1940 crediting the inequality to Ville, the strategy-vs-wealth terminology switch, Ville's 1984–85 recollections [rufCompositeGeneralizationVille2022, Sec. 5]. Fork-convexity traced to Žitković, Delbaen's m-stability and Epstein–Schneider rectangularity [ramdasTestingExchangeabilityForkconvexity2021, Sec. 3.1]. Lai 1976 dissected [wangAnytimevalidTtestsConfidence2023, Sec. 4].
 - Wald 1945 → Darling–Robbins 1968 → Robbins 1970 (Ville plus likelihood ratio plus prior mixing) → Lai 1976, Lai–Robbins 1985 → Peña–Lai–Shao 2009, Howard et al. 2020 → the modern e-value literature, with the parallel online-learning and universal-portfolio line (Vovk 1990, Cover 1991, Cesa-Bianchi–Lugosi 2006, Rakhlin–Sridharan 2017) [kirschnerConfidenceEstimationSequential2025, App. A].
+- The adaptive-design lineage in clinical trials, parallel to and until 2026 disconnected from the martingale lineage: Bauer 1989 (the name), Bauer and Köhne 1994 (Fisher combination), Proschan and Hunsberger 1995 and Müller and Schäfer 2001, 2004 (conditional error and conditional rejection probability principles), Posch and Bauer 1999 (four designs written as conditional error functions, hence the equivalence with combination tests) [poschAdaptiveTwoStage1999], Brannath, Posch and Bauer 2002 (recursive combination tests), Liu, Proschan and Pledger 2002 (a measure-theoretic theory for measurable, countable adaptation rules, with Stein's 1945 two-stage t-test and Hogg's 1982 definition of adaptation as its acknowledged ancestors, and the measurability objections) [liuUnifiedTheoryTwoStage2002, Secs 1–2, 5], Brannath, Koenig and Bauer 2007 (the name "conditional invariance principle", the distinction between flexibility and prespecified adaptivity, flexible closed tests reviewed) [brannathMultiplicityFlexibilityClinical2007, Secs 1–2], Brannath, Gutjahr and Bauer 2012 (regression-model foundation) [brannathProbabilisticFoundationConfirmatory2012, Sec. 1; brannathAnytimevalidTestingEvalues2026a, Sec. 1]; the conditional error function was a test supermartingale all along [brannathAnytimevalidTestingEvalues2026a, Sec. 2.2]; see [conditional-error-functions](conditional-error-functions.md).
 
 ## Variants and related concepts
 - [villes-inequality](villes-inequality.md), [test-martingale](test-martingale.md), [testing-by-betting](testing-by-betting.md).
@@ -33,6 +34,9 @@ The lineage of test martingales and e-values as recorded by the sources: von Mis
 - [ramdasAdmissibleAnytimevalidSequential2022](../sources/ramdasAdmissibleAnytimevalidSequential2022.md), [koningAnytimeValidityFree2026](../sources/koningAnytimeValidityFree2026.md), [perezortizEstatisticsGroupInvariance2024](../sources/perezortizEstatisticsGroupInvariance2024.md) — further history.
 - [waudbysmithEstimatingMeansBounded2020](../sources/waudbysmithEstimatingMeansBounded2020.md), [rufCompositeGeneralizationVille2022](../sources/rufCompositeGeneralizationVille2022.md), [ramdasTestingExchangeabilityForkconvexity2021](../sources/ramdasTestingExchangeabilityForkconvexity2021.md), [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md) — further history.
 - [kirschnerConfidenceEstimationSequential2025](../sources/kirschnerConfidenceEstimationSequential2025.md) — the regression and online-learning lineage.
+- [brannathProbabilisticFoundationConfirmatory2012](../sources/brannathProbabilisticFoundationConfirmatory2012.md) — the adaptive-design lineage.
+- [poschAdaptiveTwoStage1999](../sources/poschAdaptiveTwoStage1999.md), [liuUnifiedTheoryTwoStage2002](../sources/liuUnifiedTheoryTwoStage2002.md), [brannathMultiplicityFlexibilityClinical2007](../sources/brannathMultiplicityFlexibilityClinical2007.md) — three primary documents of that lineage.
+- [brannathAnytimevalidTestingEvalues2026a](../sources/brannathAnytimevalidTestingEvalues2026a.md) — its reconciliation with e-values.
 
 ## Disagreements / open issues
 - Wald 1947 (in the bib) and Wald 1945, Kelly 1956, Robbins 1970, Darling and Robbins 1967, Lai 1976, Shafer and Vovk 2019 and Shafer et al. 2011 (not in the bib) are the primary documents for most of this page; none is ingested yet.
