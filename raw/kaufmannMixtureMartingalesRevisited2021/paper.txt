@@ -1,0 +1,2763 @@
+Journal of Machine Learning Research 22 (2021) 1-44Submitted 11/18; Revised 9/21; Published 11/21
+Mixture Martingales Revisited
+with Applications to Sequential Tests and Confidence Intervals
+Emilie Kaufmann
+Univ. Lille, CNRS, Inria, Centrale Lille, UMR 9189 - CRIStAL,
+F-59000 Lille, France EMILIE.KAUFMANN@UNIV-LILLE.FR
+Wouter M. Koolen
+Centrum Wiskunde & Informatica, Science Park 123, Amsterdam, Netherlands WMKOOLEN@CWI.NL
+Editor: Csaba Szepesva ́ri
+Abstract
+This paper presents new deviation inequalities that are valid uniformly in time under adaptive sampling in a multi-armed bandit model. The deviations are measured using the Kullback-Leibler divergence in a given one-dimensional exponential family, and take into account multiple arms at a time. They are obtained by constructing for each arm a mixture martingale based on a hierarchical prior, and by multiplying those martingales. Our deviation inequalities allow us to analyze stopping rules based on generalized likelihood ratios for a large class of sequential identification problems. We establish asymptotic optimality of sequential tests generalising the track-and-stop method to problems beyond best arm identification. We further derive sharper stopping thresholds, where the number of arms is replaced by the newly introduced pure exploration problem rank. We construct tight confidence intervals for linear functions and minima/maxima of the vector of arm means. Keywords: mixture methods, test martingales, multi-armed bandits, best arm identification, adaptive sequential testing
+1. Introduction
+We are interested in making decisions under uncertainty in its myriad forms, including sequential allocation and hypothesis testing problems. In this paper our goal is the design of tight confidence regions that are valid uniformly in time, as well as the design of efficient stopping rules for a large class of sequential tests. We will develop our results in the standard multi-armed bandit model with K independent one-dimensional exponential family arms that are parameterised by their means μ = (μ1, . . . , μK). In this setup, samples X1, X2 . . . are sequentially gathered from the different arms: Xt is drawn from the distribution that has mean μAt where At ∈ {1, . . . , K} is the arm selected at round t. Our techniques all make use of self-normalised sums, which are defined after t rounds by
+∑
+a∈S
+Na(t)d(μˆa(t), μa). (1)
+Here S is a subset of the arms {1, . . . , K}, Na(t) is the random number of observations from arm a, μˆa(t) is the empirical mean of these observations after t rounds, and d(μ, λ) ≥ 0 is the relative entropy (Kullback-Leibler divergence) from the exponential family distribution with mean μ to that with mean λ. The more the empirical means of arms in S deviate from the true means, the larger
+©c 2021 Emilie Kaufmann and Wouter M. Koolen.
+License: CC-BY 4.0, see https://creativecommons.org/licenses/by/4.0/. Attribution requirements are provided at http://jmlr.org/papers/v22/18-798.html.
+
+
+KAUFMANN AND KOOLEN
+the self-normalised sum. We call the summands self-normalised as they are KL-based analogues of the (squared) t-statistic. Namely, a second-order Taylor expansion in μ around μˆ(t) reveals that
+N (t)d(μˆ(t), μ) ≈ N (t) (μˆ(t)−μ)2
+2V(μˆ(t)) , where V(μ) is the variance of the model with mean μ. One of the reasons why self-normalized sums show up in different sequential learning problems is their relation to (generalized) log likelihood ratio statistics. For example, it can be shown that
+ln `(X1, . . . , Xt; μˆ(t))
+`(X1, . . . , Xt; μ) =
+K
+∑
+a=1
+Na(t)d(μˆa(t), μa)
+where `(X1, . . . , Xt; λ) is the likelihood of the observations under a bandit model whose vector of means is λ and μˆ(t) = (μˆ1(t), . . . , μˆK(t)).
+The proposed analyses of the sequential procedures discussed in this paper all rely on a tight control of the deviations of self-normalized sums of the form (1), which inform us about possible values of the means. Our first contribution is the construction of explicit calibration functions C(x) = x + o(x) for which, under any sampling rule (effecting the Na(t) sampling counts), any bandit model μ and any confidence δ ∈ (0, 1), the self-normalised sum associated to any subset of arms S satisfies
+Pμ
+(
+∃t ∈ N :
+∑
+a∈S
+[
+Na(t)d(μˆa(t), μa) − O(ln ln Na(t))
+]
+≥ |S|C
+(
+ln 1
+δ
+|S |
+))
+≤ δ. (2)
+The salient features of this result are that it is uniform in time, exploits the information geometry (KL) intrinsic to the exponential family (rather than relying on non-parametric relaxations including sub-Gaussianity), and, more importantly, it generalises confidence ellipses by combining in the strong summation sense the evidence from multiple arms. Furthermore, as we develop inequalities that hold for any subset S, at the moderate price of a weighted union bound we may apply the bound to any arbitrary (random) subset of the arms, and thereby control the model-selection trade off between the amount of evidence on the left and the magnitude of the threshold on the right. We may recognise two well-known statistical effects (i.e. fundamental barriers) in the form of the bound (2). First, the Law of the Iterated Logarithm informs us that, in the Gaussian
+case, lim supNa(t)→∞
+Na(t)d(μˆa(t),μa)
+ln ln Na(t) = lim supNa(t)→∞
+Na(t)(μˆa(t)−μa)2
+ln ln Na(t) is a universal constant a.s., whence the correction in the sum. Moreover, it follows from the Wilks phenomenon (Wilks, 1938), which gives the limit distribution of Generalized Likelihood Ratio statistics, that, when S = {1, . . . , K}, twice the self-normalised sum (1) converges in distribution to a χ2
+K distribu
+tion. The K degrees of freedom are reflected in the perspective scaling of the threshold to which
+∑K
+a=1 Na(t)d(μˆa(t), μa) is compared in (2). The formal statement of our concentration inequalities is given in Section3, in which we prove a general result that holds for any exponential family (Theorem7) and state two improved results for Gaussian and Gamma distributions (Theorems9and10respectively). We now compare our results to previous work and explain why measuring deviations over multiple arms simultaneously is crucial for applications to sequential learning, which we discuss in Sections4to6.
+1.1 Novelty of our Concentration Results
+Due to the sequential nature of the data collection process, the analysis of virtually any bandit algorithm relies on deviation inequalities that can take into account the random number of observations from each arm. Several such inequalities have thus been developed in this literature and beyond.
+2
+
+
+MIXTURE MARTINGALES REVISITED
+However, most of these results measure deviations for one arm only, which can be rephrased in the form of the following time-uniform deviation inequality
+Pμ
+(
+∃t ∈ N : td(μˆt, μ) − O(f (t)) ≥ C
+(
+ln 1
+δ
+))
+≤ δ, (3)
+where μˆt is the empirical average of t i.i.d. observations with mean μ in a one-parameter exponential family and f (t) = ln(t) or ln ln(t).1 Further, the majority of existing inequalities were obtained for Gaussian (or sub-Gaussian) distributions with thresholds featuring f (t) = ln(t) (e.g.de la Pe n ̃a et al.,2004;Maillard,2019) or f (t) = ln ln(t) (Robbins,1970;Jamieson et al.,2014;Kaufmann et al.,2016;Zhao et al.,2016;Howard et al.,2018). For other one-dimensional exponential families, time-uniform deviation inequalities with f (t) = ln(t) have been stated for Bernoulli (Lai,1976; Jonsson et al.,2020) and Gamma distributions (Lai,1976).Lai(1976) also provides a generic recipe for general one-parameter exponential families, but that leads to intractable thresholds. On the contrary, our Theorem7applied to |S| = 1 leads to an explicit inequality of the form (3) for any exponential family, with a scaling in f (t) = ln ln(t). The closest existing result is that ofGarivier and Capp ́e(2011), which controls the deviations uniformly for t in a finite time range {1, . . . , n}. To the best of our knowledge, the only prior result that controls deviations over multiple arms simultaneously is Theorem 2 ofMagureanu et al.(2014), which also bounds deviations for t in a finite time range {1, . . . , n}. We provide a detailed comparison with this result in Section3, showing that our Theorem7leads to tighter thresholds, which are furthermore valid for the entire time range t ∈ N. Given the large number of results that are available for |S| = 1, a natural question is whether inequalities like (3) for different arms can be combined to obtain an inequality like (2). There is no straightforward way to do so and obtain the right scaling in δ: using a naive union bound leads to an inequality of the form (2) in which the right-hand side is |S|C(ln(1/δ)) ' |S| ln(1/δ) instead of |S|C(ln(1/δ)/|S|) ' ln(1/δ). Hence, specific techniques are needed to propose deviation inequalities that sum evidence across arms, which we provide. In this work we obtain essentially tight calibration functions by building suitable martingales. We show that a calibration function C satisfying (2) can be obtained by exhibiting a martingale that multiplicatively dominates exp (λ [Na(t)d(μˆa(t), μa) − O(ln ln Na(t))]) for a suitable λ ∈ (0, 1). This central assumption to derive deviation inequalities that sum evidence across arms is formalized in Section2. Our results are then obtained by leveraging some particular martingales called mixture martingales that have this property, which are defined in Section2.3. Using martingales to obtain time-uniform inequalities is an old idea that can be traced back to Ville(1939) and all the concentration results quoted above also rely on martingales. We refer the reader to the recent survey ofHoward et al.(2020) who study in great detail the power of elementary martingales for deriving time-uniform inequalities, yet without the particular focus on exponential families or multiple arms that we adopt here. Two important techniques based on martingales are the use of a peeling trick (see, e.g.Capp  ́e et al.2013) or the “method of mixtures” that has been popularized byde la Pe  ̃na et al.(2004,2009), and is sometimes also referred to as the Laplace method (Maillard,2019). We refer the reader to the discussion in Section2.3for examples of use of mixture martingales. Our results rely on new constructions of mixture martingales that are tailored
+1. Some existing results rather upper bound the probability that |μˆt − μ| exceeds some threshold. For one-parameter exponential families, we think that it is more natural to measure deviations with the KL-divergence function as the Cram ́er-Chernoff inequality for such distributions can be expressed as P(td(μˆt, μ) > ln(1/δ), μˆt > μ) ≤ δ. This form is also more convenient for measuring deviations for multiple arms, which is supported by our new inequalities.
+3
+
+
+KAUFMANN AND KOOLEN
+for exponential families. Interestingly, we note that the result ofMagureanu et al.(2014) is not based on mixture martingales: its proof relies on a peeling technique which requires the knowledge of n, and a stochastic dominance argument. Our proof technique based on mixture martingales is more flexible as it allows to easily bound deviations uniformly over the entire domain t ∈ N, which is crucial for the analysis of sequential tests that involve random stopping.
+1.2 Applications to Sequential Learning
+In this section we give more context, review our contribution, and illustrate its advantage on a simple example.
+1.2.1 RELATED WORK ON BANDITS
+Stochastic multi-armed bandit models can be traced back to the work ofThompson(1933) motivated by clinical trials. They were later studied byRobbins(1952);Lai and Robbins(1985) who introduced the regret minimization objective: the samples X1, . . . , Xt are seen as rewards and the goal is to find a sequential strategy to maximize the (expected) cumulated reward, which is equivalent to minimizing some notion of regret (see e.g.Bubeck and Cesa-Bianchi,2012;Lattimore and Szepesvari,2019, for surveys).
+In the meantime, pure-exploration problems in bandit models have also received increased attention (Even-Dar et al.,2006;Bubeck et al.,2011). In this context, a common objective is to identify as quickly and accurately as possible the arm with the largest mean, relinquishing the incentive to maximize the sum of rewards. In the fixed-confidence setting, the minimal number of samples needed to identify the best arm with accuracy larger than 1 − δ when arms belong to a one-dimensional family has been identified byGarivier and Kaufmann(2016), in a regime of small values of δ. Their Track-and-Stop algorithm is shown to asymptotically match this optimal sample complexity. Extensions of this best arm identification problem in which one should answer quickly and accurately some more general query about the means of the arms have also been studied (Huang et al.,2017;Chen et al.,2017). Prototypical queries beyond Best Arm include Top- M (Kalyanakrishnan and Stone,2010), Thresholding (Locatelli et al.,2016), Minimum Threshold (Kaufmann et al.,2018), Combinatorial Bandits (Chen et al.,2014), pure-strategy Nash equilibria (Zhou et al.,2017) or Monte-Carlo Tree Search (Teraoka et al.,2014). We note that Track-and-Stop has recently been generalized byJuneja and Krishnasamy(2019) to a generic “partition identification” problem similar to the one that we consider in Section4, whileDegenne and Koolen(2019) have studied its extension to queries with multiple correct answers. Finally, recent research has also focused on developing alternatives to Track-and-Stop that are more efficient numerically, likeDegenne et al. (2019) who develop algorithms based on iterative saddle point solving.
+1.2.2 OUR CONTRIBUTIONS
+The first impact of our concentration results is that they permit to analyse new stopping rules based on Generalized Likelihood Ratios, which extend the stopping rule originally proposed for Trackand-Stop (Garivier and Kaufmann,2016) to generic sequential identification problems. Our generic stopping rule is presented in Section4, in which we further show that under some assumptions on the identification problem itself, such a stopping rule combined with a suitable sampling rule is (asymptotically) optimal in terms of sample complexity. We then provide in Section5refined
+4
+
+
+MIXTURE MARTINGALES REVISITED
+stopping criteria for some particular tests that replace the number of arms K in the threshold by a new notion of rank.
+Next, we explain in Section6how our deviation inequalities can be used to build tight confidence regions on (functions of) the unknown parameter μ. Indeed, the sum form of the left-hand quantity in (2) allows us to build confidence regions that exclude the configuration of all (many) empirical estimates μˆa(t) being far from their means μa simultaneously. We show how this effect yields improved confidence intervals for functions of the mean μ in the cases of linear functions and minima. In concrete examples, we can quantify the benefit precisely.
+1.2.3 ILLUSTRATION OF THE BENEFIT OF (2) ON A SIMPLE EXAMPLE
+A common task in sequential learning is to construct a confidence interval on the difference μ1 − μ2 in mean between two arms, for example to decide whether μ1 can plausibly be higher than μ2 in a best arm identification scenario. We now quantify the benefit of using the self-normalized sum (2) compared to the classical approach of combining per-arm intervals using the union bound, with an illustration provided in Figure1.
+For maximum interpretability, we instantiate (2) for Gaussian arms with variance 1 (so that d(x, y) = (x − y)2/2), we ignore the ln ln terms, and we approximate KC(ln 1
+δ /K) ≈ ln 1
+δ . Then if we follow the classical per-arm approach, we obtain a confidence interval on μa for each arm a separately using (2) (which now reduces to the standard Chernoff bound), combine these into a rectangular confidence region on the pair (μ1, μ2) using the union bound over arms (called “Box” in Figure1), and work out what we know about the difference μ1 − μ2 by projecting. Doing so, we
+obtain a confidence interval on μ1 − μ2 that has diameter
+√
+8 ln 2
+δ
+(√ 1
+Na(t) +
+√1 Nb(t)
+)
+. In contrast,
+the self-normalised sum of 2 arms directly provides a confidence ellipse on the pair (μ1, μ2) (called
+“Sum” in Figure1), and projecting that to the difference μ1 − μ2 yields a tighter interval of diameter
+√
+8 ln 1
+δ
+(1
+Na(t) + 1
+Nb(t)
+)
+. The advantage of the second approach can be up to a factor
+√
+2, which
+occurs for equal sample sizes Na(t) = Nb(t). In typical adaptive stopping problems, a reduction by
+√
+2 in confidence width leads to an improvement by a factor 2 of the sample complexity.
+In Section6.1, we quantify the obtained improvement for the more general task of building a confidence interval on a linear function vTμ of the means μ ∈ RK, which can be as large as
+√
+K.
+2. Martingales and Deviation Inequalities for Exponential Family Bandit Models
+In this section, we formally introduce the stochastic processes for which we want to obtain deviation inequalities. We then present a general method for obtaining deviation inequalities for any such stochastic process. It relies on the crucial assumption that one can find martingales multiplicatively dominating exponential transforms of the process. We further introduce the general class of martingales that we shall exhibit in order to obtain the particular deviation results of this paper, namely mixture martingales.
+2.1 Exponential Family Bandit Models
+A one-parameter canonical exponential family is a class P of probability distributions characterized by a set Θ ⊂ R of natural parameters, a strictly convex and twice-differentiable function b : Θ → R
+5
+
+
+KAUFMANN AND KOOLEN
+0.0 0.2 0.4 0.6 0.8 1.0
+0.0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+μ1
+μ2
+Box
+Sum
+(a) Confidence region for μ
+0.0 0.2 0.4 0.6 0.8 1.0
+0.0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+μ1
+μ2
+Box
+Sum
+(b) Confidence interval for the difference μ1 − μ2 obtained by projecting confidence regions for μ. The dashed grey help lines connect points of equal difference μ1 − μ2. The largest and smallest values for the difference are obtained by squeezing the confidence interval between diagonal tangents (solid lines). We see that the confidence width, which is the distance between the intercepts, is strictly larger for Box than for Sum: the rounded nature of Sum provides tighter control on the difference.
+Figure 1: Visual two-arm comparison of confidence regions for μ and the implied confidence interval for the difference μ1 − μ2. A union bound over traditional per-arm confidence intervals gives the “Box” region. Our new bound (2) results in a confidence region of the egg-shape marked “Sum”.
+(called the log-partition function) and a reference measure m. It is defined as
+P=
+{
+νθ, θ ∈ Θ : νθ has density fθ(x) = exθ−b(θ) with respect to m
+}
+.
+Example of exponential families include the set of Bernoulli distribution, Poisson distributions, Gaussian distribution with known variance or Gamma distributions with known shape parameter. For any exponential family P it can be shown that the mean μ(θ) of the distribution νθ satisfies
+μ(θ) = b ̇(θ). Observe that μ is a strictly increasing function of the natural parameter θ, hence distributions in P can be alternatively parameterized by their means. We adopt this parameterization in this paper. Letting I := b ̇(Θ) be the set of possible mean parameters, for all μ ∈ I we define νμ to be the distribution in P that has mean μ. We also define the Kullback-Leibler divergence between two distributions in P as a function of their means by
+d(μ, μ′) := KL
+(
+νμ, νμ′ )
+=
+∫
+ln
+f  ̇b−1 (μ) (x)
+f ̇b−1(μ′)(x) f ̇b−1(μ)(x) dm(x).
+This divergence function has a closed form expression in the classical exponential families mentioned above. For example for Gaussian distribution with variance σ2 one has d(μ, μ′) = (μ − μ′)2/(2σ2) and for Bernoulli distributions d(μ, μ′) = μ ln(μ/μ′) + (1 − μ) ln((1 − μ)/(1 − μ′)). Further examples can be found inCapp e ́ et al.(2013). An exponential family bandit model is a sequence of K probability distributions νμ1, . . . , νμK that belong to some one-dimensional canonical exponential family P: it can be fully parametrized by the vector of means μ = (μ1, . . . , μK) ∈ IK. In a bandit model, data is collected sequentially: an arm At is selected at round t and a sample Xt from the distribution νμAt is observed. We denote
+by Na(t) = ∑t
+s=1 1(As=a) the number of selections of arm a in the first t rounds and Sa(t) =
+6
+
+
+MIXTURE MARTINGALES REVISITED
+∑t
+s=1 Xs1(As=a) the sum of these observations. The empirical mean of the observations obtained from arm a up to round t is therefore defined as μˆa(t) = Sa(t)/Na(t) once Na(t) 6= 0. We let Ft = σ(A1, X1, . . . , At, Xt) be the filtration generated by the observations gathered within the first t rounds and assume the sampling rule is such that At is mesurable with respect to σ(Ft−1, Ut) where Ut is a uniform random variable that is independent from Ft−1 (allowing randomized algorithms). In this paper, our objective is to prove time-uniform deviation inequalities for sums involving the terms Na(t)d(μˆa(t), μa) (or some one-sided versions of these). The price for uniformity in time will be some ln ln(Na(t)) term and we shall for example obtain deviation inequalities for sums of the entries of a stochastic process X(t) = {Xa(t)}K
+a=1 of the form
+Xa(t) = Na(t)d(μˆa(t), μa) − c ln(d + ln Na(t)) (4)
+for some constants c and d. We now describe a general method to obtain time-uniform deviation inequalities for any arm-dependent stochastic process X(t).
+2.2 A General Method for Obtaining Deviation Inequalities
+Let X(t) = {Xa(t)}K
+a=1 be a stochastic process indexed by arms. Here we introduce a central assumption under which it is easy to obtain deviation inequalities for sums of the entries of X(t) by combining Ville’s inequality for martingales with the Cram ́er-Chernoff method. For this reason, we call such processes g-VCC (in reference to the Ville-Crame ́r-Chernoff trio). We will also follow Shafer et al.(2011) in calling any non-negative martingale M (t) ≥ 0 of unit initial value M (0) = 1 a test martingale.
+Definition 1 Let g : Λ → R be a function defined on a non-empty interval Λ ⊆ R. A stochastic process X(t) = {Xa(t)}K
+a=1 is called g-VCC if it satisfies the following properties.
+1.For any arm a and λ ∈ Λ there exists a test martingale M λ
+a (t) such that
+∀t ∈ N, M λ
+a (t) ≥ eλXa(t)−g(λ). (∗)
+2. For any subset S ⊆ {1, . . . , K} and for any λ ∈ Λ, the product ∏
+a∈S M λ
+a (t) is a martingale.
+We note that the independent work ofHoward et al.(2020) also presents a general method based on the Cram ́er-Chernoff method to derive time-uniform concentration inequalities. The authors propose deviation inequalities for a two-dimensional stochastic processes (St, Vt) under an assumption that bears similarities with (∗): exp(λSt − φ(λ)Vt) has to be upper bounded by a martingale, for a known function φ and for all λ in a certain range. Yet the proposed applications of these two general methods differ, in particular there is no emphasis on measuring deviations for multiple arms in the work ofHoward et al.(2020).
+Remark 2 To calibrate what to expect for g, we can use knowledge of the asymptotic distribution of the Xa(t) given in (4). In our applications, Wilks’ phenomenon (seede la Pe  ̃na et al.,2009, Chapter 17) tells us that 2Xa(t) is asymptotically (for Na(t) → ∞) χ2 distributed when c = 0 in (4). For 2Y ∼ χ2, we have E[eλY ] = (1 − λ)−1/2. This strongly suggests (and this is what we will find) that g(λ) should be at least 1
+2 ln(1 − λ), plus a mild additional cost for uniformity in time. For
+this reason we will refer to gχ2(λ) = 1
+2 ln(1 − λ) as the “ideal function”.
+7
+
+
+KAUFMANN AND KOOLEN
+For a g-VCC stochastic process X(t) = {Xa(t)}K
+a=1, we provide a general deviation inequality for the sum of the entries Xa(t) over any subset of arms. The threshold is related to the function g through the following quantities.
+Definition 3 For g : Λ → R+, we define for all x > 0,
+Cg(x) := min
+λ∈Λ
+g(λ) + x
+λ.
+We also define the convex conjugate of g, g∗(x) := maxλ∈Λ (λx − g(λ)).
+With these functions in hand, we can now state our g-VCC deviation inequality.
+Lemma 4 Fix S ⊆ {1, . . . , K}. Let X(t) = {Xa(t)}K
+a=1 be a g-VCC stochastic process. Then
+∀x > 0, P
+(
+∃t ∈ N :
+∑
+a∈S
+Xa(t) ≥ |S|Cg
+(x
+|S |
+)
+)
+≤ e−x,
+∀u > 0, P
+(
+∃t ∈ N :
+∑
+a∈S
+Xa(t) > u
+)
+≤ exp
+(
+−|S |g∗
+(u
+|S |
+))
+.
+Proof Fix λ ∈ Λ. As X(t) is g-VCC (see Definition1), we find
+P
+(
+∃t ∈ N :
+∑
+a∈S
+Xa(t) > u
+)
+=P
+(
+∃t ∈ N : eλ[∑
+a∈S Xa(t)] > eλu)
+≤P
+(
+∃t ∈ N :
+∏
+a∈S
+Mλ
+a (t) > eλu−|S|g(λ)
+)
+.
+As ∏
+a∈S M λ
+a (t) is a test martingale, it follows from Ville’s inequality (P(∃t ∈ N∗ : M (t) ≥ 1/x) ≤ x for any non-negative super-martingale starting from E[M (0)] = 1 and any x ∈ (0, 1],Ville1939) that
+P
+(
+∃t ∈ N :
+∑
+a∈S
+Xa(t) > u
+)
+≤ e−[λu−|S|g(λ)] (5)
+Equivalently, one can also establish that for all x > 0, for all λ ∈ Λ,
+P
+(
+∃t ∈ N :
+∑
+a∈S
+Xa(t) > |S|g(λ) + x
+λ
+)
+≤ e−x (6)
+Picking the best possible λ in (6) yields the first inequality in Lemma4while picking the best possible λ in (5) yields the second inequality.
+The deviation inequalities given in Lemma4are either expressed in terms of the threshold function Cg or in terms of the convex conjugate g∗. Depending on g, one of these two quantities might be easier to compute that the other one. Note that if g∗ is well-behaved, the threshold function can be obtained by inverting g∗, as stated below.
+8
+
+
+MIXTURE MARTINGALES REVISITED
+Proposition 5 Assume g∗ is increasing. For all u ∈ g∗(R+), Cg(u) = (g∗)−1(u).
+Proof As g∗ is increasing on R+, the inverse function (g∗)−1 is well defined on I := g∗(R+). From the definitions of Cg and g∗, it is easy to check that
+∀x > 0, g∗(Cg(x)) ≥ x and Cg(g∗(x)) ≤ x.
+These two inequalities respectively yield that for all u ∈ I, (g∗)−1(u) ≤ Cg(u) and Cg(u) ≤ (g∗)−1(u), which concludes the proof.
+2.3 Mixture Martingales
+Introducing the cumulant generating function φμ(η) := ln EX∼νμ
+[
+eηX ]
+for all μ ∈ I, it holds for all η ∈ R that
+Zη
+a (t) := exp (ηSa(t) − φμa(η)Na(t)) (7)
+is a test martingale with respect to the filtration Ft, for any sampling rule. Indeed, when At = a
+we have E [Zη
+a (t)|At, Ft−1] = Zη
+a (t − 1)E
+[
+eηXt−φμa (η)∣
+∣At, Ft−1
+]
+= Zη
+a (t − 1), and the same
+trivially holds when At 6= a. So by the tower rule E [Zη
+a (t)|Ft−1] = E [E [Zη
+a (t)|At, Ft−1]|Ft−1] =
+Zη
+a (t − 1). More generally, for any probability distribution π on η, the mixture martingale
+Zπ
+a (t) :=
+∫
+Zη
+a (t) dπ(η) (8)
+is also a test martingale, as can be seen by applying Tonelli’s theorem
+E [Zπ
+a (t)|At, Ft−1] =
+∫
+E [Zη
+a (t)|At, Ft−1]
+} {{ }
+=Z η
+a (t−1)
+dπ(η) = Zπ
+a (t − 1).
+Finally, given a family of priors π = {πa}K
+a=1, the product martingale Zπ
+S (t) := ∏
+a∈S Zaπa (t) is also a test martingale with respect to Ft, for any subset S. Namely, when At ∈ S we have
+E [Zπ
+S (t)|At, Ft−1] = Zπ
+S\{At}(t − 1) E
+[
+Z πAt
+At (t)
+∣
+∣
+∣At, Ft−1
+]
+} {{ }
+=Z
+πAt
+At (t−1)
+= Zπ
+S (t − 1),
+and the same result holds trivially when At ∈/ S. The martingale property follows by the tower rule. Hence, a sufficient condition to establish that a stochastic process X(t) is g-VCC is to exhibit for all λ ∈ Λ a family of priors πa,λ such that M λ
+a (t) := Zπa,λ
+a (t) satisfies (∗). This is how we proceed in the next sections.
+2.3.1 EXAMPLE OF MIXTURE MARTINGALES
+Among the first occurrence of such mixture martingales, one can mention the works ofDarling
+and Robbins(1968);Robbins(1970) which consider the martingale
+∫
+exp
+(
+ηSt − η2σ2
+2t
+)
+dπ(η)
+where St is a sum of t i.i.d. standard Gaussian random variables and π is a Gaussian prior. This martingale coincides with our Zπ
+a (t) for a single standard Gaussian arm a. The choice of Gaussian
+9
+
+
+KAUFMANN AND KOOLEN
+prior π results in a threshold growing like
+√
+t ln t. We use different priors, which asymptote at η = 0, to obtain a deviation inequality for St that is uniform in time and compatible with the Law of the Iterated Logarithm: St is compared to a threshold that grows like
+√
+2t ln ln(t).
+More broadly, the term mixture martingale can refer to any martingale of the form
+∫
+M η(t)dπ(η) where M η(t) is some martingale (not necessarily Za(t)) and π is some probability distribution (that we call the prior). For example the likelihood ratio martingales introduces byLai(1976) are of this form. Mixture martingale constructions are also at the heart of the game-theoretic approach to probability (Dawid and Vovk,1999). The “method of mixtures” has then been popularized by de la Pe ̃na et al.(2004,2009) who use it to prove self-normalized deviation inequalities for general stochastic processes. Examples of its use include the work ofAbbasi-Yadkori et al.(2011) who propose a self-normalized deviation inequality for a vector-valued martingale applied to the linear bandit problem or that ofBalsubramani(2015) who derive time-uniform Hoeffding or Bernstein deviation inequalities. Most of these works present mixture martingales with specific choices of continuous priors for which the corresponding mixture can be either computed in closed form or well-approximated. In this paper, we will rely on priors constructed in hierarchical fashion from discrete and continuous ingredients with the goal of obtaining explicit near-optimal thresholds.
+3. New Deviation Inequalities for Exponential Families
+In this section, we first provide a general deviation result that holds for any one-dimensional exponential family and can also accommodate one-sided deviations (Theorem7). Next, we present in Section3.2tighter deviation inequalities that measure two-sided deviations for the special cases of Gaussian and Gamma distributions. The two sets of results rely on proving that a stochastic process is g-VCC for certain functions g, which we do by constructing appropriate mixture martingales based on hierarchical priors in Section3.4.
+3.1 Main Result
+To state our result, we introduce one-sided versions of the Kullback-Leibler divergence, namely d+(u, v) = d(u, v)1(u≤v) and d−(u, v) = d(u, v)1(u≥v). We further introduce the notation
+Ya(t) := [Na(t)d(μˆa(t), μa) − 3 ln(1 + ln(Na(t))]+
+Y−
+a (t) := [Na(t)d−(μˆa(t), μa) − 3 ln(1 + ln(Na(t))]+
+Y+
+a (t) := [Na(t)d+(μˆa(t), μa) − 3 ln(1 + ln(Na(t))]+
+and let X(t) = {Xa(t)}K
+a=1 be a stochastic process such that, for all a, either ∀t, Xa(t) = Ya(t) (for
+two-sided deviations) or ∀t, Xa(t) = Y +
+a (t) or ∀t, Xa(t) = Y −
+a (t) (for one-sided deviations).
+Remark 6 We use as our correction function 3 ln(1 + ln Na(t)), which is vacuous when Na(t) = 0 because ln Na(t) = −∞. Most algorithms for bandits avoid considering this situation, and start by pulling all arms once. In some scenarios, especially with many arms, it may be desirable to include the case Na(t) = 0. There is no essential bottleneck, and one could adjust the analysis to, for example, replace it by 3 ln(1 + ln(1 + Na(t))).
+We provide in Theorem7below a new self-normalized deviation inequality featuring a calibration function Cexp. To give the expression of Cexp, we need to introduce two functions. First for u ≥ 1 the
+10
+
+
+MIXTURE MARTINGALES REVISITED
+function h(u) = u − ln u and its inverse h−1(u). Secondly, the function defined for any z ∈ [1, e] and x ≥ 0 by
+ ̃hz(x) =
+{
+e1/h−1(x)h−1(x) if x ≥ h(1/ ln z),
+z(x − ln ln z) otherwise. (9)
+Theorem 7 Let Cexp : R+ → R+ be the function defined by
+Cexp(x) = 2 ̃h3/2
+( h−1(1 + x) + ln(2ζ(2))
+2
+)
+(10)
+where ζ(s) = ∑∞
+n=1 n−s. For S a subset of arms and x > 0,
+P
+(
+∃t ∈ N :
+∑
+a∈S
+Xa(t) ≥ |S|Cexp
+(x
+|S |
+)
+)
+≤ e−x.
+Moreover, if Xa(t) measures only one-sided deviation (that is for all a, Xa = Y +
+a or Xa = Y −
+a ), the
+calibration function can be replaced by the smaller C ̃exp(x) = 2 ̃h3/2
+( h−1(1+x)+ln(ζ(2)) 2
+)
+.
+As can be seen in the proof given in Section3.4, this result follows by exhibiting a family of functions gξ such that X(t) is gξ-VCC, applying Lemma4and then optimizing the parameters to obtain the best possible calibration function. Proposition8below (proved in AppendixA) gives a tight bound on the inverse function h−1, which yields an upper bound on the calibration function Cexp. On can easily see that Cexp(x) ∼ x when x tends to infinity. For x ≥ 5, a good approximation of the threshold is Cexp(x) ' x + 4 ln(1 + x +
+√
+2x), which is slightly larger than the approximation ' x + ln(x) that is added for comparison to Figure2.
+Proposition 8 The function h is increasing on [1, +∞[ and its inverse function, defined on [1, +∞[, satisfies h−1(x) = −W−1(−e−x) with W−1 the negative branch of the Lambert function. Moreover,
+∀x ≥ 1, h−1(x) ≤ x + ln(x +
+√
+2(x − 1)).
+3.2 Refined Results for Gaussian and Gamma Distribution
+For Gaussian and Gamma distributions, a different martingale construction, explained in detail in AppendixC, permits to establish the following results. In a bandit model with Gaussian arms with means μa and known variance σ2, the associated
+divergence is d(μ, μ′) = (μ−μ′)2
+2σ2 and one can prove the following theorem.
+Theorem 9 In a Gaussian bandit model, introducing for all a the process Xa(t) = Na(t)d(μˆa(t), μa)− 2 ln(4 + ln Na(t)), the stochastic process X(t) is gG-VCC where
+gG :]1/2, 1] −→ R λ 7→ 2λ − 2λ ln (4λ) + ln ζ(2λ) − 1
+2 ln (1 − λ) .
+Hence, letting CG := CgG, it follows from Lemma4that for every subset S and x > 0,
+P
+(
+∃t ∈ N :
+∑
+a∈S
+[Na(t)d (μˆa(t), μa) − 2 ln(4 + ln Na(t))] ≥ |S|CG
+(x
+|S |
+)
+)
+≤ e−x.
+11
+
+
+KAUFMANN AND KOOLEN
+In a bandit model with arms that are Gamma distributed with means μa and known shape
+parameter α, the associated divergence is d(μ, μ′) = α
+(μ
+μ′ − 1 − ln μ
+μ′
+)
+and one can prove the
+following theorem.
+Theorem 10 In a Gamma bandit model, introducing for all a the process Xa(t) = Na(t)d(μˆa(t), μa)− 2 ln(4 + ln Na(t)), the stochastic process X(t) is gΓ-VCC where
+gΓ :]1/2, 1] −→ R λ 7→ 2λ − 2λ ln (4λ) + ln ζ(2λ) − ln (1 − λ) .
+Hence, letting CΓ := CgΓ, it follows from Lemma4that for every subset S and x > 0,
+P
+(
+∃t ∈ N :
+∑
+a∈S
+[Na(t)d (μˆa(t), μa) − 2 ln(4 + ln Na(t))] ≥ |S|CΓ
+(x
+|S |
+)
+)
+≤ e−x.
+3.3 Discussion
+The three deviation inequalities given Theorems7,9and10all provide a control of the two-sided deviations of the empirical means from the true means, of the form
+P
+(
+∃t ∈ N :
+∑
+a∈S
+Na(t)d(μˆa(t), μa) >
+∑
+a∈S
+c ln(d + ln(Na(t))) + |S|C
+(x
+|S |
+)
+)
+≤ e−x
+where c and d are two constants and C(x) is a calibration function. For Gaussian or Gamma distributions one can use c = 2, d = 4 while c = 3, d = 1 apply for other one-dimensional exponential families. A more crucial difference is the calibration function C, which can be set to CG for Gaussian distributions, to CΓ for Gamma distributions and to Cexp in general. Those three calibration functions are hard to compare at first as they have no closed-form expressions. Equation (10) provides an explicit expression for Cexp but that still requires to numerically invert the function h, while CG and CΓ can be numerically approximated using Definition3which requires to minimize a convex function. In Figure2we compare those three thresholds to the “ideal” calibration function Cgχ2 where gχ2(λ) = − 1
+2 ln(1 − λ) (see Remark2). We see that that this
+idealized calibration satisfies Cgχ2 (x) ' x + ln(x) and that the calibration functions obtained for Gaussian and Gamma distributions are very close to it. The function Cexp seems to be off by an additive term of order 10. Despite this slightly larger calibration function, the general result of Theorem7is interesting for the following reasons. First, obviously it covers more distributions like Bernoulli and Poisson distributions that are often relevant for applications of multi-armed bandits. Then, we noted that Theorem7can be made tighter in case only one-sided deviations are measured (when Na(t)d+(μˆa(t), μa) or Na(t)d−(μˆa(t), μa) are used): Cexp can be replaced by the slightly smaller threshold C ̃exp. In contrast, the construction presented in AppendixCcannot be easily adapted to obtain better results for one-sided deviations for Gaussian or Gamma distributions. Finally, the presence of the positive part in the definition of Ya(t)± leads to the following improved result holding uniformly over subsets:
+P
+(
+∃t ∈ N : ∃S′ ⊆ S,
+∑
+a∈S ′
+Na(t)d±(μˆa(t), μa) >
+∑
+a∈S ′
+3 ln(1 + ln(Na(t))) + |S|Cexp
+(x
+|S |
+)
+)
+≤ e−x.
+12
+
+
+MIXTURE MARTINGALES REVISITED
+0.0 2.5 5.0 7.5 10.0 12.5 15.0 17.5 20.0 x
+5
+0
+5
+10
+15
+20
+25
+30
+C(x)
+C_{exp} C_{Gamma} C_{Gaussian} Ideal calibration function x + ln(x)
+Figure 2: Several calibration functions C(x) as a function of x.
+3.3.1 COMPARISON TO THE STATE-OF-THE-ART
+To the best of our knowledge, the only available result that controls deviations over multiple arms simultaneously is the one ofMagureanu et al.(2014). More precisely, Theorem 2 inMagureanu et al. (2014) can be rephrased as follows2, introducing the function f ̃(u) = u − 2 ln(u) for u ≥ 2:
+P
+(
+∃t ≤ n :
+∑
+a∈S
+Na(t)d+(μˆa(t), μa) ≥ |S|f ̃−1
+(
+1 + ln ln(n) + x + 1
+|S |
+)
+)
+≤ e−x. (11)
+We note that here the deviations are uniform over a finite time range {1, . . . , n}. This style of deviation inequalities can also be deduced from Theorem7for general exponential families:
+P
+(
+∃t ≤ n :
+∑
+a∈S
+Na(t)d+(μˆa(t), μa) ≥ 3|S| ln(1 + ln(n)) + |S|Cexp
+(x
+|S |
+)
+)
+≤ e−x, (12)
+or from Theorem9and Theorem10:
+P
+(
+∃t ≤ n :
+∑
+a∈S
+Na(t)d+(μˆa(t), μa) ≥ 2|S| ln(4 + ln(n)) + |S|C
+(x
+|S |
+)
+)
+≤ e−x, (13)
+where C(x) = CG(x) for Gaussian distributions and C(x) = CΓ(x) Gamma distributions. In Figure3, we plot the thresholds (right-hand side of the deviation inequalities) featured in (11) and (12) for different values of n, |S| and x, revealing that the threshold in (12) can be much smaller.
+3.3.2 IMPROVED RESULT WHEN |S| = 1
+Theorem7can be made slightly tighter for a subset of size 1 (see AppendixB.3) and we obtain, with μˆt the empirical mean of t observations from a distribution with mean μ in an exponential family,
+P
+(
+∃t ∈ N : td (μˆt, μ) ≥ 3 ln(1 + ln(t)) + 2 ̃h3/2
+( x + ln(2ζ(2))
+2
+))
+≤ e−x. (14)
+2. The result only considers Bernoulli arms and S = [K], but their analysis can be easily extended to cover the more general case of exponential families and any subset S
+13
+
+
+KAUFMANN AND KOOLEN
+0 100 200 300 400 500
+n
+100
+200
+300
+400
+500
+600
+700
+800
+thresholds as a function of n for x=2 and |S|=50
+threshold in (13) Gaussian threshold in (14) [Magureanu et al. 14]
+0 20 40 60 80 100
+|S|
+0
+200
+400
+600
+800
+1000
+thresholds as a function of |S| for n=(500) and x=2
+2 4 6 8 10
+x
+100
+200
+300
+400
+500
+600
+700
+800
+900
+thresholds as a function of x for n=500 and |S|=50
+Figure 3: Thresholds that follow from Theorem7and Theorem9compared to the threshold in (11) obtained byMagureanu et al.(2014).
+Albeit not our main focus, this result is interesting as it provides a deviation result in which the threshold features a ln(ln(t)) term, which is known to be unavoidable in the Gaussian case due to the Law of Iterated Logarithm. In the Gaussian (or sub-Gaussian) case, several results of this type already exist (Robbins,1970;Jamieson et al.,2014;Kaufmann et al.,2016;Zhao et al.,2016;Howard et al.,2018) and we do not claim ours to be the tightest in general. Beyond Gaussian distribution, (14) is the first result that controls deviations uniformly in t ∈ N for general exponential families and with a threshold scaling in ln(ln(t)).
+3.4 Sketch of Proofs
+In this section, we provide a detailed proof of Theorem7, leaving the proof of some intermediate lemmas to AppendixB. The proofs of Theorem9and10are given in AppendixC, but we provide below a high-level description of the martingale that is used for these results.
+Proof of Theorem7 Fix ξ > 0 and define for all λ ∈ [0, 1/(1 + ξ)),
+gξ(λ) = λ(1 + ξ) ln (C(ξ)) − ln(1 − λ(1 + ξ)) with C(ξ) = 2ζ(2)
+(ln(1 + ξ))2 .
+14
+
+
+MIXTURE MARTINGALES REVISITED
+The proof hinges on the fact that for the stochastic process X, there exists a martingale satisfying (∗).
+Lemma 11 For ξ ∈ [0, 1/2], X is gξ-VCC (see Definition1).
+As will be seen in the proof of Lemma11, given shortly, in case the stochastic process X only measures one-sided deviations, that is for all a either Xa(t) = Y −
+a (t) or Xa(t) = Y +
+a (t), then C(ξ)
+can be replaced by the smaller C(ξ) = ζ(2)/(ln(1 + ξ))2: the factor 2 that is removed corresponds to picking a one-sided versus a two-sided prior and leads to the slightly smaller threshold C ̃exp given in the second statement of Theorem7. Using Lemma4, we obtain the following deviation inequality expressed with the function Cgξ associated to gξ (see Definition3): for all ξ > 0, for all x > 0,
+P
+(
+∃t ∈ N :
+∑
+a∈S
+Xa(t) ≥ |S|Cgξ
+(x
+|S |
+)
+)
+≤ e−x.
+Recalling that Cgξ (x) = minλ∈[0,1/(1+ξ))
+x+gξ (λ)
+λ , the proof is completed by applying Lemma12 below, proved in AppendixB.2, to compute the optimal tuning of ξ ∈ [0, 1/2].
+Lemma 12 Let C(ξ) = 2ζ(2)
+(ln(1+ξ))2 . Fix z ∈ [0, e − 1] and x ≥ 0. Then
+inf
+ξ∈[0,z]
+λ∈[0,1/(1+ξ)]
+x − ln (1 − λ(1 + ξ))
+λ + (1 + ξ) ln C(ξ) = 2 ̃h1+z
+( h−1 (1 + x) + ln (2ζ(2))
+2
+)
+.
+We now provide the proof of the crucial Lemma11.
+Proof of Lemma11: building the martingale Lemma13below shows that the deviations of Xa(t) can be related to the deviations of a well-chosen mixture martingale Zπ
+a (t), where π has a discrete support. The proof of Lemma13is given in AppendixB.
+Lemma 13 (mixture martingales) Fix ξ ∈]0, 1/2[ and x > 0. There exists a (discrete) prior
+π(x) = π(x, ξ) such that the corresponding mixture martingale (8), denoted by Zπ(x)
+a (t), satisfies, for all t ∈ N,
+{
+Xa(t) − (1 + ξ) ln
+( 2ζ(2)
+(ln(1 + ξ))2
+)
+≥x
+}
+⊆
+{
+Z π(x)
+a (t) ≥ e
+x 1+ξ
+}
+.
+If Xa(t) = Y +
+a (t) or Xa(t) = Y −
+a (t), there exists a prior π(x) such that
+{
+Xa(t) − (1 + ξ) ln
+( ζ(2)
+(ln(1 + ξ))2
+)
+≥x
+}
+⊆
+{
+Z π(x)
+a (t) ≥ e
+x 1+ξ
+}
+. (15)
+A consequence of Lemma13is that, for every z > 1, and every λ > 0
+{
+eλ(Xa(t)−(1+ξ) ln C(ξ)) ≥ z
+}
+⊆
+{
+Z π(ln(z)/λ)
+a (t) ≥ e
+ln(z) λ(1+ξ)
+}
+⊆
+{
+Z π(ln(z)/λ)
+a (t)e− ln(z)
+λ(1+ξ)
+} {{ }
+:=W z,λ
+a (t)
+≥1
+}
+,
+15
+
+
+KAUFMANN AND KOOLEN
+where W z,λ
+a (t) is a martingale that satisfies E[W z,λ
+a (0)] = e− ln(z)
+λ(1+ξ) and, due to the above inclusion,
+W z,λ
+a (t) ≥ 1(eλ(Xa(t)−(1+ξ) ln C(ξ))≥z). (16)
+We now define another mixture martingale, for λ ∈
+]
+0, 1
+1+ξ
+[
+:
+Wλ
+a (t) = 1 +
+∫∞
+1
+W z,λ
+a (t)dz.
+Using inequality (16) yields
+Wλ
+a (t) ≥ eλ(Xa(t)−(1+ξ) ln C(ξ)).
+Moreover, a direct computation shows that W λ
+a (0) = 1
+1−λ(1+ξ) . Finally defining
+Mλ
+a (t) = (1 − λ(1 + ξ))W λ
+a (t),
+one has that M λ
+a (t) is a test martingale, i.e. E[M λ
+a (t)] = 1, that satisfies
+Mλ
+a (t) ≥ exp (λXa(t) − λ(1 + ξ) ln(C(ξ)) + ln(1 − λ(1 + ξ)))
+= exp (λXa(t) − gξ(λ)) ,
+which concludes the proof. Note that if for all a, Xa(t) = Y ±
+a (t), using the tighter statement (15)
+allows to replace the constant C(ξ) by the smaller value ζ(2)
+(ln(1+ξ))2 .
+Above, we are in essence building a test martingale of value Mt ≥ eλXt from test martingales guaranteeing Zt ≥ ex1{Xt ≥ x}. The possibilities and limits of doing this are exactly characterised byDawid et al.(2011) in the process of characterising the so-called admissible capital calibrators. By changing the mixture on thresholds x from exponential (as we do here) to polynomial, it is technically possible to guarantee Mt ≥ eXt−O(ln Xt). We do not pursue this direction, as the additional ln Xt is not convenient for combining evidence of arms, and moreover it is not at all clear that the high cost in terms of multiplicative constants (i.e. the g(λ)) is worth it.
+3.4.1 ALTERNATIVE MIXTURE MARTINGALES
+The martingale M λ
+a (t) built in the proof of Lemma11can be viewed as a mixture martingale with a hierarchical prior, which is a continuous mixture of some discrete priors π(·) defined in Lemma13. Indeed, one can write
+Mλ
+a (t) = (1 − λ(1 + ξ))Z0
+a(t) +
+∫∞
+1
+(∫
+Zη
+a (t)π(ln(z)/λ)(dη)
+)
+(1 − λ(1 + ξ))e− ln(z)
+λ(1+ξ) dz.
+To prove Theorem9and Theorem10, we build different mixture martingales in AppendixC. Interestingly, they also rely on a hierarchical prior but this time the prior is a discrete average of continuous priors. More precisely, the martingale used in each case can be written of the form
+Mλ
+a (t) =
+∞
+∑
+i=1
+γi
+∫
+Zη
+a (t)pλ,μa
+Ti (η)dη
+16
+
+
+MIXTURE MARTINGALES REVISITED
+for a well chosen family of (γi, Ti) ∈ (R+, N∗), where pλ,μa
+t (η) is a continuous function satisfying
+∀x,
+∫
+eη(tx)−φμ(η)tpλ,μa
+n (η)dη = eλtd(x,μa).
+We see that in both cases, elementary non-negative martingales of the form Zη
+a (t) from (7) are mixed under a (hierarchically constructed) prior distribution on η. Both approaches are similar in spirit, both implementing the Laplace technique of achieving a value close to that of the maximiser ηˆ (which is a function of the random data), and the peeling technique (to adapts to the random sample size Na(t)). The combined density has an asymptote at η = 0, with density nearby proportional to 1
+η(ln η)2 . The log factor is necessary for making the prior proper, and it is also the reason for the
+ln ln Na(t) terms in our deviation inequality. An interesting alternative approach, which goes slightly outside the mixture martingale framework, is taken byKoolen and van Erven(2015). There, a mixture martingale is constructed by mixing the increment Zη
+a (t) − Zη
+a (0) under the improper prior with density 1/η. Subtracting Zη
+a (0) solves the problem that, without it, the improper mixture would be infinite. However, it has the effect that the mixture can become negative, interfering with Ville’s inequality. Yet the mixture value can be shown (for bounded outcomes) to be at least − ln Na(t). Taking that into account properly yields, again, the ln ln Na(t) term in the resulting deviation inequality. We believe exploring these ideas further to be a worthwhile direction for future research.
+4. Asymptotically Optimal Adaptive Sequential Testing
+In this section, we explain how our new deviation inequalities can be useful to prove the correctness of a stopping strategy for generic sequential adaptive hypothesis testing problems, that we refer to as sequential identification problems.
+Given a bandit model, we consider M hypotheses H1 = (μ ∈ O1), . . . , HM = (μ ∈ OM ) where O1, . . . , OM are open sets forming a partition of the set of possible means O. Our goal is to adaptively sample the arms until a decision is made that one of the hypotheses ıˆ is correct. Our goal is to identify the correct hypothesis for all possible means μ ∈ O. More precisely, we aim for δ-correct strategies, for which ∀μ ∈ O, Pμ (μ ∈ Oıˆ) ≥ 1 − δ. This problem falls into the framework of Sequential Adaptive Hypothesis Testing as introduced byChernoff(1959) –who studied only discrete hypotheses and considered a different performance metric– and is called General-Samp byChen et al.(2017), who study Gaussian arms with unit variance. For general exponential family bandits, we analyse below a natural stopping rule based on Generalized Likelihood Ratio (GLR) tests. We prove that this stopping rule is δ-correct for any sequential identification problem and that in some cases it attains the minimal sample complexity (in a regime of small risk δ) when coupled with an appropriate sampling rule. We note that the independent work ofJuneja and Krishnasamy(2019) studies the same problem as ours under the name “partition identification”, also for exponential families. However, that work puts less emphasis on stopping rules, and uses the deviation inequality ofMagureanu et al.(2014) for its analysis.
+4.1 A General Stopping Rule
+For every μ, we define
+Alt(μ) =
+⋃
+i:μ∈/Oi
+Oi.
+17
+
+
+KAUFMANN AND KOOLEN
+If μ ∈ O, we let i∗(μ) be the index of the unique element in the partition to which μ belongs; in particular μ ∈ Oi∗(μ) and Alt(μ) = O\Oi∗(μ). We let μˆ(t) be the vector of empirical means of the arms based on the observations available up to round t. If μˆ(t) ∈ O, we let ıˆ(t) = i∗(μˆ(t)) so that μˆ(t) ∈ Oıˆ(t).
+Definition 14 The GLR statistic is defined as
+ˆΛt = inf
+λ∈Alt(μˆ (t))
+K
+∑
+a=1
+Na(t)d (μˆa(t), λa) . (17)
+Given a sequence of thresholds (cˆt(δ))t∈N, the GLR stopping rule with thresholds cˆt(δ) is defined by
+τδ := inf
+{
+t ∈ N : Λˆ t > cˆt(δ)
+}
+. (18)
+A Generalized Likelihood Ratio statistic is usually defined for testing a possibly composite hypothesis H0 : (μ ∈ Ω0) against a possibly composite alternative H1 : (μ ∈ Ω1) by
+Rt = supλ∈Ω0∪Ω1 `(X1, . . . , Xt; λ)
+supλ∈Ω0 `(X1, . . . , Xt; λ) ,
+where X1, . . . , Xt are some observations whose likelihood `(X1, . . . , Xt; μ) depends on some unknown parameter μ. Large values of Rt tend to reject the hypothesis H0. When the observations are obtained under a sampling rule (At) in an exponential family bandit model and μˆ(t) ∈ Ω0 ∪ Ω1 it can be shown that
+ln(Rt) = inf
+λ∈Ω0
+K
+∑
+a=1
+d(μˆa(t), λa).
+The GLR statistic ˆΛt can thus be interpreted as a statistic for testing H0 : {μ ∈ Alt(μˆ(t))} against H1 :
+{
+μ ∈ Oıˆ(t)
+}
+(if μˆ(t) ∈ O, otherwise note that ˆΛt = 0 which prevent from stopping). However
+the two hypotheses that are “tested” at time t are data-dependent. Still, large values Λˆt tend to reject (μ ∈ Alt(μˆ(t))): hypothesis ıˆ(t) must be true. Another possible interpretation of the GLR stopping rule is that it is running in parallel M GLR tests of H0 : (μ ∈ O\Oi) against H1 : (μ ∈ Oi) for i = 1, . . . , M and stops the first time one of these tests ıˆ rejects H0. This “Parallel GLRT” view is the one discussed for example byGarivier and Kaufmann(2021).
+It can be observed that
+{
+ˆΛt > cˆt(δ)
+}
+=
+{
+Ct(δ) ⊆ Oıˆ(t)
+}
+where Ct(δ) is the confidence region
+Ct(δ) :=
+{
+λ:
+K
+∑
+a=1
+Na(t)d(μˆa(t), λa) ≤ cˆt(δ)
+}
+. (19)
+The GLR stopping rule (18) can thus be rephrased in the following way: stop when the set of statistically plausible parameters Ct(δ) is included in one fold of the partition. Building on Theorem7, Proposition15below provides a choice of thresholds for which the GLR stopping rule yields a δ-correct algorithm. We provide a choice of thresholds for which the GLR rule is δ-correct when the hypothesis Hıˆ(τ) is recommended and the corresponding confidence intervals Ct(δ) always contain the true parameter with probability larger than 1 − δ.
+18
+
+
+MIXTURE MARTINGALES REVISITED
+Proposition 15 Let Cexp be the threshold function defined in Theorem7. The sequence of thresholds
+cˆt(δ) = 3
+K
+∑
+a=1
+ln(1 + ln Na(t)) + KCexp
+( ln(1/δ)
+K
+)
+(20)
+is such that, for every sampling rule,
+Pμ(∀t ∈ N, μ ∈ Ct(δ)) ≥ 1 − δ and Pμ (τδ < ∞, ıˆ(τδ) 6= i∗(μ)) ≤ δ.
+Proof Using Theorem7in the last inequality, one can write
+Pμ (τ < ∞, ıˆ(τ ) 6= i∗) ≤ Pμ
+(
+∃t ∈ N : ıˆ(t) 6= i∗, Λˆ t > cˆt(δ)
+)
+= Pμ (∃t ∈ N : ∃i 6= i∗, Ct ⊆ Oi)
+≤ Pμ (∃t ∈ N : μ ∈/ Ct)
+= Pμ
+(
+∃t ∈ N :
+K
+∑
+a=1
+Na(t)d(μˆa(t), μa) ≥ cˆt(δ)
+)
+≤ δ.
+This proves both claims of Proposition15.
+4.2 An Asymptotically Optimal Adaptive Testing Procedure
+Proposition15provides a threshold for which the GLR stopping rule (18) is δ-correct for any sampling rule. We now show that used in conjunction with an appropriate “Tracking” stopping rule, it can even attain the optimal sample complexity. The following lower bound generalizes the sample complexity lower bound obtained byGarivier and Kaufmann(2016) for the particular Best Arm Identification problem and is obtained with the exact same change-of-measure technique.
+Proposition 16 Define the complexity term T ∗(μ) as
+T ∗(μ)−1 = sup
+w∈ΣK
+inf
+λ∈Alt(μ)
+K
+∑
+a=1
+wad(μa, λa),
+where ΣK =
+{
+w ∈ [0, 1]K : ∑K
+i=1 wi = 1
+}
+. Then any δ-correct strategy satisfies
+∀μ ∈ O, Eμ[τδ] ≥ T ∗(μ) ln
+(1
+3δ
+)
+.
+We define, when they exist (that is, when the argmax below is unique) the optimal weights
+w∗(μ) := argmax
+w∈ΣK
+inf
+λ∈Alt(μ)
+K
+∑
+a=1
+wad(μa, λa) (21)
+for μ ∈ O. For well-behaved sequential testing problems, those weights indicate the fraction of samples that should be allocated to each arm by an optimal strategy. This motivates the Tracking
+19
+
+
+KAUFMANN AND KOOLEN
+rule, originally proposed byGarivier and Kaufmann(2016) as the D-Tracking rule for Best Arm Identification and that we recall here. Letting Ut = {a ∈ {1, . . . , K} : Na(t) ≤ max(
+√
+t−K/2, 0)} be the set of under-sampled arms, at time t + 1 the selected arm is
+At+1 ∈
+
+ 
+ 
+argmin
+a∈Ut
+Na(t) if Ut 6= ∅ (forced exploration)
+argmax
+a∈[K ]
+t w∗
+a(μˆ(t)) − Na(t) o.w. (tracking the plug-in estimate) (22)
+It can be noted that w∗(μˆ(t)) is defined only if μˆ(t) ∈ O. In practice if μˆ(t) ∈/ O the tracking step of the algorithm can be replaced by uniform exploration. Due to the forced exploration, as μ ∈ O (which is an open set by assumption) the law of large numbers ensures that at some point μˆ(t) ∈ O, and the tracking step can be applied.
+Theorem 17 Assume that the following assumptions are satisfied:
+1.For every μ ∈ O, there is a unique vector of optimal weights w∗(μ)
+2.For all i ∈ {1, . . . , M }, the mapping μ 7→ w∗(μ) is continuous on Oi.
+For δ ∈ (0, 1] let cˆt(δ) be a deterministic sequence of thresholds that is increasing in t and for which there exists constants C, D > 0 such that
+∀t ≥ C, ∀δ ∈ (0, 1], cˆt(δ) ≤ ln
+( Dt
+δ
+)
+.
+Let τδ be the GLR stopping rule (18) with thresholds cˆt(δ). The Tracking rule (22) ensures
+lim sup
+δ→0
+Eμ [τδ]
+ln(1/δ) = T ∗(μ).
+The proof of Theorem17is given in AppendixD. Combining this result with Proposition15 yields that an adaptive sequential test using the Tracking rule and the GLR stopping rule with thresholds (20) is δ-correct for every δ ∈ (0, 1] and its sample complexity is asymptotically matching the lower bound of Proposition16, provided that the optimal weights w∗(μ) are well defined and continuous in μ. Efficient ways to compute those weights are also needed for the actual implementation of the Tracking rule. In the next section, we will discuss particular examples of adaptive sequential tests in which those requirements are fulfilled and optimal (and efficient) adaptive testing is thus possible. We will see that smaller thresholds than the universal threshold (20) can be used in some cases. The assumptions of Theorem17are frequently satisfied for practical problems (see alsoCombes et al.2017, Lemma 1 proving continuity of the highly related oracle regret problem for the structured multi-armed bandit problem in the fixed-budget setting, under a unique optimiser assumption similar to1). Uniqueness may however fail for other practical problems, including e.g. the Minimum Threshold problem studied byKaufmann et al.(2018). A solution for such cases was proposed in recent follow-up work byDegenne and Koolen(2019), who propose regarding the oracle weight map μ 7→ w∗(μ) from (21) as set-valued, and prove that it is upper hemi-continuous and convex-valued for every sequential identification problem of the form we consider here (in particular with a unique correct answer for each instance). Leveraging these two properties, they analyse a variation of the Tracking rule (22) for which the overall approach is asymptotically optimal in general (Degenne and Koolen,2019, Theorem 7).
+20
+
+
+MIXTURE MARTINGALES REVISITED
+5. Smaller Thresholds for Better Sequential Tests
+A stylized form of (two-sided) deviation inequalities obtained in this paper (in Corollaries9and10 and Theorem7) is the following. For any subset of arms S ⊆ {1, . . . , K}, for all x > 0,
+P
+(
+∃t ∈ N :
+∑
+a∈S
+Na(t)d(μˆa(t), μa) >
+∑
+a∈S
+c ln(d + ln(Na(t))) + |S|C
+(x
+|S |
+)
+)
+≤ e−x (23)
+where c and d are two positive constants and C(x) is a threshold function. This result holds for any subset of arms S. Combining (23) with a weighted union bound, one obtains in Lemma18below a deviation inequality that is uniform over subsets belonging to the support of a weight vector π ̃.
+Lemma 18 (weighted union bound) Assume (23) holds. Let π ̃ be a probability distribution over subsets: ∑
+S⊆{1,...,K} π ̃(S) = 1. Then for all x > 0
+P
+(
+∃t, ∃S :
+∑
+a∈S
+Na(t)d(μˆa(t), μa) >
+∑
+a∈S
+c ln(d + ln(Na(t))) + |S|C
+(x − ln(π ̃(S))
+|S |
+)
+)
+≤ e−x.
+Proof A union bound followed by inequality (23) gives
+P
+(
+∃t, ∃S :
+∑
+a∈S
+Na(t)d(μˆa(t), μa) >
+∑
+a∈S
+c ln(d + ln(Na(t))) + |S|C
+(x − ln(π ̃(S))
+|S |
+)
+)
+≤
+∑
+S ⊆{1,...,K }
+P
+(
+∃t :
+∑
+a∈S
+Na(t)d(μˆa(t), μa) >
+∑
+a∈S
+c ln(d + ln(Na(t))) + |S|C
+(x − ln(π ̃(S))
+|S |
+)
+)
+≤
+∑
+S ⊆{1,...,K }
+e−(x−ln(π ̃(S))) = e−x ∑
+S ⊆{1,...,K }
+π ̃(S) = e−x.
+We now explain how this result can serve to tighten the analysis of the GLR stopping rule for some particular sequential testing problems, to allow for the use of smaller threshold functions. We later discuss in Section6the impact of this result on the design of confidence regions.
+5.1 Improved Stopping Rules for Best Arm Identification
+The (fixed-confidence) Best Arm Identification problem is a particular sequential identification problem as defined in Section4with Ok = {μ : μk > maxj6=k μj}: the goal is to identify the arm with largest mean. For this particular problem, the GLR statistic (17) rewrites to
+Λˆ t = min
+b6=ıˆ(t)
+min
+λb >λıˆ(t)
+[
+Nıˆ(t)(t)d(μˆıˆ(t)(t), λıˆ(t)) + Nb(t)d(μˆb(t), λb)
+]
+(24)
+and the associated stopping rule, ˆΛt > cˆt(δ), is referred to as the Chernoff stopping rule byGarivier and Kaufmann(2016). In this particular case, it is possible to propose a smaller threshold than the universal threshold (20) that still ensures a δ-correct rule. Indeed, the probability of error of the
+21
+
+
+KAUFMANN AND KOOLEN
+strategy that stops when Λˆt > cˆt(δ) and outputs ıˆ(τ ) is upper bounded as follows, assuming arm 1 is the arm with largest mean:
+P(error) ≤ P
+(
+∃t ∈ N, ∃a 6= 1 : min
+λa>λ1
+[Na(t)d(μˆa(t), λa) + N1(t)d(μˆ1(t), λ1)] > cˆt(δ)
+)
+≤ P (∃t ∈ N, ∃a 6= 1 : Na(t)d(μˆa(t), μa) + N1(t)d(μˆ1(t), μ1) > cˆt(δ))
+=P
+
+∃t, ∃a 6= 1 :
+∑
+j∈{1,a}
+Nj(t)d(μˆj(t), μj) > cˆt(δ)
+
+.
+From Theorem7and a union bound over the K − 1 subsets {1, 2}, . . . , {1, K} (Lemma18with a weight vector such that π ̃({1, a}) = 1/(K − 1) for a 6= 1) it holds that
+P
+
+∃t, ∃a 6= 1 :
+∑
+j∈{1,a}
+Nj(t)d(μˆj(t), μj) > 3
+∑
+j∈{1,a}
+ln(1 + ln(Nj(t))) + 2Cexp
+(
+ln K−1
+δ
+2
+)
+
+ ≤ δ.
+This implies that the GLR rule is δ-correct with the threshold
+cˆt(δ) = 6 ln
+(
+ln
+(t
+2
+)
++1
+)
++ 2Cexp
+(
+ln K−1
+δ
+2
+)
+. (25)
+For large t, this will be smaller than the original threshold cˆt(δ) = ln 2t(K−1)
+δ proposed byGarivier and Kaufmann(2016) in the Bernoulli case. It can hence lead to earlier stopping while preserving the optimal sample complexity guarantees, as this threshold still satisfies the assumptions of Theorem17. Note also that this new threshold provides a better motivation for the stylized ln((ln(t) + 1)/δ) threshold that is sometimes used in best arm identification experiments, and for which the empirical error probability is reported to remain below δ.
+Remark 19 The improved threshold (25) yields a δ correct stopping rule, however the corresponding confidence interval (19) does not satisfy P (∀t ∈ N : μ ∈ Ct(δ)) ≥ 1 − δ. There is no equivalence between the improved δ-correct stopping rule and improved δ-valid confidence regions. We will discuss the implications of Lemma18for confidence regions in Section6.
+5.2 Smaller Thresholds for More General Tests
+The reason why we are able to propose a smaller threshold for the BAI problem is that its GLR statistic (24) only features pairs of arms. In more general tests, the structure of the GLR statistic may also be exploited to allow for a smaller threshold that does not depend on the total number of arms K featuring in the universal threshold (20) but on a smaller effective number of arms.
+Definition 20 Consider a sequential identification problem specified by a partition O = ⋃M
+i=1 Oi.
+We say this problem has rank R if for every i ∈ {1, . . . , M } we can write
+O\Oi =
+⋃
+q∈[Q]
+{
+λ ∈ IK∣
+∣
+∣(λki,q
+1
+, . . . , λki,q
+R
+) ∈ Li,q
+}
+,
+for a family of arm indices ki,q
+r ∈ [K] and open sets Li,q indexed by r ∈ [R], q ∈ [Q] and i ∈ [M ]. In words, the rank is R if every set O \ Oi is a finite union of sets that are each defined in terms of only R arms.
+22
+
+
+MIXTURE MARTINGALES REVISITED
+The BAI problem has rank 2. Indeed, for all i ∈ {1, . . . , K},
+O\Oi =
+⋃
+a6=i
+{
+λ ∈ IK |(λi, λa) ∈ {(x, y) : x < y}
+}
+.
+In any testing problem that has rank R, the GLR statistic may be rewritten
+Λˆ t = min
+q∈[Q]
+inf
+λ (λkıˆ(t),q
+1
+,...,λkıˆ(t),q
+R
+)∈Lıˆ(t),q
+R
+∑
+r=1
+Nkıˆ(t),q
+r
+(t)d
+(
+μˆkıˆ(t),q
+r
+(t), λkıˆ(t),q
+r
+)
+,
+which yields the expression (24) in the BAI case.
+Proposition 21 Fix an identification problem of rank R. Then the GLR stopping rule (17) is δ-correct with threshold
+cˆt(δ) = 3R ln(1 + ln(t/R)) + RCexp
+(
+ln M−1
+δ
+R
+)
+Proof Fix μ ∈ O. For each i 6= i∗, μ ∈ O\Oi, thus from Definition20there exists qi such that
+(μki,qi
+1
+, . . . , μki,qi
+R
+) ∈ Li,qi . Then
+Pμ {τδ < ∞ and ıˆ(τδ) 6= i∗}
+≤ Pμ
+{
+∃t : Λˆ t ≥ cˆt(δ) and ıˆ(t) 6= i∗}
+= Pμ
+{
+∃t, i 6= i∗ : Λˆt ≥ cˆt(δ) and ıˆ(t) = i
+}
+= Pμ
+
+  
+  
+∃t, i 6= i∗ : min
+q∈[Q]
+inf
+λ (λki,q
+1
+,...,λki,q
+R
+)∈Li,q
+R
+∑
+r=1
+Nki,q
+r (t)d
+(
+μˆki,q
+r (t), λki,q
+r
+)
+≥ cˆt(δ)
+
+  
+  
+≤ Pμ
+{
+∃t, i 6= i∗ :
+R
+∑
+r=1
+Nkir,qi (t)d
+(
+μˆkir,qi (t), μkir,qi
+)
+≥ 3R ln(1 + ln(t/R)) + Cexp
+(
+ln M−1
+δ
+R
+)}
+≤ Pμ
+{
+∃t, i 6= i∗ :
+R
+∑
+r=1
+Nkir,qi (t)d
+(
+μˆkir,qi (t), μkir,qi
+)
+≥3
+R
+∑
+r=1
+ln
+(
+1 + ln Nkir,qi (t)
+)
++ Cexp
+(
+ln M−1
+δ
+R
+)}
+≤ δ,
+where the last inequality follows from Theorem7and a union bound over M − 1 subsets (Lemma18 with a weight vector π ̃({ki,qi
+1 , . . . , ki,qi
+R }) = 1/(M − 1) for i 6= i∗) together with the concavity of s 7→ ln(1 + ln(s)) that ensures
+R
+∑
+r=1
+ln
+(
+1 + ln Nkir,qi (t)
+)
+≤ R ln(1 + ln(t/R)).
+23
+
+
+KAUFMANN AND KOOLEN
+5.2.1 A RANK 4 EXAMPLE
+Assume we are given a collection of K pairs of arms and want to find out which pair has the largest difference (which we think of as profit) between first component (which we think of as revenue) and second component (which we think of as cost). More precisely, we consider a K × 2 array of random sources Xij where i ∈ [K] and j ∈ {1, 2}. Let μij = E[Xij] denote the means. A strategy samples one arm At = (It, Jt) per round and its goal is to identify the largest profit pair
+i∗(μ) = arg miax μi,1 − μi,2.
+It is easy to check that this problem, which we call Largest Profit Identification, has rank 4 and the GLR statistic rewrites to
+Λˆ t = bm6=iıˆn inf
+λ∈R{b,ıˆ}×{1,2}
+λb,1 −λb,2 >λıˆ,1 −λıˆ,2
+∑
+a∈{b,ıˆ} j∈{1,2}
+Na,j(t)d (μˆa,j(t), λa,j) .
+By Proposition21the GLR stopping rule (18) is δ-correct with the threshold
+cˆt(δ) = 12 ln(1 + ln(t/4)) + 4Cexp
+(
+ln K−1
+δ
+4
+)
+.
+Remark 22 For Largest Profit Identification the oracle weights w∗(μ), which are needed for implementing the asymptotically optimal procedure of Section4.2, maximise the concave function T ∗(μ)−1. For both Gaussian and Bernoulli (and possibly more) we can write the objective as a Disciplined Convex Program and solve it efficiently with e.g. CVX (Grant and Boyd,2017).
+5.2.2 BEST ACTION IDENTIFICATION IN A GAME TREE
+In the bandit literature, a particular structured identification problem that offers a simple model for Monte Carlo Tree Search in games has been recently studied byTeraoka et al.(2014);Garivier et al. (2016);Huang et al.(2017);Kaufmann and Koolen(2017). The goal is to quickly identify the action at the root of a (maxmin) game tree whose value is the largest by querying noisy samples of the leaves’ values of that tree. Lemma 8 inKaufmann and Koolen(2017) provides an expression for the optimal weights in a depth-two tree, that are then computable using disciplined convex optimization tools (e.g. CVX). Furthermore, it can be checked that this identification problem is of rank L + 1, where L is the maximum number of actions of the second player. This is much smaller than the number of leaves, which is K · L in a game tree where the first player has K moves and the second player has L moves. Assuming the weights (which are only numerically computable) satisfy the continuity assumption of Theorem17(or, if not, byDegenne and Koolen2019, Theorem 7), the GLR rule with a rank L + 1 threshold is asymptotically optimal in combination with the Tracking rule. We note that the existing literature does not provide asymptotically optimal algorithms for best action identification in a game tree, even for depth-two trees.
+6. Projected Confidence Intervals
+The deviation inequalities presented in this paper can also be used to build tight confidence regions on (functions of) the parameter μ ∈ IK. We are particularly interested in building δ-uniformly valid confidence regions Ct(δ), that satisfy P (∀t ∈ N, μ ∈ Ct(δ)) ≥ 1 − δ for every sampling rule.
+24
+
+
+MIXTURE MARTINGALES REVISITED
+Lemma18in combination with our deviation results allows to build such confidence regions. Indeed for any weight vector π ̃ over subsets, the following confidence interval is δ-uniformly valid (with c and d as given by the lemma):
+C π ̃
+t (δ) :=
+{
+λ : ∀S,
+∑
+a∈S
+Na(t)d(μˆa(t), λa) ≤ c
+∑
+a∈S
+ln(d +ln Na(t))+|S|Cexp
+(ln(1/(π ̃ (S )δ ))
+|S |
+)
+}
+.
+(26) A natural question is thus which vector π ̃ yields the most interesting confidence region. Answering this question would require to compare complicated shapes in RK (like we do for K = 2 in Figure1(a) in the Introduction) and the answer would still depend on the purpose of those confidence regions. In this section we investigate their use for computing confidence intervals on derived quantities of the form f (μ), where f : RK → R is some fixed function. Knowing that μ ∈ Ct, we can immediately conclude that f (μ) ∈ It(δ) := {f (λ)|λ ∈ Ct}. The interplay of the structure of the function f and the shape of the confidence region Ct will jointly determine the tightness of the projected confidence interval It(δ). The principal challenge is to find, for each f of interest, a statistically tight Ct with a computationally tractable way of computing It. In this section we study two classes of examples, linear f and minima/maxima.
+6.1 Linear Functions
+In this section we consider an arbitrary linear function f (μ) = vTμ where v ∈ RK. We will derive our results in the Gaussian case because it admits revealing and explicit closed-form expressions. In that case the confidence region (26) is δ-uniformly valid for c = 2 and d = 4 and g = gG, as licensed by Corollary9. The following two confidence intervals on vTμ follow from two extreme choices of weight vectors: one supported on all the singleton sets and one supported on the full set.
+Proposition 23 (Box) The following is a δ-uniformly valid confidence interval on vTμ
+It(δ) =
+
+vTμˆ(t) ±
+∑
+a∈[K ]
+√
+2
+(
+Cg
+(
+ln K
+δ
+)
++ c ln(d + ln(Na(t)))
+) va2
+Na(t)
+
+.
+Proof Simple algebra show that It(δ) = {vT λ, λ ∈ Cπ ̃
+t (δ)} where π ̃ is uniform on singletons.
+Indeed, as Cπ ̃
+t (δ) is δ-uniformly valid, it holds that for all t ∈ N and a ∈ [K], |μˆa(t) − μa| ≤
+√2 Na(t)
+(
+Cg (
+ln K
+δ
+)
++ c ln(d + ln(Na(t)))
+)
+.
+Proposition 24 (Ellipse) The following is a δ-uniformly valid confidence interval on vTμ
+It(δ) =
+
+
+vTμˆ(t) ±
+√ √ √
+√
+√2
+
+K C g
+(
+ln 1
+δ
+K
+)
++
+∑
+a∈[K ]
+c ln(d + ln(Na(t)))
+
+
+∑
+a∈[K ]
+va2
+Na(t)
+
+
+.
+Proof We show that It(δ) = {vT λ, λ ∈ Cπ ̃
+t (δ)} where π ̃ is a point-mass on the whole set:
+π ̃({1, . . . , K}) = 1. Letting C = ∑K
+a=1 ln(1 + ln Na(t)) + KCexp(ln(1/δ)/K), computing the
+25
+
+
+KAUFMANN AND KOOLEN
+upper bound of this confidence interval requires to compute
+mλax vTλ subject to
+∑
+a∈[K ]
+Na(t) (μˆa(t) − λa)2
+2 ≤ C.
+Introducing Lagrange multiplier ρ, we find that this is equivalent to
+min
+ρ≥0 mλax vTλ + ρ
+
+C −
+∑
+a∈[K ]
+Na(t) (μˆa(t) − λa)2
+2
+
+.
+Solving for λ by cancelling the derivative results in λa = μˆa(t) + va
+ρNa(t) , asking us to solve
+min
+ρ≥0 vTμˆ(t) +
+∑
+a∈[K ]
+v2
+a
+2ρNa(t) + ρC = vTμˆ(t) +
+√ √ √
+√2C
+∑
+a∈[K ]
+va2
+Na(t)
+where zero ρ derivative is found at ρ =
+√
+C−1 ∑
+a∈[K ]
+va2
+2Na(t) . As minλ vTλ = − maxλ(−v)Tλ,
+the lower bound of It(δ) also follows.
+6.1.1 COMPARISON
+The major difference between the two above bounds is the appearance of the sum outside vs inside of the square root. To get more intuition, let’s compare in the special case Na(t) = t/K and approximate Cg(x) ≈ x. Then we need to compare
+‖v‖1
+√
+2
+(
+ln K
+δ + c ln(d + ln(t/K))
+)K
+t and ‖v‖2
+√
+2
+(
+ln 1
+δ + Kc ln(d + ln(t/K))
+)K
+t.
+We see that the box bound depends on the one-norm of v, whereas the ellipse bound depends on the two-norm of v, which can be smaller by a factor
+√
+K (at the price of a factor K multiplying the ln ln t term). In a regime of small δ, the ellipse bound can thus be much better than the box bound.
+Another case of interest is Na(t) = t |va|
+∑
+a|va| , which result from following the oracle weights w∗(μ).
+Also here the advantage of ellipse over box can again be as large as a factor
+√
+K.
+6.2 Minimum
+We now turn our attention to f (μ) = mina μa. Estimating the minimum (or, symmetrically, maximum) mean is a natural task in the multi-armed bandit setting (seeKaufmann et al.2018). Unlike in the linear case, here the situation is not symmetric. We will study separately the lower and upper confidence bounds
+Lπ ̃
+t (δ) = min
+{
+main λa : λ ∈ Cπ ̃,−
+t (δ)
+}
+and Uπ ̃
+t (δ) = max
+{
+main λa : λ ∈ Cπ ̃,+
+t (δ)
+}
+for the confidence regions
+C π ̃ ,±
+t (δ) =
+{
+λ : ∀S,
+∑
+a∈S
+[
+Na(t)d±(μˆa(t), λa) − 3 ln(1 + ln Na(t))
+]+ ≤ |S|Cexp
+( ln(π ̃(S)/δ)
+δ
+)
+}
+26
+
+
+MIXTURE MARTINGALES REVISITED
+that are both δ-uniformly valid by Lemma18. It follows that P
+{
+∀t ∈ N : mina μa ≤ Uπ ̃
+t (δ)
+}
+≥ 1−δ and P
+{
+∀t ∈ N : mina μa ≥ Lπ ̃
+t (δ)
+}
+≥ 1 − δ. We investigate in each case the tightest possible confidence bound that can be obtained by optimising the choice of the weight vector π ̃.
+6.2.1 LOWER CONFIDENCE BOUND
+A minimum is low whenever one entry is low. This means that the λ ∈ Cπ ̃,−
+t of lowest mean will have all entries equal to μˆ except for one. This in turn means that we do not get any mileage out of combining evidence from multiple arms. Instead, the best Lπ ̃
+t is obtained for the choice π ̃({k}) = 1/K (uniform distribution on singletons). We find the following.
+Proposition 25 At time t, for each arm a, let θa(t) ≤ μˆa(t) be the solution to
+Na(t)d−(μˆa(t), θa(t)) = 3 ln(1 + ln(Na(t))) + Cexp
+(
+ln K
+δ
+)
+(note the left-hand side increases with decreasing θa(t), so the solution can be found by binary search). Then
+P
+{
+∀t ∈ N, main μa ≥ main θa(t)
+}
+≥ 1 − δ.
+Proof With the choice π ̃({k}) = 1/K, Cπ ̃,−
+t (δ) is the set of λ:
+∀a ∈ [K] : Na(t)d−(μˆa(t), λa) ≤ 3 ln(1 + ln(Na(t))) + Cexp
+(
+ln K
+δ
+)
+.
+By definition, θa(t) is the lowest possible value for λa, and hence mina θa(t) is the lowest possible value for mina λa.
+6.2.2 UPPER CONFIDENCE BOUND
+Above, we found that we do not learn much about the lower bound in the presence of many arms.
+For the upper confidence bound the story is different. We explain in Proposition26how to compute
+Uπ ̃
+t for a general weight vector π ̃. We then show that empirically a weight vector supported on all subsets can be helpful.
+Proposition 26 Let θ(t) be the solution in θ to the equation
+max
+S ⊆[K ]
+[
+∑
+a∈S
+[
+Na(t)d+(μˆa(t), θ) − 3 ln(1 + ln(Na(t)))
+]+ − |S|Cexp
+( ln 1
+δ π ̃ (S )
+|S |
+)]
+= 0.
+Then P {∀t ∈ N, mina μa ≤ θ(t)} ≥ 1 − δ.
+Proof We prove that Uπ ̃
+t (δ) = θ(t). Let λ ∈ Cπ ̃,+
+t (δ). By definition,
+max
+S ⊆[K ]
+[
+∑
+a∈S
+[
+Na(t)d+(μˆa(t), λa) − 3 ln(1 + ln(Na(t)))
+]+ − |S|Cexp
+( ln 1
+δ π ̃ (S )
+|S |
+)]
+≤ 0.
+27
+
+
+KAUFMANN AND KOOLEN
+What does this tell us about mina∈[K] λa? Well, consider a candidate value θ ≥ mina μˆa(t) for the minimum. Among bandit models λ with mina λa = θ, the left-hand side above is minimised at λa = max {μˆa(t), θ} and the maximal value of mina∈[K] λa is the maximal value of θ such that
+max
+S ⊆[K ]
+[
+∑
+a∈S
+[
+Na(t)d+(μˆa(t), θ) − 3 ln(1 + ln(Na(t)))
+]+ − |S|Cexp
+( ln 1
+δ π ̃ (S )
+|S |
+)]
+≤ 0.
+We recover the objective in the statement by noting that the left-hand side is a continuous and non-decreasing function of θ.
+6.2.3 PRACTICAL CHOICE OF WEIGHT VECTOR
+The upper bound for a minimum may benefit from considering many subsets S ⊆ [K] in the weighted union bound. The reason is that a smaller subset will have a smaller evidence term (summing fewer terms), but it may also have a smaller threshold. Here we investigate the use of cardinality-based weight vectors of the form π ̃(S) = π(|S|)/
+(K |S |
+)
+for some probability vector π on {1, . . . , K}.
+First, let’s consider the computation of θ(t) for those weight vectors: we are looking for the zero crossing of an increasing function, which can be found by e.g. binary search. It remains to efficiently evaluate the objective for a fixed θ(t). Here we propose to express the objective as
+max
+k∈[K ]
+max
+S ⊆[K ]:|S |=k
+∑
+a∈S
+[
+Na(t)d+(μˆa(t), θ(t)) − 3 ln(1 + ln(Na(t)))
+]+
+} {{ }
+the best set takes the k largest contributors; implement by sorting once.
+−kCexp
+
+ 
+ln (K
+k) δπ(k)
+k
+
+
+.
+and observe that the best set of size k takes the k arms of largest contribution, which we can look up after sorting the arms by their contribution. Hence each evaluation of the objective can be obtained in O(K ln K) time.
+We expect combining evidence across arms to be particularly useful when there are several arms with means close to the minimum. We illustrate this empirically in Figure4for a Bernoulli bandit model with M arms with mean 0.1 and 4 more arms with means 0.2, 0.3, 0.4, 0.5 (thus K = M + 4), for different values of M . We consider the use of a “Box” weight vector that is uniform on the singletons (π(1) = 1), a weight vector supported on the whole set of arms (π(K) = 1) and a weight vector that is uniform over subset sizes (π(k) = 1/K). For each value of M , data is collected using uniform sampling and we set δ = 10−10 to focus on the high confidence regime. We see that the uniform weight vector consistently leads to smaller upper confidence bounds when compared to Box, with an increased gap when M increases. We also experimented with a “Zipf” distribution for π (π(k) ∝ 1/k), which performed almost identically as the uniform vector.
+This experiment shows that for small values of δ a uniform cardinality-based weight vector is a robust choice: summing evidence across arms never hurts too much. In the particular case of minimums, we would like to mention that one can go even further and aggregate samples from different arms, as explained inKaufmann et al.(2018), which leads to even smaller upper confidence bounds in experiments.
+28
+
+
+MIXTURE MARTINGALES REVISITED
+200 400 600 800 1000 time step t
+0.2
+0.4
+0.6
+0.8
+1.0
+UCB^ (t)
+M=1
+Box: (1)=1 All Arms: (K)=1 Uniform: (k)=1/K Minimum value
+200 400 600 800 1000 time step t
+0.2
+0.4
+0.6
+0.8
+1.0
+UCB^ (t)
+M=5
+Box: (1)=1 All Arms: (K)=1 Uniform: (k)=1/K Minimum value
+200 400 600 800 1000 time step t
+0.2
+0.4
+0.6
+0.8
+1.0
+UCB^ (t)
+M = 10
+Box: (1)=1 All Arms: (K)=1 Uniform: (k)=1/K Minimum value
+200 400 600 800 1000 time step t
+0.2
+0.4
+0.6
+0.8
+1.0
+UCB^ (t)
+M = 20
+Box: (1)=1 All Arms: (K)=1 Uniform: (k)=1/K Minimum value
+Figure 4: Uπ ̃
+t (δ) as a function of t for several cardinality-based weight vectors π ̃ in a presence of M identical arms with the minimal mean, for M = 1, 5, 10, 20.
+7. Conclusion
+Sequential problems are studied in the multi-armed bandit model, where the learner sequentially picks arms to sample. The central question is what the learner infers from the samples that it has seen. This is used for deciding what to do next, when to stop, what to recommend and/or estimate. We use mixture martingales to design confidence regions, based on self-normalised sums, for exponential family multi-armed bandit models. We argue that these confidence regions are the tightest known, and match, in spirit, established statistical lower bounds. We then apply the obtained deviation inequalities to the design of confidence intervals by means of explicit projections, stopping rules by means of GLR statistics, and asymptotically optimal sampling rules by a tight analysis of the Track-and-Stop algorithm. The fact that we are pushing the state of the art in each of these areas clearly demonstrates the generic appeal of the mixture martingale approach.
+Acknowledgments
+Emilie Kaufmann acknowledges the support of the French Agence Nationale de la Recherche (ANR), under grants BADASS (ANR-16-CE40-0002) and BOLD (ANR-19-CE23-0026-04) and the
+29
+
+
+KAUFMANN AND KOOLEN
+European CHIST-ERA project DELTA. Wouter Koolen acknowledges support from the Netherlands Organization for Scientific Research (NWO) under Veni grant 639.021.439. We are grateful to INRIA Associate Team 6PAC.
+References
+Y. Abbasi-Yadkori, D.Pa ́l, and C.Szepesva ́ri. Improved Algorithms for Linear Stochastic Bandits. In Advances in Neural Information Processing Systems, 2011.
+A. Balsubramani. Sharp finite-time iterated-logarithm martingale concentration. arXiv:1405.2639, 2015.
+C. Berge. Topological Spaces. Oliver & Boyd, 1963.
+S. Bubeck and N. Cesa-Bianchi. Regret analysis of stochastic and nonstochastic multi-armed bandit problems. Fondations and Trends in Machine Learning, 5(1):1–122, 2012.
+S. Bubeck, R. Munos, and G. Stoltz. Pure Exploration in Finitely Armed and Continuous Armed Bandits. Theoretical Computer Science 412, 1832-1852, 412:1832–1852, 2011.
+O. Cappe ́, A. Garivier, O.-A. Maillard, R. Munos, and G. Stoltz. Kullback-Leibler upper confidence bounds for optimal sequential allocation. Annals of Statistics, 41(3):1516–1541, 2013.
+L. Chen, A. Gupta, J. Li, M. Qiao, and R. Wang. Nearly optimal sampling algorithms for combinatorial pure exploration. In Proceedings of the 30th Conference on Learning Theory (COLT), 2017.
+S. Chen, T. Lin, I. King, M. Lyu, and W. Chen. Combinatorial Pure Exploration of Multi-Armed Bandits. In Advances in Neural Information Processing Systems, 2014.
+H. Chernoff. Sequential design of Experiments. The Annals of Mathematical Statistics, 30(3): 755–770, 1959.
+R. Combes, S. Magureanu, and A. Proutiere. Minimal exploration in structured stochastic bandits. In Advances in Neural Information Processing Systems 30, pages 1763–1771. Curran Associates, Inc., 2017.
+D. Darling and H. Robbins. Some further remarks on inequalities for sample sums. Proceedings of the National Academy of Sciences, 60(4):1175–1182, 1968.
+A. P. Dawid and V. G. Vovk. Prequential probability: principles and properties. Bernoulli, 5(1): 125–162, 02 1999.
+A. P. Dawid, S. de Rooij, G. Shafer, A. Shen, N. Vereshchagin, and V. Vovk. Insuring against loss of evidence in game-theoretic probability. Statistics & Probability Letters, 81(1):157 – 162, 2011. ISSN 0167-7152.
+V. H. de la Pe ̃na, M. Klass, and T. L. Lai. Self-Normalized Processes: Exponential inequalities, moment bounds and iterated logarithm laws. The Annals of Probability, 32(3A):1902–1933, 2004.
+30
+
+
+MIXTURE MARTINGALES REVISITED
+V. H. de la Pe ̃na, T. L. Lai, and S. Q. Self-normalized processes. Limit Theory and Statistical applications. Springer, 2009.
+R. Degenne and W. M. Koolen. Pure exploration with multiple correct answers. In Advances in Neural Information Processing Systems (NeurIPS) 32, pages 14591–14600. Curran Associates, Inc., Dec. 2019.
+R. Degenne, W. M. Koolen, and P. Me ́nard. Non-asymptotic pure exploration by solving games. In Advances in Neural Information Processing Systems (NeurIPS) 32, pages 14492–14501. Curran Associates, Inc., Dec. 2019.
+E. Even-Dar, S. Mannor, and Y. Mansour. Action Elimination and Stopping Conditions for the MultiArmed Bandit and Reinforcement Learning Problems. Journal of Machine Learning Research, 7: 1079–1105, 2006.
+A. Garivier and O. Capp ́e. The KL-UCB algorithm for bounded stochastic bandits and beyond. In Proceedings of the 24th Conference on Learning Theory, 2011.
+A. Garivier and E. Kaufmann. Optimal best arm identification with fixed confidence. In Proceedings of the 29th Conference On Learning Theory (COLT), 2016.
+A. Garivier and E. Kaufmann. Nonasymptotic sequential tests for overlapping hypotheses applied to near-optimal arm identification in bandit models. Sequential Analysis, 40(1):61–96, 2021.
+A. Garivier, E. Kaufmann, and W. M. Koolen. Maximin action identification: A new bandit framework for games. In Proceedings of the 29th Conference On Learning Theory (COLT), 2016.
+M. Grant and S. Boyd. CVX: Matlab software for disciplined convex programming, version 2.1.
+http://cvxr.com/cvx, Mar. 2017.
+S. Howard, A. Ramdas, J. McAuliffe, and J. Sekhon. Time-uniform, nonparametric, nonasymptotic confidence sequences. arXiv:1810.08240, 2018.
+S. Howard, A. Ramdas, J. McAuliffe, and J. Sekhon. Time-uniform chernoff bounds via nonnegative supermartingales. Probability Surveys, 17:257–317, 2020.
+R. Huang, M. M. Ajallooeian, C. Szepesva ́ri, and M. Mu ̈ller. Structured best arm identification with fixed confidence. In International Conference on Algorithmic Learning Theory (ALT), 2017.
+K. Jamieson, M. Malloy, R. Nowak, and S. Bubeck. lil’UCB: an Optimal Exploration Algorithm for Multi-Armed Bandits. In Proceedings of the 27th Conference on Learning Theory, 2014.
+A. Jonsson, E. Kaufmann, P. M ́enard, O. D. Domingues, E. Leurent, and M. Valko. Planning in Markov decision processes with gap-dependent sample complexity. In Advances in Neural Information Processing Systems (NeurIPS), 2020.
+S. Juneja and S. Krishnasamy. Sample complexity of partition identification using multi-armed bandits. In Conference on Learning Theory (COLT), 2019.
+S. Kalyanakrishnan and P. Stone. Efficient Selection in Multiple Bandit Arms: Theory and Practice. In International Conference on Machine Learning (ICML), 2010.
+31
+
+
+KAUFMANN AND KOOLEN
+E. Kaufmann and W. M. Koolen. Monte-Carlo tree search by best arm identification. In Advances in Neural Information Processing Systems (NIPS), 2017.
+E. Kaufmann, O. Capp ́e, and A. Garivier. On the Complexity of Best Arm Identification in MultiArmed Bandit Models. Journal of Machine Learning Research, 17(1):1–42, 2016.
+E. Kaufmann, W. M. Koolen, and A. Garivier. Sequential test for the lowest mean: From Thompson to Murphy sampling. In Advances in Neural Information Processing Systems (NeurIPS) 31, pages 6333–6343, Dec. 2018.
+W. M. Koolen and T. van Erven. Second-order quantile methods for experts and combinatorial games. In Proceedings of the 28th Annual Conference on Learning Theory (COLT), pages 1155–1175, June 2015.
+T. Lai. On confidence sequences. The Annals of Statistics, 4(2):265–280, 1976.
+T. L. Lai and H. Robbins. Asymptotically efficient adaptive allocation rules. Advances in Applied Mathematics, 6(1):4–22, 1985.
+T. Lattimore and C. Szepesvari. Bandit Algorithms. Cambridge University Press, 2019.
+A. Locatelli, M. Gutzeit, and A. Carpentier. An optimal algorithm for the thresholding bandit problem. In M. Balcan and K. Q. Weinberger, editors, Proceedings of the 33nd International Conference on Machine Learning, ICML 2016, New York City, NY, USA, June 19-24, 2016, volume 48 of JMLR Workshop and Conference Proceedings, pages 1690–1698. JMLR.org, 2016.
+S. Magureanu, R. Combes, and A. Prouti`ere. Lipschitz Bandits: Regret lower bounds and optimal algorithms. In Proceedings on the 27th Conference On Learning Theory, 2014.
+O. Maillard. Mathematics of Statistical Sequential Decision Making. 2019.
+H. Robbins. Some aspects of the sequential design of experiments. Bulletin of the American Mathematical Society, 58(5):527–535, 1952.
+H. Robbins. Statistical Methods Related to the law of the iterated logarithm. Annals of Mathematical Statistics, 41(5):1397–1409, 1970.
+G. Shafer, A. Shen, N. Vereshchagin, and V. Vovk. Test martingales, Bayes factors and p-values. Statistical Science, 26(1):84–101, 2011.
+K. Teraoka, K. Hatano, and E. Takimoto. Efficient sampling method for Monte Carlo tree search problem. IEICE Transactions on Infomation and Systems, pages 392–398, 2014.
+W. R. Thompson. On the likelihood that one unknown probability exceeds another in view of the evidence of two samples. Biometrika, 25:285–294, 1933.
+J. Ville. E ́tude critique de la notion de collectif. Gauthier-Villars, 1939.
+S. Wilks. The Large-Sample Distribution of the Likelihood Ratio for Testing Composite Hypotheses. The Annals of Mathematical Statistics, 9(1):60–62, 1938.
+32
+
+
+MIXTURE MARTINGALES REVISITED
+S. Zhao, E. Zhou, A. Sabharwal, and S. Ermon. Adaptive concentration inequalities for sequential decision problems. In Advances in Neural Information Processing (NIPS), 2016.
+Y. Zhou, J. Li, and J. Zhu. Identify the Nash equilibrium in static games with random payoffs. In Proceedings of the 34th International Conference on Machine Learning, volume 70 of Proceedings of Machine Learning Research, pages 4160–4169, International Convention Centre, Sydney, Australia, Aug. 2017. PMLR.
+Appendix A. Proof of Proposition8
+We may write
+h−1(x) = inf
+z≥1
+z
+(
+x − 1 + ln z
+z−1
+)
+Plugging in the sub-optimal feasible choice z = 1 + 1
+(x−1)+√2(x−1) reveals
+h−1(x) ≤
+(
+1+ 1
+(x − 1) +
+√
+2(x − 1)
+) (
+x − 1 + ln
+(
+x+
+√
+2(x − 1)
+))
+≤ 1 + (x − 1) + ln
+(
+x+
+√
+2(x − 1)
+)
+.
+The last inequality uses ln
+(
+x+
+√
+2(x − 1)
+)
+≤
+√
+2(x − 1) which holds with equality at x = 1 and
+whose gap is increasing (as can be checked by differentiation).
+Appendix B. Additional Proofs for Exponential Families
+B.1 Proof of Lemma13
+Given any probability distribution π, recall that the associated mixture martingale is defined as
+Zπ
+a (t) =
+∫
+exp (λSa(t) − φμa(λ)Na(t)) dπ(λ).
+The first step of the construction is Lemma27, which relates the deviation of Na(t)d+(μˆa(t), μa) and Na(t)d−(μˆa(t), μa) to those of ηSa(t) − φμa(η)Na(t) for a well chosen η, provided that Na(t) belongs to some “slice” [(1 + ξ)i−1, (1 + ξ)i].
+Lemma 27 Fix i ∈ N∗, x > 0 and ξ > 0. There exist η+
+i (x, ξ) and η−
+i (x, ξ) such that, if
+Na(t) ∈ [(1 + ξ)i−1, (1 + ξ)i] it holds that
+{
+Na(t)d+(μˆa(t), μa) ≥ x
+}
+⊆
+{
+η+
+i Sa(t) − Na(t)φμa (η+
+i )≥ x
+1+ξ
+}
+{
+Na(t)d−(μˆa(t), μa) ≥ x
+}
+⊆
+{
+η−
+i Sa(t) − Na(t)φμa (η−
+i )≥ x
+1+ξ
+}
+.
+33
+
+
+KAUFMANN AND KOOLEN
+The next step is to relate the deviation of Xa(t) to those of a martingale for every t ∈ N and not only for Na(t) is some slice: this will be achieved by a mixture martingale with a well-chosen discrete prior. In the sequel, we consider the (most complicated) case in which Xa(t) = Ya(t) for all t. Given x, we define the following probability distribution. Let
+γi = 1
+2
+1
+i2ζ(2) xi = x + ln
+(1
+γi
+)
+η+
+i = η+
+i (xi, ξ) η−
+i = η−
+i (xi, ξ),
+where η±
+i (x, ξ) are defined in Lemma27. We define the discrete prior
+π=
+∞
+∑
+i=1
+γiδη+
+i
++
+∞
+∑
+i=1
+γiδη−
+i
+and the corresponding mixture martingale
+Zπ
+a (t) =
+∞
+∑
+i=1
+γi Z η+
+ai (t) +
+∞
+∑
+i=1
+γi Z η−
+ai (t),
+where by a slight abuse of notation, Zη
+a (t) = Zaδη (t) = exp(ηSa(t) − φμa(η)Na(t)) for η ∈ R.
+In the case Xa(t) = Y +
+a (t), this prior is modified by taking γi = 1
+i2ζ(2) and π = ∑∞
+i=1 γiδη+
+i,
+while for Xa(t) = Y −
+a (t), one defines π = ∑∞
+i=1 γiδη−
+i
+. We continue the proof assuming Xa(t) =
+Ya(t) for all t. The proof of the two other cases follow the exact same lines, with the corresponding
+priors, leading to an improved constant C(ξ) = ln ζ(2)
+(ln(1+ξ))2 .
+{Xa(t) − (1 + ξ) ln C(ξ) ≥ x}
+⊆
+{
+[Na(t)d(μˆa(t), μa) − 3 ln(1 + ln(Na(t)))]+ ≥ x + (1 + ξ) ln C(ξ)
+}
+= {Na(t)d(μˆa(t), μa) − 3 ln(1 + ln(Na(t))) ≥ x + (1 + ξ) ln C(ξ)} ,
+where we use that x + (1 + ξ) ln C(ξ) > 0 as ξ < 1/2. Now, as 2(1 + ξ) < 3, one has
+{Xa(t) − (1 + ξ) ln C(ξ) ≥ x}
+⊆
+{
+Na(t)d (μˆa(t), μa) − 2(1 + ξ) ln (1 + ln(Na(t))) ≥ x + (1 + ξ) ln
+( 2ζ(2)
+ln(1 + ξ)2
+)}
+⊆
+{
+Na(t)d (μˆa(t), μa) ≥ x + (1 + ξ) ln
+( 2ζ(2)(1 + ln(Na(t))2
+ln(1 + ξ)2
+)}
+⊆
+{
+Na(t)d (μˆa(t), μa) ≥ x + (1 + ξ) ln
+( 2ζ(2)(ln(1 + ξ) + ln(Na(t))2
+ln(1 + ξ)2
+)}
+,
+34
+
+
+MIXTURE MARTINGALES REVISITED
+where the last inequality uses ln(1 + ξ) ≤ ln(3/2) ≤ 1. Now, let i(t) ≥ 1 be such that Na(t) ∈
+[(1 + ξ)i−1, (1 + ξ)i]. One can observe that ln Na(t)
+ln(1+ξ) ≥ i(t) − 1. Using Lemma27,
+{Xa(t) − (1 + ξ) ln C(ξ) ≥ x}
+⊆
+{
+Na(t)d (μˆa(t), μa) ≥ x + (1 + ξ) ln
+(1
+γi(t)
+)}
+⊆
+
+
+
+max
+η∈
+{
+η+
+i(t) ,η −
+i(t)
+} [ηSa(t) − φμa(η)Na(t)] ≥ 1
+1+ξ
+[
+x + (1 + ξ) ln
+(1
+γi(t)
+)]
+
+
+
+⊆
+
+
+
+max
+η∈
+{
+η+
+i(t) ,η −
+i(t)
+} γi(t) exp (ηSa(t) − φμa(η)Na(t)) ≥ e
+x 1+ξ
+
+
+
+⊆
+{
+max
+i∈N max
+η∈{η+
+i ,η−
+i}
+γi exp (ηSa(t) − φμa(η)Na(t)) ≥ e
+x 1+ξ
+}
+⊆
+{
+Zπ
+a (t) ≥ e
+x 1+ξ
+}
+.
+Proof of Lemma27 We introduce the notation θ for the natural parameter associated to μa, defined as θ = b ̇−1(μa). Define η+
+i < 0 and η−
+i > 0 such that
+KL(θ + η+
+i , θ) = KL(θ + η−
+i , θ) = x
+(1 + ξ)i .
+where KL(θ, θ′) is the Kullback-Leibler divergence between the distributions of natural parameter θ and θ′. Moreover, using some properties of the KL-divergence, one can write
+KL(θ + η+
+i , θ) = η+
+i μ+
+i − φμa (η+
+i ) with μ+
+i := b ̇−1(θ + η+
+i ) < μa,
+KL(θ + η−
+i , θ) = η−
+i μ−
+i − φμa (η−
+i ) with μ−
+i := b ̇−1(θ + η−
+i ) > μa.
+For Na(t) ∈ [(1 + ξ)i−1, (1 + ξ)i], one has
+{
+Na(t)d+(μˆa(t), μa) ≥ x
+}
+⊆
+{
+d+(μˆa(t), μa) ≥ x
+(1 + ξ)i
+}
+⊆
+{
+μˆa(t) ≤ μ+
+i
+}
+⊆
+{
+η+
+i μˆa(t) − φμa (η+
+i ) ≥ KL(θ + η+
+i , θ)
+}
+⊆
+{
+(1 + ξ)i−1 (
+η+
+i μˆa(t) − φμa (η+
+i)
+)
+≥x
+1+ξ
+}
+⊆
+{
+Na(t)
+(
+η+
+i μˆa(t) − φμa (η+
+i)
+)
+≥x
+1+ξ
+}
+,
+where the third inclusion uses that η+
+i is negative. Similarly, using this time that η−
+i > 0 yields
+{
+Na(t)d−(μˆa(t), μa) ≥ x
+}
+⊆
+{
+μˆa(t) ≥ μ−
+i
+}
+⊆
+{
+η−
+i μˆa(t) − φμa (η−
+i ) ≥ KL(θ + η−
+i , θ)
+}
+⊆
+{
+Na(t)
+(
+η−
+i μˆa(t) − φμa (η−
+i)
+)
+≥x
+1+ξ
+}
+,
+which concludes the proof.
+35
+
+
+KAUFMANN AND KOOLEN
+B.2 Tight Tuning: Proof of Lemma12
+In this section we prove Lemma12, which gives the tightest possible tuning achievable with our method. We first prove two auxiliary lemmas.
+Lemma 28 Let x ≥ 0. Then
+inf
+q∈[0,1]
+x − ln (1 − q)
+q = h−1 (1 + x) .
+Proof The objective is convex in 1
+q , and hence minimised at zero derivative. Cancelling the derivative requires
+1+x = 1
+1 − q − ln 1
+1−q = h
+(1
+1−q
+)
+so that q = 1 − 1
+h−1 (1 + x)
+where the rewrite in terms of h is allowed since 1/(1 − q) ≥ 1. Plugging this in, we find the value as stated.
+Definition 29 For any z ∈ [1, e] and x ≥ 0, we define
+ ̃hz(x) = min
+y∈[1,z]
+y (x − ln ln y) .
+We can now make the connection to (9).
+Lemma 30 Fix z ∈ [1, e]. Then
+ ̃hz(x) =
+{
+exp
+(1
+h−1(x)
+)
+h−1(x) if x ≥ h
+(1 ln z
+)
+,
+z (x − ln ln z) o.w.
+Proof The objective in Definition29is convex on y ∈ [1, e], and its derivative is x − h(1/ ln y). When x ≤ h(1/ ln z) it is decreasing on the entire domain y ∈ [1, z], and hence minimised at y = z, yielding the second case. If on the other hand x ≥ h(1/ ln z), the derivative of the objective is
+cancelled at y = e
+1
+h−1(x) , and substitution reveals that the value equals
+e
+1
+h−1(x) (
+x + ln h−1(x)
+)
+=e
+1
+h−1(x) h−1(x).
+We are now ready to prove the Lemma.
+36
+
+
+MIXTURE MARTINGALES REVISITED
+Proof (of Lemma12) We reorganise, apply Lemma28and then Lemma30to find
+Cexp(x) = inf
+ξ∈[0,z]
+(1 + ξ)
+(
+inf
+q≤1
+x − ln (1 − q)
+q + ln C(ξ)
+)
+= inf
+ξ∈[0,z]
+(1 + ξ)
+(
+h−1 (1 + x) + ln C(ξ)
+)
+= inf
+ξ∈[0,z]
+(1 + ξ)
+(
+h−1 (1 + x) + ln (2ζ(2)) − 2 ln ln(1 + ξ)
+)
+= 2 inf
+y∈[1,1+z]
+y
+( h−1 (1 + x) + ln (2ζ(2))
+2 − ln ln y
+)
+= 2 ̃h1+z
+( h−1 (1 + x) + ln (2ζ(2))
+2
+)
+.
+B.3 A Tighter One-Arm Bound
+Lemma13allows us to directly derive valid thresholds involving only a single arm. Namely, we have
+Corollary 31 Let  ̃hz(x) be as defined in (9). For every arm a and confidence parameter x ≥ 0
+P
+{
+∃t ∈ N : Xa(t) ≥ 2 ̃h3/2
+( x + ln (2ζ(2))
+2
+)}
+≤ e−x.
+Proof By Lemma13, for every ξ ∈ [0, 1/2],
+P
+{
+Xa(t) − (1 + ξ) ln
+( 2ζ(2)
+(ln(1 + ξ))2
+)
+≥ (1 + ξ)x
+}
+≤P
+{
+Z π((1+ξ)x)
+a (t) ≥ ex}
+≤ e−x
+Minimising the threshold w.r.t. ξ using Lemma30results in
+min
+ξ∈[0,1/2]
+(1 + ξ)
+(
+x + ln
+( 2ζ(2)
+(ln(1 + ξ))2
+))
+= 2 ̃h3/2
+( x + ln (2ζ(2))
+2
+)
+.
+We see that the multiple-arm threshold of Theorem7has h−1(1 + x) > x where Corollary31has just x. This additional blowup is the overhead that our approach incurs for controlling multiple arms by means of a “Crame ́r-Chernoff” approach.
+Appendix C. Refined Deviation Inequalities for Gaussian and Gamma Distributions
+Theorem9and Theorem10follow from a similar martingale construction, that could actually be used for other one-dimensional exponential families with divergence function d(·, ·), provided one is able to construct a continuous prior satisfying a general assumption given below.
+37
+
+
+KAUFMANN AND KOOLEN
+Assumption 32 For every λ ∈]0, 1[, μ ∈ I, there exists a family of functions (pλ,μ
+t )t≥1 such that, for every t ≥ 1,
+∀x ∈ I,
+∫
+pλ,μ
+t (η)eηtx−φμ(η)t dη = eλtd(x,μ). (27)
+Moreover, for every 1 ≤ n1 ≤ n2 and every η ∈ R,
+pλ,μ
+n1 (η) ≥
+√ n1
+n2
+pλ,μ
+n2 (η). (28)
+In words, this assumption implies that for all a and t ≥ 1 there exists a prior distribution for which the corresponding mixture martingale exactly attains eλtd(μˆa(t),μa) and such that one can control the variation of the prior corresponding to two different time steps. Under this assumption, we are able to prove the following.
+Theorem 33 Assume that Assumption32is satisfied and let
+C0(t, λ) := sup
+μ∈I
+∫
+pλ,μ
+t (η) dη.
+Fix ξ > 0, c > 1 and define
+g0(λ, ξ, c) = ln
+[∞ ∑
+i=1
+1
+iλcζ(λc) C0
+(
+(1 + ξ)i−1, λ
+)
+]
+.
+The stochastic process Xa(t) = Na(t)d(μˆa(t), μa) − c ln
+(
+ln(1 + ξ) + ln Na(t)
+)
+is gξ,c-VCC where
+gξ,c : (c−1, 1] −→ R+
+λ 7→ g0(λ, ξ, c) + 1
+2 ln(1 + ξ) + λc ln
+(1
+ln(1+ξ)
+)
++ ln ζ(λc).
+Theorem33directly provides a deviation inequality using Lemma4. It thus remains to find sequences of priors satisfying Assumption32, which we were able to do for two particular examples, Gaussian and Gamma distributions. One can note that finding functions pλ,μ
+t is closely related to computing a (bilateral) inverse Laplace transform. Indeed, if q is the inverse Laplace transform of eλtd(x,μ), meaning that ∀x :
+∫∞
+−∞ q(s)e−sx ds = eλtd(x,μ), the assumption is satisfied for pλ,μ
+t (η) =
+tq(−ηt)eφμ(η)t. However, computing such inverse Laplace transforms is not easy beyond Gaussian or Gamma distributions.
+Proof of Theorem33 For i = 1, 2, . . . we introduce grid points Ti = (1 + ξ)i−1 with prior weights γi = 1
+iλcζ(λc) and define the (un-normalized) martingale
+M ̃ λ
+a (t) :=
+∞
+∑
+i=1
+γi
+∫
+pλ,μa
+Ti (η)eηSa(t)−φμa (η)Na(t) dη,
+that satisfies M ̃ λ
+a (0) ≤ exp(g0(λ, ξ, c)).
+38
+
+
+MIXTURE MARTINGALES REVISITED
+For Na(t) ∈ [Ti, Ti+1[, we first bound the martingale from below by one of its terms, and then make use of Assumption32.
+M ̃ λ
+a (t) ≥ γi
+∫
+pλ,μa
+Ti (η)eηSa(t)−φμa (η)Na(t) dη
+≥
+√
+Ti
+Na(t) γi
+∫
+pλ,μa
+Na(t)(η)eηSa(t)−φμa (η)Na(t) dη
+=
+√
+Ti
+Na(t) γi exp (λNa(t)d (μˆa(t), μa))
+≥
+√1
+1 + ξ γi exp (λNa(t)d (μˆa(t), μa)) ,
+where the last inequality uses Na(t) ≤ Ti+1 and Ti/Ti+1 = 1/(1 + ξ), due to the geometric grid. Introducing the normalised martingale M λ
+a (t) = M ̃ λ
+a (t)/M ̃ λ
+a (0) and further using the expression of γi yields, for all t such that Na(t) ∈ [Ti, Ti+1[,
+Mλ
+a (t) ≥ M ̃ λ
+a (t)e−g0(λ,ξ,c) ≥ eλNa(t)d(μˆa(t),μa)−g0(λ,ξ,c)− 1
+2 ln(1+ξ)−ln ζ(λc)−λc ln(i).
+Finally, using that i ≤ 1 + ln(Na(t))/ ln(1 + ξ) yields the desired
+Mλ
+a (t) ≥ exp (λXa(t) − gξ,c(λ)) .
+It remains to check the case Na(t) = 0. Then Xa(t) = −∞, so clearly M λ
+a (t) = 1 > e−λ∞.
+C.1 Application to Gaussian Distributions
+In the Gaussian case, direct computations show that Assumption32holds for the choice
+pλ,μ
+t (η) = 1
+√
+1−λ
+1
+√
+2πσ2
+t
+exp
+(
+− η2
+2σ2
+t
+)
+,
+where σ2
+t= λ
+t(1−λ) . As a consequence C0(t, λ) = √ 1
+1−λ and g0(λ, ξ, c) = − 1
+2 ln (1 − λ). Note that
+the inequality (28) is actually an equality. We are now ready to prove Theorem9.
+Proof of Theorem9 By Theorem33, picking c = 2, for every ξ > 0 and λ ∈]1/2, 1[ there exists
+a test martingale M λ,ξ
+a (t) such that
+∀t ∈ N, M λ,ξ
+a (t) ≥ eλ[Na(t)d(μˆa(t),μa)−fξ(Na(t))]−gξ(λ)
+with
+fξ(s) = 2 ln(ln(1 + ξ) + ln(s))
+gξ(λ) = 1
+2 ln(1 + ξ) + 2λ ln
+(1
+ln(1 + ξ)
+)
++ ln ζ(2λ) − 1
+2 ln (1 − λ)
+39
+
+
+KAUFMANN AND KOOLEN
+It can be checked that the choice of ξ leading to the smallest gξ function is ln(1 + ξ) = 4λ. Denoting by ξ∗(λ) this value, it holds that
+gG(λ) = gξ∗(λ)(λ) = 2λ − 2λ ln (4λ) + ln ζ(2λ) − 1
+2 ln (1 − λ) .
+For every λ ∈]1/2, 1[, observe that fξ∗(λ)(s) ≤ 2 ln(4 + ln s). Hence, there exists a test martingale
+Mλ
+a (t) = M λ,ξ∗(λ)
+a (t) such that
+∀t ∈ N, M λ
+a (t) ≥ eλ[Na(t)d(μˆa(t),μa)−2 ln(4+ln(Na(t)))]−gG(λ),
+which concludes the proof.
+C.2 Application to Gamma Distributions
+A Gamma distribution with shape parameter α and mean μ has density at z > 0 given by
+fα,μ(z) =
+e− αz
+μ
+( αz μ
+)α
+zΓ(α) .
+We recover the Exponential distribution for α = 1. More generally, the set of Gamma distributions with a known shape α form a one-parameter exponential family for which
+d(μ, μ′) = α
+(μ
+μ′ − 1 − ln μ
+μ′
+)
+and φμ(η) = α ln
+(α
+α − μη
+)
+for η < α/μ.
+Next we show that the family of functions
+pλ
+t (η) := μ
+α
+(αt/e)λαt
+Γ(λαt)
+(
+1 − ημ
+α
+)−αt (
+λ − ημ
+α
+)λαt−1
++
+. (29)
+leads to suitable “priors”.
+Proposition 34 The family of functions defined in (29) satisfies Assumption32.
+Proof Proving (27) is equivalent to checking that for all x > 0,
+μ
+α
+( αtx
+μ
+)λαt 1
+Γ(λαt)
+∫ λα
+μ
+−∞
+(
+λ − ημ
+α
+)λαt−1
+eηtx dη = e
+λαtx μ
+which can be done using change of variables to y = tx
+( αλ
+μ −η
+)
+and the definition of the Gamma
+function Γ(z) =
+∫∞
+0 xz−1e−x dx. Now let us check condition (28). The condition is trivially
+satisfied for η ≥ λα
+μ , as both sides are zero. So assume η is smaller. Then
+ln pλ
+n1 (η)
+pλn2 (η) = ln
+μ α
+(αn1 /e)λαn1 Γ(λαn1)
+(
+1 − ημ
+α
+)−αn1 (
+λ − ημ
+α
+)λαn1−1
+μ α
+(αn2 /e)λαn2 Γ(λαn2)
+(
+1 − ημ
+α
+)−αn2 (
+λ − ημ
+α
+)λαn2−1
+= ln Γ(λαn2)(αn2/e)−λαn2
+Γ(λαn1)(αn1/e)−λαn1 + α(n2 − n1)
+(
+ln
+(
+1 − ημ
+α
+)
+− λ ln
+(
+λ − ημ
+α
+))
+≥1
+2 ln
+( n1
+n2
+)
++ α(n2 − n1)
+(
+λ ln λ + ln
+(
+1 − ημ
+α
+)
+− λ ln
+(
+λ − ημ
+α
+))
+≥1
+2 ln
+( n1
+n2
+)
+.
+40
+
+
+MIXTURE MARTINGALES REVISITED
+For the first inequality we used that the approximation error ln(Γ(x)) − x ln(x) + x − 1
+2 ln
+( 2π x
+)
+is a decreasing function of x ∈ R+ (as can be easily verified by a plot), so that in particular
+ln Γ(λαn2)
+Γ(λαn1) ≥ 1
+2 ln
+( n1
+n2
+)
++ λαn2 ln(λαn2/e) − λαn1 ln(λαn1/e).
+For the second inequality we use that the expression above switches from decreasing to increasing at η = 0, and is hence minimised there. Plugging in the value η = 0 gives the result.
+We are now ready to prove Theorem10, as a consequence of Theorem33.
+Proof of Theorem10 In order to evaluate the function g0(λ, ξ, c) featured in Theorem33, we first
+compute
+C0(t, λ) = Γ((1 − λ)αt)
+Γ(αt) (αt/e)λαt(1 − λ)−(1−λ)αt.
+To see this, perform the variable substitution z = αλ−ημ
+α−ημ ∈ [0, 1] to render this a standard Beta integral
+C0(t, λ) = (αt/e)λαt
+Γ(λαt)
+∫ λα
+μ
+−∞
+(
+1 − ημ
+α
+)−αt (
+λ − ημ
+α
+)λαt−1 μ
+α dη
+= (αt/e)λαt
+Γ(λαt)
+∫1
+0
+(
+1− λ−z
+1−z
+)−αt (
+λ− λ−z
+1−z
+)λαt−1 1 − λ
+(1 − z)2 dz
+= (αt/e)λαt
+Γ(λαt) (1 − λ)−(1−λ)αt
+∫1
+0
+zλαt−1 (1 − z)(1−λ)αt−1 dz
+= (αt/e)λαt (1 − λ)−(1−λ)αt Γ((1 − λ)αt)
+Γ(αt)
+Proposition 35 C0(t, λ) is decreasing in t ∈ R+.
+Proof Let ψ(0)(x) = ∂ ln Γ(x)
+∂x . The derivative of ln C0(t, λ) w.r.t. t is negative iff
+(1 − λ)ψ(0)((1 − λ)αt) − (1 − λ) ln((1 − λ)αt) < ψ(0)(αt) − ln(αt).
+Now this follows from the fact that xψ(0)(x) − x ln x can be checked to be an increasing function of x ∈ R+.
+We find that C0(t, λ) decreases from 1
+1−λ at t → 0 to √ 1
+1−λ for t → ∞. For the former, we use
+C0(t, λ) = Γ((1 − λ)αt)
+Γ(αt) (αt/e)λαt(1 − λ)−(1−λ)αt
+=1
+1−λ
+((1 − λ)αt)Γ((1 − λ)αt)
+(αt)Γ(αt) (αt/e)λαt(1 − λ)−(1−λ)αt
+=1
+1−λ
+Γ(1 + (1 − λ)αt)
+Γ(1 + αt) (αt/e)λαt(1 − λ)−(1−λ)αt
+41
+
+
+KAUFMANN AND KOOLEN
+The claimed limit for t → 0 now follows by taking the limit of each factor, using Γ(1) = 1 and
+tt → 1. For the latter, the first-order Stirling’s approximation Γ(z) ∼
+√
+2πe−zzz− 1
+2 yields
+C0(t, λ) ∼ 1
+√
+1 − λ when t → ∞
+Finally, we have that for all λ ∈ (0, 1) and t ∈ N,
+C0(t, λ) ∈
+[1
+√
+1 − λ; 1
+1−λ
+]
+.
+It follows that for all ξ > 0, − 1
+2 ln(1 − λ) ≤ g0(λ, ξ, c) ≤ − ln(1 − λ). We might be able to show
+that g0 is actually closer to − 1
+2 ln(1 − λ) as the Stirling approximation is known to be good for moderate values of t. However using Theorem33(and picking c = 2) one can already prove that for every ξ > 0 and λ ∈ (c−1, 1), there exists a test martingale M λ,ξ
+a (t) such that
+∀t ∈ N, M λ,ξ
+a (t) ≥ eλ[Na(t)d(μˆa(t),μa)−fξ(Na(t))]−gξ(λ)
+with
+fξ(s) = 2 ln(ln(1 + ξ) + ln(s))
+gξ(λ) = 1
+2 ln(1 + ξ) + 2λ ln
+(1
+ln(1 + ξ)
+)
++ ln ζ(2λ) − ln (1 − λ) .
+Just like in the proof of Corollary9, the function g is optimised in ξ at ln(1 + ξ) = 4λ. We conclude similarly that Xa(t) = Na(t)d(μˆa(t), μa) − 2 ln(4 + ln(Na(t)) is gΓ-VCC (see Definition1) for the function gΓ(λ) = 2λ − 2λ ln (4λ) + ln ζ(2λ) − ln (1 − λ).
+Appendix D. Optimal Sample Complexity: Proof of Theorem17
+The first ingredient of the proof is a (deterministic) property of the Tracking sampling rule, that reformulates Lemma 8 inGarivier and Kaufmann(2016).
+Lemma 36 Under the Tracking rule for each a ∈ {1, . . . , K}, Na(t) ≥ (
+√
+t−K/2)+−1. Moreover, for all > 0, for all t0, there exists t ≥ t0 such that
+sup
+t≥t0
+max
+a∈{1,...,K }
+|w∗
+a(μˆ(t)) − w∗
+a(μ)| ≤ ⇒ sup
+t≥t
+max
+a∈{1,...,K }
+∣ ∣ ∣ ∣
+Na(t)
+t − w∗
+a(μ)
+∣ ∣ ∣ ∣
+≤ 3(K − 1) .
+To ease the notation, we fix μ ∈ O1. From the continuity of w∗ in μ ∈ O1, there exists ξ = ξ( , μ) such that
+I := [μ1 − ξ, μ1 + ξ] × · · · × [μK − ξ, μK + ξ]
+is included in O1 and is such that for all μ′ ∈ I ,
+max
+a∈{1,...,K }
+|w∗
+a(μ′) − w∗
+a(μ)| ≤ .
+42
+
+
+MIXTURE MARTINGALES REVISITED
+In particular, whenever μˆ(t) ∈ I , it holds that ıˆ(t) = 1.
+Let T ∈ N and define the “good tail” event
+ET ( ) =
+T
+⋂
+t=T 1/4
+(μˆ(t) ∈ I ) .
+By Lemma36, under the Tracking rule each arm is drawn at least of order
+√
+t times at round t. This permits to establish the following concentration result, stated as Lemma 19 inGarivier and Kaufmann(2016).
+Lemma 37 There exist two constants B, C (that depend on μ and ) such that
+Pμ(E c
+T ( )) ≤ BT exp(−CT 1/8).
+Using Lemma36, there exists a constant T such that for T ≥ T , it holds that on ET ( ),
+∀t ≥
+√
+T , max
+a∈{1,...,K }
+∣ ∣ ∣ ∣
+Na(t)
+t − w∗
+a(μ)
+∣ ∣ ∣ ∣
+≤ 3(K − 1)
+On the event ET ( ), for t ≥ T 1/4 it holds that ıˆ(t) = 1, thus Alt(μˆ(t)) = Alt(μ) and ˆΛt = tMˆ (t) where
+Mˆ (t) := inf
+λ∈Alt(μ)
+∑
+a∈{1,...,K }
+Na(t)
+t d (μˆa(t), λa) .
+One can rewrite
+Mˆ (t) = g
+(
+μˆ (t),
+( Na(t)
+t
+)
+a∈{1,...,K }
+)
+,
+with g a mapping defined on O1 × [0, 1]K by
+g(μ′, w′) = inf
+λ∈Alt(μ)
+∑
+a∈{1,...,K }
+w′
+ad
+(
+μ′
+a, λa
+)
+.
+As the mapping (λ, μ′, w′) 7→ ∑
+a∈{1,...,K} w′
+ad (μ′
+a, λa) is jointly continuous and the constraint set
+Alt(μ) doesn’t depend on (μ′, w′), it follows from the application of Berge’s maximum theorem (Berge,1963) that g is continuous. For T ≥ T , introducing the constant
+C∗(μ) = inf
+μ′:||μ′−μ||≤ξ( ) w′ :||w′ −w∗ (μ)||≤3(K −1)
+g(μ′, w′) ,
+on the event ET ( ) it holds that for every t ≥
+√
+T , Mˆ (t) ≥ C∗(μ).
+43
+
+
+KAUFMANN AND KOOLEN
+Let T ≥ T . On ET ( ),
+min
+(
+τ GLR
+δ ,T
+)
+≤
+√
+T+
+T
+∑
+t=
+√
+T
+1(τδ>t) ≤
+√
+T+
+T
+∑
+t=
+√
+T
+1(tMˆ (t)≤ct(δ))
+≤
+√
+T+
+T
+∑
+t=
+√
+T
+1(tC∗(μ)≤cT (δ)) ≤
+√
+T + cT (δ)
+C∗(μ) .
+Introducing
+T0 (δ) = inf
+{
+T ∈N:
+√
+T + cT (δ)
+C∗(μ) ≤ T
+}
+,
+for every T ≥ max(T0 (δ), T ), one has ET ( ) ⊆ (τδ ≤ T ), therefore
+Pμ (τδ > T ) ≤ P(Ec
+T ) ≤ BT exp(−CT 1/8)
+and
+Eμ[τδ] ≤ T0 (δ) + T +
+∞
+∑
+T =1
+BT exp(−CT 1/8) .
+We now provide an upper bound on T0 (δ). For ξ > 0 we introduce the constant
+C(ξ) = inf{T ∈ N : T −
+√
+T ≥ T /(1 + ξ)}.
+Using moreover the upper bound on the threshold yields
+T0 (δ) ≤ C + C(ξ) + inf
+{
+T ∈ N : ln
+( DT δ
+)
+C∗(μ) ≤ T
+1+ξ
+}
+.
+Letting h−1 be the function defined in the statement of Theorem7which is related to the Lambert function. One has
+T0(δ) ≤ C + C(ξ) + (1 + ξ)
+C∗(μ) h−1
+(
+ln
+( (1 + ξ)D
+C ∗ (μ)δ
+))
+.
+Using Proposition8, it follows that
+T0(δ) ≤ C + C(ξ) + (1 + ξ)
+C (μ)
+[
+ln
+( (1 + ξ)D
+C ∗ (μ)δ
+)
++ ln
+(
+ln
+( (1 + ξ)D
+C ∗ (μ)δ
+)
++
+√
+2 ln
+( (1 + ξ)D
+C ∗ (μ)δ
+)
+−2
+)]
+.
+From this last upper bound, for every ξ > 0 and > 0,
+lim sup
+δ→0
+Eμ
+[
+τ GLR
+δ
+]
+ln(1/δ) ≤ (1 + ξ)
+C∗(μ) .
+Letting ξ and go to zero and using that, by continuity of g and by definition of w∗(μ),
+li→m0 C∗(μ) = T ∗(μ)−1
+yields
+lim sup
+δ→0
+Eμ [τδ ]
+ln(1/δ) ≤ T ∗(μ)
+To conclude, the lower bound of Proposition16implies that this inequality is an equality.
+44

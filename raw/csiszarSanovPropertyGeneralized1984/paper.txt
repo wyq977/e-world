@@ -1,0 +1,1355 @@
+The Annals of Probability
+1984, Vol. 12, No. 3, 768-793
+
+SANOV PROPERTY, GENERALIZED I-PROJECTION AND
+A CONDITIONAL LIMIT THEOREM
+
+By Imre CsiszAr!
+
+Mathematical Institute of the Hungarian Academy of Sciences, Budapest
+
+Known results on the asymptotic behavior of the probability that the
+empirical distribution P, of an i.i.d. sample X;, ---, X, belongs to a given
+convex set II of probability measures, and new results on that of the joint
+distribution of X,, ---, X, under the condition P, € I] are obtained simulta-
+neously, using an information-theoretic identity. The main theorem involves
+the concept of asymptotic quasi-independence introduced in the paper. In the
+particular case when P, € II is the event that the sample mean of a V-valued
+statistic y is in a given convex subset of V, a locally convex topological vector
+space, the limiting conditional distribution of (either) X; is characterized as a
+member of the exponential family determined by y through the unconditional
+
+distribution Px, while X,, -.-, X, are conditionally asymptotically quasi-
+independent.
+1. Introduction. Given a sequence X,, Xo, --- of independent ran-
+
+dom variables (rv’s) distributed over an arbitrary measurable space (S, @)
+with common distribution Px, a set II of probability measures (pm’s) on
+(S, @) is said to have the Sanovu property if the empirical distribution P,, of X”
+= (X, ---, Xn) satisfies
+
+(1.1) lim,..(1/n)log Pr{P, € II} = —D(I1 || Px).
+Here the following notation is used:
+(1.2) D( || Q) = infpen D(P || Q),
+
+where for any two pm’s P and @ defined on the same measurable space
+
+(13) D(P\Q) = {i f log(dP/dQ) dP if P«Q
+else
+
+is the I-divergence or Kullback-Leibler information number, called briefly diver-
+gence in the sequel. The quantity (1.3) has also been called information for
+discrimination, cross-entropy, information gain, etc. The terminology adopted
+here is the one appearing most frequently in recent information theory literature,
+although it is at variance with the original terminology of Kullback and Leibler
+(1951) where “divergence” meant the Jeffreys divergence, i.e., the symmetrized
+
+Received January 1983; revised December 1983.
+
+‘This work was done while the author was a visiting professor at Stanford University, partially
+supported by NSF grant ENG 79-08948:
+
+AMS 1980 subject classifications, Primary 60F 10, 60B10, 60B12; secondary 62B10, 94A17, 82A05.
+
+Key words and phrases. Kullback-Leibler information, J-projection, large deviations in abstract
+space, exponential family, asymptotic quasi-independence, maximum entropy principle.
+
+768
+
+Institute of Mathematical Statistics is collaborating with JSTOR to digitize, preserve, and extend access to
+The Annals of Probability.
+
+www .jstor. org
+SANOV PROPERTY AND CONDITIONAL LIMIT THEOREM 769
+
+form of (1.3). A familiar alternative definition is
+(1.4) D(P||Q) = supzDa(P|Q); Da(P||Q) = DE P(B))log(P(B)/Q(B:)),
+
+where # = (B,, ---, B,) ranges over all finite (measurable) partitions of the
+underlying measurable space. Here one understands 0 log 0 = 0 log(0/0) = 0,
+a log(a/0) = + if a > 0; all logarithms in this paper are to the base e. For the
+equivalence of (1.3) and (1.4) and for the basic properties.of divergence cf., e.g.,
+Pinsker (1964).
+
+The limit relation (1.1) is often referred to as Sanov’s theorem. Papers
+establishing (1.1) under various conditions include Sanov (1957), Hoeffding
+(1965), Hoadley (1967), Borovkov (1967), Lanford (1972), Stone (1974), Donsker
+and Varadhan (1975-1976) (this highly sophisticated work deals with the Markov
+case), Bahadur and Zabell (1979) and Groeneboom, Oosterhoff and Ruymgaart
+(1979). For brevity, in the sequel we shall refer to the last two papers as BZ
+(1979) and GOR (1979). Familiarity with them or any of the other references is,
+however, not necessary for reading this paper.
+
+There is a close relationship exhibited and exploited in our treatment, between
+the Sanov property and the limiting behavior of the conditional distribution of
+X, under the condition P, € II, as n — ©. The latter has been treated in the
+literature only when conditioning on empirical averages, i.e., on an event
+(1/n) ¥., f(X;) € I (where f is some real-valued function and J is an interval) or
+on the joint occurrence of a finite number of such events. This corresponds to
+letting II be the set all pm’s P satisfying { f dP € J, or the intersection of sets of
+this form. For such conditioning, Lanford (1973), Bartfai (1974), Vasicek (1980),
+Van Campenhout and Cover (1981) determined the limiting conditional distri-
+bution of X, under various assumptions, all of which implied the existence of a pm
+P* E Il minimizing D(P || Px) subject to P € I; the limiting conditional distri-
+bution of X, was equal to this P*. Such results are relevant for statistical physics,
+since microcanonical distributions can be interpreted as conditional distributions
+of the mentioned kind. It has been argued, cf. Van Campenhout and Cover (1981),
+that such conditional limit theorems provide a justification of the “maximum
+entropy principle” in physics. Conditioning on exact values of empirical averages
+has also been considered, cf. Zabell (1980) and the literature cited there. Except
+for the discrete case, this problem requires stronger regularity conditions and
+may still not have direct implications for the previous one, cf. Van Campenhout
+and Cover (1981). Our generalization of these results will involve the concepts of
+generalized J-projection and convergence in information.
+
+Let Q be a pm and II be a convex set of pm’s on (S, @) such that D(II || Q) <
+o, As in Csiszar (1975), a pm P* will be called the I-projection of Q on II if
+P* € Tl and D(P* || Q) = D(IL || Q). This J-projection surely exists if II is variation-
+closed, while in general there exists a pm P* not necessarily in II such that every
+sequence of pm’s P,, € II with D(P,, || Q) — D(II || Q) converges to P* in variation,
+cf. Csiszar (1975, Theorem 2.1 and Remark). The latter P* will be called the
+generalized I-projection of Q on II. Csiszar (1975, Theorem 2.2) proved that if P*
+770 I. CSISZAR
+
+is the J-projection of Q on II then
+(1.5) D(P || Q) = D(P || P*) + DU||Q) for every P E II.
+
+Topsoe (1979, Theorem 8) proved that (1.5) holds also if P* is the generalized I-
+projection, called by him the “relative center of attraction”; moreover, (1.5)
+uniquely determines P*. It follows from (1.5) that any sequence of pm’s P,, € II
+with D(P,, || Q) — D(II || Q) converges in information to P* in the sense of Csiszar
+(1962), ie., D(P, || P*) — 0; this is a stronger property than convergence in
+variation, cf. Section 2. It is not possible, in general, to define a “closure” of II
+such that every Q with D(II || Q) < & had an I-projection on this closure equal to
+its generalized I-projection on II, cf. Example 3.1. Further, while we always have
+
+(1.6) D(P*||Q) < DAT!)
+
+by the lower semi-continuity of divergence, implied by (1.4), cf. Pinsker (1964),
+here the strict inequality is possible, cf. Example 3.2.
+
+In this paper we will consider convex sets II of pm’s satisfying some slight
+additional conditions. These are fulfilled for the intersection of a finite number
+of sets of form {P: f f dP € I} and also in other cases of interest. For such sets
+II we will obtain a simple proof of the Sanov property, using an elementary
+information-theoretic identity. More importantly, our approach leads to the
+conclusion that the conditional distribution of (either) X; under the condition
+P,, € II converges in information to the generalized J-projection P* of Px on II.
+It will also turn out that Xi, ---, X, are asymptotically quasi-independent under
+the condition P,, € II in an information-theoretic sense, which has a very intuitive
+probabilistic meaning, cf. Definition 2.1 and the discussion thereafter. This
+appears highly relevant for the statistical physics problem hinted to above; results
+of this kind do not seem to have been published previously. .
+
+As a special case, we will consider the choice of II which makes P, € II
+‘equivalent to (1/n) ©. y(X;) € C where y is a statistic with values in a topological
+vector space V and C is a convex subset of V. In this case we get more explicit
+results, based on representing the generalized I-projection of Px on II as a
+member of the exponential family determined by Px and y.
+
+2. Statement and discussion of the results. Let (S, 4) be an arbitrary
+measurable space, considered as fixed throughout this paper. We designate by A
+the set of all pm’s on (S, @) and by A; its subset consisting of all atomic pm’s
+with a finite number of atoms, i.e., P € A; iff for every BE @
+
+The empirical distribution of a sample s= s, ses, 6) € S” is the pm P.(s, -)
+€ A; defined by
+
+(2.2) P,(s, B) = (1/n) Dk1 1a(si.
+We consider as fixed also a sequence of independent S-valued rv’s X,
+Xo, +» with common distribution Px. A formal definition of such rv’s will not
+
+be needed, for we simply regard the nth Cartesian power of (S, & Px) as the
+SANOV PROPERTY AND CONDITIONAL LIMIT THEOREM 771
+
+sample space of X” = (Xi, ---, X,) and by probabilities of events determined in
+terms of X” we formally mean P-measures of subsets of S” where P% is the nth
+Cartesian power of Px. In particular, for any set of pm’s II C A the probability
+that the empirical distribution P,, of (Xi, ---, X,) belongs to II is, by definition,
+
+(2.3) Pr{P, € Tl} = P&(A,); An = {s: 6,(s, -) © I}.
+
+The last probability is well defined if A, € #”. For conditions on II C A ensuring
+this for every n, cf. GOR (1979, Proposition 3.1). If A, € 4”, consider instead of
+(2.3) the upper and lower probabilities
+
+(2.4) Pr{P,, € I} = PX(A,), Pr{P, € I} = PX(An)
+
+where A, > A, and A, C A,, respectively, are sets in &” having minimum,
+respectively maximum, P%-measure among all such sets. In this case the Sanov
+property is interpreted to mean that the limit relation (1.1) holds both for the
+upper and lower probabilities.
+
+REMARK 2.1. If S is a completely regular topological space, @ its Borel
+o-algebra, and Px satisfies the regularity condition
+
+(2.5) lim Px(G,) = Px(UG,)
+
+for every increasing net of open sets G, then, by Csiszar (1970, Lemma 2), PX
+can be uniquely extended to the Borel c-algebra of S” which, in general, is larger
+than 4”, in such a way that both (2.5) and the Fubini theorem for evaluating
+integrals f f dP hold for the extended P% and Borel-measurable functions f on
+S”. This remark is relevant to our subject when S is a topological vector space,
+and one is interested in the event that the sample mean is in a given Borel subset
+of S, cf. BZ (1979). This event need not be in @” but is obviously a Borel set in
+- S". The regularity of a pm in the sense of BZ (1979, page 592) is a stronger
+condition than (2.5).
+
+For any subset A € @” of S” with P%(A) > 0, we designate by Px,4 and
+Pxn4 the conditional distribution of X; and of X” = (X, ---, Xn), respectively,
+under the condition X" € A. Formally, Px, is the pm defined on (S, @)” by
+
+(2.6) Pxnja(E) = P(E A)/PKA) (E © #2")
+
+and Px,4 is its ith marginal. In the case when Px,)4 = +++ = Px ja, this pm will
+be denoted simply by Px,4. The definition of these conditional distributions is
+extended to the case A ¢ #4” by setting Px-\4 = Px«\a where A & #” is such
+that A D A and P%(A) is minimum subject to these contraints. Clearly, this leads
+to an unambiguous definition whenever A has a positive outer P x-measure. In
+particular, the conditional distributions
+
+(2.7) Pxo pen = Prxoiays Pxip,en = Pxia, ,
+with A, as in (2.3)—are well defined whenever Pr{P,, € II} > 0.
+
+DEFINITION 2.1. Let Xj, -+-, Xnn be S-valued rv’s with joint distribution
+P®™, n=1,2,---, or let X,, X2,--- be S-valued rv’s and A, C S” be sets with
+772 . I. CSISZAR
+
+Pxua =P”, n=1, 2, ---. Then, if
+(2.8) lim,,.0(1/n)D(P™ || Q”) = 0
+
+for some pm Q € A, we say that Xin, ---, Xnn are asymptotically quasi-independent
+with limiting distribution Q, or that X,, ---, X, are asymptotically quasi-inde-
+pendent under the condition X" € A,, with limiting distribution Q, respectively.
+
+This terminology is motivated by the fact that whatever probabilistic state-
+ment holds, excepting an event of exponentially small probability, for i.i.d. rv’s
+with common distribution Q, it holds with probability tending to 1 for Xin, ---,
+Xnn as in Definition 1 or, equivalently, with conditional probability tending to 1
+for X1, ---, Xn given that X” € A,. More precisely, it follows from (2.8) that for
+every a >0
+
+lim,.0.P™(B,) =0 if B,€ B@",
+
+(2.9)
+° Q"(B,) < exp(—an), n= 1, 2,---. oo
+
+In fact, the inequality D..(P™ || Q”) <= D(P™ || Q”), cf. (1.4), applied to Y =
+(B,,, S”\B,,) yields
+
+P(B,) _ pir) 1- P™(B,)
+QB, +h ~ PBwilos 7 on.)
+
+hence (2.9) clearly follows if (2.8) holds. If in Definition 2.1 each X;, has the
+same distribution P, or each X; has the same conditional distribution P,, given
+that X" € A, (i= 1, ---, n) then, by the inequality
+
+(210) D(a) < (1/n)D(P 1Q"),
+
+Q is the limiting distribution for the individual rv’s in the strong sense that
+P,, — Q in information, i.e., D(P, || Q) > 0 as n — ©. (2.10) follows from the
+identity
+
+(2.11) D(P® Qi x «++ X Qn) = D(P™ || Pr X +++ & Pa) + DE1 DP: ll Qi)
+
+where P; € A, Q; € A,i=1, ---, n are arbitrary and P” is any pm on (S, @)”
+whose marginals are the P,’s. For a proof of (2.11), P’” « P, X --- X P, and
+P; « Q;,i = 1, ---,n may be assumed, for else both sides are +. Then
+
+dp” dp™ _ dP,
+dQ X 0 XQ) OH 8) = TDK KP) Ber 7 $e) HE Gg,
+
+whence, taking logarithms and integrating with respect to P, (2.11) follows by
+(1.3). As another consequence of (2.11), we notice that if every k consecutive
+ones of the rv’s in Definition 2.1 have the same joint distribution or conditional
+joint distribution given that X" € A,, say P®, then P\ — Q* in information as
+n—>%,
+
+Convergence in information is a stronger property than that in variation. In
+fact, the variation distance of any two pm’s P and Q, ie., the total variation
+
+P™(B,,)log <= D(P™ || Q”);
+
+SANOV PROPERTY AND CONDITIONAL LIMIT THEOREM 773
+
+| P — Q| of the signed measure P — Q, satisfies
+(2.12) IP - Q| s v2D(P||Q),
+cf. Csiszar (1967, Theorem 4.1). Further, if P, — Q in information then
+
+(2.13) | ar. f raa if J expe) dQ<o for |t|<e
+
+where ce > 0 is arbitrary, cf. Csiszar (1975, Lemma 3.1). Clearly, P, — Q in
+variation is not sufficient for (2.13).
+
+The results of GOR (1979) on the Sanov property are formulated in terms of
+what they call the r-topology on A. This topology is defined by the basic
+neighborhoods of pm’s P € A of form
+
+(2.14) U(P, F «) = {Q: | P(B) — Q(B) | <e,t=1, ---, R
+
+where # ranges over all measurable partitions # = (B,, ---, B,) of (S, @) and
+e ranges over the positive numbers. We shall find it convenient to use a slightly
+weaker topology.
+
+DEFINITION 2.2. The 79-topology on A is defined by the basic neighborhoods
+Uol(P, F «)
+= {Q: | P(B;)) — Q(B) | < ¢, Q(B) = 0 if P(B) = 0,7 = 1, ---, Rh.
+
+Notice that A; is to-open but not 7-open.
+
+(2.15)
+
+DEFINITION 2.3. A set of pm’s II C A is completely convex if for every
+probability space (Q, <% ») and Markov kernel v from (Q, 27) to (S, #) such
+that v(w, -) € II for each w € Q, the pm uy defined by
+
+wb) = [ v6-, BY dy (BE #)
+
+also belongs to II. Further, a convex set of pm’s II C A is almost completely convex
+if there exist completely convex subsets IT, C II, C --- of II such that Uz_, I, 5
+ILM Ay.
+
+Notice that A; is convex but, typically, not even almost completely convex.
+For an important class of almost completely but, in general, not completely
+convex sets of pm’s cf. Lemma 4.3.
+
+Now we can formulate our basic result.
+THEOREM 1. Let II C A be an almost completely.convex set of pm’s and, if
+D(I || Px) < ©, let P* denote the generalized I-projection of Px on Il. Then
+(2.16) (1/n)log Pr{P, € Il} < —D(UI|| Px) for every n
+and in case D(II || Px) < © we have for each II’ C II with Pr{P,, € II’} > 0
+(2.17) (1/n)log PrP, € 1’} <= —D(I || Px) ~ (1/n)D(PxeA,e0 || P*”).
+774 I. CSISZAR
+
+If Tl’ C Ml is such that
+(2.18) D(int,,I1’ || Px) = DUI || Px) < ©
+
+then (II and) II’ has the Sanov property, and X,, ---, X, are asymptotically quasi-
+independent under the condition P,, € II’ with limiting distribution P*.
+
+Theorem 1 will be proved in Section 4. The proof is remarkably simple, the
+main tool being the identity (2.11). Of course, (2.17) implies that X,, ---, X, are
+asymptotically quasi-independent under the condition P,, € II’ with limiting
+distribution P* whenever D(II’ || Px) = D(II|| Px) < © and II’ has the Sanov
+property; (2.18) is just a sufficient condition for the latter. The intuitive proba-
+bilistic implications of asymptotic quasi-independence have been discussed after
+Definition 2.1. We notice that (2.10) and (2.17) yield
+
+(2.19) D(Px,é,eu || P*) < —(1/n)log Pr{P, € I’) — DUI || Px),
+
+relating the speed of the convergence in information Px|é cn —> P* to the speed
+of convergence in the Sanov property.
+
+The next two theorems characterize generalized [-projections on certain im-
+portant kinds of sets of pm’s as members of exponential families. They will be
+proved in Section 3 as consequences of Lemma 3.4, a generalization of Csiszar
+(1975, Theorem 3.1). Our final result, Theorem 4, proved in Section 4, is an
+application of Theorems 1 and 3 to sample means of a statistic taking values in
+a topological vector space. It comprises a large derivation theorem and a condi-
+tional limit theorem involving such statistics.
+
+The relation of Theorems 1-4 to previous results will be discussed at the end
+of this section.
+
+THEOREM 2. If II C A is defined by
+
+(2.20) u={p: J jareoier.a}
+
+where f,, ---, f, are given measurable functions on (S, #), fora pm QE A we
+have D = D(II || Q) < & iff there exists a P € Il with P « Q. Then the generalized
+I-projection P* of Q on II has Q-density of form
+
+dP* _ fexp{D + Dk: off} on fs: (Als), ---, fals)) © M}
+
+(2.21) dQ |o elsewhere
+
+where M is a linear subspace of R* and 3* = (0*, ---, 0f) € RE. (2.21) holds with
+M = R’, i.e., P* belongs to the exponential family {P»: 0 € ©} defined by
+dP, exp Dh Of
+
+dQ f exp(Dhi vif) dQ’
+
+(2.22)
+e= \° = (01, +++, Oy): f exp(X2 vif) dQ < =|
+
+iff there exists a P € Il with P = Q, where = designates mutual absolute continuity.
+SANOV PROPERTY AND CONDITIONAL LIMIT THEOREM 775
+Under the last condition
+
+(2.23) D = D(Il||Q) = mexocr “og i exp( D1 0;fi) aa]
+where the maximum is attained iff Ps = P*.
+
+COROLLARY. The statements of Theorem 2 hold also for Il = {P: f f;dP = 0,
+i= 1, ---, kj, with the only modification that R* is to be replaced everywhere by
+R*.
+
+Now let V be a locally convex topological vector space and consider pm’s on
+the Borel o-algebra of V. The expectation or resultant of such a pm P is defined
+
+by
+
+(2.24) E(P) = vo if f J(-) dP = Huo) for each 3 € V’
+
+if such a Up € V exists, while else E(P) is undefined. Here V’ is the set of all
+continuous linear functionals on V. A useful fact is
+
+(2.25) AC V_ compact, convex, P(A) =1= E(P) exists, E(P) € A,
+
+cf. Choquet (1969, page 115). The support of P is the set of those v € V which
+do not have a neighborhood of P-measure 0. Let Q be a convex-tight pm on V,
+i.e., such that there exist subsets K,, of V with the properties
+
+(2.26) K,C KoC.---, each compact and convex, Q(K,)-»1 as no.
+If V is a separable Fréchet or, in particular, Banach space then every pm on V is
+
+convex-tight.
+
+THEOREM 3. Given V and Q as above, let C C V be a convex set whose interior
+has a nonvoid intersection with the convex hull of the support of Q. Then, with the
+notation
+
+(2.27) TI(C) = {P: E(P) € C}, I(C) = {P: P(K,) = 1 for some n} N II(C)
+for sets K,, satisfying (2.26), we have
+(2.28) D(IIL(C) || Q) = D(Io(int C) || Q) = D<
+
+and the common generalized I-projection P* of Q on II(C) and Ip(int C) belongs
+to the exponential family {P5: 0 € 9} defined by
+
+dP) ___ exp 0(-) _ Jo. of co
+(2.29) dQ = Texp H) dQ’ o=|rvev, exp 0(-) dQ < \.
+
+Further,
+(2.30) D= mex |infecd) — log f exp i(-) aa
+
+where the maximum is attained iff Ps = P*.
+776 I. CSISZAR
+
+REMARK 2.2. To compare Theorems 2 and 3, consider the former in the case
+S = R*, fx, -++, x) =x; — ri, T= 1, ---, Rk, where r,, ---, r, are real constants.
+This is equivalent to the general case, even when setting r, = --- = rz, = 0, cf.
+the proof of Theorem 2. We get, in particular, that the generalized [-projection
+P* of Q on II belongs to the exponential family of pm’s with Q-density
+dP, exp YE, 0i%;
+
+(2.31) dQ (x) = f exp(dE, 0,x;) dQ
+
+iff a P EI with P = Q exists; further, then
+
+(2.32) D(II || Q) = mex] Bb vir; — log f exp(DE1 0;%)) aa|
+
+where the maximum is attained iff Py = P*; Theorem 3, when specialized to the
+case V= R*, C= {x: x, 2 7r;,i = 1, ---, Rj, gives the same results under the
+condition that the convex hull of the support of @ intersects the interior of C, a
+condition equivalent to
+
+(2.33) f x,dP>r, t=1,---,k forsome P«Q.
+
+Since (2.33) implies the existence of a P € II with P = Q but not conversely, we
+see that Theorem 2 is somewhat stronger than the corresponding special case of
+the more general Theorem 3. This is of advantage, e.g., in obtaining the corollary.
+
+THEOREM 4. Let ¥ be a measurable mapping of (S, @) into a locally convex
+topological vector space V, let Q be the image of Px under y, and suppose that Q is
+convex-tight. Then, for any convex set C C V whose interior has a nonvoid
+intersection with the support of Q, we have
+
+(2.34) lim,..(1/n)log Pr{(1/n) Dh y(Xi) € C} = —D
+
+where D < © is given by (2.30). Further, X,, ---, X, are asymptotically quasi-
+independent under the condition
+
+(2.35) (1/n) Shi W(X) EC
+
+with limiting distribution P*, where
+
+*
+dPx
+with 3* € V’ attaining the maximum in (2.30).
+
+(2.36) =c exp 0*(¥(-)),
+
+In the “nonmeasurable case”, i.e., when the set
+An = {(s1, +++, 8x): (1/n) Dh Ws) € C}
+
+is not in @”, (2.34) is interpreted to mean that the limit relation holds for both
+the upper and lower probabilities, cf. (2.4). The asymptotic quasi-independence
+assertion means, of course, that (2.8) holds for Px=\4, and P* in the role of P”
+SANOV PROPERTY AND CONDITIONAL LIMIT THEOREM 777
+
+and Q. We notice that as Theorem 4 is a consequence of Theorem 1, the bound
+(2.19) holds for the present case. It now gives
+
+(2.37) = D(Pxjamzewxpec || P*) S — (1/n)log Pr{(1/n) S21 y(X) € C} -
+
+We conclude this section by discussing the relation of Theorems 1-4 to
+previous results.
+
+The more interesting part of the basic Theorem 1 is the asymptotic « quasi-
+independence assertion. Related results available in the literature, referred to in
+the Introduction, concern the case when the condition P,, € II represents a finite
+number of constraints on sample means; then, under various regularity hy-
+potheses, the convergence of Px,A,cn to the I-projection of Px on II has been
+established. These results are generalized here in four directions:
+
+(i) more general sets II of pm’s are considered
+
+(ii) the J-projection of Px on II need not exist
+
+(iii) a stronger kind of convergence Px \f,cn — P* is established, namely
+convergence in information, and its speed is related to the speed of
+convergence in the Sanov property, cf. (2.19)
+
+(iv) perhaps most importantly, the rv’s Xi, -+-, Xp under the condition
+P,, € Tl are shown to jointly behave, in a sense, “ike i Lid. rv’s with common
+distribution P*.
+
+Theorem 1 also contains the most general sufficient conditions known to us
+for a convex set of pm’s to have the Sanov property. An interesting point is that
+the upper bound needed for the Sanov property holds for every n rather than
+asymptotically as n — «. This bound (2.16) may be viewed as a general Chernoff
+bound. For the discrete case, (2.16) appears in Csiszar and Korner (1981, page
+48). A result equivalent to a special case of (2.16) is the “multidimensional
+~ Berstein-Chernoff inequality” of Bartfai (1977, Theorem 2). The asymptotic
+upper bound
+
+lim sup,..(1/n)log Pr{P,, € 1} < —D(I || Px)
+
+has been established by GOR (1979, Lemmas 2.4 and 3.1A) for sets II C A closed
+in the r-topology, cf. (2.14), but otherwise arbitrary. Its lower counterpart
+
+(2.38) lim inf,.0(1/n)log Pr{P, € Il} = —D(I || Px)
+
+was proved by GOR (1979, Lemma 2.1B) for II C A open in the r-topology or,
+equivalently, for II C A satisfying D(II || Px) = D(int,II || Px). It follows similarly,
+cf. Lemma 4.1, that D(I || Px) = D(int,,I] || Px) is already sufficient for (2.38).
+Actually, hypothesis (2.18) of Theorem 1 has been imposed but for ensuring
+(2.38) with II’ in the role of II. For an alternative approach yielding (2.38) in
+great generality cf. Bahadur, Zabell and Gupta (1980).
+
+It has been known for a long time that if
+
+(2.39) n={p: f jar=oi=1---.R}
+
+as in the Corollary of Theorem 2 then, providing the exponential family (2.22)
+778 I. CSISZAR
+
+contains a pm P,- € Il, this P,- is the J-projection of Q on II. This is obvious
+from the identity
+
+(2.40) D(P || Q) = D(P || Px») + DP» |1Q) (P © ID
+
+which can be considered as an analogue of Pythagoras’ theorem, the divergence
+playing the role of squared Euclidean distance. Various special cases of (2.40)
+were used in statistical inference by Kullback (1959), anda systematic approach
+to geometric properties of pm’s based on (2.40) was developed by Cencov (1972).
+The well-known exponential family representation of /-projections on II as in
+(2.39) was extended to generalized J-projections by Jupp and Mardia (1983),
+generalizing a previous result of Topsoe (1979). Their result is, in our terminology,
+that if
+
+(2.41) mexoct lo f exp(2, 0;f;) aa
+
+is attained then this maximum equals D(II || Q) and the generalized J-projection
+of Q on II equals P35. if 3 = J* attains the maximum in (2.41). The corollary of
+Theorem 2 shows that on the other hand, (2.41) is necessary for the generalized
+I-projection to belong to the exponential family (2.22), and it provides another
+necessary and sufficient condition for the latter, namely the existence of a
+P €Tl with P = Q. The corollary also provides a characterization of generalized
+I-projection when this condition is not fulfilled.
+
+For the purpose of this paper, sets of pm’s of form (2.39) are of minor interest
+for they typically do not meet the hypothesis (2.18) of Theorem 1. Characteri-
+zations of generalized [-projections on sets of pm’s as in Theorems 2 and 3 have
+not been considered in the literature. Nevertheless, formula (2.82)—equivalent
+to (2.23)—has been proved by GOR (1979, Theorem 5.1) under a condition
+equivalent to (2.33). Further, BZ (1979, Theorem 3.2 and Theorem 3.3d) proved
+a minimax counterpart of formula (2.30) for open convex sets C C V, namely,
+with our notation, that
+
+(2.42) D(TI(C) || Q) = ifscosuprev| 0) ~ log f exp 0(-) aa].
+
+under a slightly stronger hypothesis on Q than ours. They did not assume that C
+intersected the convex hull of the support of Q; notice, however, that under the
+hypothesis of BZ (loc. cit) formula (2.30) trivially holds if C is disjoint from the
+convex hull of the support of Q, since then C can be separated from the latter by
+a hyperplane. We believe it is intuitively suggestive to regard formulas for
+D(II || Q) as corollaries of the exponential family representation of generalized
+I-projection. This has also lead to a simple proof of the identity (2.28) which was,
+in a sense, a missing link between the approaches of GOR (1979) and BZ (1979)
+to large deviation theorems, cf. the next paragraph.
+
+A general large deviation theorem for empirical means such as (2.34) has been
+established by BZ (1979, Theorems 2.3 and 3.2) and GOR (1979, Corollary 4.2).
+The former authors proved (2.34) for open convex sets C C V with the alternative
+SANOV PROPERTY AND CONDITIONAL LIMIT THEOREM 7719
+
+formula (2.42) for D. In the finite-dimensional case the same was proved also by
+Bartfai (1977, Theorem 1) who considered nonconvex open sets C, too. GOR (loc.
+cit.) used effectively the hypotheses of Theorem 4 and identified the limit in
+(2.34) as D = D(IIp(C) || Q) (with our notation, cf. (2.27)); they did not show that
+this result was equivalent to that of BZ (1979). In the special case
+
+V= R*, v= (fh, +++, fe), C= {(m, +++, a) 2, d= 1, +++, Ry
+the hypothesis of Theorem 4 reduces to (2.33), with Q = Px. Then (2.36) gives
+
+dP*
+dPx
+
+and Theorem 4 gives the “d-dimensional Chernoff theorem” of GOR (1979,
+Theorem 5.1). The main new contribution of Theorem 4 is the asymptotic quasi-
+independence assertion. It considerably extends previous limit theorems on the
+conditional distribution of X,, referred to in the Introduction, while retaining
+the exponential family representation of the limiting distribution P*. The bound
+(2.37) may also be of interest. Results of this kind have apparently not been .
+published previously.
+
+=cexp 2, vf; with JF > 0, i=1,-:-,k,
+
+3. Generalized J-projection. Given a pm Q € A write
+(8.1) Ag={P: PE A, D(P || Q) < ~}.
+LEMMA 3.1. Let P* be the generalized I-projection of Q on a convex set of pm’s
+ILC A with D(II || Q) < ©, and let P’ « Q, P’ # P* be arbitrary. Then
+dP* dP’
+dq dQ
+
+In particular, for any measurable function f on (S, @) such that J f dP = 0 for
+every P E II NM Ag, we have
+
+dP.
+
+(3.3) DI || Q) = —log { exp f dQ.
+If here the equality holds then
+dp* f -1
+(3.4) dQ ~ exp f aa| exp f.
+Proor. On account of (1.5), we have for every P € ILM Ag
+| . dP*
+D(I || Q) = D(P||Q) — D(P || P*) = log Gq dP = DPI)
+
+which proves the equality in (3.2). Further, as (1.5) uniquely determines P*, in
+case P’ ¥ P* there exists P € II M Ag such that D(P || Q) < D(P || P’) + D(II || Q).
+780 I. CSISZAR
+
+If here P’ « Q, it follows that
+
+dP IP!
+D(T|| Q) > D(P||Q) -— DP ||P’) = f log => dQ aP,
+
+completing the proof of (3.2). To prove (3.3), we may suppose that f exp f dQ <
+o, Then, applying (3.2) to the pm P’ with Q-density [f exp f dQ]"’ exp f, we
+obtain
+
+. dP’
+
+D(1||Q) = infpennag | log dQ =-log | expfdQ+infpenna, | f dP
+
+where the inequality is strict unless P’ = P*. As [ f dP = 0 for every PE TIN
+Ag by assumption, the proof is complete. 0
+
+LEMMA 3.2. For convex subsets II’ C II of A, D(TI||Q) = DAI’ | Q) <
+implies that the generalized I-projections of Q on II and II’ are the same.
+
+PrRooF. Obvious from the definition of generalized J-projection. 0
+We notice that the converse implication is false, cf. Example 3.2.
+
+LEMMA 3.3. Let y be a measurable mapping of (S, @) into another measurable
+space (V, ¥) and let II be the set of all pm’s P € A whose image under y belongs
+to a given convex set II of pm’s on (V, &). Then for arbitrary Q © A and its
+y-image Q we have
+
+(3.5) D(I || Q) = Ddi || @).
+
+If D(II || Q) < ©, the generalized I-projections P* of Q on Tr and P* of Q on Il are
+related by
+
+dP*
+
+dQ 7
+PROOF. It follows from (1. 4) that D(P || Q) > D(P || Q) for each P € A and its
+
+y-image P. Further, for any P € Ii with D(P || Q) < © the pm P € A determined
+by
+
+(3.6) (s) = ~ ((s)) [Q].
+
+dP
+— (s) = = (W(s
+0 Fi )= dO (W(s))
+has y-image P and it satisfies D(P || Q) = D(P || Q) by (1.3). This proves (3.5),
+and implies that if P, € U, D(P, | Q) — D(I||Q) then the pm’s P, € II
+determined by (dP,,/dQ)(s) = (dP,/dQ)(Y(s)) satisfy D(P, || Q) > D(I||@) =
+D(II || Q). Hence (3.6) follows by the definition of generalized J-projection. 0
+
+EXAMPLE 3.1. As in Csiszar (1962, page 154), consider pm’s P, Q, and
+SANOV PROPERTY AND CONDITIONAL LIMIT THEOREM 781
+
+Rnn (1<m<n) on N, the positive integers, with probability mass functions
+
+if i<m Pali) = jen) if i<n
+
+gi + _ JDi
+PCi) = 2", ant) =P if i=m, Cmri? if Gen.
+
+Further, let II be the set of pm’s on N with expectation = 3, possibly infinite.
+Then Rin € Wand D(Rmn || Qn) > 0 as n> ©. Hence, if generalized I-projections
+on II could be represented as J-projections on some. “closure” II* of II, we
+certainly had Q,, € II*, m=1, 2, ---. On the other hand, P has J-projection P*
+on II with p*(i) = ¥4(%)', and D(Q,, || P) ~ 0 as m — © rules out the equality of
+this P* to the J-projection of P on the hypothetical II*.
+
+EXAMPLE 3.2. Let S be the positive half-line, let Q be the pm with distribution
+function 1 — (s + 1)~%e™, i.e., with density function
+s+4 ot
+(s+1)* -
+Let II, be the set of all pm’s P on S with expectation f s dP = a. Consider the
+pm’s P,, € II, with density functions
+
+q(s) =
+
+_ Jenexp(t,s)q(s), Ossn
+Prls) = {3 e>n
+
+where c, and ¢, are determined from the conditions fp, ds = 1, f spn ds = a. Let
+az=%. Theni, =1,t,->~lasn—~», thus
+
+D(P, || Q) = log en + f tn$Pn ds = —log { exp(t,s)q ds + tra
+0
+
+< —log i e*q ds + at, — —log { e’qds +a=a — log *.
+0 0
+
+Hence D(II, || Q) < a — log *. Further, let P* be the element with parameter ¢ =
+1 of the exponential family of pm’s with densities of from c exp(ts)q(s), i.e., the
+pm with density
+
+2 st+4
+
+PX) = 3 Ga DE
+
+Then
+
+*
+J 06 aP = tog2 + { sdP=a- og 3 for every PE IIq.
+This proves by Lemma 3.1 that P* is the generalized J-projection of Q on II,
+and D(II, || Q) = a — log % (a = %). This example shows that for convex sets II’
+C II it may happen that @ has the same generalized J-projection on I] and II’
+and still D(II’ || Q) > D(II|| Q), and also that in (1.6) the strict inequality is
+possible.
+782 I, CSISZAR
+
+Let ¥ be a family of real-valued measurable functions on (S, @). We
+designate by II(#) and II’(.#) the set of all pm’s P € A for which the integrals
+J f dP exist and are nonnegative, respectively positive, for each fE 7:
+
+ll( F) = {P: | far = 0, fe +}
+(3.7)
+Il’(F) = {p: | far >o, fe a
+For a subset K € & of S, Il(¥ | K) and II’(# | K) will designate the subsets
+
+of Il(#) and Il’(#) consisting of the pm’s with P(K) = 1. Further, if
+& = {Kj2, is a sequence of sets such that
+
+(3.8) K;E€ @ K,;C Kin, each fE F isboundedon K, i= 1, 2,---
+we write
+
+(3.9) W(F|#)=Uh, 0(¥ |K), W(¥ | #) = Vai I'(F | Ki).
+
+If to a given Q € A there exists a Py € II’(#) or Po E II'(F | ~%), respectively,
+such that D(P, || Q) < © then
+
+@10 D(’(F)|Q = DMF) IQ,
+DU'(F | #)||Q = DUM F | %) 11).
+
+This follows from the facts that for any P, € Il(#) (II(F¥ | &)) we have P, =
+(1-—a@Pot+aP, EN’ (¥) (I'(F | #))if0< as 1 and, by convexity,
+
+lim sup. D(Pa || Q) S lim.i[(1 — @)D(Po || Q) + aD(Pi ll @)]
+
+- (3.11)
+
+= DPQ).
+
+The main tool to the proof of Theorems 2 and 3 is the following generalization
+of Csiszar (1975, Theorem 3.1).
+
+LEMMA 3.4. Suppose that ¥ is a convex cone, ie, fiE FA a 20, t= 1,
+
++++, n implies
+ME aif; EF
+
+a. If QE Ais apm with D(Il(F)||Q) = D < © whose I-projection P* on
+Il(F) exists then log(dP*/dQ) — D belongs to the L,(P*)-closure of #
+
+b. IfQE Ais apm with D(II(F |) ||Q) =D < © and P* is its generalized
+I-projection on Il( F | %) then there exists a sequence of functions f, € F such
+that
+dP*
+dQ
+
+Proor. a. Let 4 be the set of functions of formf+g, fE % g20, sg
+
+(3.12) log =D+limpsof,  [P*].
+
+SANOV PROPERTY AND CONDITIONAL LIMIT THEOREM 783
+
+bounded. We first show that if
+
+dP*
+
+dQ
+
+then ¥ belongs to the L,(P*)-closure of 4. In fact, else # could be separated
+from the convex cone by a hyperplane in L,(P*), ie.,
+
+(3.13) P*ENM(F), D(P*|Q) =D, %=lg——-D
+
+(3.14) i ¢h dP* < inte, f fh dP* =0
+
+would hold for some h € L..(P*). As ‘ contains the nonnegative bounded
+functions, here necessarily h = 0 P*-a.e., and h can be chosen to satisfy f h dP*
+= 1. Since ¥ C A, (3.14) implies that the pm Pp with dP)/dP* = h belongs to
+Il(.F). We also have Py € Ag since P* € Ag and h is bounded. Thus (3.2) gives
+
+dp*
+f Yh dP* = f (ig dQ -v) dP, = 0,
+
+a contradiction to (3.14).
+By what we have proved, there exist functions f, € ¥ and g, = 0, g, bounded,
+such that
+
+(3.15) fat&r—2? in L,(P*).
+By (3.18) we have f f, dP* = 0, f & dP* = 0. As (3.15) implies
+
+fnarx+ f marxs f ear
+
+it follows that || gn llz,e) = J 8 dP* — 0. This and (3.15) complete the proof of
+. parta.
+
+b. For n so large that D, = D(II(¥ |K,)||Q) < ™, let Pi denote the
+I-projection of Q on II(¥ | K,). This J-projection exists, since (3.8) implies that
+Il( ¥ | K,) is variation-closed. By part a, ?, = log(dPn/dQ) — D,, belongs to the
+L,(P*)-closure of Y in particular, there exists f, € #% such that
+(3.16) |[¥%,—fr2|<1/n except fora set A, with Px(An) < 1/n.
+Further, as by (3.9)
+
+PEM F|%), D(P*|Q) =D, > D = DMF | %)/Q),
+
+we have | P* — P*| — 0 by the definition of generalized J-projection. In partic-
+ular, P*(A,) — 0 implies P*(A,) — 0, hence from (3.16)
+
+(3.17) %,—fn—290 in P*-measure. -
+
+On the other hand, from | P* — P* | > 0 and D,, — D it follows that
+‘dP* .
+
+(3.18) Y, > % = log — D in P*-measure.
+
+(3.17) and (3.18) show that f, — ¢ in P*-measure. Since any sequence of
+784 I. CSISZAR
+
+functions converging in measure has an a.e. convergent subsequence, this proves
+(3.12).0
+
+PROOF OF THEOREM 2. It suffices to prove the theorem in the special case
+S = R*, fix, ++, Xp) = Xi; t=1, -++, k, when
+
+(3.19) n= {P: J dP 2o,i=1, af.
+
+In fact, in the general case consider the mapping y: S — R* defined by ¥(s) =
+(fils), ---, fa(s)). Then (2.20) is the set of those pm’s P € A whose y-image
+belongs to (3.19), and Lemma 3.3 gives that if Theorem 2 is true in the mentioned
+special case then it is true in general.
+
+We henceforth consider II as in (3.19) and a pm Q on R* such that P « Q for
+some P & II. Let IIp be the subset of II consisting of pm’s with bounded support,
+Le.,
+
+Mo = {P+ PUK) = 1 for some ns J x dP = 0,7=1, A}
+
+(3.20)
+
+where K,, = {x: |x;| Sn, i=1, ---, Rj.
+We will prove that
+(3.21) Do = D(H || Q) < ©
+
+and characterize the generalized J-projection P§ of Q on IIo. Then the proof will
+be completed by checking that D(TI || Q) = D(Io || Q), P* = Px.
+
+The set (3.20) of pm’s on R* is of form II(F | %), ef. (3.9), with the convex
+_ cone ¥ of linear functions f(x) = YE, 0ix;, 0 = (01, ---, 02) © R%, and with the
+sequence of “cubes” K,, defined in (3.20). As the a.e. limit of a sequence of
+functions in this ¥ is itself a.e. equal to a function in F% Lemma 3.4 gives that
+
+dP§
+dQ
+
+supposing that (3.21) holds.
+Let M designate the smallest linear subspace of R* with the property
+
+(3.23) P(M)=1 forevery PEM with P«Q@.
+
+Then, of course, Q(M) > 0. We are going to show that, for every n, the set of
+pm’s on R* with the properties
+
+(3.22) log (x) = Do + DE OFx; [P*] with v* © Ri‘,
+
+P<Q, 6 bounded,
+
+(3.24) dP
+MONK, C xg) > 9 CMO K, forsome m2>=n
+
+contains some P,, € II. Since then P,, € Ip and D(P,, || Q) < ©, this will prove
+(3.21). Further, as (1.5) then implies P, < P§}, n= 1, 2, ---, hence and from
+SANOV PROPERTY AND CONDITIONAL LIMIT THEOREM 785
+
+(3.23) it will also follow that
+dP§
+dQ
+
+Let us denote by E,, the set of expectation vectors of all pm’s with the properties
+(3.24). We have to prove that E, MR? #@. Let F C M be the closed convex hull
+of the support of the restriction of Q to M, and let Fy be the interior of F relative
+to its affine hull. Clearly, E, C F and E,, is dense in F. Since E, is convex, it
+follows that E,, D Fy. Hence it suffices to show that Fy N Ri # ©. Supposing the
+contrary, Fy and MN R* could be separated by a (dim M — 1)-dimensional linear
+subspace M, of M, thus apm P « Q with P(M) = 1 could not belong to IT unless
+its support were contained in M,. This contradicts to the minimality of M subject
+to (3.23). According to the previous paragraph, thereby we have established (3.21)
+and (3.25). .
+
+Now we show that D = D(II || Q) equals Dy = D(Ilo || Q) and the generalized
+I-projection P* of Q on II equals P3. By (3.23) and (3.25), every P € II with P
+<Q satisfies P< P%. Hence from (3.22) and (3.19) we obtain for every such P
+
+(3.25) is positive exactly on M [Q].
+
+dP§ b
+(8.26) i log dQ dP = Do + Shi BF f x; dP = Do.
+By Lemma 3.1, the infimum for all P € II with D(P || Q) < © of the first integral
+in (3.26) cannot exceed D, and would be strictly less than D were P§ not equal
+to P*. Since D < Dy by definition, this proves the asserted equalities. Thus we
+have proved, cf. (3.22), (3.25), that
+
+dP* = fexpiD + D4, 0¥x} if xEM
+dQ |o else
+
+(3.27) where 3* € RE.
+
+If there exists a P € II with P = Q then (3.23) implies Q(M) = 1, hence (3.27)
+holds with M = R*. In this case P* belongs to the exponential family {P,: 3 € 0}
+where
+
+dP» (x) = exp vey VX;
+dQ f exp(D2i ¥jx,) dQ’
+(3.28) .
+e= {o: f exp(Dh1 vixi) dQ < a
+
+We notice that (3.27) gives
+(3.29) D = -log f exp(X£, oF x) dQ if “Py = P*.
+
+Finally, applying (3.3) to f(x) ="D£, dix; with 0 © R4, we see that
+
+D = —log f exp(X£: 0:2) dQ foreach v0 € Ri,
+
+and this inequality is strict unless P) = P*. This and (3.29) prove that if P = @
+786 I. CSISZAR
+
+for some P € II then
+(3.30) D = maxyert | tog i exp(Di1 0;%i) aa].
+
+where the maximum is attained iff Py = P*.
+
+This completes the proof of Theorem 2 for the case S = R*, f,(x1, ---, Xe) = Xi,
+i= 1, ---, k. According to the first paragraph of the proof, thereby Theorem 2 is
+proved in general. The corollary follows from the theorem simply by applying it
+to the 2k functions f,, —/1, --+, fe, —fr.O
+
+PROOF OF THEOREM 3. We first prove that
+
+(3.31) D(o(int C)||Q) =D<o, P*=Q,
+
+where P* denotes the generalized J-projection of Q on IIp(int C). By assumption,
+some Up € int C belongs to the convex hull of the support of Q, i.e.,
+(3.32) Vo = YE, Ajj, Aj > 0, L = 1, a) k, dha a= 1,
+
+where Q(u; + N) > 0, i= 1, ---, k for each 0-neighborhood N in V. Pick a
+convex and closed 0-neighborhood N such that vp + N C int C, and let no be so
+large that the compact, convex sets A; = (vu; + N) N K,,,i = 1, ---, & have
+positive Q-measure, where the compact convex sets K, C Kz, C --- with Q(K,) >
+1 are those appearing in (2.27). Then for the pm
+
+Py = S21 aiR; with R-) = Q(- N Ad)/Q(A)
+we have for n = no
+(3.33) E(Po) € int C, D(Pol|Q)<™, Po(K,) = 1,
+
+where the first property follows from (2.25), (3.32) and the condition vo + N C
+int C. This already proves the first part of (3.31). Further, as the pm’s P,, defined
+by
+
+with sufficiently small a, > 0 also satisfy (3.33), we have
+Q,«P,«P*<«<Q forevery n= no.
+
+As Q(K,,) — 1, this proves the second part of (3.31).
+
+Since the assertions of Theorem 3 are invariant under translations, we hence-
+forth assume that 0 € int C and that in (3.33) we have E(P)) = 0. Then by the
+bipolar theorem (K6othe, 1960, page 248)
+
+(3.34) cl C = C® = fu: Hv) < 1 for all 9 € C%
+where
+(3.35) Co = {0:08 € V’, Wu) <= 1 for all vu E C}
+
+is the polar of C with respect to the duality (V, V’). By the Alaoglu-Bourbaki
+SANOV PROPERTY AND CONDITIONAL LIMIT THEOREM 787
+
+theorem (Kéthe, 1960, page 250), C° is compact in the weak topology of V’, i.e.,
+in the topology of pointwise convergence of funtionals.
+
+On account of (2.24), (2.25) and (3.34), Ho(cl C) and Ilo(int C) defined by
+(2.27) can be represented in the form (3.9):
+
+(3.36) Tip(el C) = (FY | &), Wolint C) = I’ (F | &)
+
+where .% is the sequence K, C Ky C --- appearing in (2.27), and # is the convex
+cone of functions f = a(1 — 0) (a = 0, 8 E C®) on V. In particular, by (3.10) and
+Lemma 3.2
+
+D(To(cl C) || Q) = D(Mo(int C) || Q) = D
+
+and the generalized I-projection of Q on Ip(cl C) and Io(int C) is the same P*.
+As we already know that P* = Q, Lemma 3.4 gives
+
+*
+
+dQ
+
+=D+lim,..a,(1—0,)  [Q]
+(a,20, 0,EC°, n=1,2,---).
+
+log
+
+Using the compactness of C°, hence it is easy to conclue that P* belongs to the
+exponential family (2.29). In fact, if a, — 0 then the right side of (3.37) equals
+the constant D; then necessarily D = 0 and P* = Q. Suppose therefore that a,,
+— dy) > 0 for some sequence {n,}, where a) = © is not yet excluded. Then the a.e.
+convergence of a,(1 — ¥,) to a finite limit implies the same for 0,,,; moreover, do
+= 0 is possible only if 3, > 1 [Q]. Let Jo € C° be a “cluster point” of the sequence
+vn, in the topology of pointwise convergence. Then lim 0,,(v) = Yo(v) for each v
+€ V such that the limit exists, i.e., for Q—a.e. v € V. The possibility of do(-) =
+1 [Q] and thus that of a) = © is ruled out by (8.33) with E(Po) = 0, cf. (2.24).
+Thus (3.37) yields
+
+*
+
+(3.38) log dP = D + ao(1 — 90) [Q] (do = 0, 3 € C°),
+
+dQ
+and P* belongs to the exponential family (2.29), with 0 = —aoUo.
+Now, writing 3* = —ao¥o, we have 3*(v) = —dp for all v € C by (3.35), thus
+(3.38) gives
+
+D = —log f exp[ao(1 — vo(-))] dQ
+
+(3.39)
+= —a — log i exp 3*(.) dQ = inf,ecd*(v) — log i exp 0*(.) dQ.
+
+On the other hand, applying (3.3) with the choice f = fy = 0(-) — infyecd(v),
+where 3? € V’ with inf,<cd(v) > —© is arbitrary, we get
+
+(3.40) D(H(C) || Q) = infecd(v) — log { exp 0(-) dQ, JVEV’,
+
+with strict inequality unless [f exp fs dQ]"‘exp fs = dP»/dQ, cf. (2.29), equals the
+788 I. CSISZAR
+
+Q-density of the generalized I-projection of Q on II(C). Comparing (3.39) and
+(3.40) with the obvious inequality D = D(Ho(int C) || Q) = DCI(C) || Q), it follows
+that in the latter the equality holds and, in particular, the generalized [-projec-
+tions of Q on II(C) and Io(int C) are the same. Moreover, we have also obtained
+that the necessary and sufficient condition of the equality in (3.40) is Ps = P*,
+This completes the proof of Theorem 3.
+
+4. Proof of the limit theorems. We send forward two simple lemmas.
+LEMMA 4.1. Jf IL C A is a relatively ro-open subset of II U Ay, 1.e., if every P &
+II has a to-neighborhood, cf. Definition 2.2, such that U)(P, B& e) N A; C I, then
+(4.1) lim inf,..(1/n)log Pr{P, € I} = —D(I || Px).
+Further, (4.1) holds for every Il C A such that D(TI || Px) = D(int,,1] || Px).
+Proor. It suffices to prove the first assertion, for the second one follows by
+
+applying it to the 7o-open set int,,II instead of II.
+We may suppose that D(II || Px) < 0%. Given any 6 > 0, pick P € IE with
+
+(4.2) D(P || Px) < D(II|| Px) + 6
+and find # = (B,, ---, B,) and e > 0 such that U,(P, & e) N Ay C I. Choose
+0<e’ <es0 small that ‘for nonnegative nr, -+-, r, with
+(4.3) |r; - P(B)| <e’, 77=0 if PB) =0, 1=1,---,Rk
+we have
+(4.4) rlog — P(B))log P(B)) i=1,---,k.
+PB) Px(B))
+
+This is possible since P(B;) > Px(B;) = 0 is ruled out by (4.2). For sufficiently
+large n there exist nonnegative integers 71, ---, 7, such that 2, 7; = n and r;
+= /,/n satisfy (4.3). Then
+
+PriP, € 1} = Pr{P, € UP, Ae) N Af
+Lil oes 2,
+
+= (n+ 1)-*exp!—n SE rilog ;
+~ Lo ae PP? PBI
+
+Here the last inequality follows because
+
+Zyl 2!
+- a1 * = (n + 1) *exp{—n DE rilog rij;
+
+this can be checked by Stirling’s approximation or for a simple elementary proof
+cf. Csiszar and Korner (1981, page 30). Since r,, ---, r, satisfy (4.3) and therefore
+SANOV PROPERTY AND CONDITIONAL LIMIT THEOREM 789
+
+(4.4), we have by (1.4)
+rj
+
+k
+i= i]
+dint M08 BB)
+
+Using this and (4.2), we obtain from (4.5)
+lim inf, .«(1/n)log Pr{P € Il} = —D(I1 || Px) — 26.
+
+Since 6 > 0 was arbitrary, the proof is complete. 0
+
+LEMMA 4.2. If Il C A is completely convex and II’ C Il, Pr{P,, € Il’} > 0 then
+Px)p,en € I.
+
+PROOF. Write
+(4.6) A’ = {s: P,(s, -) € 11’}.
+
+Then, cf. (2.7), Px,p,en’ = Px,’ is the one-dimensional marginal, not depend-
+ing on 1, of Pxn|p,en’ = Px’; the latter is defined as in (2.6) if A’ € @” and by
+Px: = Pxny, else, where A € @", A D A’ and P(A) is minimum subject to
+these conditions, i.e.,
+
+P&(A) = Pr{P, € I’}, cf. (2.4).
+Integrating the identity (2.2) with respect to Px), yields for every BE @
+
+A 1
+(4.7) f P,(-, B) dPx 4° = nh YE Px, a(B) = PxA,en(B).
+
+If A’ € @", the integral in (4.7) may be restricted to A’, and Px,A,en € II follows
+from (4.6) and II’ C II by the definition of complete convexity. Turning to the
+case A’ € @", we notice that since the outer Px»,4--measure of A’ is equal to 1,
+there exists a unique pm P’ on the o-algebra of subsets F= A’ NE (EE @”)
+of A’ such that P’(F) = Px»)4-(#). Thus the integral in (4.7) can be written as
+an integral on A’ with respect to P’, i.e.,
+
+(4.8) Px\p,en'(B) = J P,(.,B) dP’ (BE @).
+Hence Px,é,en’ € II follows as before. 0
+
+PROOF OF THEOREM 1. Let II’ be an arbitrary subset of the almost com-
+pletely convex set of pm’s II C A such that Pr{P,, € II’} > 0. By Definition 2.3,
+there exist completely convex subsets II, C II, C --+ of II such that, with the
+notation II, = II, N I’,
+
+(4.9) {s: P,(s, -) E11’) = Us, {s: P,(s, -) € If}.
+
+Fixing n, consider setsAC 4", A,EC BS", k=1,2,--- withA 2D {s: P,(s, +)
+€ II’}, A, D {s: P,(s, -) € Ig}, whose P%-measure is minimum subject to these
+790 I. CSISZAR
+
+conditions. On account of (4.9), these sets may be chosen such that
+
+(4.10) Ai Cc Ag C.--. S A= Upe-1 Ak,
+thus
+(4.11) P2(A,) > P3(A) = Pr{P, € II’} as k-> &.
+
+We assume, without any loss of generality, that P%(A,) > 0 for each k, and
+consider the pm’s
+
+(4.12) Px\p,en' = Pxna, Px p,en, = Px,
+defined as in (2.6).
+Applying the identity (2.11) with the choice P” = Pxrj4,, Qi =--- =Q.=
+
+Px, it follows that
+—log P&(Ax) = D(Pxa, || PX)
+= D(Pxa, | PXa,) + nD(Pxya, || Px)
+where Px,4,, the (unique) one-dimensional marginal of Px-),,, satisfies
+(4.14) Pxia, = Pxis,en, © Uk, C I
+
+by Lemma 4.2. Since (4.14) implies D(Px,4, || Px) = D(II || Px), (4.11) and (4.13)
+give
+
+(4.18)
+
+(1/n)log Pr{P, € 11’} = lim,.«(1/n)log P%(A,) = —D(I || Px).
+
+This, with the choice II’ = II, already proves (2.16). If D(II || Px) < » (4.14)
+implies also
+
+_ (4.15) D(Px,4, || Px) = D(Pxia, || P*) + DCI || Px)
+by (1.5). From (4.18) and (4.15) we obtain, using (2.11) once more (now with Q,
+(4.16) —log P&(Ax) = D(Pxa, || P*") + nDUI || Px).
+
+Here, on account of (4.10) and (2.6),
+D(P x4, || P*") > D(Px 4||P*") as Rk &.
+
+Thus, recalling (4.11) and (4.12), the assertion (2.17) follows from (4.16). Under
+hypothesis (2.19) we have by Lemma 4.1
+lim inf,.(1/n)log Pr{P, € 1’} = —D(I || Px).
+
+This and (2.17) complete the proof of Theorem 1.0
+LEMMA 4.3. For any family ¥ of real-valued measurable functions on (S, @ )
+
+and any sequence % = {K}}%, of subsets of S with the properties (3.8), the sets of
+pm’s Il(F | %) and I'(F | &) defined by (3.9) are almost completely convex.
+SANOV PROPERTY AND CONDITIONAL LIMIT THEOREM 791
+
+PrRooF. For uy as in Definition 3.3
+
+(4.17) | idan = f (J f dv(w, ») du
+
+for every measurable and bounded f/f; hence, if »(w, -) © IIl(¥ | K;) for each
+w € Q then also py € II( ¥ | K,). Since II(¥ |. 4) =UZ, W(# | K,) by definition,
+this proves that II(.¥ | %~) is almost completely convex. The almost complete
+convexity of II’(¥ | %) follows in the same way. 0
+
+REMARK. If the functions f € 7 are not bounded onS, II(.#) and II’(.7)
+defined by (8.7) are not completely convex, in general, since the left side of (4.17)
+need not exist even if f f dv(w, -) exists and is positive for every w € Q. On the
+other hand, if a sequence {K;}2, with the properties (3.8) exists such that U2, K;
+= § then Lemma 4.3 implies that II(#) and I’(#) are almost completely
+convex.
+
+PROOF OF THEOREM 4. By assumption, the y-image Q of Px is convex-tight,
+i.e., there exist compact and convex subsets K, C K2 C --- of V such that
+
+Q(Uiz1 Ki) = Px({s: ¥(s) © UE; Ki}) = 1.
+
+Without any loss of generality, we assume that ¥(s) € U2, K; for every s € S.
+Let II, II’ and II” denote the subsets of A consisting of those pm’s whose
+w-image belongs to IIo(cl C), Mo(C) and I({int C), respectively, cf. (2.27). Clearly,
+the event (2.35) is the same as P, € II’.
+
+It follows from Theorem 3 and Lemma 3.3 that both D(II || Px) and D(II’ || Px)
+
+are equal to
+D(Up(cl C) || Q) = D(Mo(int C) || Q) = D
+
+where D is given by (2.30), and the generalized [-projection P* of Px on II is
+given by (2.36). Hence Theorem 4 follows from Theorem 1 if we show that II is
+almost completely convex and II” is ro-open.
+
+By Lemma 4.3 and (3.36), Io(cl C) is almost completely convex. Hence, by the
+definition of II and Definition 2.3, II is almost completely convex, as well. The
+To-openness of II” follows from the weak *-continuity of the mapping P — E(P)
+in the space of pm’s on V satisfying P(K,,) = 1, cf. Choquet (1969, page 115). The
+latter means that to any Py with Po(K,) = 1 and 0-neighborhood N in V there
+exist continuous functions f,, ---, fe on K, and positive numbers e), ---, ¢, such
+that
+
+E(P) € E(P,) + N if P(K,) =1 .
+
+(4.18) and | Je aP— | f dP,
+
+Now, if Po € II” then its y-image P, satisfies E(Po) € int C and P)(K,) = 1 for
+
+<e, 1=1,---,R.
+
+792 I. CSISZAR
+
+some n. Then, with N such that E(P,) + N C int C, (4.18) implies the existence
+of a ro-neighborhood Uo(Po, Y «) C II”, cf. (2.15), since it is clearly possible to
+choose # and « such that the y-image P of each P € U)(Po, & «) satisfies the
+hypothesis in (4.18). Thus II” is, indeed, 7o-open, and the proof of Theorem 4 is
+complete. 0
+
+REFERENCES
+
+[1] Bahadur, R. R. and ZABELL, S. L. (1979). Large deviations of the sample mean in general vector
+spaces. Ann. Probab. 7 587-621.
+
+[2] BAHADUR, R. R., ZABELL, S. L. and Gupta, J. C. (1980). Large derivations, tests, and estimates,
+In: Asymptotic Theory of Statistical Tests and Estimation 33-64, Proc. Adv. Internat.
+Symp., Chapel Hill, NC, 1979. Academic, New York.
+
+[3] BARTFAI, P. (1974). On a conditional limit theorem. In: Progress in Statistics 1 85-91. Colloquia
+Math. Soc. J. Bolyai 9: European Meeting of Statisticians, Budapest, 1972. North Holland,
+Amsterdam.
+
+[4] BARTFAI, P. (1977). On the multivariate Chernoff theorem. Preprint of the Math. Inst. of the
+Hung. Acad. Sci. Budapest.
+
+[5] Borovkov, A. A. (1967). Boundary-value problems of random walks and large derivations in
+function spaces. Theor. Probab. Appl. 12 575-595.
+
+[6] CENCOV, N. N. (1972). Statistical Decision Rules and Optimal Inferences (in Russian). Nauka,
+Moscow. .
+
+[7] CHOQUET, G. (1969). Lectures on Analysis, Vol. 2. Benjamin, New York.
+
+[8] CsiszAr, I. (1962). Informationstheoretische Konvergenzbergriffe im Raum der
+Wahrscheinlichkeitsverteilungen. Publ. Math. Inst. Hung. Acad. Set. 7 137-158.
+
+[9] CstszAr, I. (1967). Information-type measures of difference of probability distributions and
+indirect observations. Studia Sci. Math. Hungar. 2 299-318.
+
+[10} CsiszAr, I. (1970). Some problems concerning measures on topological spaces and convolutions
+of measures on topological groups. In: Les Probabilités sur les Structures Algebriques, 75-
+96. Colloques Internationaux du CNRS, 186, CNRS, Paris.
+
+[11} CsiszAr, I. (1975). I-divergence geometry of probability distributions and minimization prob-
+lems. Ann. Probab. 3 146~158.
+
+[12} CsiszAr, I. and KORNER, J. (1981). Information Theory: Coding Theorems for Discrete Memory-
+less Systems. Academic, New York.
+
+[13] DonskeEr, M. D. and VARADHAN, S. R. S. (1975-1976). Asymptotic evaluation of certain Markov
+process expectations for large time I-III. Comm. Pure Appl. Math. 28 1-47, 279-301 and
+29 389-461.
+
+[14] GROENEBOOM, P., OOSTERHOFF, J. and RUYMGAART, F. H. (1979). Large deviation theorems
+for empirical probability measures. Ann. Probab. 7 553-586.
+
+{15} Jupp, P. E. and Marpia, K. V. (1983). A note on the maximum entropy principle. Scand. J.
+Statist. 10 45-47.
+
+[16] KOTHE, G. (1960). Topologische Lineare Raume. Springer, Berlin.
+
+[17] KULLBACK, S. and LEIBLER, R. A. (1951). On information and sufficiency. Ann. Math. Statist.
+22 79-86.
+
+[18] KULLBACK, S. (1959). Information Theory and Statistics. Wiley, New York.
+
+[19] HoabDLey, A. B. (1967). On the probability of large deviations of functions of several empirical
+cdf’s. Ann. Math. Statist. 38 360-381.
+
+[20] HoEFFDING, W. (1965). Asymptotically optimal tests for multinomial distributions. Ann. Math.
+Statist. 36 369-401.
+
+[21] LANFoRD, O. E. (1973). Entropy and equilibrium states in classical statistical mechanics. In:
+Statistical Mechanics and Mathematical Problems. Lecture Notes in Physics 20 1-113.
+Springer, Berlin.
+
+[22] PINSKER, M.S. (1964). Information and Information Stability of Random Variables and Processes.
+Holden-Day, San Francisco.
+SANOV PROPERTY AND CONDITIONAL LIMIT THEOREM 793
+
+[23] Sanov, I. N. (1957). On the probability of large deviations of random variables. Mat. Sb. 42
+11-44 (in Russian). English translation in Sel. Transl. Math. Statist. Probab. (1961) 1
+213-244.
+
+[24] STONE, M. (1974). Large deviations of empirical probability measures. Ann. Statist. 2 362-366.
+
+[25] Topsog, F. (1979). Information theoretical optimization techniques. Kybernetika 15 8-27.
+
+[26] VAN CAMPENHOUT, J. M. and Cover, T. M. (1981). Maximum entropy and conditional
+probability. JEEE Trans. Inform. Theory. IT-27 483-489. ,
+
+[27} Vasicex, O. A. (1980). A conditional law of large numbers. Ann. Probab. 8 142-147.
+
+[28] ZABELL, S. L. (1980). Rates of convergence for conditional expectations. Ann. Probab. 8 928-
+941.
+
+MATHEMATICAL INSTITUTE OF THE
+
+HUNGARIAN ACADEMY OF SCIENCES
+BUDAPEST, REALTANODA-U. 13-15
+1053 HUNGARY
+

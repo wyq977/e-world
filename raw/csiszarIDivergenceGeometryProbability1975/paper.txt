@@ -1,0 +1,697 @@
+The Annals of Probability
+1975, Vol. 3, No. 1, 146-158
+
+I-DIVERGENCE GEOMETRY OF PROBABILITY DISTRIBUTIONS
+AND MINIMIZATION PROBLEMS
+
+By I. CsiszAr
+Mathematical Institute of the Hungarian Academy of Sciences
+
+Some geometric properties of PD’s are established, Kullback’s I-diver-
+gence playing the role of squared Euclidean distance. The minimum dis-
+crimination information problem is viewed as that of projecting a PD onto
+a convex set of PD’s and useful existence theorems for and characteriza-
+tions of the minimizing PD are arrived at. A natural generalization of
+known iterative algorithms converging to the minimizing PD in special
+situations is given; even for those special cases, our convergence proof is
+more generally valid than those previously published. As corollaries of
+independent interest, generalizations of known results on the existence of
+PD’s or nonnegative matrices ofa certain form are obtained. The Lagrange
+multiplier technique is not used.
+
+1. Introduction. Capital P, Q, R will denote PD’s (probability distributions)
+on a measurable space (X, 2”) which will not be mentioned in the sequel. If
+P< Q(orQ « R, etc.) the corresponding density (Radon-Nikodym derivative)
+will be denoted by p,(x) (or ¢,(x), etc.); the argument x will be omitted if this
+does not cause ambiguity.
+
+The /-divergence or Kullback-Leibler information number /(P||Q)—also
+called information for discrimination, information gain or entropy of P relative
+to Q—is defined as
+
+(1.1) KP ||Q) = § log py dP = § pg log py dQ if P<Q
+If R is any PD with P < R, Q < R (1.1) may be equivalently written as
+(1.2) KP||Q) = § pylog 22 aR.
+
+R
+
+Here and in the sequel we understand
+(1.3) log 0 = —oo, log = = +00, 0. (+00) =0.
+
+I(P || Q) is always nonnegative and vanishes only for P = Q.
+
+We shall not be concerned with the information theoretic significance of I-
+divergence; rather, we look at it simply as a quantity measuring how much P
+differs from Q. Given a PD R, the set of PD’s
+
+(1.4) S(R, p) = {P: KP||R) < p} (0 <p <0)
+
+Received February 20, 1973; revised December 27, 1973.
+AMS 1970 subject classifications. Primary 60-00-E05, 62-B10; Secondary 49-F 22, 15-A48.
+
+Key words and phrases. Geometry of probability distributions, minimum discrimination in- ,
+
+formation, distributions with given marginals, contingency tables, iterative proportional fitting
+procedure.
+
+146
+
+Institute of Mathematical Statistics is collaborating with JSTOR to digitize, preserve, and extend access to
+
+The Annals of Probability. a RE
+
+www jstor.org
+I-DIVERGENCE GEOMETRY OF DISTRIBUTIONS 147
+
+will be called an I-sphere with center R and radius p. If & is a convex set of
+PD’s intersecting S(R, co), a PD Qe & satisfying
+
+(1.5) KQ||R) = min,. . (P| R)
+
+will be called the I-projection of Ron &. If such Q exists, the convexity of &
+guarantees its uniqueness since /(P || R) is strictly convex in P, as one immediately
+sees from (1.1).
+
+As demonstrated by Kullback [14], minimization problems of type (1.5) play
+a basic role in the information-theoretic approach to statistics (see also [7], [9],
+[13], [17] etc.); they frequently occur also elsewhere, e.g., in the theory of large
+deviations, cf. Sanov [20], and in statistical physics, as maximization of entropy,
+cf. Jaynes [10]. In physics, the measure R is often not a PD; R(X) may even
+be infinite. This does not make much difference in most respects, except that in
+the latter case the integral (1.1) may be negative, even — oo (which corresponds
+to infinite entropy), or undefined.
+
+Let us emphasize that J-divergence is not a metric and in general the J-spheres
+S(R, e) do not even define a topology (as a base of the neighborhood system of
+R). This negative statement remains true if J(P || Q) is replaced by the symmetric
+divergence I(P||Q) + (Q || P)---used already by Jeffreys [11]—or by any reason-
+able function of 1(P||Q) and 1(Q|| P), see Csiszar [3]. In spite of these discour-
+aging facts, it will be shown that certain analogies exist between properties of
+PD’s and Euclidean geometry, where I-divergence plays the role of squared
+Euclidean distance. In particular, a “geometric” approach will be helpful in
+the study of J-projections, i.e., of the extremum problem (1.5).
+
+In Section 2, using an analogue of the parallelogram identity, we first prove
+that the J/-projection always exists if the convex set & is closed in the topology
+of the variation distance
+
+(1.6) IP — QO] = § |Pe — Iai AR
+
+(where R is any PD with P < R, Q < R). Next we prove a lemma having the
+geometric interpretation that the PD’s with § log g, dP = oe form the “tangent
+hyperplane” of the /-sphere S(R, ) at Q, where p = (Q|| R) < co; for such P’s
+
+(1.7) KP||R) = KP||Q) + KQ||R),
+
+which is an analogue of Pythagoras’ theorem.
+
+The resulting characterization of J-projection will be used in Section 3 to es-
+tablish a necessary and a sufficient condition on the form of J-projection on a set
+& defined by linear constraints of a general type. In case of a finite number of
+integral constraints or marginal constraints, we obtain a necessary and sufficient
+characterization of J-projection. These results complete the known sufficient
+conditions following from the minimum discrimination information theorem of
+Kullback [14] and Kullback and Khairat [18]. As corollaries of independent
+interest, we arrive at generalizations of known results on existence of bivariate
+148 I. CSISZAR
+
+distributions or nonnegative matrices of a certain product form and with given
+marginals, see Hobby and Pyke [8] and, e.g., Sinkhorn [21].
+
+Another “geometric” result of Section 2 (asserting the transitivity of J-projec-
+tion) is used in Section 3 to prove the convergence of an iterative algorithm for
+finding the /-projection, which generalizes the familiar iterative proportional
+fitting procedure (IPFP) for adjusting a contingency table to given marginal
+distributions. Though the proof works only for finite X, it is of more general
+validity than the known convergence proofs for the IPFP, even if attention is
+restricted to that case.
+
+Our last result is an existence proof for a case not covered in Section 2.
+
+After having submitted the first version of this paper, the author became aware
+of related work of Cencov [2]; he has developped a geometry of J/-divergence,
+looking at it with the reversed order of P and Q. Apparently, there is no in-
+tersection between his results and ours, except for Theorem 3.3, see the discussion
+there.
+
+2. General “geometric” results on /-projections.
+
+THEOREM 2.1. If the convex set & of PD’s is variation-closed then each R with
+S(R, 00) N & # @ has an I-projection on &.
+
+Proor. The idea is similar to the proof of existence of projection in Hilbert
+space. Pick a sequence P, € & with I(P,, || R) < oo (in particular, P, < R) such
+that
+
+(2.1) KP, ||R) inky. g MP || R)
+
+Since
+
+(2.2) KPq||R) + HPaI|R)
+57 (Pat Pa Py + Py Py +P,
+= 21(S Ae |R) + (Pal 85") + 1(P, | 22")
+
+(this analogue of the parallelogram identity is readily checked by writing all
+terms as integrals with respect to R, using (1.2)), where (P,, + P,)/2e 2 by
+convexity, the last two terms of (2.2) must converge to 0 as m,n —> co.
+
+Using the inequality
+
+(2.3) |P — O| S (2K P||Q))
+proved independently in [4], [12] and [15], one concludes that
+IP, — P,| < Py, — fat Fe + p, — tat *e
+
+converges to 0 as m,n -—>+ oo and, consequently, P, converges in variation to
+some PD Q: ,
+
+(2.4) IP, — Q| = § [Pan — Yul AR +0 (n — 00)
+(the convergence in variation of the PD’s P, < R to Q clearly implies Q < R).
+I-DIVERGENCE GEOMETRY OF DISTRIBUTIONS 149
+
+In view of (1.1), from (2.4) follows by Fatou’s lemma!
+(2.5) 1(Q || R) < lim inf,,,.. 1(P,, || R).
+
+As & is variation-closed, we have Qe &. On account of (2.1) and (2.5), it
+follows that Q is the J/-projection of R on &.
+
+REMARK. The only role of the hypothesis that & is variation-closed has been
+to ensure that the PD Q with the properties (2.4) and (2.5) belongs to &. If
+this is ensured in some other way, the assertion still holds, see Theorem 3.3.
+
+For any three PD’s with Q < R and either of (P||Q) < co and KP||R) < 00
+(thus P < R, too), (1.1) and (1.2)—using (1.3) if necessary—give rise to the
+identity
+
+(2.6) KP||R) — HP||Q) = § (Pel08 pa ~ Pe log 2) dR
+R
+= § p,logq,dR = § logq,aP.
+Our further results will be based on
+LemMa 2.1. If I(P||Q) and (Q || R) are finite, the “segment joining P and Q”
+does not intersect the I-sphere S(R, ) with radius po = I(Q|| R), i.e., (P,||R) =
+1(Q || R) for each PD
+
+(2.7) P,=aP+(1—a)Q, O<aK<l,
+iff
+
+(2.8) § log g, dP = KQ||R).
+
+If
+
+(2.9) Q =aP +(1—a)P’, 0<a<l,
+
+then I(Q || R) < 00 implies I(P||R) < co, and the segment joining P and P' does not
+intersect S(R, p) (with 9 = I(Q|| R)) iff
+(2.10) { log g,dP = 1(Q||R).
+
+Proor. The hypotheses imply P< R, Q<R. Let p, = app + (1 — age
+denote the R-density of P, defined by (2.7) (in particular, p) = qx, Pp, = Pr)-
+
+Since p, is linear in @ and ¢ log t is convex, p, log p, is a convex function of a
+and its difference quotient
+
+i
+(2.11) fa = = (Pa log Pa — x 108 4x)
+converges non-increasingly (as a | 0) to
+
+a
+(2.12) lim, jo fa = aq Pe log pal = (Pe — Gn)(log Gz + 1).
+
+1 (2,5) is a particular case of a more general lower semicontinuity property of I-divergence, see
+Pinsker [19], Section 2.4, Assertion 5.
+150 I. CSISZAR
+
+fi. = PxlO8 pp — Fz 10g 7p is R-integrable by assumption, thus (1.1), (2.11) and
+(2.12) give, by the monotone convergence theorem,
+
+(2:13) SPR) = limes § fe AR = § (Px — Ga)(10B 2 + 1) aR
+
+= J logg,dP — (Q||R).
+This proves that if (2.8) does not hold then
+T(P,||R) < (Po || R) = MQ || R) for some a>0.
+
+The converse is trivial: (2.8) implies 1(P||R) = 1(Q||R) by (2.6), and P, also
+satisfies (2.8) if P does.
+
+(2.9) with 1(Q||R) < co implies PK Q<R, pz an'g,, thus by (1.1)
+I(P || R) < 00, too, and similarly [(P’||Q) < oo. The last assertion of Lemma
+2.1 follows from the first one, because (2.8) for both P and P’ with strict in-
+equality in either case would contradict to (2.9).
+
+Lemma 2.1 means, intuitively, that the “tangent hyperplane” of S(R, 0) at Q
+consists of the PD’s satisfying (2.10); according to (2.6), this is equivalent to
+(1.7), thus we have an analogue of Pythagoras’ theorem. This geometric in-
+terpretation is limited, however, to P< S(R, co) U S(Q, oo); if both 7(P|| R) and
+J(Q||R) are infinite, the integral | log g, dP may or may not be defined and if
+it is, its value may be arbitrary (the case of P € S(Q, o0)\S(R, 00), i.e., IP || Q) <
+I(P || R) = oo is not contained in Lemma 2.1, either; but then (2.6) applies and
+shows that (2.8) is trivially valid).
+
+Lemma 2.1 and the identity (2.6) immediately give rise to
+
+THEOREM 2.2. 4 PD Qe 2 N S(R, 00) is the I-projection of R on the convex
+set & of PD’s iff every Pe & N S(R, 00) satisfies (2.8) or, equivalently, iff
+
+(2.14) K(P|\|R) = WP||Q) + (Q||R) forevery Pe®.
+
+If the I-projection Q is an algebraic inner point of & then & C S(R, o) and (2.8)
+and (2.14) hold with the equality.
+
+A Qe @ is called an algebraic inner point of & if for every Pe & there exist
+a and P’e & satisfying (2.9).
+
+REMARK. (2.14) shows, in particular, that if the J-projection Q of R on & exists
+then P < Q for every Pe & 0 S(R, co). Thus, if some Pe & with I(P ||Q)<00
+is measure-theoretically equivalent to ‘R, then so is Q, as well.
+
+Intuition suggests that if 2 is a linear set of PD’s—i.e., if with P and P’ also
+aP + (1 — a)P’ belongs to & for every real a for which it isa PD—then &
+always lies in the tangent hyperplane of S(R, ) at Q, the J-projection of R on
+& (with o = (Q||R)), ie., that the identity (1.7) is valid for every Pe &. It
+will be shown in the next section that this conjecture is not generally true but
+in the most important cases—in particular, for finite X—it is. This additivity
+relation and its consequence, the following transitivity property of J-projection,
+I-DIVERGENCE GEOMETRY OF DISTRIBUTIONS . 151
+
+proved for various particular cases by Kullback [14], [17], Ku and Kullback
+[13], etc., is very essential for informational statistical analysis.
+
+THEOREM 2.3. Let & and &, C & be convex sets of PD’s, let R have I-projection
+Q on & and I-projection Q, on &,, and suppose that the identity (1.7) holds for every
+Pe&. Then Q, is the I-projection of Q on &,.
+
+PRoor. Applying (2.14) with Q, in the role of Q and (1.7) with Q, in the role
+of P, we have for Pe &,
+
+(2.15) MP||R) = KP ||Q,) + (Qi ||R) = HP || Q,) + HQ, ||Q) + KQ||R)-
+Comparing (2.15) with (1.7), (Q || R) cancels out, yielding
+(2.16) KP ||Q) = KP || Q,) + HQ, || Q) for every Pe &,.
+
+Theorem 2.3 completes the geometric results on J-divergence needed for our
+purposes. Of course, intuition should be used with caution. For example, if R
+has /-projection Q on a convex set & of PD’s, it does not follow that the ele-
+ments of the “joining segment” of Q and R have the same /-projection on &.
+
+3. Minimizing /-divergence under linear constraints. A general formulation
+of a useful result known as minimum discrimination information theorem
+(Kullback [14], Kullback and Khairat [18]) is the following: For any (not nec-
+essarily convex) set & of PD’s, if there exists a Q ¢ & with R-density c exp g(x)
+where J gdP, = | gdP, < o forany P,, P,e &, then (Q||R) = min,,, KP || R);
+more exactly, in this case
+
+(3.1) KP ||R) = KP ||Q) + KQ||R) for all Pe&.
+
+Observe that this immediately follows from the identity (2.6).
+
+Two particular cases deserve main attention:
+
+(A) & is defined by constraints of form { f;dP = a,,i = 1,.--,k. Then, if
+aQe@ with
+
+(3.2) qrlX) = € EXP Diz 6 f(x)
+exists, it is the /-projection of R on & and (3.1) holds.
+
+(B) (X, 27) = (X%, #4) x (%,, €%) and & consists of the PD’s P with given
+marginals P, on (X,, 2%,),i= 1,2. Then, ifa Qe & with
+
+(3.3) qu(%s %2) = a(%)O%2), — logae LP), log be L,(P,)
+
+exists, it is the /-projection of R on & and, again, (3.1) holds.
+
+Our next aim is to complete the mentioned results for cases (A) and (B). We
+shall not explicitly consider the equally important case of PD’s on a multiple
+product space with given marginals of certain (arbitrary) types, since the ex-
+tension of our results from case (B) to that case is trivial. For example, if
+(X, 27) = Xi (X, 2) and 2& consists of the PD’s with given marginals (of
+types shown by the indices) P,,3, P,,,and P,,, say, then the extension of Corollary
+152 I. CSISZAR
+
+3.1 below is that a Q ¢ & is the J-projection of R on @ iff
+Yn(X1> Xao Xgy X4) = A(X, Xqy Xg)O(X 1, Xqy X4}C(Xg, Xy)
+
+with log a € L,(Pi3), log be L,(Py,), loge € L,(P,,) except, possibly, for a set N
+where q, vanishes and P(N) = 0 whenever Pe &, I(P || R) < 00; then (3.1) holds,
+too.
+
+The following theorem concerns sets of PD’s defined by linear constraints of a
+general type. Since no existence assertions will be made, we need not formally
+exclude even & = @, i.e., contradicting constraints.
+
+THEOREM 3.1. Let {f,},-, be an arbitrary set of real-valued 4~measurable func-
+tions on X and {a,},., be real constants. Let & be the set of all those PD’s P on
+(X, #7) for which the integrals \ f, dP exist and equal a, (y ¢T). Then, ifaPDR
+has I-projection Q on &, its R-density is of form
+
+(3.4) 9,(X) = ¢ expg(x) if x¢éN
+
+where N has P(N) = 0 for every Pe & 0 S(R, 00) and g belongs to the closed sub-
+space of L,(Q) spanned by the f,’s. On the other hand, ifa Qe & has R-density of
+form (3.4) where g belongs to the linear space spanned by the f,’s (without closure)
+then Q is the I-projection of R on & and (3.1) holds.
+
+Coro.iary 3.1. Jn case (A) or (B) above, a Qe & is the I-projection of R on
+& iff q, is of form (3.2) or (3.3), respectively, except possibly for a set N where q,
+vanishes and P(N) = 0 foi every Pe & 0 S(R, 00); in both cases, the identity (3.1)
+holds. If, in particular, some Pe & with I(P||R) < co is measure-theoretically
+equivalent to R then (3.2) or (3. 3) is necessary and sufficient for Q to be the I-
+projection of Ron &.
+
+Before giving the proof, let us show by an example that for the /-projection
+on a set & defined by linear constraints the identity (3.1) is not generally true
+(contrary to geometric intuition) and neither the necessary nor the sufficient
+condition of Theorem 3.1 is both necessary and sufficient, in general.
+
+EXAMPLE. Let X be the unit interval, 2° the Borel o-algebra and Q the
+Lebesgue measure. Let & be the set of PD’s satisfying | f,dP = 4, = 1,2,---,
+where
+
+. 1
+x)= 14+ — if O<xc —
+f.AX) +3 <x*<z
+. 1
+3.5 =1 if —< 4
+(3.5) in = * <4
+—~_ 1 it t<x<cl
+~~ Ant ‘= 2
+=0 if £ax<1.
+I-DIVERGENCE GEOMETRY OF DISTRIBUTIONS 153
+
+Let the PD R be determined by the condition ¢,(x) = c exp g(x) where
+(3.6) g(x) = —lim,.... f,(x) = —1 if O<x<4
+
+=0 if d<x<l.
+Then Q € &, and on account of Fatou’s lemma
+
+(3.7) § log g, dP = loge — § lim,,.... f, dP
+> loge — = KQ||R)
+
+for all Pe &. This means, by Theorem 2.2, that Q is the T-projection of R on
+&. It is easy to find Pe & for which in (3.7) the strict inequality holds, e.g.
+the PD with Q-density
+
+1 .
+Pot) = = if O<x<t
+
+(3.8) = 0 if }<x<e
+=2 if @<x<1.
+
+Thus (3.1) is false in this case; in particular, Q cannot meet the sufficient condi-
+tion of Theorem 3.1. If g(x) is given the opposite sign and R is defined ac-
+cordingly, we obtain { logg,dP < K(Q|| R) for the P defined by (3.8); this means
+that Q cannot be the J-projection of R on &, showing that the necessary condi-
+tion of Theorem 3.1 is not sufficient.
+
+PROOF OF THEOREM 3.1. If Q is the J-projection of R on & then for N =
+{x: 9,(x) = 0} necessarily P(N) = 0 for each Pe & 1 S(R, 00); see the remark
+to Theorem 2.2.
+
+Let 2’ c & be the set of PD’s Pe & with p(x) <2. If Pe &, there is a
+Pre &' with po’(x) = 2 — p(x), and with it Q = (P + P’)/2; thus Q is an alge-
+braic inner point of &’. Applying Theorem 2.2 to & instead of & we obtain
+§ log g,dP = I(Q||R), i-e.,
+
+(3.9) { log gz (Pe — 1)}dQ = 0 for all Pes’.
+But for any 4@+measurable function # with |h(x)| < 1 such that
+
+(3.10) {4dQ=0 and \f,2dQ =0 foreach yer,
+there exists a Pe S” with pp = 1 + A. Thus (3.9) gives
+(3.11) { log q,4dQ =0
+
+for all such / and therefore also for all h ¢ L,,(Q) satisfying (3.10).
+
+Hence follows that logg, belongs to the (closed) subspace of L,(Q) spanned
+by 1 and the f,’s. In fact, were this not the case, in view of the Hahn-Banach
+theorem ([22] page 106) there would exist a bounded linear functional on L,(Q)
+vanishing on the mentioned subspace but not at log g,; since the dual of L,(Q)
+is L,(Q) ({22] page 115), this is a contradiction. This proves the first assertion
+of Theorem 3.1.
+154 I. CSISZAR
+
+The second part is much easier. Suppose that g, is of the stated form. Since
+g is a finite linear combination of f,’s, | g dP is constant for Pe & and
+
+(3.12) { log ¢, dP = loge + | gdP = const = I(Q ||P)
+
+for Pe&, P< Q. But for Pe& both KP||R) < co (by hypothesis) and
+I(P||Q) < co (by definition) imply P < Q; thus (3.1) follows from (2.6) and
+(3.12).
+
+To prove the corollary, observe that case (B) does fit into the considered
+model, taking for f,’s the P,-integrable functions f(x,), i = 1, 2 (looking at them
+as functions of (x,, x,)). Theorem 3.1 clearly gives a necessary and sufficient
+condition on q, and guarantees the validity of (3.1) for the /-projection Q if the
+linear space spanned by the /,’s is closed in L,(P) for each Pe &. But the latter
+hypothesis is fulfilled in both cases (A) and (B), completing the proof.
+
+Theorem 3.1 and its corollary leaves the question of existence of /-projection
+open. If 2’ is variation-closed, as in the case of bounded /,’s or in case (B), Theo-
+rem 2.1 guarantees the existence provided that & + @ and I(P||R) < co for
+some Pe &. For case (A) with not bounded /,’s, see Theorem 3.3 below.
+
+As a consequence of Corollary 3.1 and Theorem 2.1 we obtain
+
+CoroLiary 3.2. To given PD’s P, on (X,, 2%), i= 1,2 and R on (X, x Xy
+4, x #4), there exists a PD Q on the product space with marginals P, and P, and
+with R-density of form a(x,)b(x,), log a¢ L,(P,), log 6 ¢ L,(P,) iff there exists any P
+measure-theoretically equivalent to R which has the prescribed marginals and satisfies
+
+K(P||R) < 0.
+
+Considering R < P, x P, with density f(x,, x,) and using P = P, x P, in Corol-
+lary 3.2, we obtain for the existence of a PD with marginals P, and P, and having
+P, x P,-density of form a(x,)b(x,)f(x,, x,) the sufficient condition log f¢ L,(P, x P,).
+It is interesting to compare this with a result of Hobby and Pyke [8]; their the-
+orem, when specialized to our problem, gives the sufficient condition 0<a<
+f(% %2) SK.
+
+Specializing Corollary 3.2 to finite X, and X,, we obtain
+
+Corotiary 3.3. Let A be an m x n matrix with nonnegative elements. For the
+existence of positive diagonal matrices D, and D, such that the row and column sums
+of D,AD, be given positive numbers, it is necessary and sufficient that some B with
+nonnegative elements and with the given row and column sums have the same zero
+entries as A (if any).
+
+Proor. Without any loss of generality, the elements of A and both the given
+row and column sums may be assumed to add up to one. Then A defines a PD
+R on X, x X, and D, AD, defines a PD having R-density of form (3.3). Since
+for PD’s on finite sets P < R implies [(P||R) < oo, the assertion follows from
+Corollary 3.2. ,
+
+Corollary 3.3 solves a matrix-theoretic problem, partial solutions of which
+have been given by many authors. Sinkhorn [21] has shown that the positivity
+I-DIVERGENCE GEOMETRY OF DISTRIBUTIONS 155
+
+of A isa sufficient condition by proving the convergence of the iterative propor-
+tional fitting procedure (IPFP) dating back to Deming and Stephan [5]. This
+IPFP and its extensions are widely used in the analysis of contingency tables.
+Of the extensive literature of the subject we mention here only Ireland and
+Kullback [9], Ku and Kullback [13] and Fienberg [6]; further references may
+be found there.’
+
+The IPFP for adjusting a PD R given on a finite product space to k marginal
+constraints, i.e., to given marginal distributions of arbitrary types, consists in
+the successive calculation of PD’s Q, on the product space starting from Q, = R:
+to obtain Q,, the probabilities of Q,_, are multiplied by the ratios of the cor-
+responding marginal probabilities of the nth constraint and of Q,_,. Here the
+constraints are looked at cyclically repeated. As shown by Ireland and Kullback
+[9], Q, is just the /-projection of Q,_,on &,, where @;, is the set of PD’s satisfy-
+ing the ith constraint, and Q = lim,_,,, Q, (if it exists) is the /-projection of R
+on & = ()'_, 2, the set of PD’s satisfying all k marginal constraints. Kullback
+[16] generalized the method for the non-discrete case, too.
+
+Motivated by the approach of Ireland and Kullback [9], we are going to for-
+mulate the procedure in a general setup and prove convergence to the required
+I-projection, provided that X isa finite set. Unlike previous convergence proofs
+for the IPFP (see Fienberg [6] and the references there), we shall not need any
+assumption on the positivity of the probabilities of R. It should be noted that
+the convergence proof in [9] is incomplete since formula (4.38) does not imply
+(4.39); in [16] there is a similar flaw.
+
+THEOREM 3.2. Let &, ---, &, be arbitrary linear sets of PD’s on a finite set
+X with = (yi. FS; # @, let R be any PD to which there exists Pe € with P < R,
+and define Q,, Q,, --+ recursively by letting Q,, be the I-projection of Q,_, on &,,
+n= 1,2,.--+- where Q, = R and
+
+(3.13) $=, if n=mk+i, 1<ic<k.
+
+_Then Q,, converges ( pointwise or, equivalently, in variation) to the I-projection Q of
+Ron &.
+
+Proor. Any linear set & of PD’s ona finite set X of size r, say, can be looked
+at as the intersection of a linear subset of E” with the simplex representing the
+PD’s on X. Hence @ is closed and can be defined by a finite number of linear
+constraints. In view of Theorem 2.1 and Corollary 3.1, the /-projection of R
+on such an & always exists if 1(P || R) < oo—now equivalent to P < R—for some
+Pe@, and then (3.1) holds, as well.
+
+Under the hypotheses of Theorem 3.2, it follows that the /-projections Q,,
+Q,, ++» and Q exist and J(P{!Q,_,) = (P||Q,) + (Q,||Q,-1) for any Pe,
+
+2 The iterative algorithms suggested in [17] apparently do not belong to the class of generali-
+zations of the IPFP considered below. But also for the problems considered there, it is straight-
+forward to give convergent iterations within the framework of Theorem 3.2,
+156 I. CSISZAR
+
+n=1,2,.--. Setting P = Q, in particular, we obtain by induction
+
+(3.14) KQ||R) = KQ|O.) + Ler MQ:||Qin), 1 =1,2,---.
+
+Since X is finite, each subsequence of Q, contains a convergent subsequence; it
+suffices to show that Q., — Q' implies Q’ = Q. First verify Q'’e &. We have
+from (3.14)
+
+Lita HQ, ||O,4) S KQ||R) < 00
+
+thus 1(Q,||Q,-1) > 0, implying |0, — Q,_,| > 0 by (2.3). Thus Qiia ttt
+Q,,,4, also converge to Q’ as 1 co. Since these PD’s belong to (a cyclic per-
+mutation of) the closed sets 2, .-., &, respectively, see (3.13), we conclude
+eNak=&.
+
+Repeated application of Theorem 2.3 shows that Q is the I-projection on &
+of O,,-+-,Q,, ---, as well, thus
+
+(3.15) U(P||Q,) = (P||Q) + (Q|| Q,) for all Pes,
+
+n=1,2,---. Applying this to P = Q’, we obtain K(Q'||Q) = 0, ie., Q’ = Q,
+because for finite XQ, — Q’ implies 1(Q’ || Q,,) +9. The proof is complete.
+
+Finally, let us return to the problem of existence of I-projection in case (A),
+if the f,’s are not necessarily bounded. One possible approach is to prove in a
+direct way that there exists a Qe & with R-density (3.2). This is not easy but
+has been done under fairly general conditions by Cencov [2], Theorem 23.1.
+Here we show how the method of Theorem 2.1 applies to this case. Our hy-
+pothesis will be that
+
+(3.16) Ty = (ts +--+ t,): exp DEA t, f(x) is R-integrable}
+
+is an open set in £*; this clearly implies that f,(x) exp 14, t, f,(x) is R-integrable
+for every (4,---,t,)€T,, i= 1,---,k. (Im the first version of this paper,
+T, = E* was assumed. The strengthening has been inspired by Cencov’s result,
+loc. cit., which implies the existence of I-projection even under a slightly weaker
+hypothesis. )
+
+THEOREM 3.3. Let (a, +--+, a,) be the set of PD’s satisfying \ f,dP = a,, i =
+1, -.+,k and let A, be the set of points (a,, ---, a,)€ E* for which E(a,, -++, a,)
+contains some P with (P||R) < co. Then, supposing that T, is open, the I-projection
+of Ron Sa, +++, a,) exists for each inner point (a,, ---, a,) of An, and its R-
+density is of form (3.2).
+
+REMARKS. It can be shown that the interior of A, coincides with that of the
+convex hull of the support of R’, the image of R in E* at the mapping x >
+(f(x), «++» f:(x)). Thus, assuming that the /,’s are linearly independent mod R,
+the interior of A, is nonvoid. If (a,, ---,a,)¢ A, is on the boundary of A,,
+typically there still exists the /-projection of R on (a,, ---, a,) butiits R-density
+vanishes on a set N of R(N) > 0. These problems will not be entered here.
+
+We shall need the following lemma of some independent interest,
+J-DIVERGENCE GEOMETRY OF DISTRIBUTIONS 157
+
+Lemma 3.1. For any (measurable) function f(x) for which eS is Q-integrable
+if |t| is sufficiently small, I(P,,||Q)— 0 implies | fdP, > \ fdQ.
+
+Proor. Let p, denote the Q-density of P,; it surely exists if I(P, ||Q) < oo.
+In view of (2.3), 1(P,,||Q) — 0 implies |P, — Q| = § |p, — 1| dQ — 0, hence on
+A, = {x: |f(x)| S K} we have §,, fdP,, > §,, fdQ. Thus it suffices to show that
+to any ¢ > O there exists K such that
+
+(3.17) lim sup, 0 Sava, |f| @P. = lim sup, i. Sava, [flPndQ <e-
+
+But ((P,,||Q) = § p, log p, dQ — 0 implies lim,._... |, p, log p, @ = 0 for every
+Ae (apply Fatou’s lemma to both 4 and X\A). Choosing t > 0 and K to
+satisfy § ya, e'f'dQ < et, (3.17) follows from the inequality ab < aloga + e’
+(see [1] Section 15), substituting a = p,(x), b = t| f(x)|.
+
+Proor oF THEOREM 3.3. On account of the convexity of I(P||.R)in P, A, is
+a convex set and
+
+(3.18) F(a, 1G) = INE pe x (a,,---,ag) I(P || Q)
+
+is a finite valued convex function on Az. Hence, if (a,, ---, @,) isan inner point
+of Ap, there exists (4,, ---, ¢,) such that
+
+(3.19) F(b,, +++, 5,) S Flay +++, a) + SE, tb, — a)
+for all (d,, ---, 5,)€ Ap.
+First we show that (t,, :+-, t,)€ Tp, see (3.16).
+Let P, ¢ F(a, ---, 4), (P, || R) > F(a, +--+, @,); then P, converges in variation
+to some Q by the proof of Theorem 2.1. Let f;(x) = f,(x) if t, f(x) S K, and
+f(x) = 0 else, where K, f oo, and let Q, be the PD with R-density
+
+(3.20) Guw(X) = Cy EXP Dita 6 fi") -
+
+From (3.20) and (1.1) follows
+
+(3.21)  (Q,||R) = Slog gun dP, + Hin t(§ f?d2, — Jf" 4P,) -
+
+Since (0,,---,0)¢ 7, and T, is open, the f,’s are R-integrable and thus Q,-
+integrable, too; it follows that for large n | f,”dQ,, is arbitrarily close to
+{ f,dQ, = 5,”, say (note, that the sequence c, is non-increasing). Choosing the
+K,’s properly, also | f,” dP,, will be close to { f,dP,, = a, if n is large, and then
+the identities (3.21) and (2.6) compared with the inequality (3.19) (with 5,” in
+the role of 6,) give rise to I(P,, ||Q,) > 0.
+
+On account of (2.3), it follows that the Q,’s with R-density (3.20) also con-
+verge in variation to Q, hence the latter has R-density (3.2); in particular,
+(ts mt ty) € TR.
+
+Setting 5, = { f, dQ, similarly to (3.21) we have
+(3.22) HQ||R) = § log gg dP, + Lis t(b, — 4),
+whence—again by (2.6) and (3.19)—we obtain that WP, ||Q) — 0.° Using the
+
+assumption that T,, isan open set, Lemma 3.1 gives § f,dQ = lim,,... § f,dP, = @is
+i=1,.--,k. The proof is complete.
+158 I. CsISZAR
+
+REMARK. It follows that F(a,, ---, a,)—see (3.18)—is differentiable at every
+inner point of A, and grad F(a,, ---, @,) = (th, «++, t,) is just the parameter vector
+in (3.2) for the J-projection Q of R on &(a,, ---, a).
+
+REFERENCES
+
+(1] BECKENBACH, E. F. and BELLMAN, R. (1961). Inequalities. Springer-Verlag, Berlin.
+[2] Cencov, N.N. (1972). Statistical Decision Rules and Optimal Decisions (in Russian). Nauka,
+Moskow.
+[3] CstszAr, I. (1964). Uber topologische und metrische Eigenschaften der relativen Informa-
+tion der Ordnung a. Trans. Third Prague Conference of Information Theory etc. Pub-
+lishing House of the Czehoslovak Academy of Sciences, Prague, 63-73.
+[4] CsiszAr, I. (1967). Information-type measures of difference of probability distributions and
+indirect observations. Studia Sci. Math. Hungar. 2 299-318.
+[5] Demine, W. E. and STEPHAN, F, F, (1940). On a least square adjustment of a sampled fre-
+quency table when the expected marginal totals are known. Ann. Math, Statist. 11
+427-444.
+[6] FrenBERG, S. (1970). An iterative procedure for estimation in contingency tables. Ann.
+Math, Statist. 41 907-917.
+[7] Goon, I. J. (1963). Maximum entropy for hypothesis formulation, especially for multidi-
+mensional contingency tables. Ann. Math. Statist. 34 911-934.
+[8] Hossy, C. and Pyxg, R. (1965). Doubly stochastic operators obtained from positive oper-
+ators. Pacific J. Math. 15 153-157.
+[9] IRELAND, C. T. and KuLvsackx, S, (1968). Contingency tables with given marginals.
+Biometrika 55 179-188.
+[10] JAYNEs, E. T. (1957). Information theory and statistical mechanics. Phys. Rev. 106 620-630.
+[11] Jurrreys, H. (1948). Theory of Probability. 2nd ed. Clarendon Press, Oxford.
+[12] KEmperman, J. H. B. (1967). On the optimum rate of transmitting information. Proba-
+bility and Information Theory. Lecture Notes in Mathematics, Springer-Verlag, 126-
+169.
+[13] Ku, H. H. and Ku.vpack, S. (1968). Interaction in multidimensional contingency tables:
+an information theoretic approach. J. Res. Nat. Bur. Standards 72 159-199.
+[14] KuLLBack, S. (1959). Information Theory and Statistics. Wiley, New York.
+[15] Kuvvsackx, S. (1967). A lower bound for discrimination information in terms of variation.
+IEEE Trans. Information Theory. 1T-13 126-127.
+[16] KuLipack, S. (1968). Probability densities with given marginals. Ann. Math. Statist. 39
+1236-1243.
+[17] Kutvsack, S. (1971). Marginal homogeneity of multidimensional contingency tables.
+Ann. Math. Statist. 42. 594-606.
+[18] KuLLBaAck, S. and KHarrat, M. A. (1966). A note on minimum discrimination informa-
+tion. Ann. Math. Statist. 37 279-280.
+[19] Pinsker, M. 8. (1964). Information and Information Stability of Random Variables and
+Processes. Holden-Day, San Francisco.
+[20] SANov, I. N. (1957). On the probability of large deviations of random variables (in Russian).
+Mat. Sbornik 42 11-44. ‘
+[21] SrnkHorN, R. (1967). Diagonal equivalence to matrices with prescribed row and column
+sums. Amer. Math. Monthly 74 402-405.
+[22] Yosrpa, K. (1965). Functional Analysis. Springer-Verlag, Berlin.
+
+MATHEMATICAL INSTITUTE
+HUNGARIAN ACADEMY OF SCIENCES
+1053 BUDAPEST, REALTANODA-U. 13-15
+HUNGARY
+

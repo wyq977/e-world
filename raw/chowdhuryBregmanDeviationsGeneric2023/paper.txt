@@ -1,0 +1,2922 @@
+Proceedings of Machine Learning Research vol 195:1–56, 2023 36th Annual Conference on Learning Theory
+Bregman Deviations of Generic Exponential Families
+Sayak Ray Chowdhury T-SAYAKR@MICROSOFT.COM Microsoft Research, India
+Patrick Saux PATRICK.SAUX@INRIA.FR Univ. Lille, Inria, CNRS, UMR 9189 - CRIStAL, F-59000, Lille, France
+Odalric-Ambrym Maillard ODALRIC.MAILLARD@INRIA.FR Univ. Lille, Inria, CNRS, UMR 9189 - CRIStAL, F-59000, Lille, France
+Aditya Gopalan ADITYA@IISC.AC.IN Indian Institute of Science, Bangalore, India
+Editors: Gergely Neu and Lorenzo Rosasco
+Abstract
+We revisit the method of mixtures, or Laplace method, to study the concentration phenomenon in generic (possibly multidimensional) exponential families. Using duality properties of the Bregman divergence to construct nonnegative martingales, we establish a generic inequality controlling the deviation between the parameter of the family and a finite sample estimate. This bound is expressed in the local geometry induced by the Bregman pseudo-metric. Moreover, it is time-uniform and involves a quantity extending the classical information gain to exponential families, which we call the Bregman information gain. For the practitioner, we instantiate this novel bound to several classical families, e.g., Gaussian (including with unknown variance or multivariate), Bernoulli, Exponential, Weibull, Pareto, Poisson and Chi-square, yielding explicit forms of the confidence sets and the Bregman information gain. We further compare the resulting confidence bounds to state-of-the-art time-uniform alternatives and show this novel method yields competitive results. Finally, we apply our result to the design of generalized likelihood ratio tests for change detection, capturing new settings such as variance change in Gaussian families. Keywords: Exponential families, Bregman divergence, concentration bounds.
+1. Introduction
+Concentration inequalities are a powerful set of methods in statistical theory with key applications in machine learning. Often in machine learning applications, a learner estimates some quantity solely based on samples from an unknown distribution and would like to know the magnitude of the estimation error. The typical example is that of the mean μ of some real-valued random variable X, estimated by its empirical mean built from a sample of n independent and identically distributed (i.i.d.) observations. We refer the interested reader to the monographs ofBoucheron et al.(2013); Raginsky and Sason(2018);Zeitouni and Dembo(1998) for standard results and related topics. In many situations, one may want to further estimate some vector parameter, as in, e.g., linear bandits (Abbasi-Yadkori et al.,2011) and logistic bandits (Faury et al.,2020). A closely related problem is to estimate the parameter of a distribution coming from a parametric family (Chowdhury et al.,2021). Exponential families are a flexible way to formalize such distributions over a set X by describing densities of the form pθ(x) ∝ h(x) exp(⟨θ, F (x)⟩), for some given feature function F : X 7→ Rd and base function h (Section2). Most classical distributions fall into this category, e.g.,
+© 2023 S.R. Chowdhury, P. Saux, O.-A. Maillard & A. Gopalan.
+arXiv:2201.07306v4 [cs.LG] 13 Jul 2023
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+Gaussian (possibly multivariate, with or without known variance), Exponential, Gamma, Chi-square, Weibull, Pareto, Poisson, Bernoulli and Multinomial distributions (Amari,2016).
+A number of problems in current-day machine learning involve sequential, active data-sampling strategies (Cesa-Bianchi and Lugosi,2006). This includes multi-armed bandits, reinforcement learning, active learning and federated learning, to mention a few application domains. Since the decision to sample a novel observation results from the interaction between the learning algorithm and the environment, and depends on past observations, one needs to design concentration inequalities working with a random number of observations typically at a random stopping time (Durrett,2019). A natural way to handle this difficulty is to derive time-uniform concentration inequalities, producing sequences of confidence sets valid uniformly over all number of observations with high probability, as opposed to being valid for a single number of observation.
+A popular method in bandit theory is to combine supermartingale techniques with union bound arguments over a geometric time grid, a technique known as time peeling (or stitching) – seeBubeck (2010);Cappé et al.(2013) for early uses in bandits, as well asGarivier(2013), or more recently Maillard(2019b); see alsoHoward et al.(2020,2021) for a recent, complementary survey of the history of this field, andKuchibhotla and Zheng(2021) for an extension of Bentkus’ concentration bounds (Bentkus,2004) for bounded distributions using time peeling. The method of mixtures, initiated byRobbins and Pitman(1949);Robbins(1970) and popularized inPeña et al.(2008) is a powerful alternative to peeling for developing time-uniform confidence sets. It has been applied to sub-Gaussian families inAbbasi-Yadkori et al.(2011), leading to a variety of applications (Chowdhury and Gopalan,2017;Durand et al.,2018;Kirschner and Krause,2018). InKaufmann and Koolen(2021), a generalization to handle one-dimensional exponential families is considered, with applications to Gaussian (known variance) and Gamma distributions (known shape). A fairly different ‘capital process’ construction technique has been recently developed for bounded distributions in Shafer and Vovk(2019), and popularized further inWaudby-Smith and Ramdas(2023).
+In this work, we revisit the method of mixtures for parametric exponential families of arbitrary dimension, expressing deviations in the natural (Bregman) divergence of the family. The setting of exponential families is convenient for integration in a Bayesian setup, thanks to the notion of conjugate prior that enables us to reduce computation of tedious integrals to simple parameter updates. Here, we exploit this property to obtain explicit mixtures of martingales. Exponential families are largely used in modern machine learning, yet concentration tools available to the practitioner are comparatively scarce beyond the Gaussian case. To help close this gap, we obtain both sharp and computationally tractable confidence sets, especially in the small sample regime.
+Outline and contributions. In Section2, we first recall some background material on exponential families and their associated Bregman divergences. Section3.1states our main result (Theorem3): a time-uniform concentration inequality for exponential families. Specifically, we control the Bregman deviations associated with the log-partition function of the family using a novel information-theoretic quantity, the Bregman information gain. On a high level, this quantifies the information gain about the parameter of the family after observing i.i.d. samples from it, which is measured in terms of the natural Bregman divergence of the family. To illustrate the utility of this general result, we detail in Section3.2how Bregman information gain and deviation inequalities specialize for well-known exponential families, resulting in fully explicit confidence sets (see Table1). To the best of our knowledge, we are the first to derive an explicit time-uniform deviation inequality for two-parameter Gaussian (i.e. both mean and variance are unknown), Chi-square, Weibull, Pareto,
+2
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+and Poisson distributions. Our result is an adaptation of the method of mixtures technique, and a proof sketch is outlined in Section3.3. In Section4, we numerically evaluate the high-probability confidence sets built from our method for classical families, and achieve state-of-the-art time-uniform bounds. Finally, in Section5, we generalize Theorem3to obtain a doubly time-uniform concentration inequality for generic exponential families, which could be of independent interest (Theorem5). We present an application of both results in controlling the false alarm probability of the Generalized Likelihood Ratio (GLR) test, used for change detection in the exponential family model.
+2. Exponential Families and Bregman Divergence
+In this section, we introduce exponential families and the link between their Kullback-Leibler (KL) and Bregman divergences, as well as useful properties of these divergences.
+Exponential families. We consider an exponential family of distributions {pθ}θ∈Θ over some set X , parameterized in some open set Θ ⊂ Rd, whose density or mass function has the form pθ(x) = h(x) exp(⟨θ, F (x)⟩−L(θ)). Here, F : X → Rd is the feature function, h : X → R+ is the base function, and L represents the normalization term (a.k.a. log-partition function, convex w.r.t. θ) given by L(θ) = log
+R
+X h(x) exp(⟨θ, F (x)⟩)dx. We denote by ΘD = θ ∈ Rd : L(θ) < ∞ the
+domain of L and by ΘI = θ ∈ ΘD : det ∇2L(θ) > 0 the set on which its Hessian is invertible. We assume that Θ ⊂ ΘI , which is tantamount to assuming that the family is minimal, and ensures we only consider non-degenerate distributions (∇L is one-to-one on its domain). We use notations Pθ, Eθ to explicitly refer to the probability and expectation associated to the distribution pθ.
+Bregman divergence of an exponential family. A fundamental property of exponential families is the following form for the KL divergence between two distributions with parameters θ, θ′ ∈ ΘD:
+KL(pθ, pθ′) = ⟨θ − θ′, Eθ(F (X))⟩ − L(θ) + L(θ′) .
+Here, Eθ(F (X)) is called the vector of expectation parameters (a.k.a. dual parameters), and is equal to ∇L(θ). Hence, it holds that KL(pθ, pθ′) = BL(θ′, θ), where BL is known as the Bregman divergence (Bregman,1967) with potential function L, defined by
+BL(θ′, θ) d=ef L(θ′) − L(θ) − ⟨θ′ − θ, ∇L(θ)⟩ .
+Tail and duality properties. The canonical Bregman divergence of an exponential family enjoys two fundamental properties. The first one links it to the log-moment generating function of the random variable F (X), which makes Bregman divergences well suited to control the tail behavior of random variables appearing in concentration inequalities. The second one highlights duality properties that enables convenient algebraic manipulations. To this end, for any λ ∈ Rd, we define the function BL,θ(λ) = BL(θ + λ, θ) = L(θ + λ) − L(θ) − ⟨λ, ∇L(θ)⟩. Also, we introduce the Legendre-Fenchel dual operator ⋆ associating a function G to its dual G⋆(x) = supλ⟨λ, x⟩ − G(λ).
+Lemma 1 (Properties of Bregman divergences) For all θ ∈ ΘD and λ ∈ Rd such that θ+λ ∈ ΘD,
+log Eθ [exp (⟨λ, F (X) − Eθ[F (X)]⟩)] = BL,θ(λ) .
+Furthermore, if ∇L is one-to-one, the following Bregman duality relations hold for any θ, θ′ ∈ ΘD :
+BL(θ′, θ) = B⋆
+L,θ′(∇L(θ) − ∇L(θ′)) = BL⋆(∇L(θ), ∇L(θ′)).
+3
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+More generally, the following holds for any α ∈ [0, 1] :
+B⋆
+L,θ′ α(∇L(θ) − ∇L(θ′)) = BL θ′, θα , where θα = ∇L−1 α∇L(θ) + (1 − α)∇L(θ′) .
+The second half of this technical lemma is essentially a change of variable formula to move back and forth between two representations of an exponential family: in natural parameters (measured by the Bregman divergence between θ′ and θ) and in expectation parametrization (measured by the dual Bregman divergence between ∇L(θ) = Eθ[F (X)] and ∇L(θ′) = Eθ′[F (X)] ). For more background on this, which forms the basis of the information geometry field, we refer toAmari(2016, Sections 2.1 and 2.7). This result is at the root of the martingale construction behind Theorem3in the next section. For completeness, the proof of this classical lemma is given in AppendixB.
+3. Time-uniform Bregman Concentration
+In this section, we are interested in controlling the deviation between a parameter θ ∈ Θ and its estimate θn built from n observations from distribution pθ. We naturally measure this deviation in terms of the canonical Bregman divergence of the family. Further, we would like to control this deviation not only for a single sample number n, but simultaneously for all n ∈ N. Namely, we would like to upper bound quantities of the form P [∃n ∈ N : BL(θ, θn) ⩾ . . . ]. Such a control is very useful in contexts when observations are gathered sequentially (either actively or otherwise), and especially when the number of observations n is unknown beforehand. Classical examples include multi-armed bandits (Auer et al.,2002), or model-based reinforcement learning (Jaksch et al.,2010).
+3.1. A generic deviation inequality
+In this section, we consider the problem of controlling the Bregman-deviations of a parameter estimate of θ. To this end, we adapt the method of mixtures (a.k.a. Laplace method) from (Peña et al.,2008). The method is originally designed in the context of Gaussian distributions, where it yields simple closed-form expressions, even though it can be applied more generally. We state below a generic extension of the method to parametric exponential families and introduce a quantity that measures a form of information gain about θ after observing n samples, but expressed in terms of the natural Bregman divergence. For this reason, we call this quantity the Bregman information gain.
+Definition 2 (Bregman information gain) Let X1, . . . , Xn ∼ pθ be i.i.d. samples generated from pθ, where θ ∈ Θ ⊂ ΘI , and let θ0 ∈ Θ be a reference parameter. For any constant c > 0, the Bregman information gain about θ after observing X1, . . . , Xn from θ0 is defined as
+γn,c(θ0) = log
+
+
+R
+Θ exp −cBL(θ′, θ0) dθ′
+R
+Θexp −(n+c)BL(θ′, θn,c(θ0)) dθ′
+
+,
+where θn,c(θ0) = (∇L)−1
+Pn
+t=1 F (Xt)+c∇L(θ0)
+n+c denotes a parameter estimate of θ.1
+1. θn,c(θ0) is actually a maximum a posteriori estimate under a conjugate prior on θ, depending on the reference point θ0.
+4
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+Dependence on θ0 and example. The acute reader can note that the considered parameter estimate θn,c(θ0) and Bregman information gain γn,c(θ0) involve a reference parameter θ0. It makes sense to have such a local reference point since the Bregman divergence is typically linked to metrics with local (non-constant) curvature. Hence, the (information) geometry seen from the perspective of different points θ0 may be different, unlike in the Gaussian case. Specifically, for a Gaussian N (μ, σ2) with known variance σ2, the Bregman information gain w.r.t. a reference point μ0 reads
+γN
+n,c(μ0) = 1
+2 log 2πσ2
+c −1
+2 log 2πσ2
+n+c = 1
+2 log n+c
+c.
+It is independent of the reference parameter μ0, which is a consequence of the fact that the Bregman divergence in this case is proportional to the squared Euclidean distance; in other words, Gaussian distributions with known variance exhibit invariant geometry. However, for other exponential families, the geometries are inherently different, and hence Bregman information gain depend explicitly on local reference points (see Section3.2for details). For reference, the classical Gaussian information gain, i.e., the mutual information between a prior μ ∼ N (μ0, σ2) and the average of an i.i.d. sample X1, . . . , Xn drawn from N (μ, cσ2) is 1
+2 log n+c
+c , which matches the Bregman information gain. We now present the main result of this paper – a time uniform confidence bound for θ connecting the Bregman divergence geometry of the exponential family with its Bregman information gain.
+Theorem 3 (Main result: Laplace method for generic exponential families) Fix any δ ∈ (0, 1] and n ∈ N. Under the hypothesis of Definition2, consider the confidence set
+Θn,c(δ) = θ0 ∈ Θ : (n + c)BL (θ0, θn,c(θ0)) ⩽ log 1
+δ + γn,c(θ0) .
+The following time-uniform control holds whenever the Bregman information gain is well-defined:
+Pθ [∃n ∈ N : θ ∈/ Θn,c(δ)] ⩽ δ .
+Note the implicit definition of the confidence set Θn,c(δ). where the parameter of interest θ0 appears in both arguments of the Bregman divergence, as well as in the Bregman information gain γn,c(θ0). Because of this, computing this confidence set from the equation in Theorem3may seen non-trivial at first glance. However, we show in Section3.2how these sets simplify for many classical families, revealing how the computation can be made efficiently. Moreover, we observe that these confidence sets are actually tighter than those of prior work, and as such are especially well suited to be used when n is small (for large n, most methods produce essentially equivalent sets). Note that our concentration bound holds uniformly over all n. Equivalently (Howard et al.,2020, Lemma 3), it also holds that Pθ [θ ∈/ Θτ,c(δ)] ⩽ δ for any random stopping time τ .
+Comparison with prior work. Similar to this work,Kaufmann and Koolen(2021) extend the method of mixtures technique to derive time-uniform concentration bounds for exponential families. However, their proof technique is fairly different, relying instead on discrete mixtures and stitching, which only works for single parameter families, and involves case-specific calculations that are difficult to generalize beyond Gaussian (with known variance) and Gamma (with known shape). In contrast, our method applies to generic exponential families, including distributions with more than one parameter such as Gaussian when both mean and variance are unknown. Moreover, their discrete prior construction leads to technical constants seemingly unrelated to the exponential family model.
+5
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+Our prior is naturally induced by the exponential family, leveraging key properties of Bregman divergences, yields more intrinsic quantities (Bregman information gain) and perhaps a more elegant and shorter proof. Hence, our results are not only more general, but also of fundamental interest.
+Asymptotic behavior. The asymptotic width of Θn,c(δ) depends on the behavior of γn,c(θ0) as n → +∞. Standard arguments show that θn,c(θ0) → θ and the Taylor expansion of θ′ 7→ BL(θ′, θ) around θ′ = θ is BL(θ′, θ) = 1
+2 (θ′ − θ)⊤∇2L(θ)(θ′ − θ) + o ∥θ′ − θ∥2 (note that ∇2L(θ) is positive definite for θ ∈ ΘI ). Laplace’s method for integrals (chapter 20 inLattimore and Szepesvári (2019),Shun and McCullagh(1995)) then gives the following estimate:
+Z
+Θ
+exp −(n+c)BL(θ′, θn,c(θ0)) dθ′ ≈
+Z
+Rd
+exp − n+c
+2 (θ − θ′)⊤∇2L(θ)(θ − θ′) dθ′ ,
+which is a simple Gaussian integral, and thus γn,c(θ0) = d
+2 log(1+n/c) + O(1). This asymptotic scaling is worse than the log log n rate of the law of iterated logarithm. However, this is a standard feature of the method of mixtures compared to stitching (Maillard,2019b;Howard et al.,2020), which is compensated by its improved nonasymptotic sharpness, as evidenced in Section4.
+Dependence on the parameter c. The parameter c is usually chosen to be 1 in the Gaussian case. However, it is useful to study its influence over the bounds. We provide in Section4a detailed study of this parameter, revealing first that the confidence bounds are not significantly altered over a large range of values, and then explaining how to pick an optimized value of c, e.g., for a specific horizon n = n0. Note that choosing a variable c changing with n is not allowed by the theory, as this would break the martingale property used in our proof (see Section3.3). Moreover, it would be incompatible with the time-uniform lower bound |Θn,c (δ)| = Ω(
+p
+log log n/n) provided by the law of iterated logarithm. Indeed, the Bregman information gain with cn ∝ n would be asymptotically γn,cn (θ0) = d
+2 log(1+O(1)) + O(1) = O(1), leading to |Θn,c (δ)| = O(1/√n) when n → +∞.
+Application to bandits. One can apply the technique developed in proving Theorem3to build confidence sets in standard K-armed bandit problems. In such problems, we are given K distributions {pθi }K
+i=1 from a generic exponential family (e.g., Gaussian) with parameters {θi}K
+i=1, from which we can draw samples, interpreted as rewards we want to maximize. This setting is standard to analyze regret-optimal bandit algorithms (Cappé et al.,2013;Korda et al.,2013;Baudry et al.,2020). Specifically, at each time n, we choose an arm in ∈ [K] based on past observations, and draw a sample Xn from its distribution pθin . The samples are then used to update knowledge about the
+parameters {θi}K
+i=1 by building confidence sets for each of them. Let Ni(n) denote the number of times that we have chosen action i up to time n. Also, let θi,Ni(n),c(θ0) and γi,Ni(n),c(θ0) denote the parameter estimate and Bregman information gain for arm i, respectively (similar to Definition2 with n replaced by Ni(n) ). We construct the confidence set for arm i at time n as
+Θi,n,c(δ) = θ0 ∈ Θ : (Ni(n) + c)BL θ0,θi,Ni(n),c(θ0) ⩽ log 1
+δ + γi,Ni(n),c(θ0) .
+Then, similar to Theorem3, it holds that the true parameter θi lies in the set Θi,n,c(δ) for all time-steps n ∈ N with probability at least 1−δ. Finally, we take a union bound over i ∈ [K] to obtain confidence sets for all arms (with widths inflated by an additive log K factor). Such construction is standard and is used inAbbasi-Yadkori et al.(2011) for (sub)-Gaussian families. Possible applications include UCB algorithms for regret minimization and designing GLR stopping rules for tracking algorithms
+6
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+in pure exploration (Garivier and Kaufmann,2016) in the context of generic exponential families (see also Section5for another application of GLR tests using the parameter estimate θn,c(θ0)).
+Remark 4 We provide in AppendixA.2a complementary result (Corollary8) using a Legendre function L0 instead of the regularizing parameter c, which eschews the use of a local reference θ0. However, we argue that such a global regularization is actually less convenient to use except for univariate and multivariate Gaussian distributions that anyway exhibit invariant geometry. Furthermore, in Theorem7, we prove a more general result that handles the case of a sequence (Xt)t∈N of random variables that are not independent, and having possibly different distributions from each other, which we apply to build confidence sets in linear bandits (see AppendixF).
+3.2. Specification to classical families
+In this section, we specify the result of Theorem3to some classical exponential families. Interestingly, the literature on time-uniform concentration bounds outside of random variables that are bounded, gamma with fixed shape or Gaussian with known variance is significantly scarce, even though many more distributions are commonly used in machine learning models. We derive below explicit confidence sets for a range of distributions, which we believe will be of interest for the wider machine learning and statistics community. For instance, consider active learning in bandit problems (Carpentier et al.,2011), where one targets upper confidence bounds on the variance (rather than the mean); in the Gaussian case, this can be achieved with Chi-square concentration.Hao et al.(2019) studies the classical UCB algorithm for bandits under a weaker assumption that sub-Gaussianity, involving the Weibull concentration. In differential privacy, concentration of Laplace distribution (symmetrized exponential) is often used to study the utility of differentially private mechanisms (Dwork et al.,2014). Finally, heavy-tailed distributions such as Pareto have recently been of interest to study risk-averse or corruption in bandit problems (Holland and Haress,2021;Basu et al.,2022). We now make explicit the Bregman information gains and confidence sets for some illustrative families (more examples and full derivations are provided in AppendixC).
+Gaussian (unknown mean and variance). Let X ∼ N (μ, σ2). Given samples X1, . . . , Xn, we
+define Sn = Pn
+t=1 Xt and μbn = Sn/n. Further, for μ, σ ∈ R × R+, we define the normalized sum
+of squares Zn(μ, σ) = 1
+σ2
+Pn
+t=1(Xt − μ)2. Then, for reference parameters μ0 ∈ R, σ0 ∈ R+, c > 0, the Bregman information gain reads
+γN
+n,c(μ0, σ0) = 3
+2 log n
+n+c Zn(μbn, σ0) + c
+n+c Zn(μ0, σ0) + c +fn,c ,
+where fn,c = n+c+1
+2 log(n+c)− c
+2 +2 log c− n
+2 (1+log 2)+log Γ c+3
+2 −log Γ n+c+3
+2.
+Bernoulli. Let X ∼ Bernoulli(μ), with unknown mean μ ∈ [0, 1]. Define, for reference parameter μ0 ∈ R, c > 0, the estimate μn,c(μ0) = Sn+cμ0
+n+c . Then, the Bregman information gain is given by
+γ Bernoulli
+n,c (μ0) = c H(μ0)−(n+c)H(μn,c(μ0)) + log B(cμ0, c(1 − μ0))
+B((n + c)μn,c(μ0), (n + c)(1 − μn,c(μ0)) ,
+where B(α, β) =
+R1
+0 uα−1(1−u)β−1du is the Beta function and H(·) the Bernoulli entropy function.
+7
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+Exponential. Let X ∼ Exp(1/μ), with unknown mean μ > 0. For reference parameters μ0, c > 0, the Bregman information gain reads
+γExp
+n,c (μ0) = log (Sn/μ0 + c) + log Γ(c)
+Γ(n + c) + (n + c − 1) log(n + c) − c log c − n .
+Pareto. Let X ∼ Pareto (α), with unknown shape α > 0. Define Ln = Pn
+t=1 log Xt. Then, for reference parameters α0, c > 0, the Bregman information gain is given by
+γ Pareto
+n,c (α0) = log (α0Ln +c)+log Γ(c)
+Γ(n + c) +(n+c−1) log(n + c)−c log c−n.
+Chi-square. Let X ∼ χ2(k), where k ∈ N is unknown. Define Kn = Pn
+t=1 log Xt
+2 . For reference
+points k0 ∈ N, c > 0, introduce an estimate kn,c(k0) satisfying ψ0
+kn,c (k0 )
+2 = Kn+c ψ0
+k0 2
+n+c . In this
+case, the Bregman information gain is given by
+γ χ2
+n,c(k0) = kn,c(k0)
+2 Kn +cψ0
+k0
+2 −(n+c) log Γ kn,c(k0)
+2 +c log Γ k0
+2 −c k0
+2 ψ0
+k0 2 +log J (c, cψ0( k0
+2 ))
+J (n+c, Kn +cψ0( k0
+2 ))
+, where J(a, b) :=
+∞
+X
+k′=1
+exp −a log Γ k′
+2 +bk′
+2.
+The function J(a, b) can be estimated using numerical methods (see Section4). This paves a way to build high-probability confidence sets for Chi-square distribution which has not been adequately captured in prior work. The sums over k′ above derive from the martingale construction of Theorem3 with discrete mixture (i.e., w.r.t the counting measure). A continuous (i.e., w.r.t the Lebesgue measure) mixture similar to the other families is also possible, as detailed in the appendix in Remark9.
+Explicit confidence sets. We now turn to illustrate the confidence sets in the same exponential families as above. They are obtained by specifying the generic form and simplifying the resulting expression. We provide the confidence sets for two-parameter Gaussian (i.e., unknown mean and variance), Bernoulli, Exponential, Pareto and Chi-square distributions, respectively, in Table1. The technical details of the derivation of the specific forms for each illustrative family is postponed to AppendixC, along with other distributions (Gamma, Poisson, Weibull) in Table2. We now provide a set of illustrative numerical experiments to display the confidence envelopes resulting from Theorem3in the case of classical exponential families. We plot for a given value of the confidence level δ and regularization parameter c the convex sets n 7→ T
+n′⩽n Θn′,c(δ)
+(taking the running intersection is standard in sequential testing and was pioneered inDarling and Robbins(1967); it ensures that the upper (resp. lower) confidence envelopes are nonincreasing (resp. nondecreasing) as the sample size grows, thus providing tighter bounds). In dimension d = 1, we report the extremal points of these intervals, which we call the upper and lower envelopes respectively. We refer to Figure1for Pareto, Chi-square and Gaussian (with unknown μ, σ) and AppendixD for many other families. Because we exploit the Bregman geometry, our bounds capture a larger setting than typical mean estimation; for instance, we are able to concentrate around the exponent α of a Pareto distribution even when the distribution is not integrable (α < 1). Furthermore, for two-parameter Gaussian, apart form being anytime, our confidence sets are convex and bounded in contrast to the one based on Chi-square quantiles with a crude union bound (see AppendixD.1).
+8
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+Table 1: Bregman confidence sets given by Theorem3for representative families
+Distribution Parameters Confidence Set
+Gaussian μ ∈ R
+σ ∈ R+
+1
+2 Zn(μ, σ)− n+c+3
+2 log n
+n+c Zn(μbn, σ)+ c
+n+c Zn(μ, σ)+c
+⩽ log 1
+δ−n
+2 log 2− c
+2 +2 log c+ 1
+2 log (n+c)+log Γ( c+3
+2)
+Γ( n+c+3
+2)
+Bernoulli μ ∈ [0, 1] Sn log 1
+μ +(n−Sn) log 1
+1−μ +log Γ(Sn+cμ)Γ(n−Sn+c(1−μ))
+Γ(cμ)Γ(c(1−μ))
+⩽ log 1
+δ +log Γ(n+c)
+Γ(c)
+Exponential μ ∈ R+
+Sn
+μ −(n+c+1) log Sn
+μ +c
+⩽ log 1
+δ +log Γ(c)
+Γ(n+c) −log(n+c)−c log c
+Pareto α ∈ R αLn − (n+c+1) log (αLn + c)
+⩽ log 1
+δ + log Γ(c)
+Γ(n+c) − log(n + c) − c log c
+Chi-square k ∈ N n log Γ k
+2 −k
+2 Kn −log J c, cψ0 k
+2
++ log J n+c, Kn +cψ0 k
+2 ⩽ log 1
+δ
+3.3. Proof Sketch: Theorem3
+We now sketch the proof of Theorem3, and refer the interested reader to the appendix for details.
+Step 1: Martingale construction. For any λ ∈ Rd, we introduce the quantity
+Mλ
+n = exp (⟨λ, n(μn −μ)⟩−nBL,θ(λ)) ,
+where μn = 1
+n
+Pn
+t=1F (Xt) and μ = Eθ[F (X)]. By Lemma1, M λ
+n is a martingale such that
+E[M λ
+n ] = 1. We now introduce the distribution q(θ|α, β) = exp(⟨θ, α⟩ − βL(θ))H(α, β) where H(·, ·) is the normalization function, and define the mixture martingale Mn =
+R
+Mλ
+n q(θ +λ|α, β)dλ. Note that Mn also satisfies E[Mn] = 1.
+Step 2. Choice of parameters and duality properties. Choosing α = c∇L(θ) and β = c yields
+Mn = G(θ, c)
+Z
+exp(⟨λ, n(μn −μ)⟩−(n+c)BL,θ(λ)) dλ ,
+where G(θ, c) = 1/
+R
+exp −cBL(θ′, θ) dθ′. Now, we consider the function B⋆
+L,θ(x) = maxλ⟨λ, x⟩−
+BL,θ(λ). Note that its maximal point λ⋆
+x satisfies x + ∇L(θ) = ∇L(θ + λ⋆
+x) for every x. In particular,
+for the choice x = n
+n+c (μn − μ), we have n
+n+c μn + c
+n+c ∇L(θ) = ∇L(θ + λ⋆
+x), which justifies introducing the following regularized estimate
+θn,c(θ) = (∇L)−1 n
+n + c μn + c
+n + c ∇L(θ) ,
+provided that ∇L is one-to-one in Θ.
+9
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+012
+1
+2
+=5%, =1, =1, c=1.0
+(a) Gaussian (mean and variance)
+0 50 100 150 200 Sample size
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+=5%, p=80%, c=1.0 (averaged over 1000 repetitions)
+(b) Bernoulli
+20 40 60 80 100 Sample size
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+=5%, =0.5, c=1.0 (averaged over 1000 repetitions)
+(c) Pareto
+0 50 100 150 200 Sample size
+2
+4
+6
+8
+10
+=5%, =5.0, c=1.0 (averaged over 1000 repetitions)
+(d) Chi-square
+Figure 1: Example of Gaussian time-uniform joint confidence sets for (μ, σ) = (1, 1) with sample sizes n ∈ {10, 25, 50, 100} observations (smaller confidence sets correspond to larger sample sizes), and examples of time-uniform confidence envelopes for Bernoulli(0.8), Pareto(0.5) and χ2(5) on several realizations as a function of the number of observations n. Thick lines indicate the median curve over 1000 replicates.
+Step 3. Martingale rewriting and conclusion. Note that the duality property also yields ⟨λ, x⟩ − BL,θ(λ) − ⟨λ⋆
+x, x⟩ + BL,θ(λ⋆
+x) = ⟨λ − λ⋆
+x, ∇L(θ + λ⋆
+x)⟩ + L(θ + λ⋆
+x) − L(θ + λ) for each x. Using this property, we obtain
+Mn = exp (n+c)B⋆
+L,θ(x) G(θ, c)
+G(θn,c(θ), n + c) .
+10
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+After applying Markov’s inequality, we obtain the following inequality:
+Pθ B⋆
+L,θ
+n
+n+c (μn − μ) ⩾ 1
+n+c log G(θn,c(θ), n+c)
+δ G(θ, c) ⩽ δ .
+Now, we use duality property of Bregman divergence to obtain B⋆
+L,θ
+n
+n+c (μn −μ) = BL θ, θn,c(θ) ,
+which yields the desired form. Finally, by properties of the martingale Mn, the deviation bound also holds for any random stopping time N , and hence we obtain the time uniform bound by employing a stopping time construction similar to that ofPeña et al.(2008);Abbasi-Yadkori et al.(2011).
+4. Numerical Experiments
+In this section, we provide illustrative numerical results to show the resulting confidence bands built from Theorem3are promising alternatives to existing competitors (detailed in AppendixD). All the confidence sets presented here are implemented in the open source concentration-lib Python package
+(https://pypi.org/project/concentration-lib/).
+Comparison. We compare our confidence envelopes to state-of-the-art time-uniform bounds in Figure2and AppendixD. Interestingly, our upper and lower bounds are not necessarily symmetrical, and in the Bernoulli case, they fit within the distribution support without clipping, contrary to most other methods, thus adapting to the local geometry of the family. Our bounds are comparable to those ofKaufmann and Koolen(2021), if slightly tighter; however, we emphasize again that our scope is wider and captures more distributions.
+Numerical complexity. Some of our formulas (Poisson, Chi-square) require the evaluation of integrals for which no closed-form expression exist. However, these can be estimated up to arbitrary precision by numerical routines, see Remarks10and11for details. Similarly, the use of special functions (digamma, ratio of Gamma) may lead to numerical instabilities or overflows for large n; we recommend instead to use the log-Gamma function and an efficient implementation of the log-sum-exp operator. We report results for n ⩽ 200 as we think the small sample regime is where our bounds shine (most reasonable methods produce similar confidence sets for large n). Finally, most confidence sets reported in Figure2are implicitly defined (after reorganizing terms) as level sets {F (θ) ⩽ 0} for some function F . For one-dimensional families, we use a root search routine for a fast estimation of the boundaries of such sets; in higher dimension, we evaluate F on a uniform grid (e.g, in Figure1a, we use a 1024×1024 grid over [−2, 4]×[0.1, 4]).
+Influence of the regularization parameter c. Here, we fix δ = 0.05 (note that all bounds exhibit the typical log 1
+δ dependency). The parameter c is fixed to c = 1 and can be interpreted as a number of virtual prior samples, thus introducing a bias. The choice c = 1 is a typical value considered in literature on Gaussian concentration. To see the influence of the parameter c on the bounds, we provide a second set of experiments, in which we compute confidence envelopes for c varying between 0.1 and 30 (Figure2d). We find that c has limited influence on the width of the confidence interval. To get more insight on the tuning of c, we perform additional experiments in AppendixD, where we optimize the confidence width w.r.t. to c for varying sample sizes n. The resulting choice c∗
+n = argminc|Θn,c (δ)| exhibits a linear trend c∗
+n ≈ 0.12n, which seems consistent across the tested distributions. Of note, the constant 0.12 is reminiscent of the optimal tuning of the sub-Gaussian Laplace method (Howard et al.,2020). This is consistent with the observation in Section3.1that
+11
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+(a) Gaussian (b) Exponential
+(c) Bernoulli (d) Bernoulli (tuning c)
+Figure 2: Comparison of median confidence envelopes around the mean for N (0, 1), Bernoulli(0.8) and Exp(1), as a function of the sample size n, over 1000 independent replicates. Grey lines are trajectories of empirical means μbn. Bottom right: confidence envelopes for varying regularization c ∈ [0.1, 30] for Bernoulli(0.5) distribution. Dotted black line: heuristic cn ≈ 0.12n.
+the confidence width |Θn,c (δ)| is equivalent to the Gaussian confidence width when n → +∞. We report in Figure2dthis heuristic for c. However, we restate that sample a size-dependent regularization parameter c is not supported by the theory (as it would violate the law of iterated logarithms). Now, this does not prevent from choosing a specific horizon of interest n0 and set c = 0.12n0 to promote sharpness around n = zn0.
+12
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+5. Application: Generalized Likelihood Ratio Test in Exponential Families
+In this section, we apply our result to control the false alarm rate of Generalized Likelihood Ratio (GLR) tests when detecting a change of measure from a sequence of observations. The GLR test in the exponential family model E is defined, for a threshold α > 0, as
+τ (α; E) = min{t ∈ N : max
+s∈[0,t)
+GE
+1:s:t ⩾ α},
+where the GLR is defined to be GE
+1:s:t = infθ′ supθ1,θ2 log
+Qs
+t′=1 pθ1 (Xt′ )Qt
+t′=s+1 pθ2 (Xt′ )
+Qt
+t′=1 pθ′ (Xt′ ) .
+Hereafter, we consider that all the observations (Xt′)t′∈N come from a distribution with same parameter θ ∈ Θ. Then, the false alarm rate of the GLR test can be bounded using
+Pθ(τ (α; E) < ∞) = Pθ ∃(t, s) ∈ N2, s < t : GE
+1:s:t ⩾ α .
+Observe that solving for the inner supremums in the expression of GLR, we obtain
+GE
+1:s:t = iθn′f sBL(θ′, θ1:s) + (t − s)BL(θ′, θs+1:t),
+where we introduce parameter estimates θ1:s and θs+1:t such that ∇L(θ1:s) = 1
+s
+Ps
+t′=1 F (Xt′ ) and ∇L(θs+1:t) = 1
+t−s
+Pt
+t′=s+1 F (Xt′), respectively. Hence, the false alarm rate can be controlled as
+Pθ(τ (α; E) < ∞) ⩽ Pθ ∃s ∈ N : sBL(θ, θ1:s) ⩾ α1 +Pθ ∃(t, s) ∈ N2,s < t : (t−s)BL(θ, θs+1:t) ⩾ α2
+for appropriate terms α1, α2 such that α = α1 + α2. The control of the first term comes naturally from our time-uniform deviation result (Theorem3) using a regularized version of the estimate θ1:s. For the second term, we need to study the concentration of BL(θ, θs+1:t) uniformly over s and t.
+Doubly time-uniform concentration. For any s < t, c > 0 and reference parameter θ0 ∈ Θ,
+we define the regularized estimate θs+1:t,c(θ0) = (∇L)−1 1
+t−s+c
+Pt
+t′=s+1 F (Xt′ ) + c∇L(θ0)
+built from (t−s) observations Xs+1, . . . , Xt. Similarly, we introduce the corresponding Bregman information gain γs+1:t,c(θ0) as in Definition2. The following result extends the Laplace method for exponential families (Theorem3) to control the Bregman deviation of θs+1:t,c(θ0) around θ0.
+Theorem 5 (Doubly time-uniform concentration) Let δ ∈ (0, 1] and g : N → R∗
++ such that
+P∞
+t=1 1/g(t) ⩽ 1 (e.g., g(t) = κ(1+t) log2(1+t) where κ = 2.10975). Then, under the assumptions of Definition2, it holds that
+Pθ ∃t ∈ N, ∃s < t : (t−s+c)BL(θ, θs+1:t,c(θ)) ⩾ log g(t)
+δ + γs+1:t,c(θ) ⩽ δ .
+Remark 6 Maillard(2019a) proves a doubly uniform concentration inequality for means of (sub)Gaussian random variables and conjectures that it could be extended to other types of changes, such as changes of variance in a Gaussian family. Theorem5can be seen as a generalization of this result to generic exponential families. This naturally comes with additional challenges due to the intrinsic local geometry of exponential families. The proof of this result is deferred to AppendixE.
+13
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+A regularized GLR test. For a given false alarm (i.e., false positive) probability δ ∈ (0, 1] and parameter c > 0, we define the regularized GLR test τ δ
+c (E) as follows:
+Θs,c(δ) = {θ ∈ Θ : (s + c)BL(θ, θ1:s,c(θ)) ⩽ log(1/δ) + γ1:s,c(θ)} ,
+Θs+1:t,c(δ) = {θ ∈ Θ : (t − s + c)BL(θ, θs+1:t,c(θ)) ⩽ log(g(t)/δ) + γs+1:t,c(θ)} ,
+τδ
+c (E) = min {t ∈ N : ∃s < t, Θs,c(δ/2) ∩ Θs+1:t,c(δ/2) = ∅} .
+Note that, under the measure Pθ, θ ∈ Θs,c(δ/2) holds with probability at least 1 − δ/2 by timeuniform concentration over s (Theorem3), and θ ∈ Θs+1:t,c(δ/2) holds with probability at least 1−δ/2 by doubly time-uniform concentration over both s and t (Theorem5). Then, by a union-bound, this test is guaranteed to have a false alarm probability controlled by δ. The factor g(t) is essentially a function growing slightly faster than linearly; other common choices include g(t) ∝ tη for some η > 1, though it leads to a looser bound due to the faster growth. Furthermore, if one is interested in detecting changes up to a known horizon T , one can replace the function g(t) by the slightly tighter factor g(t) = κ(1+t) log2(1+t) with κ = PT
+t=1 1/g(t) and still guarantee a false alarm rate under δ. In AppendixE.3, we report simulations of this GLR test to detect changes of variance in the family of centered Gaussian (Figure14), which answers an open question fromMaillard(2019a).
+6. Conclusion
+We apply the method of mixture to derive a time-uniform deviation inequality for generic parametric exponential families expressed in terms of their Bregman divergences, highlighting the role of a quantity, the Bregman information gain, that is related to the geometry of the family. We specialize this general result to build confidence sets for classical examples. Our method compares favorably to the state-of-the art for Gaussian, Bernoulli and exponential distributions, and extends to other families like Chi-square, Pareto and two-parameter Gaussian, where no known time-uniform bound exists. Our method is also general enough to design GLR tests for change detection. An interesting direction for future work would be to consider the case where the log-partition function (and thus the Bregman divergence) is misspecified or unknown and has to be learned alongside the parameter.
+Acknowledgments
+The authors acknowledge the funding of the French National Research Agency, the French Ministry of Higher Education and Research, Inria, the MEL and the I-Site ULNE regarding project R-PILOTE19-004-APPRENF and Bandits For Health (B4H). We thank the anonymous reviewers for their careful reading of the paper and their suggestions for improvements. Experiments presented in this paper were carried out using the Grid’5000 testbed, supported by a scientific interest group hosted by Inria and including CNRS, RENATER and several universities as well as other organizations (see https://www.grid5000.fr).
+14
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+References
+Yasin Abbasi-Yadkori, Dávid Pál, and Csaba Szepesvári. Improved algorithms for linear stochastic bandits. In Advances in Neural Information Processing Systems, pages 2312–2320, 2011.
+Shun-ichi Amari. Information geometry and its applications, volume 194. Springer, 2016.
+P. Auer, N. Cesa-Bianchi, and P. Fischer. Finite-time Analysis of the Multi-armed Bandit Problem. Machine Learning, 47(2):235–256, 2002.
+Debabrota Basu, Odalric-Ambrym Maillard, and Timothée Mathieu. Bandits corrupted by nature: Lower bounds on regret and robust optimistic algorithm. arXiv preprint arXiv:2203.03186, 2022.
+Dorian Baudry, Emilie Kaufmann, and Odalric-Ambrym Maillard. Sub-sampling for efficient nonparametric bandit exploration. Advances in Neural Information Processing Systems, 33:5468–5478, 2020.
+Vidmantas Bentkus. On hoeffding’s inequalities. The Annals of Probability, 32(2):1650–1673, 2004.
+Daniel Berend and Aryeh Kontorovich. On the concentration of the missing mass. Electronic Communications in Probability, 18:1–7, 2013.
+Stéphane Boucheron, Gábor Lugosi, and Pascal Massart. Concentration inequalities: A nonasymptotic theory of independence. Oxford university press, 2013.
+L.M. Bregman. The relaxation method of finding the common point of convex sets and its application to the solution of problems in convex programming. USSR Computational Mathematics and Mathematical Physics, 7(3):200–217, 1967. ISSN 0041-5553.
+Sébastien Bubeck. Bandits games and clustering foundations. PhD thesis, 2010.
+Olivier Cappé, Aurélien Garivier, Odalric-Ambrym Maillard, Rémi Munos, and Gilles Stoltz. Kullback-leibler upper confidence bounds for optimal sequential allocation. The Annals of Statistics, pages 1516–1541, 2013.
+Alexandra Carpentier, Alessandro Lazaric, Mohammad Ghavamzadeh, Rémi Munos, and Peter Auer. Upper-confidence-bound algorithms for active learning in multi-armed bandits. In International Conference on Algorithmic Learning Theory, pages 189–203. Springer, 2011.
+Nicolo Cesa-Bianchi and Gábor Lugosi. Prediction, learning, and games. Cambridge university press, 2006.
+Sayak Ray Chowdhury and Aditya Gopalan. On kernelized multi-armed bandits. In International Conference on Machine Learning, pages 844–853. PMLR, 2017.
+Sayak Ray Chowdhury, Aditya Gopalan, and Odalric-Ambrym Maillard. Reinforcement learning in parametric mdps with exponential families. In International Conference on Artificial Intelligence and Statistics, pages 1855–1863. PMLR, 2021.
+DA Darling and Herbert Robbins. Iterated logarithm inequalities. Proceedings of the National Academy of Sciences, 57(5):1188–1192, 1967.
+15
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+Audrey Durand, Odalric-Ambrym Maillard, and Joelle Pineau. Streaming kernel regression with provably adaptive mean, variance, and regularization. Journal of Machine Learning Research, 19 (1):650–683, 2018.
+Rick Durrett. Probability: theory and examples, volume 49. Cambridge university press, 2019.
+Cynthia Dwork, Aaron Roth, et al. The algorithmic foundations of differential privacy. Found. Trends Theor. Comput. Sci., 9(3-4):211–407, 2014.
+Louis Faury, Marc Abeille, Clément Calauzènes, and Olivier Fercoq. Improved optimistic algorithms for logistic bandits. In International Conference on Machine Learning, pages 3052–3060. PMLR, 2020.
+Aurélien Garivier and Emilie Kaufmann. Optimal best arm identification with fixed confidence. In Conference on Learning Theory, pages 998–1027. PMLR, 2016.
+Aurélien Garivier. Informational confidence bounds for self-normalized averages and applications. In 2013 IEEE Information Theory Workshop (ITW), pages 1–5, 2013. doi: 10.1109/ITW.2013. 6691311.
+Botao Hao, Yasin Abbasi Yadkori, Zheng Wen, and Guang Cheng. Bootstrapping upper confidence bound. Advances in Neural Information Processing Systems, 32:12123–12133, 2019.
+Wassily Hoeffding. Probability inequalities for sums of bounded random variables. Journal of the American Statistical Association, 58(301):13–30, 1963. ISSN 01621459.
+Matthew Holland and El Mehdi Haress. Learning with risk-averse feedback under potentially heavy tails. In International Conference on Artificial Intelligence and Statistics, pages 892–900. PMLR, 2021.
+Steven R Howard, Aaditya Ramdas, Jon McAuliffe, and Jasjeet Sekhon. Time-uniform chernoff bounds via nonnegative supermartingales. Probability Surveys, 17:257–317, 2020.
+Steven R Howard, Aaditya Ramdas, Jon McAuliffe, and Jasjeet Sekhon. Time-uniform, nonparametric, nonasymptotic confidence sequences. The Annals of Statistics, 2021.
+Thomas Jaksch, Ronald Ortner, and Peter Auer. Near-optimal regret bounds for reinforcement learning. Journal of Machine Learning Research, 11(4), 2010.
+Emilie Kaufmann and Wouter M Koolen. Mixture martingales revisited with applications to sequential tests and confidence intervals. Journal of Machine Learning Research, 22:246–1, 2021.
+Michael Kearns and Lawrence Saul. Large deviation methods for approximate probabilistic inference. In Proceedings of the Fourteenth conference on Uncertainty in artificial intelligence, pages 311–319, 1998.
+Johannes Kirschner and Andreas Krause. Information directed sampling and bandits with heteroscedastic noise. In Conference On Learning Theory, pages 358–384. PMLR, 2018.
+Nathaniel Korda, Emilie Kaufmann, and Remi Munos. Thompson sampling for 1-dimensional exponential family bandits. Advances in neural information processing systems, 26, 2013.
+16
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+Arun K Kuchibhotla and Qinqing Zheng. Near-optimal confidence sequences for bounded random variables. In Marina Meila and Tong Zhang, editors, Proceedings of the 38th International Conference on Machine Learning, volume 139 of Proceedings of Machine Learning Research, pages 5827–5837. PMLR, 18–24 Jul 2021.
+T. Lattimore and C. Szepesvári. Bandit Algorithms. Cambridge University Press, 2019.
+Beatrice Laurent and Pascal Massart. Adaptive estimation of a quadratic functional by model selection. Annals of Statistics, pages 1302–1338, 2000.
+O.-A. Maillard. Sequential change-point detection: Laplace concentration of scan statistics and non-asymptotic delay bounds. In Algorithmic Learning Theory (ALT), 2019a.
+Odalric-Ambrym Maillard. Mathematics of Statistical Sequential Decision Making. Habilitation à diriger des recherches, Université de Lille Nord de France, February 2019b.
+Victor H Peña, Tze Leung Lai, and Qi-Man Shao. Self-normalized processes: Limit theory and Statistical Applications. Springer Science & Business Media, 2008.
+Maxim Raginsky and Igal Sason. Concentration of Measure Inequalities in Information Theory, Communications, and Coding. Now Publishers, 2018.
+Herbert Robbins. Statistical methods related to the law of the iterated logarithm. The Annals of Mathematical Statistics, 41(5):1397–1409, 1970.
+Herbert Robbins and EJG Pitman. Application of the method of mixtures to quadratic forms in normal variates. The annals of mathematical statistics, pages 552–560, 1949.
+Glenn Shafer and Vladimir Vovk. Game-Theoretic Foundations for Probability and Finance, volume 455. John Wiley & Sons, 2019.
+Zhenming Shun and Peter McCullagh. Laplace approximation of high dimensional integrals. Journal of the Royal Statistical Society: Series B (Methodological), 57(4):749–760, 1995.
+Jean Ville. Etude critique de la notion de collectif. Bull. Amer. Math. Soc, 45(11):824, 1939.
+Ian Waudby-Smith and Aaditya Ramdas. Estimating means of bounded random variables by betting. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 2023.
+A Dembo O Zeitouni and A Dembo. Large deviations techniques and applications. Applications of Mathematics, 38, 1998.
+17
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+Appendix A. Proof of the Main Result About Bregman Deviations
+In this section, we detail the proof of the main results regarding Bregman deviation inequalities, stated with its two variants Theorem3and7, We start in SectionA.1with the proof of Theorem3 when considering a numerical constant c to build the regularizer. In SectionA.2, we then provide the proof for Theorem7when considering instead a Legendre function L0 as a regularizer, and also extend to the non i.i.d. case.
+A.1. Proof of Bregman concentration using mixture parameter c
+The proof of this first result follows an adaptation of the method of mixture, combined with properties of Bregman divergences recalled in Lemma1.
+Theorem 3 (Main result: Laplace method for generic exponential families) Fix any δ ∈ (0, 1] and n ∈ N. Under the hypothesis of Definition2, consider the confidence set
+Θn,c(δ) = θ0 ∈ Θ : (n + c)BL (θ0, θn,c(θ0)) ⩽ log 1
+δ + γn,c(θ0) .
+The following time-uniform control holds whenever the Bregman information gain is well-defined:
+Pθ [∃n ∈ N : θ ∈/ Θn,c(δ)] ⩽ δ .
+Proof of Theorem3:
+Step 1. Martingale and mixture martingale construction.
+Let us note that Eθ[F (X)] = ∇L(θ) and log Eθ [exp⟨λ, F (X)⟩] = L(θ + λ) − L(θ). Hence, we deduce that
+log Eθ [exp⟨λ, F (X) − Eθ[F (X)]⟩] = BL,θ(λ) d=ef L(θ + λ) − L(θ) − ⟨λ, ∇L(θ)⟩ .
+Now, let μn = 1
+n
+Pn
+t=1 F (Xt) and μ = Eθ[F (X)]. For any λ ∈ Rd, the following quantity
+Mλ
+n = exp ⟨λ, n(μn − μ)⟩ − nBL,θ(λ) ,
+is thus a martingale such that E[M λ
+n ] = 1.
+We now introduce the distribution q(θ|α, β) = H(α, β) · exp(⟨θ, α⟩ − βL(θ)) where H is the normalization term. We further introduce the following quantity
+Mn =
+Z
+Λθ
+Mλ
+n q(θ + λ|α, β)dλ ,
+where Λθ = {λ : θ + λ ∈ Θ}. This also satisfies E[Mn] = 1. Further, we have the rewriting
+Mn = H(α, β)
+Z
+Λθ
+exp ⟨λ, n(μn − μ)⟩ − nBL,θ(λ) + ⟨λ + θ, α⟩ − βL(θ + λ) dλ .
+18
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+Step 2. Choice of parameters and duality properties. Considering in particular the choice α = c∇L(θ) and β = c, we get
+Mn = H(c∇L(θ), c)
+Z
+Λθ
+exp ⟨λ, n(μn − μ)⟩ − nBL,θ(λ) + c⟨λ + θ, ∇L(θ)⟩ − cL(θ + λ) dλ
+= G(θ, c)
+Z
+Λθ
+exp ⟨λ, n(μn − μ)⟩ − (n + c)BL,θ(λ) dλ ,
+where we introduce the following quantity
+G(θ, c) = H(c∇L(θ), c) exp c⟨θ, ∇L(θ)⟩ − cL(θ) =
+exp c⟨θ, ∇L(θ)⟩ − cL(θ)
+R
+Θ exp c⟨θ′, ∇L(θ)⟩ − cL(θ′) dθ′
+=
+Z
+Θ
+exp − cBL(θ′, θ) dθ′
+−1
+.
+At this point, let us introduce x = n
+n+c (μn − μ). We also consider the Legendre-Fenchel dual
+function B⋆
+L,θ(x) = maxλ⟨λ, x⟩ − BL,θ(λ) and denote λ⋆
+x its maximal point. Now, we note that
+x + ∇L(θ) = ∇L(θ + λ⋆
+x) and thus
+⟨λ, x⟩ − BL,θ(λ) − ⟨λ⋆
+x, x⟩ + BL,θ(λ⋆
+x) = ⟨λ − λ⋆
+x, x + ∇L(θ)⟩ + L(θ + λ⋆
+x) − L(θ + λ)
+= ⟨λ − λ⋆
+x, ∇L(θ + λ⋆
+x)⟩ + L(θ + λ⋆
+x) − L(θ + λ) .
+Also, since it holds that x = n
+n+c (μn − ∇L(θ)), then the quantity x + ∇L(θ) = ∇L(θ + λ⋆
+x)
+rewrites n
+n+c μn + c
+n+c ∇L(θ) = ∇L(θ + λ⋆
+x), which justifies to introduce the following regularized parameter estimate
+θn,c(θ) = (∇L)−1 n
+n + c μn + c
+n + c ∇L(θ) .
+Step 3. Martingale rewriting and conclusion. Using this property, we note that
+Mn = exp (n+c)B⋆
+L,θ(x) · G(θ, c)
+Z
+Λθ
+exp (n+c)
+h
+⟨λ−λ⋆
+x, ∇L(θ+λ⋆
+x )⟩ − L(θ + λ) + L(θ + λ⋆
+x)
+i
+dλ
+= exp (n+c)B⋆
+L,θ(x) · G(θ, c)
+Z
+Λθ
+exp ⟨λ+θ, (n+c)∇L(θ+λ⋆
+x)⟩−(n+c)L(θ+λ) dλ ×
+exp − (n+c)⟨λ⋆
+x +θ, ∇L(θ+λ⋆
+x) + (n+c)L(θ+λ⋆
+x)⟩
+= exp (n+c)B⋆
+L,θ(x) G(θ, c)
+G(θ + λ⋆x, n + c) = exp (n+c)B⋆
+L,θ(x) G(θ, c)
+G(θn,c(θ), n + c) .
+We then apply simple Markov inequality, which yields for all constant c,
+∀δ ∈ (0, 1], P B⋆
+L,θ
+n
+n+c (μn −μ) ⩾ 1
+n + c log G(θn,c(θ), n + c)
+G(θ, c)
+1
+δ ⩽ δ.
+19
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+To conclude, we use the duality property of the Bregman divergence (Lemma1), considering that ∇L is invertible. Indeed, denoting α = n/(n + c), and θn = (∇L)−1(μn), it comes
+B⋆
+L,θ α(μn − μ) = BL θ, θα where θα = ∇L−1 α∇L(θn) + (1 − α)∇L(θ) = θn,c(θ) .
+Last, we note that this extends from a single n to being time-uniform thanks to Doob’s maximal inequality for nonnegative supermartingale applied to Mn (also known as Vile’s inequalityVille (1939)). □
+A.2. Bregman concentration using Legendre function L0
+In this section, we state a more general result that can handle the case of sequence (Xt)t⩾1 of random variables that are not independent, each having possibly different distribution from others.
+Theorem 7 (Laplace method for non i.i.d. samples) Suppose {Ht}∞
+t=0 is a filtration such that for each t ⩾ 1, (i) Xt is Ht-measurable, (ii) Ft and ht are Ht−1-measurable and (iii) given Ht−1, Xt ∼ pθ0,t where pθ0,t belongs to an exponential family with parameter θ0, feature function Ft and base function ht. Let Lt be the log-partition function corresponding to Ft. For any Legendre (i.e., strictly convex and continuously differentiable) function L0 : Θ → R such that exp(−L0) is integrable and any n ∈ N, we introduce the parameter estimate and Bregman information gain
+θn,L0 =
+n
+X
+t=0
+∇Lt
+−1 n
+X
+t=1
+Ft(Xt) ,
+γn,L0 = log
+R
+Θ exp − L0(θ′) dθ′
+R
+Θ exp − Pn
+t=0 BLt (θ′, θn,L0 ) dθ′
+,
+and then, for any δ ∈ (0, 1], the set
+Θn,L0 (δ) =
+(
+θ:
+n
+X
+t=0
+BLt (θ, θn,L0 ) − L0(θ) ⩽ log 1
+δ + γn,L0
+)
+.
+Then, the following time-uniform concentration holds:
+P ∃n ∈ N : θ0 ∈/ Θn,L0(δ) ⩽ δ .
+In contrast to Theorem3that involves a local regularization using the true parameter θ0 ∈ Θ of the family and a constant c > 0, here we make use of a global regularization, in the form of the Legendre function L0. Concretely, the regularized parameter estimate θn,L0 and the Bregman information gain γn,L0 do not depend on the true parameter θ0, thus making for a more explicit confidence set Θn,L0. The trade-off here is that the choice of regularizer is limited by the integrability assumption on exp(−L0), which is critical to build an appropriate prior for the method of mixtures. The proof of this result follows a similar line of proof as before. However the use of L0 instead of c induces a few changes that we detail below. In particular, we use a different prior to build the mixture of martingales.
+20
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+Proof of Theorem7:
+Step 1. Martingale and mixture martingale construction. For any λ ∈ Rd, we define
+Mλ
+n = exp
+n
+X
+t=1
+λ⊤ (Ft(Xt) − Eθ [Ft(Xt)]) − BLt,θ(λ)
+!
+,
+where we introduced BLt,θ(λ) = Lt(θ + λ) − Lt(θ) − ⟨λ, ∇Lt(θ)⟩ for convenience. Note that M λ
+n > 0 and
+Eθ
+h
+exp λ⊤Ft(Xt)
+i
+= exp (Lt(θ + λ) − Lt(θ)) ,
+Eθ
+h
+exp λ⊤Eθ[Ft(Xt)
+i
+= exp λ⊤Lt(θ) .
+Note that M λ
+n is Hn-measurable and in fact E[M λ
+n |Hn−1] = M λ
+n−1. Therefore {M λ
+n }∞
+n=0 is a
+nonnegative martingale adapted to the filtration {Hn}∞
+n=0 and actually satisfies E M λ
+n = 1 . For any prior density q(θ) for θ, we now define a mixture of martingales
+Mn =
+Z
+Λθ
+Mλ
+n q(θ + λ)dλ . (1)
+where Λθ = {λ : θ + λ ∈ Θ}. Then Mn is also a martingale and actually satisfies E [Mn] = 1 . Now consider the prior density
+q(θ + λ) = c0 · exp (−L0(θ + λ)) , (2)
+where c0 = 1
+R
+Θ exp(−L0(θ′))dθ′ (which is well-defined since exp(−L0) is integrable over Θ). We then
+have
+Mn = c0
+Z
+Λθ
+exp λ⊤Sn −
+n
+X
+t=1
+BLt,θ(λ) − L0(θ + λ)
+!
+dλ ,
+where we denote Sn = Pn
+t=1 (Ft(Xt) − Eθ [Ft(Xt)]). Now, from the formula of parameter estimate, we have
+n
+X
+t=1
+∇Lt(θn,L0 ) + ∇L0(θn,L0 ) =
+n
+X
+t=1
+Ft(Xt) . (3)
+This yields Sn = Pn
+t=1 (∇Lt(θn,L0 ) − ∇Lt(θ)) + ∇L0(θn,L0 ).
+Step 2. Legendre function and Bregman properties. We now introduce the function L1:n(θ) =
+Pn
+t=1 Lt(θ). Note that L1:n is a also Legendre function and its associated Bregman divergence satisfies
+BL1:n (θ′, θ) =
+n
+X
+t=1
+Lt(θ′) − Lt(θ) − (θ′ − θ)⊤∇Lt(θ) =
+n
+X
+t=1
+BLt (θ′, θ).
+21
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+In this notation, we can rewrite Pn
+t=1 BLt,θ(λ) = BL1:n,θ(λ) and Sn = ∇Ln(θn,L0 ) − ∇Ln(θ) + ∇L0(θn,L0). We then obtain
+Mn = c0 · exp (−L0(θ))
+Z
+Λθ
+exp λ⊤xn − BL1:n,θ(λ) + λ⊤x0 − BL0,θ(λ) dλ , (4)
+where we have introduced x0 = ∇L0(θn,L0) − ∇L0(θ) and xn = ∇L1:n(θn,L0) − ∇L1:n(θ). We now have from the Bregman-duality property recalled in Lemma1that
+sup
+λ∈Rd
+λ⊤xn − BL1:n,θ(λ) = B⋆
+L1:n ,θ (xn )
+= B⋆
+L1:n,θ(∇L1:n(θn,L0 ) − ∇L1:n(θ)) = BL1:n (θ, θn,L0 ) .
+Further, any optimal λ must satisfy
+∇L1:n(θ + λ) − ∇L1:n(θ) = xn =⇒ ∇L1:n(θ + λ) = ∇L1:n(θn,L0 ) .
+One possible solution is λ⋆ = θn,L0 − θ. We then have
+λ⊤xn − BL1:n,θ(λ)
+= λ⊤xn − BL1:n,θ(λ) + BL1:n (θ, θn,L0 ) − λ⋆⊤xn − BL1:n,θ(λ⋆)
+= BL1:n (θ, θn,L0 ) + (λ − λ⋆)⊤∇Ln(θ + λ⋆) + BL1:n,θ(λ⋆) − BL1:n,θ(λ) − (λ − λ⋆)⊤∇L1:n(θ)
+= BL1:n (θ, θn,L0 ) + (λ − λ⋆)⊤∇L1:n(θ + λ⋆) + L1:n(θ + λ⋆) − L1:n(θ + λ) . (5)
+Similarly, we have
+λ⊤x0 − BL0,θ(λ) = BL0 (θ, θn,L0 ) + (λ − λ⋆)⊤∇L0(θ + λ⋆) + L0(θ + λ⋆) − L0(θ + λ) . (6)
+Step 3. Martingale rewriting and conclusion. Plugin-in (6) and (5) in (4), we now obtain
+Mn = c0 exp
+X
+j∈{0,1:n}
+BLj (θ, θn,L0 ) − L0(θ)
+×
+Z
+Λθ
+exp
+X
+j∈{0,1:n}
+(λ − λ⋆)⊤∇Lj(θ + λ⋆) + Lj(θ + λ⋆) − Lj(θ + λ) dλ
+= c0 exp
+X
+j∈{0,1:n}
+BLj (θ, θn,L0 ) − L0(θ) · exp −
+X
+j∈{0,1:n}
+(θ + λ⋆)⊤∇Lj(θ + λ⋆) − Lj(θ + λ⋆)
+×
+Z
+Λθ
+exp
+X
+j∈{0,1:n}
+(θ + λ)⊤∇Lj(θ + λ⋆) − Lj(θ + λ) dλ
+= c0
+cn
+exp
+X
+j∈{0,1:n}
+BLj (θ, θn,L0 ) − L0(θ)
+×
+R
+Λθ exp P
+j∈{0,1:n} (θ + λ)⊤∇Lj(θ + λ⋆) − Lj(θ + λ) dλ
+R
+Θ exp P
+j∈{0,1:n} ((θ′)⊤∇Lj (θ + λ⋆) − Lj (θ′)) dθ′
+= c0
+cn
+exp
+n
+X
+t=1
+BLt (θ, θn,L0 ) + BL0 (θ, θn,L0 ) − L0(θ) ,
+22
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+where we have introduced cn = exp(P
+j∈{0,1:n}((θ+λ⋆)⊤∇Lj (θ+λ⋆)−Lj (θ+λ⋆)))
+R
+Θ exp(P
+j∈{0,1:n}((θ′)⊤∇Lj (θ+λ⋆)−Lj (θ′)))dθ′ .
+We then obtain the following result by a simple application of Markov’s inequality, which yields
+P
+"n X
+t=1
+BLt (θ, θn,L0 ) + BL0 (θ, θn,L0 ) − L0(θ) ⩾ log cn
+c0
+1
+δ
+#
+= P Mn ⩾ 1
+δ ⩽ δ · E [Mn] = δ . (7)
+Finally, since λ⋆ = θn,L0 − θ, we have the more explicit form
+cn
+c0
+=
+R
+Θ exp − L0(θ′) dθ′
+R
+Θ exp − P
+j∈{0,1:n}
+BLj (θ′, θ + λ⋆) dθ′
+=
+R
+Θ exp − L0(θ′) dθ′
+R
+Θ exp − Pn
+t=1 BLt (θ′, θn,L0 ) − BL0 (θ′, θn,L0 ) dθ′
+.
+We obtain the time-uniform bound by applying Doob’s maximal inequality for nonnegative supermartingale. □
+The general result of Theorem7specifies straightforwardly to the case when all observations have same law, yielding the following corollary that we state now for completeness.
+Corollary 8 Let μn = 1
+n
+Pn
+t=1 F (Xt). For all Legendre function L0 such that exp(−L0) is integrable over Θ, let
+θn,L0 = ∇L+ 1
+n ∇L0
+−1(μn) and γn,L0 = log
+
+
+R
+Θ exp − L0(θ′) dθ′
+R
+Θ exp −nBL (θ′, θn,L0 )−BL0 (θ′, θn,L0 ) dθ′
+
+.
+Then for all δ ∈ (0, 1],
+P ∃n ∈ N, nBL (θ, θn,L0 ) + BL0 (θ, θn,L0 ) ⩾ log 1
+δ + L0(θ) + γn,L0 ⩽ δ .
+Choice of Legendre function L0 A natural choice for the Legendre regularizer L0 is to use the log-partition function of the exponential family at hand. If L0 = cL, where c > 0 is a scaling coefficient, the formula above simplify to
+θn,L0 = θn
+1+ c
+n
+and γn,L0 = log
+
+
+R
+Θ exp − cL(θ′) dθ′
+R
+Θ exp −(n + c)BL (θ′, θn,L0 ) dθ′
+
+,
+where θn = (∇L)−1 (μn) is the standard maximum likelihood estimate of the parameter θ0.
+23
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+In the special case of the one-dimensional Gaussian family N (θ0, σ2) where the variance σ2
+is known, the log-partition function regularizer defined by L0(θ) = θ2
+2σ2 satisfies the integrability
+assumption
+R
+R e−cL0(θ)dθ < ∞ with c > 0. Straightforward calculations show that the resulting confidence set is the same as the one derived from Theorem3with local regularization c (see AppendixC.1). For many other standard families however, this integrability assumption may fail, as in the case of the exponential distributions E(−θ), for which L(θ) = − log(−θ) (see AppendixC.5). For other choices of Legendre function, computing the regularized parameter estimate θn,L0 and
+the information gain γn,L0 requires inverting the function ∇L + 1
+n ∇L0 and computing a tedious integral, both of which seldom result in closed-form expressions. For these reasons, we recommend as a first step the use of local regularization (Theorem3) over Legendre regularizers. In AppendixF, we detail an application of Theorem7to Gaussian contextual bandits using a quadratic regularizer.
+Appendix B. Properties of Bregman Divergences
+In this section, we detail the derivation of some useful properties of the Bregman divergence that are used in the proof of the Bregman deviation inequalities.
+Lemma 1 (Properties of Bregman divergences) For all θ ∈ ΘD and λ ∈ Rd such that θ+λ ∈ ΘD,
+log Eθ [exp (⟨λ, F (X) − Eθ[F (X)]⟩)] = BL,θ(λ) .
+Furthermore, if ∇L is one-to-one, the following Bregman duality relations hold for any θ, θ′ ∈ ΘD :
+BL(θ′, θ) = B⋆
+L,θ′(∇L(θ) − ∇L(θ′)) = BL⋆(∇L(θ), ∇L(θ′)).
+More generally, the following holds for any α ∈ [0, 1] :
+B⋆
+L,θ′ α(∇L(θ) − ∇L(θ′)) = BL θ′, θα , where θα = ∇L−1 α∇L(θ) + (1 − α)∇L(θ′) .
+Proof of Lemma1:
+The first equality is immediate, since Eθ[F (X)] = ∇L(θ) and
+log Eθ [exp(⟨λ, F (X)⟩)] = log
+Z
+exp(⟨λ, F (x)⟩ + ⟨θ, F (x)⟩ − L(θ))dx
+= L(λ + θ) − L(θ) .
+We now turn to the duality formula. Using the definition of each terms, we have
+B⋆
+L,θ′(∇L(θ) − ∇L(θ′)) = sup
+λ
+⟨λ, ∇L(θ) − ∇L(θ′)⟩ −
+h
+L(θ′ + λ) − L(θ′) − ⟨λ, ∇L(θ′)⟩
+i
+= sup
+λ
+⟨λ, ∇L(θ)⟩ − L(θ′ + λ) + L(θ′) .
+An optimal λ must satisfy ∇L(θ) = ∇L(θ′ + λ). Hence, provided that ∇L is invertible, this means λ = θ − θ′. Plugin-in this value, we obtain
+B⋆
+L,θ′(∇L(θ) − ∇L(θ′)) = ⟨θ − θ′, ∇L(θ)⟩ − L(θ) + L(θ′) = BL(θ′, θ) .
+24
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+The remaining equality BL(θ′, θ) = BL⋆(∇L(θ), ∇L(θ′)) is a standard result. Finally, regarding the generalization, we note that
+B⋆
+L,θ′ α(∇L(θ) − ∇L(θ′)) = sup
+λ
+⟨λ, α∇L(θ) + (1 − α)∇L(θ′)⟩ − L(θ′ + λ) + L(θ′) .
+Hence, an optimal λ must now satisfy α∇L(θ) + (1 − α)∇L(θ′) = ∇L(θ′ + λ), that is λ = θα − θ′. This further yields
+B⋆
+L,θ′ α(∇L(θ) − ∇L(θ′)) = ⟨θα − θ′, ∇L(θα)⟩ − L(θα) + L(θ′) = BL(θ′, θα) .
+□
+Appendix C. Specification to Illustrative Exponential Families
+In this section, we provide the technical derivations to specify our generic concentration result to a few classical distributions. The results are summarized in Table2.
+C.1. Gaussian with unknown mean, known variance
+Consider X ∼ N (μ, σ2), where μ is unknown and σ is known. This corresponds to an exponential family of distributions, with parameter θ = μ, feature function F (x) = 1
+σ2 x and log-partition
+function L(θ) = θ2
+2σ2 . The Bregman divergence between two parameters θ′ and θ associated with L
+is given by BL(θ′, θ) = KL(Pμ, Pμ′ ) = (μ−μ′)2
+2σ2 . We further have L′(θ) = θ
+σ2 = μ
+σ2 and L′′(θ) = 1
+σ2 ,
+implying that L′ is invertible. Denoting Sn = Pn
+t=1 Xt, we obtain that
+μn,c(μ) = θn,c(θ) = Sn + cμ
+n+c .
+The Bregman deviations simplify as follows
+(n + c) · BL(θ, θn,c(θ)) = (n + c) (θn,c(θ) − θ)2
+2σ2 = 1
+n+c
+(Sn − nμ)2
+2σ2 .
+Now, on the other hand, let us see that the information gain is explicitly given by
+γn,c(μ) = 1
+2 log n + c
+c.
+We obtain from Theorem3w.p. ⩾ 1 − δ, ∀n ∈ N,
+1
+n+c
+(Sn − nμ)2
+2σ2 ⩽ log(1/δ) + 1
+2 log n + c
+c.
+25
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+C.2. Gaussian with known mean, unknown variance
+We consider X ∼ N μ, σ2 , where μ is known and σ is unknown. This corresponds to a onedimensional exponential family model with parameter θ = − 1
+2σ2 ∈ R∗
+−, feature function F (x) =
+(x − μ)2 and log-partition function L(θ) = − 1
+2 log (−2θ). The first two derivatives of L are given
+by L′(θ) = − 1
+2θ and L′′(θ) = 1
+2θ2 , which shows that L′ is invertible on the domain Θ = R∗
+−.
+The Bregman divergence between two parameters θ′ and θ is therefore BL(θ′, θ) = 1
+2 log (θ/θ′) +
+1
+2 (θ′/θ − 1).
+Let Qn = Pn
+t=1 (Xt − μ)2. A short calculation shows that the following expression holds:
+θn,c(θ) = − n + c
+c/θ − 2Qn
+.
+To compute the Bregman information gain, note that the above expression and a change of variable implies
+Z0
+−∞
+exp −cBL θ′, θ dθ′ = −θ (2/c)c/2+1 ec/2Γ (c/2 + 2) .
+Combining the last two lines yields
+γn,c(θ) = log θ
+θn,c(θ) − (1+log 2) n
+2 −(c
+2 +1) log c + ( n+c
+2 +1) log(n+c) − log Γ n+c
+2 +2
+log Γ c
+2 +2
+= log c−2θQn
+n+c − (1+log 2) n
+2 −(c
+2 +1) log c + ( n+c
+2 +1) log(n+c) − log Γ n+c
+2 +2
+log Γ c
+2 +2
+= log Qn/σ2 + c
+n+c − (1+log 2) n
+2 −(c
+2 +1) log c + ( n+c
+2 +1) log(n+c) − log Γ n+c
+2 +2
+log Γ c
+2 +2 .
+Moreover, we deduce from the expression of θn,c(θ) and the Bregman divergence that:
+BL(θ′, θn,c(θ)) = − 1
+2 log cθ′/θ − 2θ′Qn
+n+c + 1
+2
+cθ′/θ − 2θ′Qn
+n+c − 1 .
+So, we have
+(n + c)BL(θ, θn,c(θ)) = − n + c
+2 log Qn/σ2 + c
+n+c + Qn/σ2 + c
+2 −n
+2.
+After some simple algebra and using the natural parametrization θ = − 1
+2σ2 , we derive from Theorem3that w.p. ⩾ 1 − δ, ∀n ∈ N,
+− (n+c
+2 +1) log Qn/σ2 + c
+n+c + Qn
+2σ2
+⩽ log 1
+δ−n
+2 log 2 − ( c
+2 +1) log c + ( n+c
+2 +1) log(n+c) + log Γ c
+2 +2 − log Γ n+c
+2 +2 .
+(8)
+26
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+C.3. Gaussian with unknown mean and variance
+We consider X ∼ N μ, σ2 , where both μ ∈ R and σ > 0 are unknown. These distributions form a
+two-dimensional exponential family with parameter θ = θ1
+θ2
+=
+μ σ2
+−1
+2σ2
+belonging to the domain
+Θ = R × R∗
+−. The corresponding feature and log-partition functions writes F (x) = x
+x2 and
+L(θ) = − 1
+2 log(−θ2)− θ2
+1
+4θ2 respectively. The gradient and Hessian of L follows from straightforward calculations and write:
+∇L(θ) =
+− θ1
+2θ2 −1
+2θ2 + θ2
+1
+4θ2
+2
+!
+, ∇2L(θ) =
+
+
+−1
+2θ2
+θ1
+2θ2
+2 θ1
+2θ2
+2
+1 2θ2
+2
+− θ2
+1
+2θ3
+2
+
+.
+In particular, Tr ∇2L(θ) = − 1
+2θ2 + 1
+2θ2
+2
+− θ2
+1
+2θ3
+2
+> 0 and det ∇2L(θ) = − 1
+4θ3
+2
+> 0, therefore the
+symmetric matrix ∇2L(θ) is positive definite (both its eigenvalues are positive). The inverse of the gradient mapping ∇L : Θ → P, where the image set is P = (x, y) ∈ R2, y > x2 , can be explicitly computed as:
+(∇)−1 L x
+y= 1
+y − x2
+x
+−1
+2
+.
+The expression of the Bregman divergence between two parameters θ and θ′ can be calculated from the above results and reads:
+BL(θ′, θ) = 1
+2 log θ2
+θ′
+2
++ θ′
+2
+2θ2
+− θ′
+2
+θ′
+1
+2θ′
+2
+− θ1
+2θ2
+2
+−1
+2.
+Let Sn = Pn
+t=1 Xt and Qn = Pn
+t=1 X 2
+t and Vn,c = 1
+n+c Qn − 1
+n+c Sn
+2
+. We have that
+θn,c(θ) = 1
+Vn,c − c
+n+c
+1
+2θ2 + nc
+(n+c)2
+θ2
+1
+4θ2
+2
++c
+(n+c)2
+θ1
+θ2 Sn
+1
+n+c Sn − c
+2(n+c)
+θ1 θ2
+−1
+2
+!
+.
+To compute the Bregman information gain, we will need to evaluate the integral
+R
+Θ exp (−cBL(θ′, θ)) dθ′.
+As the integrand is nonnegative, we can integrate first along θ′
+1 (Fubini’s theorem), which writes:
+Z
+Θ
+exp −cBL(θ′, θ) dθ′ =
+Z0
+−∞
+Z∞
+−∞
+exp − c
+2 log θ2
+θ′
+2
+−c
+2
+θ′
+2 θ2
++ cθ′
+2
+θ′
+1
+2θ′
+2
+− θ1
+2θ2
+2
++c
+2
+!
+dθ′
+1dθ′
+2
+= ec
+2
+Z0
+−∞
+θ′
+2 θ2
+c 2
+e− c
+2
+θ′
+2 θ2
+Z∞
+−∞
+exp cθ′
+2
+θ′
+1
+2θ′
+2
+− θ1
+2θ2
+2
+!
+dθ′
+1dθ′
+2.
+Let m = θ1
+2θ2 and s = 1
+√−2cθ′
+2
+. The integral w.r.t θ′
+1 can be rewritten using the change of variable
+y = θ′
+1
+2θ′
+2
+as:
+Z∞
+−∞
+exp cθ′
+2
+θ′
+1
+2θ′
+2
+− θ1
+2θ2
+2
+!
+dθ′
+1 = −2θ′
+2
+√
+2πs
+Z∞
+−∞
+1
+√
+2πs e− (y−m)2
+2s2 dy
+| {z }
+=1
+.
+27
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+Therefore, the above calculation simplifies to:
+Z
+Θ
+exp −cBL(θ′, θ) dθ′ = 2
+rπ
+c ec
+2
+Z0
+−∞
+θ′
+2 θ2
+c 2
+e− c
+2
+θ′
+2 θ2
+q
+−θ′
+2dθ′
+2,
+which after a linear change of variable on θ′
+2 can be related to the Gamma function as follows:
+Z
+Θ
+exp −cBL(θ′, θ) dθ′ = 2
+rπ
+c
+2
+c
+c+1
+2 +1
+Γ c+1
+2 + 1 (−θ2) 3
+2.
+The Bregman information gain is thus:
+γn,c(θ) = − 1+log 2
+2 n− c
+2 + 2 log c + n+c
+2 + 2 log(n+c)
++ log Γ c+3
+2 − log Γ n+c+3
+2 +3
+2 log θ2
+θn,c(θ)2
+,
+with θ2
+θn,c(θ)2 = −2θ2Vn,c + c
+n+c − nc
+(n+c)2
+θ2
+1
+2θ2 − 2cθ1
+(n+c)2 Sn. Now, applying the result of Theorem3
+shows that w.p. ⩾ 1 − δ, ∀n ∈ N,
+− n+c+3
+2 log θ2
+θn,c(θ)2
+− θ2(n+c)Vn,c − nθ2
+1
+4θ2
+− θ2
+n+cS2
+n − θ1Sn
+⩽ log 1
+δ−n
+2 log 2 − c
+2 +2 log c + n+c
+2 +2 log (n+c) + log Γ c+3
+2 − log Γ n+c+3
+2.
+After expanding the ratio θ2
+θn,c(θ)2 and substituting the natural parametrization in terms of μ and σ,
+we finally obtain that w.p. ⩾ 1 − δ, ∀n ∈ N,
+− n+c+3
+2 log 1
+σ2 Vn,c + c
+n+c + nc
+(n+c)2
+μ2
+σ2 − 2c
+(n+c)2
+μ
+σ2 Sn + n+c
+2σ2 Vn,c + nμ2
+2σ2 + 1
+2(n+c)σ2 S2
+n− μ
+σ2 Sn
+⩽ log 1
+δ−n
+2 log 2 − c
+2 +2 log c + n+c
+2 +2 log (n+c) + log Γ c+3
+2 − log Γ n+c+3
+2.
+To simplify this formula, we introduce the standardized sum of squares Zn(m, s) =
+n
+P
+t=1
+Xt−m s
+2
+for (m, s) ∈ R × R∗
++. After rearranging terms and denoting μbn = Sn/n, the above formula reads:
+1
+2 Zn(μ, σ) − n + c + 3
+2 log n
+n+c Zn(μbn, σ) + c
+n+c Zn(μ, σ) + c
+⩽ log 1
+δ−n
+2 log 2 − c
+2 +2 log c + 1
+2 log (n+c) + log Γ c+3
+2 − log Γ n+c+3
+2.
+C.4. Bernoulli
+We consider X ∼ Bernoulli(μ). This corresponds to an exponential family model, with parameter θ = log μ
+1−μ , feature function F (x) = x and log-partition function L(θ) = log(1 +
+exp(θ)). The Bregman divergence between two parameters θ′ and θ associated with L is given
+28
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+by BL(θ′, θ) = kl(μ, μ′) = μ log μ
+μ′ + (1 − μ) log 1−μ
+1−μ′ . We further have L′(θ) = exp(θ)
+1+exp(θ) = μ and L′′(θ) = exp(θ)
+(1+exp(θ))2 = μ(1 − μ). Therefore L′ is invertible and we have the expression
+θn,c(θ) = (L′)−1 1
+n+c
+Pn
+t=1 Xt + c
+n+c
+exp(θ)
+1+exp(θ) . Then, denoting Sn = Pn
+t=1 Xt, we get
+μn,c(μ) := L′(θn,c(θ)) =
+Pn
+t=1 Xt + cμ
+n + c = Sn + cμ
+n+c .
+Therefore, the Bregman deviation specifies to the following closed-form formula
+(n + c) · BL(θ, θn,c(θ)) = (n + c) · kl(μn,c(μ), μ)
+= (Sn + cμ) log μn,c(μ)
+μ + (n − Sn + c(1 − μ)) log 1 − μn,c(μ)
+1−μ .
+Now, we observe that
+Z
+Rd
+exp −cBL(θ′, θ) dθ′ = B(cμ, c(1 − μ))
+μcμ(1 − μ)c(1−μ) ,
+Z
+Rd
+exp −(n + c)BL(θ′, θn,c(θ)) dθ′ = B((n + c)μn,c(μ), (n + c)(1 − μn,c(μ)))
+μn,c(μ)(n+c)μn,c(μ)(1 − μn,c(μ))(n+c)(1−μn,c(μ)) .
+Therefore, we deduce that the Bregman information gain rewrites
+γn,c(μ) =(Sn + cμ) log μn,c(μ) + (n − Sn + c(1 − μ)) log(1 − μn,c(μ)) − cμ log μ − c(1 − μ) log(1 − μ)
++ log Γ(cμ)Γ(c(1 − μ))
+Γ(Sn + cμ)Γ(n − Sn + c(1 − μ)) + log Γ(n + c)
+Γ(c) .
+Combining the above and using Theorem3, we obtain that w.p. ⩾ 1 − δ, ∀n ∈ N,
+Sn log 1
+μ + (n − Sn) log 1
+1 − μ + log Γ(Sn + cμ)Γ(n − Sn + c(1 − μ))
+Γ(cμ)Γ(c(1 − μ)) ⩽ log 1
+δ + log Γ(n + c)
+Γ(c) .
+C.5. Exponential
+We consider X ∼ Exp(1/μ) with unknown mean μ. The distribution of X is supported on [0, +∞)
+with density pμ(x) = 1
+μ e− x
+μ . This corresponds to an exponential family model with parameter
+θ = −1
+μ , feature function F (x) = x and log-partition function L(θ) = log(− 1
+θ ). The Bregman di
+vergence between two parameters θ′ and θ associated with L is given by BL(θ′, θ) = KL(Pμ, Pμ′) =
+μ
+μ′ − 1 − log μ
+μ′ .
+We have L′(θ) = − 1
+θ = μ and L′′(θ) = 1
+θ2 = μ2. Therefore L′ is invertible and we have
+μn,c(μ) := L′(θn,c(θ)) = Sn + cμ
+n+c .
+Therefore, we deduce that the Bregman divergence takes the following form
+(n + c) · BL(θ, θn,c(θ)) = (n + c) · KL(Pμn,c(μ), Pμ) = Sn
+μ − (n + c) log μn,c(μ)
+μ −n.
+29
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+Now, we observe that
+Z
+Rd
+exp −cBL(θ′, θ) dθ′ = Γ(c + 1)
+cμ
+e
+c
+c
+= Γ(c)
+μ
+e
+c
+c
+,
+Z
+Rd
+exp −(n + c)BL(θ′, θn,c(θ)) dθ′ = Γ(n + c + 1)
+(n + c)μn,c(μ)
+e
+n+c
+n+c
+= Γ(n + c)
+μn,c(μ)
+e
+n+c
+n+c
+.
+Therefore, the Bregman information gain writes explicitly as follows
+γn,c(θ) = log μn,c(μ)
+μ + log Γ(c) e
+c
+c
+− log Γ(n + c) e
+n+c
+n+c!
+.
+We can now specify the inequality (n + c) · BL(θ, θn,c(θ)) ⩽ log(1/δ) + γn,c(θ). Combining the above, we obtain w.p. ⩾ 1 − δ, ∀n ∈ N,
+Sn
+μ − (n + c + 1) log Sn + cμ
+(n + c)μ ⩽ (n + c) log(n + c) + log Γ(c)
+Γ(n + c) + log 1
+δ − c log c .
+C.6. Gamma with fixed shape
+We consider X ∼ Gamma(λ, k) with fixed shape k > 0 and unknown scale λ > 0.2 The distribution of X is supported on [0, ∞) with density pλ(x) = 1
+Γ(k)λk xk−1e− x
+λ . This corresponds to an exponen
+tial family model with parameter θ = − 1
+λ , feature function F (x) = x and log-partition function
+L(θ) = log(λk) = k log(− 1
+θ ). The Bregman divergence between two parameters θ′ and θ associated
+with L is given by BL(θ′, θ) = KL(pλ, pλ′) = k λ
+λ′ − 1 − log λ
+λ′ .
+Note that L′(θ) = − k
+θ = kλ and L′′(θ) = k
+θ2 = kλ. Therefore L′ is invertible, and we get
+kλn,c(λ) := L′(θn,c(θ)) =
+Pn
+t=1 Xt + ckλ
+n+c
+Therefore, the Bregman divergence takes the following form
+(n + c) · BL(θ, θn,c(θ)) = (n + c) · KL(pλn,c(λ), pλ)
+= k(n + c)
+Pn
+t=1 Xt + ckλ
+(n + c)kλ − k(n + c) log
+Pn
+t=1 Xt + ckλ
+(n + c)kλ − k(n + c) .
+Now, we observe that
+Z
+Rd
+exp −cBL(θ′, θ) dθ′ = Γ(ck)
+λ
+e
+ck
+ck
+,
+Z
+Rd
+exp −(n + c)BL(θ′, θn,c(θ)) dθ′ = Γ((n + c)k)
+λn,c(λ)
+e
+(n + c)k
+(n+c)k
+.
+Therefore, the Bregman information gain writes explicitly as follows
+γn,c(θ) = log
+Pn
+t=1 Xt + ckλ
+(n + c)kλ + log Γ(ck) e
+ck
+ck
+− log Γ((n + c)k) e
+(n + c)k
+(n+c)k !
+.
+2. Note that Gamma(λ, k) with k = 1 is Exp(1/λ).
+30
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+Using the above with Theorem3, we obtain w.p. ⩾ 1 − δ, ∀n ∈ N,
+k(n + c)
+Pn
+t=1 Xt + ckλ
+(n + c)kλ − (k(n + c) + 1) log
+Pn
+t=1 Xt + ckλ
+(n + c)kλ
+⩽ log 1
+δ + log Γ(ck)
+Γ((n + c)k) + (n + c)k log((n + c)k) + ck − ck log ck. (9)
+C.7. Weibull with fixed shape
+We consider X ∼ Weibull(λ, k) with fixed shape k > 0 and unknown scale λ > 0.3 The distribution
+of X is supported on [0, ∞) with density pλ(x) = k
+λ
+x λ
+k−1 e−( x
+λ )k
+. This corresponds to an exponential family model with parameter θ = − 1
+λk , feature function F (x) = xk and log-partition
+function L(θ) = log(λk) = log(− 1
+θ ). The Bregman divergence between two parameters θ′ and θ
+associated with L is given by BL(θ′, θ) = KL(Pλ, Pλ′) = λ
+λ′
+k − 1 − log λ
+λ′
+k.
+Note that L′(θ) = − 1
+θ = λk and L′′(θ) = 1
+θ2 = λ2k. Therefore L′ is invertible, and we get
+(λn,c(λ))k := L′(θn,c(θ)) =
+Pn
+t=1 X k
+t + cλk
+n+c .
+Therefore, the Bregman divergence takes the following form
+(n + c) · BL(θ, θn,c(θ)) = (n + c) · KL(pλn,c(λ), pλ)
+= (n + c)
+Pn
+t=1 X k
+t + cλk
+(n + c)λk − (n + c) log
+Pn
+t=1 X k
+t + cλk
+(n + c)λk − (n + c) .
+Now, we observe that
+Z
+Rd
+exp −cBL(θ′, θ) dθ′ = Γ(c)
+λk
+e
+c
+c
+,
+Z
+Rd
+exp −(n + c)BL(θ′, θn,c(θ)) dθ′ = Γ(n + c)
+(λn,c(λ))k
+e
+n+c
+n+c
+.
+Therefore, the Bregman information gain writes explicitly as follows
+γn,c(θ) = log
+Pn
+t=1 X k
+t + cλk
+(n + c)λk + log Γ(c) e
+c
+c
+− log Γ(n + c) e
+n+c
+n+c!
+.
+Using the above with Theorem3, we obtain w.p. ⩾ 1 − δ, ∀n ∈ N,
+(n + c)
+Pn
+t=1 X k
+t + cλk
+(n + c)λk − (n + c + 1) log
+Pn
+t=1 X k
+t + cλk
+(n + c)λk
+⩽ log 1
+δ + log Γ(c)
+Γ(n + c) + (n + c) log(n + c) + c − c log c. (10)
+3. Note that Weibull(λ, k) with k = 1 is Exp(1/λ).
+31
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+C.8. Pareto with fixed scale
+We consider X ∼ Pareto (α), where α > 0 is unknown.4 The distribution of X is supported in [1, +∞), with density pα(x) = α
+xα+1 , which corresponds to a one-dimensional exponential family model with parameter θ = −α − 1 ∈ (−∞, −1), feature function F (x) = log x and log-partition function L(θ) = − log (−1−θ). The first two derivatives of L are given by L′(θ) = − 1
+1+θ and
+L′′(θ) = 1
+(1+θ)2 , therefore L′ is invertible on the domain (−∞, −1). Using these expressions,
+the Bregman divergence between two parameters θ′ and θ writes BL(θ′, θ) = − log (−1 − θ′) +
+log (−1 − θ) + θ′−θ
+1+θ . Using the shorthand Ln = Pn
+t=1 log Xt, it follows from the definition that:
+θn,c(θ) = −1 + n+c
+c
+1+θ − Ln
+.
+To compute the Bregman information gain, we rewrite the following integral thanks to an affine change of variable in order to relate it to the Gamma function:
+Z −1
+−∞
+exp −cBL(θ′, θ) dθ′ = (−1−θ)−c e cθ
+1+θ
+Z −1
+−∞
+−1−θ′ c e− cθ′
+1+θ dθ′
+= (−1−θ) Γ(c) e
+c
+c
+.
+The expression of the Bregman information then follows immediately:
+γn,c(θ) = − log n+c
+(−1 − θ)Ln + c − n − c log c + (n+c) log(n+c) + log Γ(c) − log Γ(n+c) .
+Moreover, we deduce from the expression of θn,c(θ) and the Bregman divergence that:
+BL(θ′, θn,c(θ)) = − log(−1 − θ′) + log n+c
+Ln − c
+1+θ
+!
+−
+Ln − c
+1+θ (θ′ +1)
+n+c − 1 .
+Therefore, Theorem3combined with the natural parameter θ = −1 − α yields that w.p. ⩾ 1 − δ, ∀n ∈ N,
+αLn − (n+c+1) log (αLn + c) ⩽ log 1
+δ − c log c − log(n+c) + log Γ(c) − log Γ(n+c) . (11)
+C.9. Chi-square
+We finally consider X ∼ χ2(k) or, equivalently, X ∼ Gamma k
+2, 1
+2 , i.e., pk(x) = ( 1
+2)k
+2
+Γ( k
+2)xk
+2 −1e− x
+2,
+x ⩾ 0, k ∈ N (or k ∈ R+ \ {0} if one considers Gamma distributions). This corresponds to an exponential family model with parameter θ = k
+2 − 1, feature function F (x) = log x and log-partition
+function L(θ) = (θ + 1) log 2 + log Γ(θ + 1). The Bregman divergence between two parameters θ′ and θ associated with L is given by
+BL(θ′, θ) = KL(Pk, Pk′) = 1
+2 (k − k′)ψ0(k/2) − log Γ(k/2)
+Γ(k′/2) ,
+4. We assume scale is fixed to the value 1.
+32
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+where ψ0(x) = d
+dx log Γ(x) denotes the digamma function.
+We further have L′(θ) = log 2 + ψ0(θ + 1) and L′′(θ) = ψ1(θ + 1), where ψ1(x) = d2
+dx2 log Γ(x)
+denotes the trigamma function. Therefore L′ is invertible, and the parameter estimate is given by
+log 2 + ψ0(θn,c(θ) + 1) = 1
+n+c
+n
+X
+t=1
+log Xt + c
+n + c (log 2 + ψ0(θ + 1)) ,
+yielding
+kn,c(k) := 2(1 + θn,c(θ)) = 2ψ−1
+0
+1
+n+c
+n
+X
+t=1
+log Xt + c
+n + c ψ0(k/2) − n
+n + c log 2
+!
+= 2ψ−1
+0
+1
+n + c Kn + c
+n + c ψ0(k/2) ,
+where Kn =
+n
+P
+t=1
+log Xt
+2 . Therefore, the Bregman divergence rewrites as follows
+(n + c) · BL(θ, θn,c(θ)) = (n + c) · KL(Pkn,c(k), Pk)
+=1
+2 (kn,c(k) − k) Kn + c ψ0
+k
+2 − (n + c) log
+Γ kn,c(k)
+2
+Γk
+2
+.
+Now, we see that
+Z
+Rd
+exp −cBL(θ′, θ) dθ′ =
+Z1
+2 exp − c
+2 (k − k′)ψ0(k/2) Γ(k/2)
+Γ(k′/2)
+c
+dk′ ,
+Z
+Rd
+exp −(n + c)BL(θ′, θn,c(θ)) dθ′ =
+Z1
+2 exp − n+c
+2 (kn,c(k) − k′)ψ0(kn,c(k)/2) Γ(kn,c(k)/2)
+Γ(k′/2)
+n+c
+dk′ .
+Therefore, the Bregman information gain writes
+γn,c(θ) = c log Γ k
+2 − (n + c) log Γ kn,c(k)
+2 −c k
+2 ψ0
+k
+2 + (n + c) kn,c(k)
+2 ψ0
+kn,c(k)
+2
++ log
+R
+(Γ (k′/2))−c exp c k′
+2 ψ0 k
+2 dk′
+R
+(Γ (k′/2))−(n+c) exp (n + c) k′
+2 ψ0
+kn,c(k)
+2 dk′
+= c log Γ k
+2 − (n + c) log Γ kn,c(k)
+2 −c k
+2 ψ0
+k
+2 + kn,c(k)
+2 Kn + cψ0
+k
+2
++ log
+R
+(Γ (k′/2))−c exp c k′
+2 ψ0 k
+2 dk′
+R
+(Γ (k′/2))−(n+c) exp k′
+2 Kn + cψ0 k
+2 dk′
+= c log Γ k
+2 − (n + c) log Γ kn,c(k)
+2 −c k
+2 ψ0
+k
+2 + kn,c(k)
+2 Kn + cψ0
+k
+2
++ log J c, cψ0
+k
+2 − log J n+c, Kn +cψ0
+k
+2,
+33
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+where we define the auxiliary function J(a, b) =
+R
+exp −a log Γ k′
+2 + b k′
+2 dk′. Combining the
+above with Theorem3, and after some simple algebra, we obtain that w.p. ⩾ 1 − δ, ∀n ∈ N,
+n log Γ k
+2 −k
+2 Kn − log J c, cψ0
+k
+2 + log J n+c, Kn +cψ0
+k
+2 ⩽ log 1
+δ . (12)
+Remark 9 The integral terms
+R
+dk′ in the above derive from the martingale construction inA.1 and the mixture distribution q(θ|α, β) over the parameter θ ∈ Θ of the exponential family. In the case of Gamma k
+2, 1
+2 with unknown shape k
+2 > 0, we have θ = k
+2 and Θ = (0, +∞), therefore
+dk′ corresponds to the Lebesgue measure over (0, +∞). When restricted to the Chi-square family, Θ = N, and dk′ is instead the counting measure, effectively turning integrals into discrete sums. In AppendixD, we report figures using both versions, see Figure6and Figure11.
+Remark 10 The ratio of integrals (or infinite sums) in (12) can be efficiently implemented using a simple integration scheme (or by truncation). Indeed, for a given kmax ∈ N, b ≪ 1 and B ≫ 1, we
+define xk′ = b + k′
+kmax (B − b) for k′ = 0, . . . , kmax, so that
+log
+R +∞
+0 Γ k′
+2
+−c
+exp k′
+2 cψ0 k
+2 dk′
+R +∞
+0 Γ k′
+2
+−(n+c) exp k′
+2 cψ0 k
+2 + Pn
+t=1 log Xt
+2 dk′
+≈ logsumexp
+k′=1,...,kmax
+−c log Γ xk′
+2 + cxk′
+2 ψ0
+k
+2 + log (xk′ − xk′−1)
+− logsumexp
+k′=1,...,kmax
+− (n + c) Γ xk′
+2 + xk′
+2 cψ0
+k
+2+
+n
+X
+t=1
+log Xt
+2
+!!
++ log (xk′ − xk′−1)
+!
+.
+Similarly, we have
+log
++∞
+P
+k′=1
+Γ k′
+2
+−c
+exp k′
+2 cψ0 k
+2
++∞
+P
+k′=1
+Γ k′
+2
+−(n+c) exp k′
+2 cψ0 k
+2 + Pn
+t=1 log Xt
+2
+≈ logsumexp
+k′=1,...,kmax
+−c log Γ k′
+2 + k′
+2 cψ0
+k
+2
+− logsumexp
+k′=1,...,kmax
+− (n + c) Γ k′
+2 + k′
+2 cψ0
+k
+2+
+n
+X
+t=1
+log Xt
+2
+!!!
+,
+The final steps correspond to the right-rectangular scheme over (b, B) with kmax steps and the
+truncation to the first kmax terms respectively. Note the use of logsumexp
+k′=1,...,kmax
+(z) = log
+kmax
+P
+k′=1
+exp (zk′ )
+for z ∈ Rkmax, which is efficiently implemented in many libraries for scientific computing and better handles summation of large numbers. Empirically, we found that log b = −10, log B = 10 and kmax = 2000 provided sufficient accuracy and that using finer approximation schemes did not significantly impact the numerical results.
+34
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+C.10. Poisson
+We consider X ∼ Poisson (λ), where λ > 0 is unknown. We recall that the distribution of X is
+supported on N with probability mass function P (X = k) = λke−λ
+k! . This corresponds to a onedimensional exponential family model with parameter θ = log λ ∈ R, feature function F (x) = x and log-partition function L(θ) = eθ (which is invertible on R). The Bregman divergence between
+two parameters θ′ and θ is therefore BL(θ′, θ) = eθ′ − eθ − (θ′ − θ)eθ.
+Using the shorthand Sn = Pn
+t=1 Xt, it follows from the definition that:
+θn,c(θ) = log Sn +ceθ
+n+c .
+The Bregman information gain is expressed using the auxiliary function I(a, b) =
+R +∞
+−∞ e−aeθ+bθdθ
+as:
+γn,c(θ) = c(1 − θ)eθ − (n+c) (1 − θn,c(θ)) eθn,c(θ) + log I c, ceθ − log I n+c, (n+c)eθn,c(θ)
+= c(1 − θ)eθ − 1 − log Sn +ceθ
+n+c Sn +ceθ + log I c, ceθ − log I n+c, Sn +ceθ .
+Moreover, we deduce from the expression of θn,c(θ) and the Bregman divergence that:
+BL(θ′, θn,c(θ)) = eθ′ − Sn +ceθ
+n+c − θ′ − log Sn +ceθ
+n+c
+Sn +ceθ
+n+c .
+Therefore, Theorem3combined with the natural parametrization θ = log λ yields that w.p. ⩾ 1 − δ, ∀n ∈ N,
+nλ − Sn log λ ⩽ log 1
+δ + log I (c, cλ) − log I (n+c, Sn +cλ) .
+Remark 11 Although, to the best of our knowledge, the integral I(a, b) does not have a closed-form expression, it can be numerically estimated up to arbitrary precision. We recommend the same implementation as discussed in Remark10, using the logsumexp operator for stability, and refer to the code for further details.
+C.11. Summary table
+We summarize the high probability confidence sets of Theorem3derived in this Table2.
+35
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+Table 2: Summary of Bregman confidence sets given by Theorem3for representative families. Throughout, the following notations are used:
+Sn =
+n
+P
+t=1
+Xt, μbn = Sn
+n , Qn(μ) =
+n
+P
+t=1
+(Xt − μ)2, Zn(μ, σ) = Qn(μ)
+σ2 ,
+S (k)
+n=
+n
+P
+t=1
+Xk
+t , Ln =
+n
+P
+t=1
+log Xt, Kn =
+n
+P
+t=1
+log Xt
+2,
+I(a, b) =
+R +∞
+−∞ e−aeθ+bθ dθ,
+J(a, b) =
+R∞
+0 exp −a log Γ k
+2 + bk
+2 dk (dk is the Lebesgue measure if k ∈ R+ and the counting measure if k ∈ N).
+Name Parameters Formula
+Gaussian μ ∈ R 1
+n+c
+(Sn−nμ)2
+2σ2 ⩽ log 1
+δ+1
+2 log n+c
+c
+Gaussian σ ∈ R+
+Qn(μ)
+2σ2 − n+c
+2 +1 log Qn(μ)+c
+2σ2
+⩽ log 1
+δ +log Γ( c
+2+2)
+Γ( n+c
+2 +2) − n
+2 log 2−( c
+2 +1) log c+( n+c
+2 +1) log(n+c)
+Gaussian μ ∈ R
+σ ∈ R+
+1
+2 Zn(μ, σ) − n+c+3
+2 log n
+n+c Zn(μbn, σ) + c
+n+c Zn(μ, σ) + c
+⩽ log 1
+δ−n
+2 log 2 − c
+2 +2 log c + 1
+2 log (n+c)
++ log Γ c+3
+2 − log Γ n+c+3
+2
+Bernoulli μ ∈ [0, 1] Sn log 1
+μ +(n−Sn) log 1
+1−μ +log Γ(Sn+cμ)Γ(n−Sn+c(1−μ))
+Γ(cμ)Γ(c(1−μ))
+⩽ log 1
+δ +log Γ(n+c)
+Γ(c)
+Exponential μ ∈ R+
+Sn
+μ −(n+c+1) log Sn
+μ +c
+⩽ log 1
+δ +log Γ(c)
+Γ(n+c) −log(n+c)−c log c
+Gamma λ ∈ R+
+Sn
+λ −((n+c)k+1) log Sn
+λ + ck
+⩽ log 1
+δ +log Γ(ck)
+Γ((n+c)k) −log((n+c)k) − ck log ck
+Weibull λ ∈ R+
+S(k)
+n
+λk − (n + c + 1) log S(k)
+n
+λk + c
+⩽ log 1
+δ + log Γ(c)
+Γ(n+c) − log(n + c) − c log c
+Pareto α ∈ R αLn − (n+c+1) log (αLn + c)
+⩽ log 1
+δ + log Γ(c)
+Γ(n+c) − log(n + c) − c log c
+Poisson λ ∈ R+
+nλ−Sn log λ ⩽ log 1
+δ +log I (c, cλ) − log I (n+c, Sn +cλ)
+Chi-square k ∈ N
+or k ∈ R+
+n log Γ k
+2 −k
+2 Kn −log J c, cψ0 k
+2
++ log J n+c, Kn +cψ0 k
+2 ⩽ log 1
+δ
+36
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+Appendix D. Empirical Comparison with Existing Time-uniform Confidence Sequences
+We illustrate the time-uniform confidence sequences derived from Bregman concentration on several instances of classical exponential families detailed in3.2. In each setting, when available, we also report confidence sequences based on existing methods in the literature5.
+In what follows, we fix δ ∈ (0, 1) the uniform confidence level. For each confidence sequence (Θn)n∈N (δ), we report in the figures the intersection sequence (∩k⩽nΘk(δ))n∈N, which also holds with confidence 1 − δ, for n up to 200. Typical realizations of Bregman confidence sequences are reported in Figure3(Gaussian), Figure4(Bernoulli, Poisson), Figure5(Exponential, Gamma, Weibull, Pareto), and Figure6(Chi-square).
+0 50 100 150 200 Sample size
+2.0
+1.5
+1.0
+0.5
+0.0
+0.5
+1.0
+1.5
+2.0
+=5%, =0.0, =1.0, c=1.0 (averaged over 1000 repetitions)
+20 40 60 80 100 Sample size
+0.00
+0.25
+0.50
+0.75
+1.00
+1.25
+1.50
+1.75
+2.00
+=5%, =1.0, =1.0, c=1.0 (averaged over 1000 repetitions)
+Figure 3: Examples of confidence upper and lower envelopes around unknown expectation μ = 0 for N (μ, 1) (left, cf. Table2) and unknown standard deviation σ = 1 for N (1, σ) (right, cf. Table2), as a function of the number of observations n. The thick lines indicate the median curve over 1000 replicates.
+5. The code is provided in the supplementary material for reproducibility.
+37
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+0 50 100 150 200 Sample size
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+=5%, p=20%, c=1.0 (averaged over 1000 repetitions)
+0 50 100 150 200 Sample size
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+=5%, p=50%, c=1.0 (averaged over 1000 repetitions)
+0 50 100 150 200 Sample size
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+=5%, p=80%, c=1.0 (averaged over 1000 repetitions)
+20 40 60 80 100 Sample size
+0
+1
+2
+3
+4
+5
+6
+=5%, =3.0, c=1.0
+(averaged over 1000 repetitions)
+Figure 4: Examples of confidence upper and lower envelopes around expectation μ for discrete distributions. From top to bottom: Bernoulli(p), p ∈ {0.2, 0.5, 0.8} (cf. Table (2)) and Poisson(3) (cf. Table2) on several realizations (each dashed lines) as a function of the number of observations n. The thick lines indicate the median curve over 1000 replicates.
+38
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+0 50 100 150 200 Sample size
+0.00
+0.25
+0.50
+0.75
+1.00
+1.25
+1.50
+1.75
+2.00
+=5%, =1.0, c=1.0 (averaged over 1000 repetitions)
+20 40 60 80 100 Sample size
+0
+1
+2
+3
+4
+5
+6
+=5%, =3.0, c=1.0
+(averaged over 1000 repetitions)
+20 40 60 80 100 Sample size
+0
+1
+2
+3
+4
+5
+6
+=5%, =3.0, c=1.0
+(averaged over 1000 repetitions)
+20 40 60 80 100 Sample size
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+=5%, =0.5, c=1.0 (averaged over 1000 repetitions)
+Figure 5: Examples of confidence upper and lower envelopes (from top to bottom) around scale parameter λ for Exp(1) (cf. Table (2)), fixed shape Gamma(3, 2) (cf. Table2), fixed shape Weibull(3, 2) (cf. Table2), and exponent α for Pareto( 1
+2 ) (cf. Table2), on several realizations (each dashed lines) as a function of the number of observations n. The thick lines indicate the median curve over 1000 replicates.
+39
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+0 50 100 150 200 Sample size
+2
+4
+6
+8
+10
+=5%, =5.0, c=1.0 (averaged over 1000 repetitions)
+0 50 100 150 200 Sample size
+2
+4
+6
+8
+10
+=5%, =5.0, c=1.0 (averaged over 1000 repetitions)
+Figure 6: Examples of confidence upper and lower envelopes around expectation μ for (continuous prior) Gamma k
+2 with unknown shape k
+2 > 0 and (discrete prior) Chi-square χ2(k), k ∈ N∗ (cf. Table (2) and Remark9) on several realizations (each dashed lines), as a function of the number of observations n. In particular for the Chi-square, confidence lower and upper bounds are ceiled and floored to integers. The thick lines indicate the median curve over 1000 replicates.
+D.1. Gaussian with unknown mean and variance
+012
+1
+2
+=5%, =1, =1, c=1.0
+012
+1
+2
+=5%, =1, =1
+Figure 7: Example of time-uniform, joint confidence sets around (μ, σ) for N (1, 1) (cf. Table2for n ∈ {10, 25, 50, 100} observations (smaller confidence sets correspond to larger sample sizes). The red star indicates the true parameters (μ, σ) = (1, 1).
+40
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+We consider the two-dimensional family N μ, σ2 , (μ, σ) ∈ R × R∗
++ . To the best of our knowledge, there does not exist time-uniform joint confidence sets for (μ, σ) prior to this work. In order to compare ourselves against some baseline, we derive a crude one based on Chi-square quantiles and a union bound. Let n ∈ N, δ ∈ (0, 1), X1, . . . , Xn i.i.d samples from N (μ0, σ2
+0). The standardized sum of squares
+Zt(μ0, σ0) =
+t
+X
+s=1
+Xt − μ0
+σ0
+2
+follows a χ2(t) distribution, therefore, denoting by qχ2(t) the corresponding quantile function, we have:
+P qχ2(t)
+δ
+2 ⩽ Zt(μ0, σ0) ⩽ qχ2(t) 1 − δ
+2 ⩾1−δ.
+By a union bound argument, the intersection of n such events with confidence δ
+n , i.e
+ΘZ
+t,n(δ) =
+t
+\
+s=1
+(μ, σ) ∈ R × R∗
++ : qχ2(s)
+δ
+2n ⩽ Zs(μ, σ) ⩽ qχ2(s) 1 − δ
+2n
+describes a sequence of confidence sets at level δ that hold uniformly over t ∈ {1, . . . , n}. We report our confidence sets (cf. Equation2) and the above on Figure7. The most striking drawback of ΘZ
+t,n(δ) is that it is not convex nor even bounded; in particular, projecting onto the axes
+of μ and σ only provides trivial confidence sets, R and R∗
++ respectively, rendering this result vacuous. To better grasp this phenomenon, let us informally consider μ = α + μ0 and σ = α for some α > 0. We have:
+Zn(μ, σ) =
+n
+X
+t=1
+Xt − μ0
+α −1
+2
+=1
+α2
+n
+X
+t=1
+(Xt − μ0)2
+| {z }
+≈ σ2
+0
+α2 n
+−2
+α
+n
+X
+t=1
+(Xt − μ0)
+| {z }
+≈2
+α
+√n
++n .
+Hence, for α → +∞, Zn(μ0 + α, α) ≈ n. On the other hand, Lemma 1 inLaurent and Massart
+(2000) shows that qχ2(n) (1 − δ/2n) = O n + √n log n and qχ2(s) (δ/2n) = O (n). Therefore, even with increasing the sample size n, there exists arbitrary large α such that (μ0 + α, α) may belong to ΘZ
+t,n(δ).
+By contrast, our Bregman confidence sets are convex and bounded, which we interpret as the result of exploiting the true geometry of the two-dimensional Gaussian family. In addition to the unboundedness, ΘZ
+t,n(δ) is built using a crude union bound, which is not anytime (depends on the terminal time n) and rather loose.
+D.2. Bernoulli
+We consider the Bernoulli distribution Bernoulli(μ) for some unknown μ ∈ [0, 1]. Confidence bounds are displayed in Figure8for μ ∈ {0.2, 0.5, 0.8}. We detail below a few alternative state-of-the-art bounds.
+41
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+Chernoff-Laplace method for sub-Gaussian distributions We recall that B(μ) being supported in [0, 1], it is 1/2-sub-Gaussian (Hoeffding lemma,Hoeffding(1963)). The method of mixtures for
+exponential martingales (Peña et al.,2008) shows that P ∀n ∈ N, μ ∈ ΘLaplace
+n (δ) ⩾ 1 − δ, with
+ΘLaplace
+n (δ) =
+
+μbn −
+s
+1+ 1
+n
+log 2√1 + n/δ
+2n , μbn +
+s
+1+ 1
+n
+log 2√1 + n/δ
+2n
+
+.
+Note that a sharper sub-Gaussian control holds for B(μ), seeKearns and Saul(1998),Berend
+and Kontorovich(2013). However, the optimal sub-Gaussian parameter they suggest ( 1/2−μ
+log(1/μ−1)
+instead of 1/2) is a function of the unknown μ.
+Bentkus concentration with geometric time-peeling Kuchibhotla and Zheng(2021, Theorem 4) show that P ∀n ∈ N, μ ∈ ΘBentkus
+n (δ) ⩾ 1 − δ with
+ΘBentkus
+n (δ) = μbn − 1
+nq δ
+2h(kn) ; cn, 1/2, 1 , μbn + 1
+nq δ
+2h(kn) ; cn, 1/2, 1 .
+Here q(δ′; N, A, B) is the Bentkus bound, where δ′ is the confidence level, N is the sample size, B is the almost sure upper bound of the random variables and A2 is the variance upper bound. The function h(k) is defined as h(k) = ζ(1.1)(k + 1)1.1, where ζ(·) is the Riemann-zeta function. The integer kn and the real cn are defined as kn = min{k ∈ N : ⌈ηk⌉ ⩽ n ⩽ ⌊ηk+1⌋} and cn = ⌊ηkn+1⌋, with η = 1.1. The referenced theorem is stated with an empirical overestimate of the standard deviation instead of the fixed bound 1/2, which would lead to replace the δ/2 present in the confidence set with δ/3 by union bound; we found this step to be of negligible, and even slightly detrimental impact, in the case of Bernoulli distributions.
+Hedged Capital martingale method Waudby-Smith and Ramdas(2023, Theorem 3) present a nonnegative martingale construction from observations X1, . . . , Xn bounded in [0, 1]. Following the recommendations of the authors, we define the following quantities:
+Kn(m) = max(K+
+n , K−
+n (m)),
+K±
+n (m) =
+n
+Y
+k=1
+1 ± λ±
+k (m) (Xk − m) ,
+λ+
+k (m) = min |λk|, 1/2
+m , λ−
+k (m) = min |λk|, 1/2
+1−m ,
+λk =
+s
+2 log(2/δ)
+σb2
+k−1k log(k + 1) ,
+σb2
+k = 1/4 + Pk
+i=1 (Xi − μbi)2
+k+1 ,
+μbk = 1/2 + Pk
+i=1 Xi
+k+1 .
+Then, it holds that P ∀n ∈ N, μ ∈ ΘHC
+n (δ) ⩾ 1−δ, where ΘHC
+n (δ) = {m ∈ [0, 1] : Kn(m) < 1/δ}.
+42
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+Figure 8: Confidence upper and lower envelopes built for Bernoulli(μ), μ ∈ {0.2, 0.5, 0.8}, as a function of the number of observations n, averaged over 1000 independent simulations. Grey lines are trajectories of empirical means μbn. Confidence bounds are clipped between 0 and 1.
+D.3. Gaussian
+We consider Gaussian distributions N (μ, σ2) for some unknown μ ∈ R and known variance σ2. The confidence bounds are displayed in Figure9for μ = 0.
+43
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+Chernoff-Laplace Similarly to the Bernoulli case, N (μ, σ2) is σ-sub-Gaussian, therefore
+P ∀n ∈ N, μ ∈ ΘLaplace
+n (δ) ⩾ 1 − δ, with
+ΘLaplace
+n (δ) =
+
+μbn − σ
+s
+1+ 1
+n
+log 2√1 + n/δ
+n , μbn + σ
+s
+1+ 1
+n
+log 2√1 + n/δ
+n
+
+.
+Kaufmann-Koolen Kaufmann and Koolen(2021) introduces a martingale construction for exponential families to derive time-uniform deviation inequalities under bandit sampling. However, application of their result is limited to Gaussian distribution with known variance and Gamma distribution with known shape, which is just a scaled version of exponential distribution. Restricting Corollary 10 ofKaufmann and Koolen(2021) to the case of a single arm yields P ∀n ∈ N, μ ∈ ΘKK
+n (δ) ⩾ 1 − δ, with
+ΘKK
+n (δ) = BL (μbn, μ) ⩽ 2
+n log (4 + log(n)) + 1
+n Cg (log 1/δ) ,
+g : λ ∈ (1/2, 1] 7→ 2λ (1 − log(4λ)) + log ζ(2λ) − 1
+2 log(1 − λ),
+Cg : x ∈ (0, +∞) 7→ min
+λ∈(1/2,1]
+g(λ) + x
+λ,
+L(θ) = θ2
+2σ2 (log-partition function of N (·, σ2)).
+Figure 9: Confidence upper and lower envelopes built for Gaussian distributions N (0, 1) as a function of the number of observations n, averaged over 1000 independent simulations. Grey lines are trajectories of empirical means μbn.
+44
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+D.4. Exponential
+We now consider exponential distributions Exp(1/μ) for some unknown mean μ ∈ R. We report in Figure10the confidence bounds for the case when μ = 1.
+Kaufmann-Koolen Kaufmann and Koolen(2021, Corollary 12) show that P ∀n ∈ N, μ ∈ ΘKK
+n (δ) ⩾ 1 − δ, with the same definition as for the Gaussian case except
+g : λ ∈ (1/2, 1] 7→ 2λ (1 − log(4λ)) + log ζ(2λ) − log(1 − λ), (13)
+L(θ) = log(−1/μ) (log-partition function of E(1/μ)). (14)
+Figure 10: Confidence upper and lower envelopes built for Exponential distributions Exp(1) as a function of the number of observations n, averaged over 1000 independent simulations. Grey lines are trajectories of empirical means μbn.
+D.5. Chi-square
+We consider Gamma k
+2, 1
+2 and χ2 (k) distributions for some unknown k > 0 and k ∈ N∗ respectively. They are in fact the same distributions, however we distinguish both as the restriction on the domain for k (real or integer) bears two consequences:
+• the mixture distribution in the martingale construction is either continuous or discrete, resulting in integrals or sums in the expression of the confidence sequence (Equation2);
+• confidence bounds are constrained to be integers in the discrete case, thus ceiling and flooring the lower and upper bounds respectively.
+45
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+We find that the former is negligible as both the continuous and discrete mixtures yield the same bound within numerical precision. The latter however allows to drastically shrink the size of the confidence sequences, resulting in perfect identification the mean within 95% confidence with less than 100 observations in half the simulations (see Figure11).
+D.6. Key Observations
+On the studied examples, confidence intervals based on time-uniform Bregman concentration are either comparable with state-of-the art methods for the corresponding setting or result in sharper bounds, especially for small sample sizes (lower bounds for Bernoulli compared to Hedged Capital, upper bound for Exponential compared to Kaufmann-Koolen). In particular, due to the formulation in terms of Bregman divergence, our intervals are naturally asymmetric when the underlying distribution is, and respect the support constraints (for instance Bernoulli Bregman bounds are in [0, 1] without the need for clipping). Moreover, we also provide bounds in novel settings for which, to the best of our knowledge, time-uniform confidence sets are lacking (Chi-square, Poisson, Weibull, Pareto, mean-variance for Gaussian).
+Figure 11: Confidence upper and lower envelopes built for Gamma 5
+2, 1
+2 (blue) and χ2 (5) (red) distributions as a function of the number of observations n, over 1000 independent simulations (colored lines are median of simulated bounds). Grey lines are trajectories of empirical means μbn.
+D.7. Tuning of The Regularization Parameter c
+In this section, we provide additional experiments regarding the local regularization parameter c. We study the sensitivity of the bounds to the values of c, reported in Figure12. Then, we report in Figure13plots showing a tuning of parameter c for each fixed n = n0 illustrated for Bernoulli,
+46
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+Gaussian, exponential and Chi-square distributions. Specifically, c is chosen to minimize the width of the confidence set at n = n0, i.e., cn0 = minc>0|Θn0,c (δ)|. Let us recall that such a tuning is only valid for a single value. Hence, while using c = cn0 for a fixed n0 is allowed by the theory to produce time-uniform bounds for all n, using c = cn, that is a different value for different n, is not supported by the theory as it would break the martingale property necessary for the mixture construction to hold, which is manifested by a contradiction with the law of iterated logarithm (see Section3.1).
+(a) Bernoulli (b) Gaussian
+(c) Exponential (d) Chi-square
+Figure 12: Confidence envelopes for varying c ∈ [0.1, 30] for B(0.5) (top left), N (0, 1) (top right), E(1) (bottom left) and χ2(5) (bottom right). The dotted black line corresponds to the heuristics cn ≈ 0.12n.
+47
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+0 50 100 150 200 Sample size
+0
+5
+10
+15
+20
+25
+Regularization parameter c
+Tuning of c for B(0.7) (averaged over 1000 repetitions)
+optimal c linear trend 0.12n + 0.60
+0 50 100 150 200 Sample size
+0
+5
+10
+15
+20
+25
+Regularization parameter c
+Tuning of c for N(0, 1) (averaged over 1000 repetitions)
+optimal c linear trend 0.12n + -0.03
+0 50 100 150 200 Sample size
+0
+5
+10
+15
+20
+Regularization parameter c
+Tuning of c for E(1) (averaged over 1000 repetitions)
+optimal c linear trend 0.12n + -0.84
+0 50 100 150 200 Sample size
+0
+5
+10
+15
+20
+25
+Regularization parameter c
+Tuning of c for 2(5) (averaged over 1000 repetitions)
+optimal c linear trend 0.12n + -0.08
+Figure 13: Optimal (smallest confidence interval diameter) local regularization parameter c∗
+n= argminc|Θn,c (δ)| for δ = 5% on Bernoulli (top left), Gaussian (top right), exponential (bottom left)
+and Chi-square (bottom right). Note the apparent common linear trend c∗
+n ≈ 0.12n. Results are averaged over 1000 independent simulations.
+48
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+Appendix E. Application: Generalized Likelihood Ratio Test in Exponential Families
+In this section, we apply our result to revisit GLR tests in exponential families. The Generalized Likelihood Ratio (GLR) in the exponential family model E writes a follows
+GE
+1:s:t = log supθ1,θ2
+Qs
+t′=1 pθ1 (Xt′ ) Qt
+t′=s+1 pθ2 (Xt′ )
+supθ
+Qt
+t′=1 pθ(Xt′ )
+= sup
+θ1,θ2
+s
+X
+t′=1
+log pθ1 (Xt′ ) +
+t
+X
+t′=s+1
+log pθ2 (Xt′ ) − sup
+θ
+t
+X
+t′=1
+log pθ(Xt′ )
+= sL⋆(F1:s) + (t − s)L⋆(Fs+1:t) − tL⋆(F1:t)
+= s(L⋆(F1:s) − L⋆(F1:t)) + (t − s)(L⋆(Fs+1:t) − L⋆(F1:t)) ,
+where Fs+1:t = 1
+t−s
+Pt
+t′=s+1 F (Xt′), and it makes sense to introduce θs+1:t such that ∇L(θs+1:t) = Fs+1:t. The GLR test is then defined, for a threshold α as
+τ (α; E) = min{t ∈ N : max
+s∈[0,t)
+GE
+1:s:t ⩾ α}
+An alternative formulation of the GLR shows that
+GE
+1:s:t = inθf sup
+θ1,θ2
+log
+Qs
+t′=1 pθ1 (Xt′ ) Qt
+t′=s+1 pθ2 (Xt′ )
+Qt
+t′=1 pθ(Xt′ )
+= inθf sup
+θ1,θ2
+s ⟨θ1, F1:s⟩ − L(θ1) − ⟨θ, F1:t⟩ + L(θ)
++ (t − s) ⟨θ2, Fs+1:t⟩ − L(θ2) − ⟨θ, F1:t⟩ + L(θ) .
+The first supremum is obtained for θ1 = [∇L]−1(F1:s), with value equal to BL(θ, θ1) + ⟨θ − θ1, ∇L(θ1)⟩ + ⟨θ1, F1:s⟩ + ⟨θ1, F1t⟩, that is BL(θ, θ1:s) + ⟨θ, F1:s − F1:t⟩. Likewise, the the second supremum is obtained for θ2 = [∇L]−1(Fs+1:t), with value equal to BL(θ, θs+1:t)+⟨θ, Fs+1:t−F1:t⟩. Combining these two results, and remarking that s(F1:s − F1:t) + (t − s)(Fs+1:t − F1:t) = 0, we obtain that
+GE
+1:s:t = inθf sBL(θ, θ1:s) + (t − s)BL(θ, θs+1:t) (15)
+We further note that a solution to this optimization problem is obtained for θ such that s(∇L(θ) −
+∇L(θ1:s)) + (t − s)(∇L(θ) − ∇L(θs+1:t)) = 0. Reorganizing the terms, this entails that ∇L(θ) =
+1
+t (sF1:s + (t − s)Fs+1:t) = F1:t, and thus (without surprise) θ = θ1:t.
+Written in the form (15), the GLR satisfies for any θ′,
+GE
+1:s:t ⩽ sBL(θ′, θ1:s) + (t − s)BL(θ′, θs+1:t) .
+In particular, the false alarm rate of the GLR test, when all observations are generated from parameter θ, can be bounded using
+Pθ(τ (α; E) < ∞) = Pθ ∃(t, s) ∈ N2, s < t : GE
+1:s:t ⩾ α
+⩽ Pθ ∃(t, s) ∈ N2, s < t : sBL(θ, θ1:s) + (t − s)BL(θ, θs+1:t) ⩾ α .
+49
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+At this point, provided that for appropriate terms α1, α2,
+Pθ ∃s ∈ N : sBL(θ, θ1:s) ⩾ α2 ⩽ δ
+2,
+Pθ ∃(t, s) ∈ N2, s < t : (t − s)BL(θ, θs+1:t) ⩾ α1 ⩽ δ
+2.
+we deduce by a simple union bound argument, and for α = α1 + α2 that Pθ(τ (α : E) < ∞) ⩽ δ.
+A regularized GLR test Our concentration result shows that such a controlled can be obtained for a penalized version of the maximum likelihood parameter estimates θ1:s, θs+1,t, θ1,t. Namely, let us consider the set
+Θs,c(δ) = θ ∈ Θ : ∃s ∈ N : sBL(θ, θ1:s,c(θ)) ⩾ α1 ,
+Θs+1:t,c(δ) = θ ∈ Θ : ∃(t, s) ∈ N2, s < t : (t − s)BL(θ, θs+1:t,c(θ)) ⩾ α2 .
+Provided that α1 and α2 are defined to ensure that these are high-probability confidence sets for the parameter θ0, then they should have non-empty intersections under Pθ. This motivates the following definition of the regularized GLR-test:
+τδ
+c (E) = min {t ∈ N : ∃s < t, Θs,c(δ/2) ∩ Θs+1:t,c(δ/2) = ∅} .
+The appropriate quantity for α1 is immediately obtained by Theorem3as s
+s+c (log(1/δ) + γ1:s,c(θ)). Now for α2, we need to study doubly-time uniform concentration inequalities over both s and t.
+E.1. Doubly-time uniform concentration inequalities for exponential families
+Theorem 5 (Doubly time-uniform concentration) Let δ ∈ (0, 1] and g : N → R∗
++ such that P∞
+t=1 1/g(t) ⩽
+1 (e.g., g(t) = κ(1+t) log2(1+t) where κ = 2.10975). Then, under the assumptions of Definition2, it holds that
+Pθ ∃t ∈ N, ∃s < t : (t−s+c)BL(θ, θs+1:t,c(θ)) ⩾ log g(t)
+δ + γs+1:t,c(θ) ⩽ δ .
+Proof of Theorem5:
+We consider that all the (Xt′)t′∈N come from a distribution with same parameter θ. Let t ∈ N
+and s ∈ {0, . . . , t − 1}. We introduce the scan-mean μs+1:t = 1
+t−s
+Pt
+t′=s+1 F (Xt′ ) and its mean μ = ∇L(θ). We define as in the proof of Theorem3, for each λ the martingale
+Mλ
+s+1:t = exp ⟨λ, (t − s)(μs+1:t − μ)⟩ − (t − s)BL,θ(λ) .
+Then, applying the method of mixture and replacing each term with its scan version from s + 1 to t, we introduce the quantity
+Ms+1,t = exp (t−s+c)B⋆
+L,θ(x) G(θ, c)
+G(θs+1:t,c(θ0), t − s + c)
+50
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+where x = t−s
+t−s+c (μs+1:t − ∇L(θ)) and θs+1:t,c(θ) is the regularized estimate from the scan samples
+θs+1:t,c(θ) = (∇L)−1
+Pt
+t′=s+1 F (Xt′ ) + c∇L(θ)
+t−s+c .
+Remarking that E[Mt,t] ⩽ E[Mt+1,t] = 1 and that (Ms+1,t)s is a nonnegative supermartingale, we can now control its doubly-time uniform deviations following the proof ofMaillard (2019b)[Th.3.2, p.58]. More precisely, for any non-decreasing function g, it can be shown that
+Pθ ∃t, ∃s < t : Ms+1,t ⩾ g(t)
+δ ⩽ δEθ
+h
+mtax max
+s<t
+Ms+1:t
+g(t)
+i
+⩽δ
+∞
+X
+t=1
+1
+g(t) .
+Rewriting the terms thanks to the duality formulas, yields
+Pθ ∃t, ∃s < t : (t−s−c)BL(θ, θs+1:t,c(θ)) ⩾ log g(t)
+δ + γs+1:t,c(θ) ⩽ δ
+∞
+X
+t=1
+1
+g(t) .
+This suggests to set α2 = t−s
+t−s−c log g(t)
+δ + γs+1:t,c(θ) in the definition of the regularized
+GLR test. Putting all terms together, this leads to the definition of the following regularized GLR test, for a given false-detection error probability δ ∈ [0, 1] and regularization parameter c,
+Θs,c(δ) = {θ ∈ Θ : (s+c)BL(θ, θ1:s,c(θ)) ⩽ log(1/δ) + γ1:s,c(θ)} ,
+Θs+1:t,c(δ) = {θ ∈ Θ : (t−s +c)BL(θ, θs+1:t,c(θ)) ⩽ log(g(t)/δ) + γs+1:t,c(θ)} ,
+τδ
+c (E) = min {t ∈ N : ∃s < t, Θs,c(δ/2) ∩ Θs+1:t,c(δ/2) = ∅} .
+The factor g(t) that inflates the width of the confidence set can be tuned to satisfy P+∞
+t=1 1/g(t) ⩽ 1,
+thus controlling the above deviation probability by at most δ (ideally, P+∞
+t=1 1/g(t) should be close to
+1 to avoid overinflating the confidence width). A natural choice for this is g(t) = κ(1+t) log2(1+t) where κ = 2.10974 ⩾ P∞
+t=1
+1
+(1+t) log2(1+t) (for completeness, we derive in the next section an
+elementary way to computing suitable values for κ). By construction, this test is guaranteed to have a false-detection probability controlled by δ (that is, Pθ(τ δ
+c (E) < ∞) ⩽ δ).
+Doubly time-uniform control of supermartingale sequences For completeness, we reproduce below the derivation fromMaillard(2019b)[Th.3.2, p.58], applied to our setup. First, let us note that
+P ∃t ∈ N⋆, ∃s ∈ [0, t − 1], Ms+1:t ⩾ g(t)
+δ = P max
+t∈N⋆
+max
+s∈[0,t−1]
+Ms+1:t
+g(t) ⩾ 1
+δ
+⩽ δE max
+t∈N⋆
+max
+s∈[0,t−1]
+Ms+1:t
+g(t) .
+Let us also denote τ the random stopping time corresponding to the first occurrence t of the event
+maxs∈[0,t−1]
+Ms+1:t
+g(t) ⩾ 1
+δ . It is convenient to introduce the quantity M t =
+P
+s∈{0,...,t−1} Ms+1,t
+g(t) for
+each t ∈ N⋆. Since each Ms+1,t and g(t) is nonnegative, we first get that for every random stopping time τ ∈ N⋆, the following inequality holds:
+E maxs<τ Ms+1,τ
+g(τ ) ⩽ E M τ = E M 1 +
+∞
+X
+t=1
+(M t+1 − M t)I{τ > t} .
+51
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+Furthermore, we note that, conveniently
+M t+1 − M t = Mt+1,t+1
+g(t + 1) +
+t−1
+X
+s=0
+Ms+1,t+1
+g(t + 1) − Ms+1,t
+g(t) .
+Next, by assumption, we note that E[Ms+1,t+1|Ft] ⩽ Ms+1,t. Thus, since I{τ > t} ∈ Ft, we deduce that
+E maxs<τ Ms+1,τ
+g(τ )
+⩽ E M1 +
+∞
+X
+t=1
+E[Mt+1,t+1]
+g(t + 1) +
+∞
+X
+t=1
+X
+s<t
+E1
+g(t + 1) − 1
+g(t) Ms+1,tI{τ > t}
+= E M1 +
+∞
+X
+t=1
+E[Mt+1,t+1]
+g(t + 1) +
+∞
+X
+t=1
+X
+s<t
+1
+g(t + 1) − 1
+g(t) E Ms+1,tI{τ > t}
+| {z }
+⩾0
+.
+Hence, the assumption that g is non-decreasing ensures that the last sum is upper bounded by 0. Since on the other hand E[Mt+1,t+1] ⩽ 1 holds for all t (and thus E M 1 ⩽ 1/g(1)), we deduce that the following inequality holds:
+E maxs<τ Ms+1,τ
+g(τ ) ⩽ 1
+g(1) +
+∞
+X
+t=1
+1
+g(t + 1) =
+∞
+X
+t=1
+1
+g(t) ⩽ 1 .
+□
+E.2. Computing the inflating factor g(t)
+The right-hand side of the doubly time-uniform confidence set of Theorem5involves a log g(t)/δ term instead of log 1/δ as in Theorem3, which is a by-product of the union-like argument used in the proof. Ideally, g(t) should grow as slow as possible with t to avoid unnecessary looseness in the confidence bound. That is however limited by the constraint P∞
+t=1 1/g(t) ⩽ 1, which prohibits the
+use of a linearly growing g(t) (since P∞
+t=1 1/t diverges). The choice g(t) = κ(1+t) log1+η(1+t) for some η > 0 and κ > 0 guarantees that the series of inverses converges, although its limit is not available in closed-form. However, it is sufficient to set κ to an upper bound on P∞
+t=1
+1
+(1+t) log1+η(1+t) .
+The following elementary lemma explains how to compute a tight value for κ.
+Lemma 12 Let f : t ∈ N 7→ (1+t) log1+η(1+t) and define Sp = Pp
+t=1 1/f (t) for p ∈ N ∪ {+∞}.
+Then S∞ ⩽ Sp + 1
+η log(1+p)η .
+Proof of Lemma12:
+The function f is nondecreasing and positive, therefore for t ∈ N and x ∈ [t, t + 1), it holds that 1/f (t + 1) ⩽ 1/f (x). Integrating both terms as functions of x over the interval [t, t + 1) yields
+52
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+1/f (t + 1) ⩽
+R t+1
+t 1/f (x)dx. Summing starting at t = p, we further get the following sum-integral comparison:
+S∞ − Sp ⩽
+Z∞
+p
+dx
+f (x) .
+Finally, note that d
+dx
+1
+η logη(1+x) = − 1
+f(x) , and thus
+R∞ p
+dx
+f (x) = 1
+η log(1+p)η . □
+This lemma shows that κ = Sp + 1/ log(1+p) for some p ⩾ 1 (η = 1) is a valid choice for the definition of the inflating factor g(t), and is straightforward to compute numerically. For p = 100, we obtain κ ≲ 2.10974 and increasing p only changes further digits.
+E.3. Experiments on change point detection for Gaussian with unknown variance
+We illustrate the change point GLR test above in a numerical experiment as follows. We consider the one-dimensional exponential family of centered Gaussian distributions with unknown variance E = N (0, σ2), σ > 0 . A sequence of independent random variables (Xt)t∈N is drawn from Xt ∼ N (0, σ2
+0) if t ⩽ t∗ and from Xt ∼ N (0, σ2
+1) if t > t∗, where t∗ = 50 and σ0 = 1 and σ1 ∈ [1, 2, 3, 4]. Of note, this setting corresponds to an open question inMaillard(2019a), which studies GLR tests in sub-Gaussian families, which are adapted to the detection of changing means but not variances. Detection times are reported as min(τ δ
+c (E), T ) with T = 100, and τ δ
+c (E) > T is interpreted as no change being detected. For the doubly time-uniform confidence set in the definition of the regularized GLR test, we use the factor g(t) = κ(1+t) log2(1+t) with κ = 2.10974.
+A practical motivation for this setting is, for instance, the design of maintenance models for equipment: with time, a component of a physical system (mechanical component, measuring instrument...) starts to wear off and while it is still functioning (same output on average), it is more imprecise or less stable (higher output variance); the goal of the maintenance agent is to detect as early as possible such changes of regime in order to replace the failing component before it breaks completely.
+In Figure14, we report the histograms of detection times across 1000 independent simulations for increasingly abrupt changes of variance (σ1 ∈ {1, 2, 3, 4}). As expected, the distribution of detection times shifts closer to the actual change point t∗ when σ1 increases, i.e., more obvious changes are detected earlier. This is confirmed in Figure15, where we report the median and interquartile range of detection times for σ1 ∈ [1, 4].
+We empirically validate in Figure14athe control of the false positive probability by at most δ = 5%. However, the actual false positive rate appears much lower (0.2%), which is a consequence of the looseness of the union bound involving the factor g(t) in the doubly time-uniform confidence set. FollowingMaillard(2019a), a sharper approach would involve a direct concentration result on the pair (θs,c, θs+1:t,c) (i.e., in the terminology ofMaillard(2019a), a joint bound, as opposed to the current disjoint one). This is a nontrivial result which we leave for future work. Finally, note that the high false negative rate of Figure14b(27.6%) is an artifact of thresholding the detection time at T = 100; increasing T would enable later detections, thus reducing the number of observed false negatives, at the cost of increasing the average detection delay (as well as the computational burden of the experiment).
+53
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+0 20 40 60 80 100
+0
+200
+400
+600
+800
+1000
+(0, 1)
+=5%, 1=1.0, c=1.0
+(averaged over 1000 repetitions)
+False positive: 0.2%
+True negative: 99.8%
+(a) σ0 = σ1 = 1 (no change)
+0 20 40 60 80 100
+0
+50
+100
+150
+200
+250
+(0,1) (0,2)
+=5%, 1=2.0, c=1.0
+(averaged over 1000 repetitions)
+True positive: 72.4%
+False negative: 27.6%
+(b) σ0 = 1, σ1 = 2
+0 20 40 60 80 100
+0
+50
+100
+150
+200
+250
+(0,1) (0,3)
+=5%, 1=3.0, c=1.0
+(averaged over 1000 repetitions)
+True positive: 99.9%
+False negative: 0.1%
+(c) σ0 = σ1 = 3
+0 20 40 60 80 100
+0
+50
+100
+150
+200
+(0,1) (0,4)
+=5%, 1=4.0, c=1.0
+(averaged over 1000 repetitions)
+True positive: 100.0%
+False negative: 0.0%
+(d) σ0 = 1, σ1 = 4
+Figure 14: Histograms of detection times τ δ
+c (E) in the Gaussian setting described in AppendixE.3. Green: correct detection (negative in (a), positive in (b), (c) and (d)). Red: incorrect detection (positive in (a), negative in (b), (c) and (d)). Black dashed line: change point t∗.
+54
+
+
+BREGMAN DEVIATIONS OF GENERIC EXPONENTIAL FAMILIES
+1234
+1
+50
+60
+70
+80
+90
+100
+Detection time c ( )
+=5%, T=100, c=1.0 (averaged over 1000 repetitions)
+Figure 15: Detection time τ δ
+c (E) in the Gaussian setting described in AppendixE.3. Solid line: median detection time. Shaded area: interquartile range of detection times (25th and 75th percentiles). Black dashed line: change point t∗.
+Appendix F. Application: Linear Contextual Bandits
+In this section, we apply Theorem7to build confidence sets in the well-known linear bandit setting. We consider the setting of linear contextual bandits (Auer et al.,2002;Abbasi-Yadkori et al.,2011), but with possibly arm-dependent noise variance (heteroscedastic noise). An algorithm for this problem chooses, at each round t ∈ N, an action or arm At ∈ A, and subsequently observes a reward Xt = θ⊤φ(At) + εt, where φ : A → Rd is a (fixed) map from actions to their context vectors, θ ∈ Rd is a vector of weights unknown to the algorithm and given the action At, εt ∼ N (0, σ2
+At I) is
+a Gaussian noise with known variance σ2
+At. The goal is to select actions to maximize the expected
+cumulative reward P
+t θ⊤φ(At). Any rational agent would choose the action At causally depending upon the history of arms and reward sequences available before the start of round t. Naturally, for each n ∈ N, it boils down to controlling the deviation between the unknown parameter θ and a suitable estimate θn built from n observations (At, Xt)t⩽n.
+Under this observation model, the feature function and the log-partition function are given by Ft(x) = x
+σ2
+At
+φ(At) and Lt(θ) = 1
+2σ2
+At
+∥θ∥2
+φ(At)φ(At)⊤ . Let us define the matrix
+Vn =
+n
+X
+t=1
+1
+σ2
+At
+φ(At)φ(At)⊤ ,
+55
+
+
+CHOWDHURY SAUX MAILLARD GOPALAN
+and introduce the Legendre function L0(θ) = 1
+2 ∥θ∥2
+V0, where V0 is some fixed positive definite matrix. Then, the parameter estimate and the Bregman information gain take the form
+θn,L0 = (Vn + V0)−1
+n
+X
+t=1
+Xt
+σ2
+At
+φ(At) , γn,L0 = log det(V0 + Vn)1/2
+det(V0)1/2 .
+Now, defining Ht−1 := {A1, X1, . . . , At−1, Xt−1, At} to be the set of all information available before observing Xt, one can see that the confidence set Θn,L0(δ) given by Theorem7is the set of all θ ∈ Θ satisfying
+∥θ − θn,L0 ∥2
+Vn+V0 ⩽ ∥θ∥2
+V0 + 2 log det(V0 + Vn)1/2
+δ det(V0)1/2 .
+Comparison with Existing Results Under the assumption that the noise εt is σAt-sub-Gaussian conditioned on Ht−1,Abbasi-Yadkori et al.(2011);Kirschner and Krause(2018) obtain a highprobability confidence set eΘn,L0(δ), which is the set of all θ ∈ Θ satisfying
+∥θ − θn,L0 ∥Vn+V0 ⩽ ∥θ∥V0 +
+s
+2 log det(V0 + Vn)1/2
+δ det(V0)1/2 .
+Interestingly, since
+√
+a + b ⩽ √a +
+√
+b for positive a, b, it is then clear that Θn,L0(δ) ⊂ eΘn,L0(δ). In particular, as a side result of our approach, we obtain a tighter confidence set compared to them.
+56
