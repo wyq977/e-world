@@ -1,8 +1,8 @@
 ---
 slug: mdl-and-maximum-entropy-e-values
 title: MDL, regret, and e-values for maximum entropy models
-sources: 4
-updated: 2026-10-19
+sources: 6
+updated: 2026-11-16
 ---
 
 # MDL, regret, and e-values for maximum entropy models
@@ -21,6 +21,8 @@ Maximum entropy models maximise Shannon entropy under constraints on observables
 - Safe Testing's REGROW for a simple null is the redundancy–capacity problem, with Jeffreys' prior asymptotically optimal and regret (d/2) log n [grunwaldSafeTesting2024, Example 5]; the maximum-entropy results refine this for two-model tests; see [gro-criterion](gro-criterion.md).
 - Finite minimax regret with the NML (Shtarkov) distribution in the null certifies RIPr existence [lardyReverseInformationProjections2023, Prop. 4].
 - Simple null, alternative a set of means M_1 partitioned into pieces touching its boundary: the relative GROW e-variable in the minimax individual-sequence-regret sense is the Shtarkov (NML) distribution q(y) = p̄_{r̆(y)}(y)/∫ p̄_{r̆(y)} dρ relative to the boundary set R, divided by p_0, with constant regret mmreg(r̆); minimax redundancy mmred(H_1) is the expected-loss counterpart; for a sample mean of n observations and a boundary with four bounded derivatives both equal ((d − 1)/2) log n + O(1), by Takeuchi–Barron 2013 (upper) and Clarke–Barron 1994 (lower), the BIC complexity of the (d − 1)-dimensional boundary family; the result feeds a new Csiszár–Sanov–Chernoff bound and an asymptotic GROW rate for KL-ball alternatives [grunwaldGrowthOptimalEVariablesExtension2024a, eqs 3.8–3.10, Thms 4–6, eq. 4.5, Prop. 3].
+- Maximum entropy as a zero-sum game: for a convex set C of distributions with finite maximal entropy the game between a code-choosing observer and nature has value H_max(C), and the observer's unique optimal code is adapted to the center of attraction, the limit of every entropy-maximising sequence, which need not lie in C or attain H_max(C); with mean-energy constraints the centers of attraction form the exponential family, except above a critical energy where no maximum entropy distribution exists [topsoeInformationtheoreticalOptimizationTechniques1979, Thms 1–3, 11].
+- Conditional limit justification of maximum entropy: given that a sample mean of ψ lies in a convex set C, the observations are asymptotically quasi-independent with limiting law the exponential-family member dP*/dP_X = c·exp ϑ*(ψ), the generalized I-projection [csiszarSanovPropertyGeneralized1984, Thm 4].
 
 ## Variants and related concepts
 - [k-sample-and-contingency-table-e-values](k-sample-and-contingency-table-e-values.md), the 2 × k instances.
@@ -31,6 +33,8 @@ Maximum entropy models maximise Shannon entropy under constraints on observables
 - [grunwaldSafeTesting2024](../sources/grunwaldSafeTesting2024.md) — REGROW as redundancy–capacity.
 - [lardyReverseInformationProjections2023](../sources/lardyReverseInformationProjections2023.md) — NML certificate.
 - [grunwaldGrowthOptimalEVariablesExtension2024a](../sources/grunwaldGrowthOptimalEVariablesExtension2024a.md) — Shtarkov e-variables over a boundary, (d − 1)/2 log n regret.
+- [topsoeInformationtheoreticalOptimizationTechniques1979](../sources/topsoeInformationtheoreticalOptimizationTechniques1979.md) — maximum entropy and minimum discrimination as games.
+- [csiszarSanovPropertyGeneralized1984](../sources/csiszarSanovPropertyGeneralized1984.md) — conditional limit theorem.
 
 ## Disagreements / open issues
 - Optional stopping and e-process-ness are not discussed in the paper; products across independent studies are valid, within-study stopping is not addressed.

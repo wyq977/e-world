@@ -1,8 +1,8 @@
 ---
 slug: gro-criterion
 title: GRO, GROW, REGROW and log-optimality
-sources: 32
-updated: 2026-11-09
+sources: 33
+updated: 2026-11-16
 ---
 
 # GRO, GROW, REGROW and log-optimality
@@ -36,6 +36,7 @@ Growth-rate optimality (GRO) chooses, for a given alternative Q, the [e-variable
 - GROW and REGROW over the nuisance (β, σ) for the Bayesian and point alternatives in linear models via Pérez-Ortiz et al.; the mixture precision chosen to maximise worst-case growth over |ξ| ≥ ξ_MDE [lindonAnytimeValidInferenceLinear2026, Def. 3.2, Thm 4.1, eq. 13, Thm 4.5].
 - Simple null, alternative given by a set of means M_1: if M_1 is convex the GROW e-variable is the exponential-family likelihood ratio p̄_{μ*}/p_0 against the KL-closest mean μ* on the boundary of M_1, the same for every H_1 between the family slice E_1 and all distributions with mean in M_1, with GROW = D(P̄_{μ*} ‖ P_0); this follows from Csiszár's Pythagorean property alone, which weakens Theorem 1's conditions and Topsøe's 1979 result [grunwaldGrowthOptimalEVariablesExtension2024a, Props 1–2]. For a surrounding M_1 (complement an open star-shaped set around 0) and d = 1 the GROW prior sits on the two boundary points with equalised growth, proved via variation-diminishing kernels; d > 1 is open [grunwaldGrowthOptimalEVariablesExtension2024a, Thm 3, Lemma 1, Sec. 5]. Relative GROW in the minimax individual-sequence-regret sense (Jang et al., Orabona–Jun) over a partition of M_1 is a Shtarkov/NML distribution over the boundary divided by p_0; redundancy and regret both cost ((d − 1)/2) log n + O(1) when Y is a sample mean and the boundary is smooth, and for a KL-ball complement GROW_n = nD_1 − ((d − 1)/2) log n + O(1) [grunwaldGrowthOptimalEVariablesExtension2024a, eqs 3.8–3.10, Thms 5–6, eq. 4.5, Prop. 3]; see [mdl-and-maximum-entropy-e-values](mdl-and-maximum-entropy-e-values.md).
 - Recommended to the adaptive-design community as the principled choice among the many sequential tests that differ only by how they weight the stages, with existence for any null and likelihood-ratio form cited from Safe testing and the numeraire paper [brannathAnytimevalidTestingEvalues2026a, Sec. 5.1].
+- Game-theoretic precursor for a simple null: an observer choosing a code improvement relative to a reference distribution η against nature choosing μ in a convex set C has value inf_C D(· ‖ η), with unique optimal strategy adapted to the relative center of attraction; the theorem assumes D(μ ‖ η) < ∞ on all of C [topsoeInformationtheoreticalOptimizationTechniques1979, Thm 9]. Wiki's reading: with η the null, the code improvement is log of an e-variable and the value is GROW. The CSC paper's Proposition 1 is described as weakening that finiteness assumption [grunwaldGrowthOptimalEVariablesExtension2024a, Sec. 1.2]. See [information-projection](information-projection.md).
 
 ## Variants and related concepts
 - [numeraire](numeraire.md), the assumption-free form.
@@ -60,6 +61,7 @@ Growth-rate optimality (GRO) chooses, for a given alternative Q, the [e-variable
 - [lindonAnytimeValidInferenceLinear2026](../sources/lindonAnytimeValidInferenceLinear2026.md) — GROW for linear models.
 - [grunwaldGrowthOptimalEVariablesExtension2024a](../sources/grunwaldGrowthOptimalEVariablesExtension2024a.md) — simple null, mean-defined alternatives, CSC bounds, boundary regret.
 - [brannathAnytimevalidTestingEvalues2026a](../sources/brannathAnytimevalidTestingEvalues2026a.md) — log-optimality for adaptive designs.
+- [topsoeInformationtheoreticalOptimizationTechniques1979](../sources/topsoeInformationtheoreticalOptimizationTechniques1979.md) — relative game whose value is GROW for a simple null.
 
 ## Disagreements / open issues
 - Ly's discussion: GROW point priors leave δ+ inside anytime-valid confidence intervals forever; the authors answer with REGROW or nonlocal priors [grunwaldSafeTesting2024, discussion and reply].

@@ -1,8 +1,8 @@
 ---
 slug: confidence-sets-and-sequences
 title: E-confidence sets and confidence sequences
-sources: 25
-updated: 2026-10-14
+sources: 27
+updated: 2026-11-16
 ---
 
 # E-confidence sets and confidence sequences
@@ -30,6 +30,8 @@ An e-confidence set inverts a family of [e-variables](e-variable.md) indexed by 
 - Backward confidence sequences, the CS-width functional, and sequences for running averages of drifting parameters, with CS inconsistency across time itself a test [shekharSequentialChangeDetection2023, Defs 5, 11, 27, App. A]. Online selective confidence intervals via e-LOND-CI with FCR control under any dependence and selection [xuOnlineMultipleTesting2023, Thm 4]. Hoeffding-style and empirical-Bernstein sequences for a time-varying score differential, read as two simultaneous one-sided tests of the weak null; one-sided Winkler-score sequences [choeComparingSequentialForecasters2021, Thms 1–2, Cor. 1, Prop. 4]. Regularized confidence sets {θ : e^reg ≤ 1/α} as level sets of an inferential-model contour [martinRegularizedEprocessesAnytime2024, eq. 16]. Conformal prediction sets as inverted permutation tests [koningMeasuringEvidenceExchangeability2023, Examples 4, 6].
 - Sequential likelihood mixing: S_t(θ) = ∏_s ∫ p_s(y_s | ν) dμ_{s−1}(ν)/p_s(y_s | θ) with any predictable mixing distribution is a unit-mean martingale at the truth under realizability, so {θ : L_t(θ) ≤ log(1/δ) − Σ_s log ∫ p_s(y_s | ν) dμ_{s−1}(ν)} is a confidence sequence with arbitrarily adaptive covariates; Dirac mixing is Robbins' sequential likelihood ratio, a fixed prior the Robbins–Siegmund method of mixtures, and Bayes-rule mixing makes the two identical, giving the prior–posterior ratio set; the mixture log-loss is exp-concave, so any variational posterior (ELBO) or any online density-estimation regret bound B_t yields a valid set {θ : L_t(θ) ≤ log(1/δ) + L_t(θ̂^MLE) + B_t} (regret-to-confidence); for linear and GP regression the Gaussian-posterior ellipsoid scales with information gain, needs no norm bound, and is up to twice as tight as Abbasi-Yadkori et al.; logistic, sparse and finite-Θ instances; sub-Gaussian misspecification keeps validity and convex classes cover the RIPr of the truth; tempered ratios give sets in Rényi or Hellinger distance [kirschnerConfidenceEstimationSequential2025, Thms 2–5, 8–13, Lemmas 6, 14, Sec. 3.1]. The paper never names e-values or test martingales and proves no rates.
 - Ellipsoidal confidence sequences for regression coefficients by inverting the invariant Bayes factor, contrasts Eδ = 0, the g-prior set {δ : F_n^δ ≤ R(g, n, α)} with width-optimal g, and the asymptotic t radius that always exceeds the Robbins Gaussian radius, is asymptotically equivalent, and is infinite for small n (built-in delayed start) [lindonAnytimeValidInferenceLinear2026, Cors 4.3–4.4, eq. 18, Thm 5.5].
+- Projected confidence sequences: a time-uniform KL region over all arms (weighted union bound over subsets) projected onto a function f(μ); for linear f with Gaussian arms the ellipse beats the per-arm box by up to √K; for min_a μ_a only the upper bound gains from combining arms. A threshold can give a δ-correct stopping rule without the corresponding region being a confidence sequence [kaufmannMixtureMartingalesRevisited2021, Lemma 18, eq. 26, Props 23–26, Remark 19].
+- Joint time-uniform confidence sets for (μ, σ) of a Gaussian, convex and bounded, from the two-parameter Bregman mixture; contrast with t-type sequences for μ alone [chowdhuryBregmanDeviationsGeneric2023, Sec. 3.2, App. C.3, D.1; wangAnytimevalidTtestsConfidence2023].
 
 ## Variants and related concepts
 - [universal-inference](universal-inference.md), [villes-inequality](villes-inequality.md), [post-hoc-validity](post-hoc-validity.md).
@@ -51,6 +53,8 @@ An e-confidence set inverts a family of [e-variables](e-variable.md) indexed by 
 - [shekharSequentialChangeDetection2023](../sources/shekharSequentialChangeDetection2023.md), [xuOnlineMultipleTesting2023](../sources/xuOnlineMultipleTesting2023.md), [choeComparingSequentialForecasters2021](../sources/choeComparingSequentialForecasters2021.md), [martinRegularizedEprocessesAnytime2024](../sources/martinRegularizedEprocessesAnytime2024.md), [koningMeasuringEvidenceExchangeability2023](../sources/koningMeasuringEvidenceExchangeability2023.md) — batch-4 wave-2 contributions.
 - [kirschnerConfidenceEstimationSequential2025](../sources/kirschnerConfidenceEstimationSequential2025.md) — sequential likelihood mixing and regret-to-confidence.
 - [lindonAnytimeValidInferenceLinear2026](../sources/lindonAnytimeValidInferenceLinear2026.md) — regression confidence sequences.
+- [kaufmannMixtureMartingalesRevisited2021](../sources/kaufmannMixtureMartingalesRevisited2021.md) — projected multi-arm confidence sequences.
+- [chowdhuryBregmanDeviationsGeneric2023](../sources/chowdhuryBregmanDeviationsGeneric2023.md) — joint Gaussian mean–variance sets.
 
 ## Disagreements / open issues
 - Estimation is declared out of scope by the book, so confidence sequences are only sketched there [ramdasHypothesisTestingEvalues2025, Sec. 13.1.1].

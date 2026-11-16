@@ -1,8 +1,8 @@
 ---
 slug: test-martingale
 title: Test martingale
-sources: 30
-updated: 2026-11-09
+sources: 31
+updated: 2026-11-16
 ---
 
 # Test martingale
@@ -30,6 +30,7 @@ A test martingale (or test supermartingale) is a nonnegative (super)martingale u
 - Likelihood-ratio martingales R_t, Q_t, S_t by Fubini, a tempered-and-renormalised exact martingale whose normaliser is a Rényi divergence, sub-Gaussian and RIPr supermartingales under misspecification, and the warning that max_ν R_t(ν; θ*) is not a supermartingale [kirschnerConfidenceEstimationSequential2025, Thms 2–4, 11–13, Sec. 2.1.1].
 - Likelihood ratios of any sequence of invariant statistics are test martingales in the invariant filtration; asymptotic e-processes defined as processes dominated asymptotically by such martingales [lindonAnytimeValidInferenceLinear2026, Lemma 3.1, Sec. 2].
 - A sequence of conditional error functions with E_P[A_1] ≤ α and E_P[A_t | A_1, …, A_{t−1}] ≤ A_{t−1} is a nonnegative supermartingale, M_t = A_t/α a test supermartingale, and A_t = min(αM_t, 1) truncates any test supermartingale to one bounded by 1; rejection when A_t = 1 is Ville's inequality in adaptive-design clothing [brannathAnytimevalidTestingEvalues2026a, eq. 6, Sec. 2.2]; see [conditional-error-functions](conditional-error-functions.md).
+- g-VCC condition: a process X_a is controlled if for each λ a test martingale dominates exp(λX_a(t) − g(λ)); per-arm exponential and mixture martingales stay martingales under any adaptive sampling rule and their product over arms is again a test martingale, since only the sampled arm's factor moves [kaufmannMixtureMartingalesRevisited2021, Def. 1, Sec. 2.3].
 
 ## Variants and related concepts
 - [villes-inequality](villes-inequality.md), the inequality that makes them tests.
@@ -52,6 +53,7 @@ A test martingale (or test supermartingale) is a nonnegative (super)martingale u
 - [kirschnerConfidenceEstimationSequential2025](../sources/kirschnerConfidenceEstimationSequential2025.md) — likelihood-ratio martingales for regression.
 - [lindonAnytimeValidInferenceLinear2026](../sources/lindonAnytimeValidInferenceLinear2026.md) — invariant-filtration martingales for regression.
 - [brannathAnytimevalidTestingEvalues2026a](../sources/brannathAnytimevalidTestingEvalues2026a.md) — conditional error functions as truncated test supermartingales.
+- [kaufmannMixtureMartingalesRevisited2021](../sources/kaufmannMixtureMartingalesRevisited2021.md) — products of per-arm martingales under adaptive sampling.
 
 ## Disagreements / open issues
 - None recorded.

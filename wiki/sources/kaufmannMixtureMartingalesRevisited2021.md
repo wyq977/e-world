@@ -75,8 +75,6 @@ The paper proves deviation inequalities that hold uniformly in time and under an
 - [villes-inequality](../concepts/villes-inequality.md)
 - [exponential-family-e-values](../concepts/exponential-family-e-values.md)
 - [optional-stopping](../concepts/optional-stopping.md) (validity at any stopping time under adaptive sampling)
-- [calibrator](../concepts/calibrator.md) (capital-calibrator remark after Lemma 11)
-- [e-merging](../concepts/e-merging.md) (product of per-arm test martingales under adaptive sampling)
 
 ## Versions
 The source is the JMLR version of record (submitted November 2018, revised September 2021). Other wiki pages cite the paper as "Kaufmann and Koolen 2018", the preprint; raw/ holds only the journal version, so differences between the two are not known to the wiki.

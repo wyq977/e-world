@@ -55,6 +55,7 @@ The paper studies the mirror image of most e-value theory: a simple null P_0 for
 - brownFundamentalsStatisticalExponential1986 is in the bib (not ingested) and supplies the convexity of KL balls, the variation-reducing property and Theorem 2.2 used in Theorem 6.
 
 ## Concepts touched
+- [information-projection](../concepts/information-projection.md)
 - [gro-criterion](../concepts/gro-criterion.md)
 - [e-power](../concepts/e-power.md)
 - [exponential-family-e-values](../concepts/exponential-family-e-values.md)

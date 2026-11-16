@@ -1,8 +1,8 @@
 ---
 slug: villes-inequality
 title: Ville's inequality
-sources: 27
-updated: 2026-11-09
+sources: 29
+updated: 2026-11-16
 ---
 
 # Ville's inequality
@@ -27,6 +27,8 @@ For a nonnegative supermartingale (M_t) with M_0 ≤ 1 under P, P(∃t : M_t ≥
 - Regularized Ville inequality over a credal set of priors [martinRegularizedEprocessesAnytime2024, Thm 1]. An adapted nonnegative process bounded by c with E[W_τ] ≤ 1 at all stopping times has E[sup_t W_t] ≤ 1 + log c, converting StopFDR to SupFDR at cost 1 + log(1/α) [fischerOnlineGeneralizationEBH2024, Thm G.3]. Always-valid FWER by Ville applied to e_{H_0,t} and running maxima as pseudo e-values with Pareto(1) tail coupling [hartogFamilyWiseError2025, Thm 2.5, Thm 3.1]. PFA bounds for multi-stream detectors [dandapanthulaMultipleTestingMultistream2025, Thms 4.4, 5.5].
 - The thesis that Robbins 1970 already combined Ville and likelihood ratios for anytime-valid confidence sequences, everything since being a choice of martingale [kirschnerConfidenceEstimationSequential2025, Lemma 1, App. A].
 - Type I error control of multi-stage adaptive designs with conditional error functions (A_t) follows from Ville's inequality applied to the supermartingale (A_t) with E[A_1] ≤ α, or from optional stopping [brannathAnytimevalidTestingEvalues2026a, Sec. 2.2].
+- Ville plus Cramér–Chernoff: Ville applied to a product of per-arm martingales, then optimised over λ, gives P(∃t : Σ_{a∈S} X_a(t) ≥ |S| C_g(x/|S|)) ≤ e^{−x} with C_g(x) = min_λ (g(λ) + x)/λ [kaufmannMixtureMartingalesRevisited2021, Lemma 4].
+- Doubly time-uniform extension over all windows (s, t]: for window supermartingales M_{s+1,t}, P(∃t, ∃s<t: M_{s+1,t} ≥ g(t)/δ) ≤ δ Σ_t 1/g(t) for non-decreasing g [chowdhuryBregmanDeviationsGeneric2023, App. E.1].
 
 ## Variants and related concepts
 - [e-process](e-process.md), [test-martingale](test-martingale.md).
@@ -46,6 +48,8 @@ For a nonnegative supermartingale (M_t) with M_0 ≤ 1 under P, P(∃t : M_t ≥
 - [martinRegularizedEprocessesAnytime2024](../sources/martinRegularizedEprocessesAnytime2024.md), [fischerOnlineGeneralizationEBH2024](../sources/fischerOnlineGeneralizationEBH2024.md), [hartogFamilyWiseError2025](../sources/hartogFamilyWiseError2025.md), [dandapanthulaMultipleTestingMultistream2025](../sources/dandapanthulaMultipleTestingMultistream2025.md) — batch-4 wave-2 contributions.
 - [kirschnerConfidenceEstimationSequential2025](../sources/kirschnerConfidenceEstimationSequential2025.md) — Robbins thesis.
 - [brannathAnytimevalidTestingEvalues2026a](../sources/brannathAnytimevalidTestingEvalues2026a.md) — adaptive designs.
+- [kaufmannMixtureMartingalesRevisited2021](../sources/kaufmannMixtureMartingalesRevisited2021.md) — Ville with Cramér–Chernoff optimisation.
+- [chowdhuryBregmanDeviationsGeneric2023](../sources/chowdhuryBregmanDeviationsGeneric2023.md) — doubly time-uniform bound over windows.
 
 ## Disagreements / open issues
 - None recorded.

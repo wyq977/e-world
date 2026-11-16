@@ -1,8 +1,8 @@
 ---
 slug: confidence-sequence-boundaries
 title: Confidence sequence boundaries and sub-ψ supermartingales
-sources: 14
-updated: 2026-10-13
+sources: 17
+updated: 2026-11-16
 ---
 
 # Confidence sequence boundaries and sub-ψ supermartingales
@@ -25,6 +25,9 @@ A sub-ψ process is a pair (S_t, V_t) such that exp{λS_t − ψ(λ)V_t} is domi
 - Predictable plug-ins as a device alongside mixtures and stitching, with closed-form Hoeffding and empirical-Bernstein boundaries and rate table; a zeta-weighted discrete-mixture betting process attains the LIL rate by dominating a stitched boundary [waudbysmithEstimatingMeansBounded2020, Prop. 1, Thm 2, Table 1, Prop. 7]. Robbins' normal mixture in closed form, delayed-start and folded-Gaussian one-sided boundaries, Lambert-W tuning, and the fact that any Gaussian boundary becomes an asymptotic-sequence boundary through strong approximation [waudbysmithTimeuniformCentralLimit2021, App. A.1, B.1, B.2, Sec. 2.6, Thm 2.4]; see [asymptotic-confidence-sequences](asymptotic-confidence-sequences.md). Normal-mixture and one-sided closed-form supermartingales as explosion witnesses for the composite Ville theorem [rufCompositeGeneralizationVille2022, Sec. 3.2]. Stitched variance and median sequences restated with their large constants [wangAnytimevalidTtestsConfidence2023, App. A].
 - Converting any c√((log log t + log(1/α))/t) boundary into a detection-delay sample size O(c²(log log(c/Δ) + log(1/α))/Δ²), and the empirical-Bernstein width in terms of the true post-change variance [shekharSequentialChangeDetection2023, Props 29–30]. Sub-exponential supermartingale with predictable bounds, closed-form gamma-exponential mixture with the bound ≤ 1 when the data support the null, explicit stitched sequence [choeComparingSequentialForecasters2021, Prop. 1, Prop. 3, eq. 53].
 - Mixing the likelihood ratio directly rather than the sub-Gaussian noise martingale avoids a lower-order cross term and a norm bound in the linear-regression ellipsoid; a sub-Gaussian exponential supermartingale for arbitrary mean functions with any adapted mixing sequence [kirschnerConfidenceEstimationSequential2025, Sec. 3.1, Thm 11].
+- Fixed-n contrast: for almost completely convex sets Π of distributions, (1/n) log Pr{P̂_n ∈ Π} ≤ −D(Π ‖ P_X) holds for every n, "a general Chernoff bound"; it is not time-uniform [csiszarSanovPropertyGeneralized1984, Thm 1, eq. 2.16].
+- Multi-arm KL boundaries: for K exponential-family arms under adaptive sampling, P(∃t : Σ_{a∈S} [N_a(t) d(μ̂_a(t), μ_a) − 3 ln(1 + ln N_a(t))]⁺ ≥ |S| C_exp(x/|S|)) ≤ e^{−x} with C_exp(x) = x + o(x), so the ln ln price is per arm but the ln(1/δ) price is paid once; Gaussian and Gamma versions with correction 2 ln(4 + ln N_a(t)); the one-arm version is a ln ln t boundary uniform over t for general exponential families [kaufmannMixtureMartingalesRevisited2021, Thms 7, 9, 10, eq. 14].
+- Conjugate mixture for a d-parameter exponential family in closed Bregman form: P(∃n: (n+c) B_L(θ, θ_{n,c}(θ)) > log(1/δ) + γ_{n,c}(θ)) ≤ δ with γ_{n,c} = (d/2) log(1 + n/c) + O(1); explicit sets for Gaussian (mean, variance, joint), Bernoulli, exponential, Gamma, Weibull, Pareto, Chi-square, Poisson; a sample-size-dependent c is ruled out (it would contradict the LIL), and a fixed c ≈ 0.12 n_0 is the empirical tuning for horizon n_0 [chowdhuryBregmanDeviationsGeneric2023, Thm 3, Sec. 3.1, Table 2].
 
 ## Variants and related concepts
 - [confidence-sets-and-sequences](confidence-sets-and-sequences.md), the object these boundaries produce.
@@ -39,6 +42,9 @@ A sub-ψ process is a pair (S_t, V_t) such that exp{λS_t − ψ(λ)V_t} is domi
 - [waudbysmithEstimatingMeansBounded2020](../sources/waudbysmithEstimatingMeansBounded2020.md), [waudbysmithTimeuniformCentralLimit2021](../sources/waudbysmithTimeuniformCentralLimit2021.md), [rufCompositeGeneralizationVille2022](../sources/rufCompositeGeneralizationVille2022.md), [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md) — batch-4 contributions.
 - [shekharSequentialChangeDetection2023](../sources/shekharSequentialChangeDetection2023.md), [choeComparingSequentialForecasters2021](../sources/choeComparingSequentialForecasters2021.md) — batch-4 wave-2 contributions.
 - [kirschnerConfidenceEstimationSequential2025](../sources/kirschnerConfidenceEstimationSequential2025.md) — likelihood-ratio vs noise mixing.
+- [csiszarSanovPropertyGeneralized1984](../sources/csiszarSanovPropertyGeneralized1984.md) — fixed-n large-deviation bound, for contrast.
+- [kaufmannMixtureMartingalesRevisited2021](../sources/kaufmannMixtureMartingalesRevisited2021.md) — multi-arm KL boundaries with ln ln rate.
+- [chowdhuryBregmanDeviationsGeneric2023](../sources/chowdhuryBregmanDeviationsGeneric2023.md) — Bregman boundaries for generic exponential families.
 
 ## Disagreements / open issues
 - Howard et al. 2020, "Time-uniform Chernoff bounds via nonnegative supermartingales", defines the sub-ψ condition and is not in the bib; see gaps.

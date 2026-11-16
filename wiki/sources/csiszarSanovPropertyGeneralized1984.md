@@ -50,6 +50,7 @@ For i.i.d. X_1, X_2, … with common distribution P_X on an arbitrary measurable
 - [kaufmannMixtureMartingalesRevisited2021](kaufmannMixtureMartingalesRevisited2021.md) and [chowdhuryBregmanDeviationsGeneric2023](chowdhuryBregmanDeviationsGeneric2023.md): time-uniform KL and Bregman deviation bounds for exponential families, the anytime-valid counterparts of the fixed-n bound (2.16). Wiki's reading; this paper predates them and they were not checked for a citation.
 
 ## Concepts touched
+- [information-projection](../concepts/information-projection.md)
 - [reverse-information-projection](../concepts/reverse-information-projection.md)
 - [gro-criterion](../concepts/gro-criterion.md)
 - [exponential-family-e-values](../concepts/exponential-family-e-values.md)

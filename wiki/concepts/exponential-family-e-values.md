@@ -1,8 +1,8 @@
 ---
 slug: exponential-family-e-values
 title: E-values for exponential family nulls
-sources: 13
-updated: 2026-10-19
+sources: 17
+updated: 2026-11-16
 ---
 
 # E-values for exponential family nulls
@@ -27,6 +27,8 @@ The setting is a composite null that is a regular d-dimensional exponential fami
 - One-dimensional exponential family with sufficient statistic and null with smallest element θ* > θ_1: RIPr p_{θ*}, numeraire p_{θ_1}/p_{θ*} via convexity of the log-partition function [larssonNumeraireEvariableReverse2025, Sec. 5.5]; Gaussian scale-location examples under invariance [perezortizEstatisticsGroupInvariance2024, Secs 2.2, 4.1, 4.2]; two-point e-process rates, MLE minimaxity and dampened Savage–Dickey bounds for regular one-dimensional families [grunwaldEposterior2023, SM Thm 1, Props 3–4].
 - One-sided sub-ψ nulls: e-variables are exactly functions dominated by ∫e^{λx − ψ(λ)} π(dλ), a minimal complete class when ψ is a CGF, with e^{λ*x − ψ(λ*)} the numeraire against μ_{λ*} [larssonTestingHypothesesGenerated2025, Thm 4.3, Thm 6.5, Example 7.5]. Csiszár–Matúš exponential-family RIPr and the geometric-family moment-bound failure [lardyReverseInformationProjections2023, Sec. II-B, Example 3].
 - The dual setting, simple null P_0 and composite alternative with means in M_1: P_0 and Y generate a natural exponential family E; for convex M_1 the GROW e-variable is p̄_{μ*}/p_0 with μ* the KL-closest mean on the boundary (same for any alternative containing the family slice E_1), which is the e-variable behind the Csiszár–Sanov–Chernoff / generic Chernoff bound P_0(Y ∈ M_1) ≤ e^{−D}, including the d = 1 form P_0(sup_μ p̄_μ(Y)/p_0(Y) ≥ e^D, sgn Y = s) ≤ e^{−D} that a naive Markov bound on the non-e-variable sup_μ p̄_μ/p_0 cannot give [grunwaldGrowthOptimalEVariablesExtension2024a, Prop. 2, Thm 2]. For a surrounding M_1 (two-sided, multivariate) the boundary of a KL ball is a (d − 1)-dimensional curved exponential family; the Shtarkov/NML e-variable over it gives the bound P_0(Y ∈ M_1) ≤ e^{mmreg − D} with mmreg_n = ((d − 1)/2) log n + O(1) for a sample mean of n observations (Takeuchi–Barron, Clarke–Barron), a continuous partition beating any finite polytope [grunwaldGrowthOptimalEVariablesExtension2024a, Thms 4–6, Sec. 4]. Conditions ALT-M1/ALT-H1 bite only for non-steep (irregular) families [grunwaldGrowthOptimalEVariablesExtension2024a, Example 1]. One-dimensional exponential families are strictly variation-reducing kernels (Brown, Johnstone, MacGibbon 1981), used to show the two-sided GROW prior lives on the boundary [grunwaldGrowthOptimalEVariablesExtension2024a, Lemma 2, Sec. 5].
+- Classical background: the I-projection of a reference measure under finitely many moment constraints is the exponential-family member with those moments, existing at interior points of the attainable set when the natural parameter set is open, and the gradient of the minimal divergence is the canonical parameter [csiszarIDivergenceGeometryProbability1975, Cor. 3.1, Thm 3.3]; for a mean constrained to a convex set the generalized I-projection is again in the family, with a dual formula for the divergence [csiszarSanovPropertyGeneralized1984, Thms 2–3]. See [information-projection](information-projection.md).
+- Sequential counterparts without a growth criterion: mixtures of exp(ηS − φ_μ(η)N) control N·KL(μ̂, μ) uniformly in time for any one-parameter family, across several adaptively sampled streams [kaufmannMixtureMartingalesRevisited2021, Thm 7]; in a d-parameter family the conjugate-mixture martingale exp((n+c)·KL(p_{θ_{n,c}(θ_0)}, p_{θ_0}) − γ_{n,c}(θ_0)) gives time-uniform Bregman-ball confidence sets at a cost γ_{n,c} = (d/2) log(1 + n/c) + O(1), the O(1) by a Laplace approximation only [chowdhuryBregmanDeviationsGeneric2023, Thm 3]. The fixed-n CSC bound for a KL-ball complement pays ((d − 1)/2) log n [grunwaldGrowthOptimalEVariablesExtension2024a, Thm 4, Prop. 3]; the comparison is at leading-term level (Wiki's reading).
 
 ## Variants and related concepts
 - [reverse-information-projection](reverse-information-projection.md), [gro-criterion](gro-criterion.md).
@@ -43,6 +45,10 @@ The setting is a composite null that is a regular d-dimensional exponential fami
 - [larssonNumeraireEvariableReverse2025](../sources/larssonNumeraireEvariableReverse2025.md), [perezortizEstatisticsGroupInvariance2024](../sources/perezortizEstatisticsGroupInvariance2024.md), [grunwaldEposterior2023](../sources/grunwaldEposterior2023.md) — batch-3 contributions.
 - [larssonTestingHypothesesGenerated2025](../sources/larssonTestingHypothesesGenerated2025.md), [lardyReverseInformationProjections2023](../sources/lardyReverseInformationProjections2023.md) — constraint and projection views.
 - [grunwaldGrowthOptimalEVariablesExtension2024a](../sources/grunwaldGrowthOptimalEVariablesExtension2024a.md) — simple null vs mean-defined alternative, CSC bounds, variation diminishing.
+- [csiszarIDivergenceGeometryProbability1975](../sources/csiszarIDivergenceGeometryProbability1975.md) — exponential-family form of I-projections.
+- [csiszarSanovPropertyGeneralized1984](../sources/csiszarSanovPropertyGeneralized1984.md) — generalized I-projection onto mean constraints.
+- [kaufmannMixtureMartingalesRevisited2021](../sources/kaufmannMixtureMartingalesRevisited2021.md) — time-uniform KL deviations, one-parameter families.
+- [chowdhuryBregmanDeviationsGeneric2023](../sources/chowdhuryBregmanDeviationsGeneric2023.md) — time-uniform Bregman deviations, d-parameter families.
 
 ## Disagreements / open issues
 - No general n-free sufficient condition for the UI regularity condition in multivariate families [haoEValuesExponentialFamilies2025, App. C.1].

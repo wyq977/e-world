@@ -1,8 +1,8 @@
 ---
 slug: e-detector
 title: E-detectors and sequential change detection
-sources: 7
-updated: 2026-10-12
+sources: 8
+updated: 2026-11-16
 ---
 
 # E-detectors and sequential change detection
@@ -21,6 +21,7 @@ An e-detector is a nonnegative process M with E_P[M_τ] ≤ E_P[τ] for all stop
 - Change-point e-processes via double mixtures over hypothesised change times 2^k, and the separation of sequential testing from change detection [ramdasTestingExchangeabilityForkconvexity2021, Remark 18, Sec. 4.4]; the universal-inference t e-process with power-preserving translation is the per-start input for Gaussian unknown-variance detection [wangAnytimevalidTtestsConfidence2023, eq. 11].
 - Confidence-sequence route for the non-partitioned setting: a backward confidence sequence at time n applies any CS construction to the reversed data and re-indexes; the detector stops when the forward CS and the backward CS from the first observation are disjoint; ARL ≥ 1/(2α) − 3/2 by a union bound, delay independent of the change time and of order (log(1/α) + log log(1/Δ))/Δ² for any iterated-logarithm boundary, variance-adaptive for bounded means via empirical Bernstein; Gaussian mean, KS-metric CDFs and kernel-MMD examples; O(t²) per step; CuSum read as repeated backward power-one likelihood-ratio tests; later used as the empirical baseline that non-partitioned e-detectors beat [shekharSequentialChangeDetection2023, Defs 11–12, Thm 13, Props 19, 29, Cors 17, 22–23, App. F].
 - Multi-stream detection: any monitor with finite ARL under the global null has worst-case FDR, FWER and GER equal to one, so the paper defines error over patience, the supremum of type-I error at τ divided by E[τ]; per-stream e-detectors fed into e-BH, Bonferroni, Holm or a sum give EOP control; forfeiting ARL with α_t = α/t gives universal fixed-time control under any cross-stream dependence, and e-processes give PFA control at the price of infinite ARL; EOP needs each e-detector valid for the global filtration; piggybacking lowers thresholds after detections [dandapanthulaMultipleTestingMultistream2025, Thms 4.1–4.4, 5.1–5.5, 6.1, 7.2–7.4, Sec. 8, App. B]; see [online-multiple-testing](online-multiple-testing.md).
+- GLR change detection in exponential families with unknown pre- and post-change parameters: stop when a forward Bregman confidence set and some window set are disjoint; false-alarm probability ≤ δ via a doubly time-uniform bound with a log g(t) penalty (Σ 1/g(t) ≤ 1); no delay bound; demonstrated on a Gaussian variance change. The paper does not use e-detector vocabulary [chowdhuryBregmanDeviationsGeneric2023, Thm 5, App. E].
 
 ## Variants and related concepts
 - [e-process](e-process.md), [confidence-sequence-boundaries](confidence-sequence-boundaries.md).
@@ -32,6 +33,7 @@ An e-detector is a nonnegative process M with E_P[M_τ] ≤ E_P[τ] for all stop
 - [ramdasTestingExchangeabilityForkconvexity2021](../sources/ramdasTestingExchangeabilityForkconvexity2021.md), [wangAnytimevalidTtestsConfidence2023](../sources/wangAnytimevalidTtestsConfidence2023.md) — inputs to detectors.
 - [shekharSequentialChangeDetection2023](../sources/shekharSequentialChangeDetection2023.md) — backward confidence sequences.
 - [dandapanthulaMultipleTestingMultistream2025](../sources/dandapanthulaMultipleTestingMultistream2025.md) — multi-stream detection.
+- [chowdhuryBregmanDeviationsGeneric2023](../sources/chowdhuryBregmanDeviationsGeneric2023.md) — confidence-set-disjointness change detection.
 
 ## Disagreements / open issues
 - Ram and Ramdas on bounded-mean change detection is in the reading queue, not ingested; no delay theory exists yet for the multi-stream procedures [dandapanthulaMultipleTestingMultistream2025].

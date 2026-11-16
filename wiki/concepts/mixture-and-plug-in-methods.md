@@ -1,8 +1,8 @@
 ---
 slug: mixture-and-plug-in-methods
 title: Mixture and plug-in methods for composite alternatives
-sources: 28
-updated: 2026-10-14
+sources: 30
+updated: 2026-11-16
 ---
 
 # Mixture and plug-in methods for composite alternatives
@@ -28,6 +28,8 @@ When the alternative is composite, two standard devices produce a single likelih
 - Predictive recursion as a non-Bayesian recursive plug-in whose predictive density is nonetheless a mixture density; the oracle gap n K(p*, q̂) with n^{1/3} to n^{2/3} rates is the nonparametric analogue of the (d/2) log n plug-in cost [dixitAnytimeValidAsymptotically2023, eqs 4–5, Sec. 3.3]. GREE and GREL plug-in estimates of the alternative law in backtesting, built on GRAPA, with a cap to avoid ruin [wangEbacktesting2022, eqs 13–14, Remark 7]. Adaptive heuristic alternatives averaged over mixing weights for forecast comparison [henziValidSequentialInference2021, Sec. 4.1]. Gamma-exponential mixture with closed form and Lambert-W tuning [choeComparingSequentialForecasters2021, Prop. 3, App. B.1].
 - Plug-in (Dirac), prior mixture and prequential Bayes posterior are one device, with prior mixing and posterior sequential mixing giving identical sets; variational posteriors, Monte Carlo sample mixtures, online learners and exponential weights are further admissible mixing distributions; Laplace's expansion gives the ½ log det I_t − log μ_0(θ̂) cost of the evidence [kirschnerConfidenceEstimationSequential2025, Thms 4–5, 8–10, App. B].
 - Gaussian mixture over the standardised effect with precision Φ, the growth-optimal Φ converging to ξ*⁻² so that Φ = ξ_MDE⁻² is the design rule, width-optimal g, and the plug-in of Z̃′Z̃/n into the mixture precision [lindonAnytimeValidInferenceLinear2026, Thms 4.1, 4.5, 4.6, eq. 18].
+- Hierarchical priors for LIL-rate mixtures: a continuous (exponential) mixture over thresholds of discrete zeta-weighted priors on a geometric grid, or a discrete zeta-weighted average of continuous priors that reproduce exp(λ t d(x, μ)) exactly (found for Gaussian and Gamma); the combined density behaves like 1/(η (ln η)²) near η = 0, the log factor making it proper and causing the ln ln term [kaufmannMixtureMartingalesRevisited2021, Sec. 3.4.1, Assumption 32, Thm 33].
+- Local versus global priors: mixing with the conjugate prior ∝ exp(−c B_L(·, θ_0)) recentred at each hypothesised θ_0 gives one closed-form martingale per candidate and a mixture cost called the Bregman information gain; a single global prior ∝ exp(−L_0) needs exp(−L_0) integrable, which fails e.g. for L_0 = cL in the exponential family [chowdhuryBregmanDeviationsGeneric2023, Def. 2, Thm 7, Remark 4].
 
 ## Variants and related concepts
 - [universal-inference](universal-inference.md), [exponential-family-e-values](exponential-family-e-values.md).
@@ -47,6 +49,8 @@ When the alternative is composite, two standard devices produce a single likelih
 - [dixitAnytimeValidAsymptotically2023](../sources/dixitAnytimeValidAsymptotically2023.md), [wangEbacktesting2022](../sources/wangEbacktesting2022.md), [henziValidSequentialInference2021](../sources/henziValidSequentialInference2021.md), [choeComparingSequentialForecasters2021](../sources/choeComparingSequentialForecasters2021.md) — batch-4 wave-2 contributions.
 - [kirschnerConfidenceEstimationSequential2025](../sources/kirschnerConfidenceEstimationSequential2025.md) — mixing distributions unified.
 - [lindonAnytimeValidInferenceLinear2026](../sources/lindonAnytimeValidInferenceLinear2026.md) — mixture precision tuning.
+- [kaufmannMixtureMartingalesRevisited2021](../sources/kaufmannMixtureMartingalesRevisited2021.md) — hierarchical priors, multi-arm products.
+- [chowdhuryBregmanDeviationsGeneric2023](../sources/chowdhuryBregmanDeviationsGeneric2023.md) — recentred conjugate priors, Bregman information gain.
 
 ## Disagreements / open issues
 - RIPr for plug-in alternatives and sequential RIPr for Bayesian alternatives are not analysed [haoEValuesExponentialFamilies2025, Remark 3].

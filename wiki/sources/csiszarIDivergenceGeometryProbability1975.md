@@ -53,6 +53,7 @@ The paper develops a geometry of probability distributions (PDs) in which the I-
 - [haoEValuesExponentialFamilies2025](haoEValuesExponentialFamilies2025.md) and [grunwaldOptimalEValuesExponential2024](grunwaldOptimalEValuesExponential2024.md): exponential-family form of projections under moment constraints (Corollary 3.1, Theorem 3.3) is the classical fact behind their constructions. Wiki's reading; neither page was checked for a direct citation.
 
 ## Concepts touched
+- [information-projection](../concepts/information-projection.md)
 - [reverse-information-projection](../concepts/reverse-information-projection.md)
 - [gro-criterion](../concepts/gro-criterion.md)
 - [exponential-family-e-values](../concepts/exponential-family-e-values.md)

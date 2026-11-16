@@ -48,6 +48,7 @@ The paper argues that a game-theoretical viewpoint underlies both the maximum en
 - [giuffridaTestingMaximumEntropy2025](giuffridaTestingMaximumEntropy2025.md): maximum-entropy models as the object of testing; this paper is the game-theoretic account of the principle those models rest on. Wiki's reading.
 
 ## Concepts touched
+- [information-projection](../concepts/information-projection.md)
 - [reverse-information-projection](../concepts/reverse-information-projection.md)
 - [gro-criterion](../concepts/gro-criterion.md)
 - [mdl-and-maximum-entropy-e-values](../concepts/mdl-and-maximum-entropy-e-values.md)
