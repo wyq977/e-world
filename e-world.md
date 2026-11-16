@@ -44,6 +44,9 @@ suppress-bibliography: true
 
 ## 2023
 
+* [@chowdhuryBregmanDeviationsGeneric2023]
+    Method of mixtures for d-dimensional exponential families with a conjugate prior centred at the hypothesised parameter: the mixture martingale has a closed form whose level sets are time-uniform Bregman (KL) confidence sets with radius log(1/δ) plus a 'Bregman information gain' of order (d/2) log(1 + n/c), made explicit for ten classical families and used for a GLR change-detection test. [arXiv](https://arxiv.org/abs/2201.07306) [DOI](10.48550/arXiv.2201.07306)
+
 * [@grunwaldEposterior2023]
     The reciprocal of an e-variable, read as a posterior over the parameter: it can be combined with any loss function chosen after the data and gives frequentist risk bounds that get loose rather than wrong when the e-collection is chosen badly, which is what makes e-posterior minimax decisions safer than Bayesian ones. [PDF](https://royalsocietypublishing.org/doi/10.1098/rsta.2022.0146) [arXiv](https://arxiv.org/abs/2301.01335) [DOI](10.1098/rsta.2022.0146)
 
@@ -65,6 +68,9 @@ suppress-bibliography: true
 
 * [@howardTimeuniformNonparametricNonasymptotic2021]
     The toolkit paper for confidence sequences: four recipes (stitching, conjugate mixtures, discrete mixtures, inverted stitching) that turn any sub-psi supermartingale into a curved anytime-valid boundary, with an empirical-Bernstein bound, matrix LIL and A/B-testing applications. [PDF](https://arxiv.org/pdf/1810.08240) [arXiv](https://arxiv.org/abs/1810.08240) [DOI](10.1214/20-AOS1991)
+
+* [@kaufmannMixtureMartingalesRevisited2021]
+    Time-uniform deviation inequalities for sums over several bandit arms of N_a(t)·KL(empirical mean, true mean) in a one-parameter exponential family, obtained by multiplying per-arm mixture martingales with hierarchical priors, with a threshold that pays ln ln N_a(t) per arm and roughly ln(1/δ) in total instead of per arm; applied to GLR stopping rules, asymptotically optimal track-and-stop tests and projected confidence intervals. [PDF](https://jmlr.org/papers/v22/18-798.html)
 
 * [@shaferTestingBettingStrategy2021]
     The manifesto for reporting a test as the outcome of a bet: betting scores are likelihood ratios, the implied target replaces power, (1/alpha)-warranties replace confidence, and the discussion is where betting scores, e-values and Bayes factors are first set side by side; read before the RSS on September 9, 2020. [PDF](https://academic.oup.com/jrsssa/article/184/2/407/7056412) [arXiv](https://arxiv.org/abs/1903.06991) [DOI](10.1111/rssa.12647)
@@ -96,6 +102,21 @@ suppress-bibliography: true
 
 * [@poschAdaptiveTwoStage1999]
     Four adaptive two-stage designs (Proschan–Hunsberger, Lehmacher–Wassmer, Bauer–Köhne, Shen–Fisher) are each written as a conditional error function A(z₁) integrating to α under the null, which shows that combination tests and conditional error functions describe the same rejection regions and gives a conditional power function for comparing designs and reassessing the sample size. [DOI](10.1002/(SICI)1521-4036(199910)41:6<689::AID-BIMJ689>3.0.CO;2-P)
+
+## 1984
+
+* [@csiszarSanovPropertyGeneralized1984]
+    For convex sets of distributions, the probability that the empirical distribution falls in the set is bounded by exp(−n · KL distance) for every n, and conditionally on that event the observations behave like an i.i.d. sample from the generalized I-projection, an exponential-family member when the set is defined by means; the Csiszár of the Csiszár–Sanov–Chernoff bound. [DOI](10.1214/aop/1176993227)
+
+## 1979
+
+* [@topsoeInformationtheoreticalOptimizationTechniques1979]
+    Recasts maximum entropy and minimum discrimination information as zero-sum games between an observer choosing a code and nature choosing a distribution; for any convex set the game has a value and a unique optimal code, adapted to a 'center of attraction' that may lie outside the set and satisfies a Pythagorean inequality; the minimax result behind GROW e-variables for a simple null. [PDF](http://dml.cz/dmlcz/124320)
+
+## 1975
+
+* [@csiszarIDivergenceGeometryProbability1975]
+    Treats Kullback–Leibler divergence as a squared distance: the I-projection of a distribution onto a variation-closed convex set exists, is characterised by a Pythagorean inequality, and under linear constraints is an exponential-family member; the source of the projection geometry behind GROW e-variables for a simple null. [DOI](10.1214/aop/1176996454)
 
 ## 1939
 

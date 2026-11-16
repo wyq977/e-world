@@ -67,4 +67,4 @@ Only arXiv v1 is in `raw/`. An ICML 2023 version exists; whether its numbering o
 - No theoretical guarantees for the changepoint and magnitude estimators of Remark 16 (Conclusion (ii)).
 - The ARL bound 1/(2α) − 3/2 comes from a union bound over n + 1 confidence sequences; its tightness is not discussed, and the delay bounds are conditional on forward coverage unless θ0 is known.
 - Delay bounds carry a log log(1/Δ) factor and a constant 3/(1−α) over Lorden's rate; the paper claims optimality only modulo logarithmic factors (Remark 18).
-- Not in the bib: Darling and Robbins (1967); Lorden (1971); Maillard (2019a,b); Howard and Ramdas (2022); Manole and Ramdas (2021); Wang and Ramdas (2022, 2023); Waudby-Smith, Wu and Ramdas (2022); Podkopaev and Ramdas (2021); Chowdhury et al. (2022); Wei and Xie (2022); Puchkin and Shcherbakova (2022).
+- Not in the bib: Darling and Robbins (1967); Lorden (1971); Maillard (2019a,b); Howard and Ramdas (2022); Manole and Ramdas (2021); Wang and Ramdas (2022, 2023); Waudby-Smith, Wu and Ramdas (2022); Podkopaev and Ramdas (2021); Wei and Xie (2022); Puchkin and Shcherbakova (2022).

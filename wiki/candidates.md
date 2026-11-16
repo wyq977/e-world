@@ -49,8 +49,8 @@ Only the human adds to the bib or raw/. Rows 49 and 83 were removed on the human
 | 45 | Time-uniform central limit theory and asymptotic confidence sequences | Waudby-Smith, Arbour, Sinha, Kennedy, Ramdas 2024 | B | ingested | SAVI |
 | 48 | Anytime-valid inference for multinomial count data | Lindon, Malek 2022 | C | missing | SAVI |
 | 73 | Online permutation tests and e-values for testing group invariance | Koning, Ramdas (and others) 2024 | C | missing | unverified |
-| 92 | Mixture martingales revisited with applications to sequential tests and confidence intervals | Kaufmann, Koolen 2021 | B | missing | discussion 2026-10-28; JMLR 22; the anytime-valid KL-ball comparison left open in row 89, Sec. 6 |
-| 93 | Bregman deviations of generic exponential families | Chowdhury, Saux, Maillard, Gopalan 2023 | C | missing | discussion 2026-10-28; COLT 2023, arXiv 2201.07306; method of mixtures for d-dimensional exponential families in Bregman divergence |
+| 92 | Mixture martingales revisited with applications to sequential tests and confidence intervals | Kaufmann, Koolen 2021 | B | ingested | discussion 2026-10-28; JMLR 22; the anytime-valid KL-ball comparison left open in row 89, Sec. 6; added to Zotero by the human and ingested 2026-11-16 |
+| 93 | Bregman deviations of generic exponential families | Chowdhury, Saux, Maillard, Gopalan 2023 | C | ingested | discussion 2026-10-28; COLT 2023, arXiv 2201.07306; method of mixtures for d-dimensional exponential families in Bregman divergence; added to Zotero by the human and ingested 2026-11-16 |
 | 94 | Anytime-valid testing with e-values and confirmatory adaptive designs | Brannath, Fischer 2026 | B | ingested | human request 2026-11-09; arXiv 2606.00878; conditional error functions and recursive combination tests are sequential e-values; exhaustion versus optional continuation |
 
 ## Composite nulls: exponential families, invariance, k-sample
@@ -135,6 +135,9 @@ Only the human adds to the bib or raw/. Rows 49 and 83 were removed on the human
 | 96 | Adaptive two stage designs and the conditional error function | Posch, Bauer 1999 | C | ingested | human request 2026-11-11; Biom. J. 41(6); four designs as conditional error functions, equivalence with combination tests, conditional power; in Zotero (Wiley PDF) |
 | 97 | A unified theory of two-stage adaptive designs | Liu, Proschan, Pledger 2002 | C | ingested | human request 2026-11-11; JASA 97(460); Adaptation Lemma, adaptive conditional test, measurability and countability counterexamples; in Zotero (JSTOR PDF) |
 | 98 | Multiplicity and flexibility in clinical trials | Brannath, Koenig, Bauer 2007 | C | ingested | human request 2026-11-11; Pharm. Stat. 6(3); conditional invariance principle, flexible closed tests, switching to a conventional test after treatment selection; in Zotero (Wiley PDF) |
+| 99 | I-divergence geometry of probability distributions and minimization problems | Csiszár 1975 | B | ingested | human request 2026-11-16; Ann. Probab. 3(1); I-projection on convex sets, Pythagorean inequality, exponential-family form under linear constraints |
+| 100 | Information-theoretical optimization techniques | Topsøe 1979 | B | ingested | human request 2026-11-16; Kybernetika 15(1); maximum entropy and minimum discrimination as games, center of attraction without closedness (Thm 8) |
+| 101 | Sanov property, generalized I-projection and a conditional limit theorem | Csiszár 1984 | B | ingested | human request 2026-11-16; Ann. Probab. 12(3); generalized I-projection, every-n Chernoff-type bound, conditional limit theorem; the Csiszár of the CSC bound |
 
 ## Sources for this list
 
